@@ -1,0 +1,22 @@
+<html>
+<head>
+    <title>Ravensbourne Table Socket Test</title>
+    <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+    <script>
+        var socket = io('ws://178.62.110.55:3000', {transports: ['websocket']});
+        socket.on('connect', function () {
+            console.log('connected');
+        });
+        socket.on('message', function (data) {
+            console.log(data);
+            var received = document.querySelector('#received');
+            if ( received ) {
+                received.innerHTML += data + '<br/>';
+            }
+        });
+    </script>
+</head>
+<body>
+    <div id='received' style='position: absolute; top: 0px; left: 0px; bottom: 0px; right: 0px; overflow: scroll; background-color: lightGray; color:black;'>recieved</div>
+</body>
+</html>
