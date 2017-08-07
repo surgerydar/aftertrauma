@@ -86,11 +86,22 @@ ApplicationWindow {
         //
         // TODO: check settings for first use
         //
+        if ( SystemUtils.isFirstRun() ) {
+            SystemUtils.install();
+        }
         //register.open();
 
+        Database.load();
         stack.push("qrc:///Dashboard.qml");
 
+
+
     }
+    Connections {
+        target: SystemUtils
+
+    }
+
     //
     //
     //

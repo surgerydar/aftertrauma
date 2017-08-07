@@ -34,16 +34,23 @@ AfterTrauma.Page {
             anchors.margins: 16
             textSize: 48
             //textFit: Text.Fit
-            text: model.title
+            text: model.title || ""
             backgroundColour: Colours.categoryColour(model.index)
             radius: model.index === 0 ? [8,8,0,0] : model.index === categories.model.count - 1 ? [0,0,8,8] : [0]
             onClicked: {
-                stack.push( "qrc:///FactsheetCategory.qml", { title: model.title, colour: Colours.categoryColour(model.index), contents: model.contents });
+                stack.push( "qrc:///FactsheetCategory.qml", { title: model.title, colour: Colours.categoryColour(model.index), content: model.content });
             }
+        }
+        //
+        //
+        //
+        add: Transition {
+            NumberAnimation { properties: "y"; from: categories.height; duration: 250 }
         }
     }
 
     StackView.onActivated: {
+        /*
         //
         // TODO: get this from database
         //
@@ -94,5 +101,32 @@ AfterTrauma.Page {
         data.forEach(function(datum) {
             categories.model.append(datum);
         });
+        */
+        categories.model.clear();
+        JSONFile.read('/factsheets/categories.json');
     }
+    //
+    //
+    //
+    Connections {
+        target: JSONFile
+
+        onArrayReadFrom: {
+            console.log( 'path:' + path );
+            console.log( 'array:' + JSON.stringify(array) );
+            categories.model.clear();
+            array.forEach(function(entry) {
+                categories.model.append(entry);
+            });
+        }
+        onObjectReadFrom: {
+            console.log( 'path:' + path );
+            console.log( 'object:' + JSON.stringify(object) );
+        }
+        onErrorReadingFrom: {
+            console.log( 'path:' + path );
+            console.log( 'error:' + error );
+        }
+    }
+
 }

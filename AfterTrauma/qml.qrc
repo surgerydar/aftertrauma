@@ -71,5 +71,13 @@
         <file>Timeline.qml</file>
         <file>TimelineItem.qml</file>
         <file>utils.js</file>
+        <file>ChallengeManager.qml</file>
+        <file>ChallengeManagerItem.qml</file>
+        <file>controls/SpinBox.qml</file>
+        <file>ImageManager.qml</file>
+        <file>ImageItem.qml</file>
+        <file>NotesManager.qml</file>
+        <file>NoteItem.qml</file>
+        <file>NoteEditor.qml</file>
     </qresource>
 </RCC>

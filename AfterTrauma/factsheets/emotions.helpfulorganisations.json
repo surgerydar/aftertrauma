@@ -1,0 +1,5 @@
+[
+    { type: "text", media: "this is an introduction" },
+    { type: "image", media: "image.png" },
+    { type: "video", media: "video.mp4" }
+]

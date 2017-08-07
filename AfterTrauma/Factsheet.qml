@@ -11,7 +11,7 @@ AfterTrauma.Page {
     //
     //
     ListView {
-        id: content
+        id: contents
         anchors.fill: parent
         //
         //
@@ -35,16 +35,7 @@ AfterTrauma.Page {
 
     StackView.onActivated: {
         /*
-        var json = 'qrc:/factsheets/' + factsheet + '.json';
-        console.log( 'laoding factsheet:' + json );
-        JSONLoader.load(json, function( blocks ) {
-            content.model.clear();
-            blocks.forEach( function( block ) {
-                content.model.append(block);
-            })
-        });
-        */
-        var data = [
+         var data = [
                     { type: "text", media: "this is an introduction<br/>this is an introduction<br/>this is an introduction<br/>" },
                     { type: "text", media: "this is an introduction<br/>this is an introduction<br/>this is an introduction<br/>this is an introduction<br/>this is an introduction<br/>this is an introduction<br/>this is an introduction<br/>" },
                     { type: "text", media: "this is an introduction<br/>this is an introduction<br/>this is an introduction<br/>this is an introduction<br/>this is an introduction<br/>" },
@@ -56,9 +47,38 @@ AfterTrauma.Page {
         data.forEach(function(datum){
             content.model.append(datum);
         });
-
+        */
+        contents.model.clear();
+        if ( content.length > 0 ) {
+            JSONFile.read('/factsheets/' + content);
+        }
     }
+    //
+    //
+    //
+    Connections {
+        target: JSONFile
 
-    property string factsheet: ""
+        onArrayReadFrom: {
+            console.log( 'path:' + path );
+            console.log( 'array:' + JSON.stringify(array) );
+            contents.model.clear();
+            array.forEach(function(entry) {
+                contents.model.append(entry);
+            });
+        }
+        onObjectReadFrom: {
+            console.log( 'path:' + path );
+            console.log( 'object:' + JSON.stringify(object) );
+        }
+        onErrorReadingFrom: {
+            console.log( 'path:' + path );
+            console.log( 'error:' + error );
+        }
+    }
+    //
+    //
+    //
+    property string content: ""
 
 }
