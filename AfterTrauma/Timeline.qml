@@ -24,52 +24,44 @@ AfterTrauma.Page {
         //
         //
         //
-        model: dailyList
+        model: dailyModel
         //
         //
         //
         delegate: TimelineItem {
-            anchors.left: parent.left
-            anchors.right: parent.right
+            anchors.left: parent?parent.left:undefined
+            anchors.right: parent?parent.right:undefined
             date: model.date
             images: model.images
             notes: model.notes
             values: model.values
+        }
+        //
+        //
+        //
+        section.property: "year"
+        section.delegate: Text {
+            height: 48
+            anchors.left: parent.left
+            anchors.right: parent.right
+            font.family: fonts.light.name
+            font.pixelSize: 32
+            color: Colours.almostWhite
+            text: section
         }
     }
     //
     //
     //
     StackView.onActivated: {
-        /*
-        var datapoints = [];
-        var week = 1000 * 60 * 60 * 24 * 7;
-        for ( var i = 0; i < 64; i++ ) {
-            var datapoint = {
-                date: Date.now() - week * i,
-
-            };
-            datapoint.values = [];
-            for ( var j = 0; j < 5; j++ ) {
-                datapoint.values.push( {
-                                          name: 'value ' + j,
-                                          value: Math.random()
-                                      });
-            }
-            datapoint.images = [];
-            for ( j = 0; j < Math.random() * 4; j++ ) {
-                datapoint.images.push('icons/chart.png')
-            }
-            datapoint.notes = [];
-            for ( j = 0; j < Math.random() * 4; j++ ) {
-                datapoint.images.push('note number ' + j );
-            }
-            datapoints.push(datapoint);
+    }
+    //
+    //
+    //
+    Connections {
+        target: dailyModel
+        onUpdated : {
+            dailyList.update();
         }
-        dailyList.model.clear();
-        datapoints.forEach(function(datum) {
-            dailyList.model.append(datum);
-        });
-        */
     }
 }

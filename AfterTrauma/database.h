@@ -24,7 +24,7 @@ public slots:
     QVariant insert( QString collection, QVariant object );
     QVariant update( QString collection, QVariant query, QVariant object );
     QVariant remove( QString collection, QVariant query );
-    QVariant find( QString collection, QVariant query );
+    QVariant find( QString collection, QVariant query, QVariant sort );
     QVariant findOne( QString collection, QVariant query );
 
 private:

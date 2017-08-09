@@ -9,7 +9,7 @@ Item {
     //
     //
     //
-    height: Math.max( 86, values.count * 8 * 2 )
+    height: Math.max( 86, Math.min(5,values?values.count:0) * 8 * 2 )
     //
     //
     //
@@ -37,7 +37,7 @@ Item {
         font.family: fonts.light
         font.pixelSize: 32
         color: Colours.almostWhite
-        text: Utils.shortDate(container.date)
+        text: container.date?Utils.shortDate(container.date):""
     }
     //
     // Indicators
@@ -49,7 +49,7 @@ Item {
         anchors.left: parent.left
         anchors.bottom: parent.bottom
         anchors.margins: 4
-        visible: images.count > 0
+        visible: (images&&images.count > 0)
         image: "icons/image.png"
         backgroundColour: "transparent"
     }
@@ -60,7 +60,7 @@ Item {
         anchors.left: imageIndicator.right
         anchors.bottom: parent.bottom
         anchors.margins: 4
-        visible: notes.count > 0
+        visible: (notes&&notes.count > 0)
         image: "icons/notes.png"
         backgroundColour: "transparent"
     }
@@ -82,7 +82,7 @@ Item {
         //
         //
         Repeater {
-            model: Math.min(5,values.count) // just use five main categories
+            model: Math.min(5,values?values.count:0) // just use five main categories
             Rectangle {
                 height: 8
                 width: bars.width * values.get(index).value

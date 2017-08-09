@@ -12,6 +12,12 @@ ApplicationWindow {
     height: 640
     title: qsTr("AfterTrauma")
     //
+    // globals font
+    //
+    AfterTrauma.Fonts {
+        id: fonts
+    }
+    //
     // global model
     //
     Daily {
@@ -36,14 +42,6 @@ ApplicationWindow {
         anchors.left: parent.left
         anchors.bottom: parent.verticalCenter
         anchors.right: parent.right
-        onDateRangeChanged: {
-            /* TODO: remove this
-            dateSlider.startDate = startDate;//new Date(startDate);
-            dateSlider.endDate = endDate; //new Date(endDate);
-            dateSlider.updateDisplay(dateSlider.value);
-            console.log( 'FlowerChart.onDateRangeChanged - startDate:' + startDate + ' endDate:' + endDate );
-            */
-        }
     }
     //
     //
@@ -99,13 +97,15 @@ ApplicationWindow {
         }
         */
         //register.open();
-
+        //
+        //
+        //
         Database.load();
         //
         // test data
         //
         var week = 1000 * 60 * 60 * 24 * 7;
-        for ( var i = 53; i > 1; i-- ) {
+        for ( var i = 0; i < 52; i++ ) {
             var day = new Date(Date.now()-(week*i));
             var daily = {
                 date: day.getTime(),
@@ -134,18 +134,14 @@ ApplicationWindow {
     Connections {
         target: Database
         onSuccess: {
-            console.log( 'database success : ' + collection + ' : ' + operation + ' : ' + JSON.stringify(result) );
+            //console.log( 'database success : ' + collection + ' : ' + operation + ' : ' + JSON.stringify(result) );
+            dailyModel.databaseSuccess(collection,operation,result);
         }
         onError: {
-            console.log( 'database error : ' + collection + ' : ' + operation + ' : ' + JSON.stringify(error) );
+            //console.log( 'database error : ' + collection + ' : ' + operation + ' : ' + JSON.stringify(error) );
+            dailyModel.databaseError(collection,operation,error);
         }
 
     }
 
-    //
-    //
-    //
-    AfterTrauma.Fonts {
-        id: fonts
-    }
 }

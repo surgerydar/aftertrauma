@@ -157,7 +157,7 @@ QVariant Database::remove( QString collection, QVariant query ) {
     return results;
 }
 
-QVariant Database::find( QString collection, QVariant query ) {
+QVariant Database::find( QString collection, QVariant query, QVariant sort ) {
     //
     // TODO: sort and full query
     //
@@ -170,6 +170,39 @@ QVariant Database::find( QString collection, QVariant query ) {
             matches.append(_collection[i]);
         }
     }
+    //
+    // sort
+    //
+    QVariantMap _sort = sort.toMap();
+    if ( _sort.size() > 0 ) {
+        qDebug() << "sorting";
+        try {
+            qSort( matches.begin(), matches.end(),[&_sort]( QVariant &a, QVariant &b ) {
+                QVariantMap& _a = getStoredValueRef<QVariantMap>(a);
+                QVariantMap& _b = getStoredValueRef<QVariantMap>(b);
+                for ( QVariantMap::iterator it = _sort.begin(); it != _sort.end(); ++it ) {
+                    if ( _a.contains(it.key()) && _b.contains(it.key()) ) {
+                        if ( it.value().toInt() < 1 && _a[it.key()] < _b[it.key()] ) {
+                            qDebug() << "sorting descending : " << it.key() << " a: " << _a[it.key()].toString() << " b: " << _b[it.key()].toString();
+                            return false;
+                        } else if ( it.value().toInt() > 1 && _a[it.key()] > _b[it.key()] ) {
+                            qDebug() << "sorting ascending : " << it.key() << " a: " << _a[it.key()].toString() << " b: " << _b[it.key()].toString();
+                            return false;
+                        }
+                    } else {
+                        qDebug() << "nothing to sort";
+                    }
+                }
+                return true;
+            });
+        } catch( std::exception& e ) {
+            qDebug() << "error sorting : " << e.what();
+            emit error( collection, "find", e.what() );
+        }
+    }
+    //
+    //
+    //
     QVariant results(matches);
     emit success(collection,"find",results);
     return results;

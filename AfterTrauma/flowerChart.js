@@ -76,28 +76,29 @@ function setData( dataSet ) {
 function setCurrentDate( date ) {
     if( data && data.length > 0 ) {
         var count = data.length - 1;
-        for ( var i = 0; i < count; i++ ) {
-            if ( data[ i ][ 0 ] <= date && data[ i + 1 ][ 0 ] > date ) {
+        for ( var i = count; i > 0; i-- ) {
+            if ( data[ i ][ 0 ] <= date && data[ i - 1 ][ 0 ] > date ) {
                 // interpolate between i and i + 1
-                var interp = ( date - data[ i ][ 0 ] ) / ( data[ i + 1 ][ 0 ] - data[ i ][ 0 ] );
+                var interp = ( date - data[ i ][ 0 ] ) / ( data[ i - 1 ][ 0 ] - data[ i ][ 0 ] );
                 if ( interp <= 0 ) {
                     nextData = data[ i ][ 1 ].slice();
                 } else if ( interp >= 1 ) {
-                    nextData = data[ i + 1 ][ 1 ].slice();
+                    nextData = data[ i - 1 ][ 1 ].slice();
                 } else {
                     nextData = [];
                     for ( var j = 0; j < data[ i ][ 1 ].length; j++ ) {
-                        nextData.push( data[ i ][ 1 ][ j ] + ((data[ i + 1 ][ 1 ][ j ]-data[ i ][ 1 ][ j ])*interp));
+                        nextData.push( data[ i ][ 1 ][ j ] + ((data[ i - 1 ][ 1 ][ j ]-data[ i ][ 1 ][ j ])*interp));
                     }
                 }
                 //console.log( 'setCurrentDate : nextData : ' + nextData.join() );
                 return;
             }
         }
+        console.log( 'flowerChart.setCurrentDate : ' + date + ' is out of range ' + data[ count ][ 0 ] + ' to ' + data[ 0 ][ 0 ] );
         //
         // fallen off the end of time so use last entry
         //
-        nextData = data[ count ][ 1 ].slice();
+        nextData = data[ 0 ][ 1 ].slice();
     }
 }
 
@@ -148,6 +149,10 @@ function draw( ctx ) {
             angle += sweep;
         }
         //
+        // draw
+        //
+        /*
+        //
         // draw min / max
         //
         ctx.strokeStyle = Qt.rgba(1.,1.,1.,1.);
@@ -159,6 +164,7 @@ function draw( ctx ) {
         ctx.beginPath();
         ctx.arc(cp.x,cp.y,radius* minValue,0.,2.*Math.PI);
         ctx.stroke();
+        */
     }
 }
 
