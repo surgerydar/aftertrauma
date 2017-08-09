@@ -82,7 +82,7 @@ Item {
         //
         //
         Repeater {
-            model: values.count
+            model: Math.min(5,values.count) // just use five main categories
             Rectangle {
                 height: 8
                 width: bars.width * values.get(index).value

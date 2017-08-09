@@ -24,7 +24,7 @@ AfterTrauma.Page {
         //
         //
         //
-        model: ListModel {}
+        model: dailyList
         //
         //
         //
@@ -41,6 +41,7 @@ AfterTrauma.Page {
     //
     //
     StackView.onActivated: {
+        /*
         var datapoints = [];
         var week = 1000 * 60 * 60 * 24 * 7;
         for ( var i = 0; i < 64; i++ ) {
@@ -69,5 +70,6 @@ AfterTrauma.Page {
         datapoints.forEach(function(datum) {
             dailyList.model.append(datum);
         });
+        */
     }
 }

@@ -3,6 +3,8 @@
 
 #include <QObject>
 #include <QVariantMap>
+#include <QJsonObject>
+#include <QJsonArray>
 
 class Database : public QObject
 {
@@ -10,6 +12,7 @@ class Database : public QObject
 public:
     explicit Database(QObject *parent = 0);
     static Database* shared();
+    QString generateObjectId();
 private:
     static Database* s_shared;
 signals:
@@ -18,14 +21,16 @@ signals:
 public slots:
     void load();
     void save();
-    void insert( QString collection, QVariant object );
-    void update( QString collection, QVariant query, QVariant object );
-    void remove( QString collection, QVariant query );
-    void find( QString collection, QVariant query );
-    void findOne( QString collection, QVariant query );
+    QVariant insert( QString collection, QVariant object );
+    QVariant update( QString collection, QVariant query, QVariant object );
+    QVariant remove( QString collection, QVariant query );
+    QVariant find( QString collection, QVariant query );
+    QVariant findOne( QString collection, QVariant query );
 
 private:
+    QVariantList& getCollection( QString& collection );
     QVariantMap m_collections;
+    bool matchDocument( QVariantMap& document, QVariantMap& query );
 };
 
 #endif // DATABASE_H

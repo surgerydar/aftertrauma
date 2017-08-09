@@ -79,5 +79,6 @@
         <file>NotesManager.qml</file>
         <file>NoteItem.qml</file>
         <file>NoteEditor.qml</file>
+        <file>Daily.qml</file>
     </qresource>
 </RCC>

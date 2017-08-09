@@ -12,6 +12,12 @@ ApplicationWindow {
     height: 640
     title: qsTr("AfterTrauma")
     //
+    // global model
+    //
+    Daily {
+        id: dailyModel
+    }
+    //
     //
     //
     background: Rectangle {
@@ -86,19 +92,53 @@ ApplicationWindow {
         //
         // TODO: check settings for first use
         //
+        /*
         if ( SystemUtils.isFirstRun() ) {
+            intro.open();
             SystemUtils.install();
         }
+        */
         //register.open();
 
         Database.load();
+        //
+        // test data
+        //
+        var week = 1000 * 60 * 60 * 24 * 7;
+        for ( var i = 53; i > 1; i-- ) {
+            var day = new Date(Date.now()-(week*i));
+            var daily = {
+                date: day.getTime(),
+                year: day.getFullYear(),
+                month: day.getMonth(), // 0 - 11
+                day: day.getDate(), // 1 - 31
+                values: [
+                    { name: 'emotions', value: Math.random() },
+                    { name: 'mind', value: Math.random() },
+                    { name: 'body', value: Math.random() },
+                    { name: 'life', value: Math.random() },
+                    { name: 'relationships', value: Math.random() },
+                ],
+                notes: [],
+                images: []
+            }
+            Database.insert('daily',daily);
+        }
         stack.push("qrc:///Dashboard.qml");
-
-
-
     }
     Connections {
         target: SystemUtils
+
+    }
+
+    Connections {
+        target: Database
+        onSuccess: {
+            console.log( 'database success : ' + collection + ' : ' + operation + ' : ' + JSON.stringify(result) );
+        }
+        onError: {
+            console.log( 'database error : ' + collection + ' : ' + operation + ' : ' + JSON.stringify(error) );
+        }
 
     }
 

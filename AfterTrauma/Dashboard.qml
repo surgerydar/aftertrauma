@@ -23,6 +23,11 @@ AfterTrauma.Page {
             anchors.top: parent.top
             anchors.left: parent.left
             anchors.right: parent.right
+            onDateChanged: {
+                if ( flowerChart ) {
+                    flowerChart.setCurrentDate(currentDate.getTime());
+                }
+            }
         }
         //
         //
@@ -98,6 +103,22 @@ AfterTrauma.Page {
             anchors.bottom: parent.bottom
             currentIndex: notifications.currentIndex
             count: notifications.count
+        }
+
+    }
+    //
+    //
+    //
+    StackView.onActivated: {
+    }
+    //
+    //
+    //
+    Connections {
+        target: flowerChart
+        onDateRangeChanged: {
+            dateSlider.startDate = startDate
+            dateSlider.endDate = endDate
         }
     }
 }
