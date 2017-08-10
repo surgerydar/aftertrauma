@@ -16,7 +16,7 @@ Item {
     AfterTrauma.Background {
         id: background
         anchors.fill: parent
-        fill: Colours.darkSlate
+        fill: Colours.darkOrange
     }
     //
     //

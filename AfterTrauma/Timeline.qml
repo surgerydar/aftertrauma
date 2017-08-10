@@ -6,7 +6,7 @@ import "colours.js" as Colours
 
 AfterTrauma.Page {
     title: "TIMELINE"
-    colour: Colours.darkSlate
+    colour: Colours.darkOrange
     //
     //
     //
