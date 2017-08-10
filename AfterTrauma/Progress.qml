@@ -12,7 +12,9 @@ AfterTrauma.Page {
     SwipeView {
         id: graphs
         anchors.fill: parent
-
     }
-
+    //
+    //
+    //
+    property string period: "year" // year | month | week
 }

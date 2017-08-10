@@ -68,6 +68,8 @@ ios {
     factsheet.path =
     QMAKE_BUNDLE_DATA += factsheet
 
+    launch_images.files = $$files($$PWD/ios/launchimages/LaunchImage*.png)
+    QMAKE_BUNDLE_DATA += launch_images
 }
 
 osx {

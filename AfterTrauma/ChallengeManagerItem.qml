@@ -33,6 +33,8 @@ Item {
         //
         horizontalAlignment: Text.AlignLeft
         verticalAlignment: Text.AlignVCenter
+        elide: Text.ElideRight
+        minimumPixelSize: 24
         fontSizeMode: Text.Fit
         font.family: fonts.light
         font.pixelSize: 32
@@ -53,7 +55,7 @@ Item {
         fontSizeMode: Text.Fit
         wrapMode: Text.WordWrap
         elide: Text.ElideRight
-        minimumPixelSize: 10
+        minimumPixelSize: 18
         font.family: fonts.light
         font.pixelSize: 24
         color: Colours.almostWhite

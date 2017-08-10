@@ -36,12 +36,16 @@ Popup {
         //
         //
         anchors.fill: parent
+        anchors.leftMargin: 32
+        anchors.rightMargin: 32
+        anchors.bottomMargin: 64
         //
         //
         //
         clip: true
         spacing: 8
         verticalLayoutDirection: ListView.BottomToTop
+        interactive: contentHeight > parent.height
         //
         //
         //

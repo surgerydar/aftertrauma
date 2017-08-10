@@ -40,6 +40,22 @@ AfterTrauma.Page {
     //
     //
     //
+    AfterTrauma.Button {
+        id: addButton
+        anchors.top: parent.top
+        anchors.right: parent.right
+        image: "icons/add.png"
+        backgroundColour: "transparent"
+        //
+        //
+        //
+        onClicked: {
+            stack.push( "qrc:///ChallengeBuilder.qml")
+        }
+    }
+    //
+    //
+    //
     StackView.onActivated: {
         //
         // TODO: get this from database

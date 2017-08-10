@@ -11,10 +11,18 @@ AfterTrauma.Page {
     //
     ListView {
         id: contents
-        anchors.fill: parent
         //
         //
         //
+        height: Math.min( parent.height, contentHeight )
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.margins: 16
+        //
+        //
+        //
+        interactive: contentHeight >= parent.height
         clip: true
         spacing: 4
         //

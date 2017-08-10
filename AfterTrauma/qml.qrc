@@ -80,5 +80,13 @@
         <file>NoteItem.qml</file>
         <file>NoteEditor.qml</file>
         <file>Daily.qml</file>
+        <file>chart.js</file>
+        <file>ChallengeBuilder.qml</file>
+        <file>ChallengeBuilderItem.qml</file>
+        <file>controls/ComboBox.qml</file>
+        <file>controls/Switch.qml</file>
+        <file>icons/more_arrow.png</file>
+        <file>icons/less_arrow.png</file>
+        <file>controls/More.qml</file>
     </qresource>
 </RCC>
