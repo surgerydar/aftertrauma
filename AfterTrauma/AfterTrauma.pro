@@ -72,10 +72,6 @@ ios {
     QMAKE_BUNDLE_DATA += launch_images
 }
 
-osx {
-    SOURCES += osx/ImagePicker.cpp
-}
-
 HEADERS += \
     imagepicker.h \
     systemutils.h \

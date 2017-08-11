@@ -107,23 +107,27 @@ ApplicationWindow {
         var week = 1000 * 60 * 60 * 24 * 7;
         for ( var i = 0; i < 52; i++ ) {
             var day = new Date(Date.now()-(week*i));
+            var multiplier = ( ( 51 - i ) + 1 ) / 52.;
             var daily = {
                 date: day.getTime(),
                 year: day.getFullYear(),
                 month: day.getMonth(), // 0 - 11
                 day: day.getDate(), // 1 - 31
                 values: [
-                    { name: 'emotions', value: Math.random() },
-                    { name: 'mind', value: Math.random() },
-                    { name: 'body', value: Math.random() },
-                    { name: 'life', value: Math.random() },
-                    { name: 'relationships', value: Math.random() },
+                    { name: 'emotions', value: Math.random() * multiplier },
+                    { name: 'mind', value: Math.random() * multiplier },
+                    { name: 'body', value: Math.random() * multiplier },
+                    { name: 'life', value: Math.random() * multiplier },
+                    { name: 'relationships', value: Math.random() * multiplier },
                 ],
                 notes: [],
                 images: []
             }
             Database.insert('daily',daily);
         }
+        //
+        //
+        //
         stack.push("qrc:///Dashboard.qml");
     }
     Connections {

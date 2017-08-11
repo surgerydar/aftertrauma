@@ -6,7 +6,7 @@ import "colours.js" as Colours
 
 AfterTrauma.Page {
     title: "TIMELINE"
-    colour: Colours.darkOrange
+    colour: Colours.slate
     //
     //
     //
@@ -35,6 +35,17 @@ AfterTrauma.Page {
             images: model.images
             notes: model.notes
             values: model.values
+            //
+            //
+            //
+            Component.onCompleted: {
+                itemCount++;
+                console.log('timeline item created : ' + itemCount );
+            }
+            Component.onDestruction: {
+                itemCount--;
+                console.log('timeline item destroyed : ' + itemCount );
+            }
         }
         //
         //
@@ -44,10 +55,16 @@ AfterTrauma.Page {
             height: 48
             anchors.left: parent.left
             anchors.right: parent.right
-            font.family: fonts.light.name
+            //font.family: fonts.light.name
             font.pixelSize: 32
             color: Colours.almostWhite
             text: section
+        }
+        //
+        //
+        //
+        onCountChanged: {
+            console.log( 'timeline ListView.count : ' + count + 'ListView.model.count : ' + model.count );
         }
     }
     //
@@ -64,4 +81,5 @@ AfterTrauma.Page {
             dailyList.update();
         }
     }
+    property int itemCount: 0
 }
