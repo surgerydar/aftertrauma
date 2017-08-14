@@ -48,7 +48,7 @@ AfterTrauma.Page {
                         anchors.bottom: parent.bottom
                         anchors.right: parent.right
                         anchors.margins: 4
-                        text: model.name
+                        text: model.label
                     }
                 }
             }

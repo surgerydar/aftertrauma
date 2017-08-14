@@ -12,16 +12,28 @@ ApplicationWindow {
     height: 640
     title: qsTr("AfterTrauma")
     //
-    // globals font
+    // global font
     //
     AfterTrauma.Fonts {
         id: fonts
     }
     //
-    // global model
+    // global models
     //
     Daily {
         id: dailyModel
+    }
+    Notifications {
+        id: notificationModel
+    }
+    Challenges {
+        id: challengeModel
+    }
+    Questionnaires {
+        id: questionnaireModel
+    }
+    Messages {
+        id: messageModel
     }
     //
     //
@@ -90,41 +102,54 @@ ApplicationWindow {
         //
         // TODO: check settings for first use
         //
-        /*
         if ( SystemUtils.isFirstRun() ) {
             intro.open();
             SystemUtils.install();
+            //
+            // generate test data
+            //
+            var week = 1000 * 60 * 60 * 24 * 7;
+            for ( var i = 0; i < 52; i++ ) {
+                var day = new Date(Date.now()-(week*i));
+                var multiplier = ( ( 51 - i ) + 1 ) / 52.;
+                var daily = {
+                    date: day.getTime(),
+                    year: day.getFullYear(),
+                    month: day.getMonth(), // 0 - 11
+                    day: day.getDate(), // 1 - 31
+                    values: [
+                        { label: 'emotions', value: Math.random() * multiplier },
+                        { label: 'mind', value: Math.random() * multiplier },
+                        { label: 'body', value: Math.random() * multiplier },
+                        { label: 'life', value: Math.random() * multiplier },
+                        { label: 'relationships', value: Math.random() * multiplier },
+                    ],
+                    notes: [],
+                    images: []
+                }
+                if ( i > 0 ) {
+                    var nImages = Math.random() * 4;
+                    for ( var j = 0; j < nImages; j++ ) {
+                        daily.images.push( { title: "image", image: "icons/image.png" });
+                    }
+                    var nNotes = Math.random() * 4;
+                    for ( j = 0; j < nImages; j++ ) {
+                        daily.notes.push( { title: "note", note: "random note" + j });
+                    }
+                }
+                Database.insert('daily',daily);
+            }
+            Database.save();
+
         }
-        */
-        //register.open();
         //
         //
         //
         Database.load();
+        //register.open();
         //
-        // test data
         //
-        var week = 1000 * 60 * 60 * 24 * 7;
-        for ( var i = 0; i < 52; i++ ) {
-            var day = new Date(Date.now()-(week*i));
-            var multiplier = ( ( 51 - i ) + 1 ) / 52.;
-            var daily = {
-                date: day.getTime(),
-                year: day.getFullYear(),
-                month: day.getMonth(), // 0 - 11
-                day: day.getDate(), // 1 - 31
-                values: [
-                    { name: 'emotions', value: Math.random() * multiplier },
-                    { name: 'mind', value: Math.random() * multiplier },
-                    { name: 'body', value: Math.random() * multiplier },
-                    { name: 'life', value: Math.random() * multiplier },
-                    { name: 'relationships', value: Math.random() * multiplier },
-                ],
-                notes: [],
-                images: []
-            }
-            Database.insert('daily',daily);
-        }
+        //
         //
         //
         //

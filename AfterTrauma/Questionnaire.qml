@@ -6,53 +6,85 @@ import "colours.js" as Colours
 
 AfterTrauma.Page {
     title: "QUESTIONNAIRE"
-    subtitle: "Subject"
+    subtitle: questionnaires.currentItem.title || ""
     colour: Colours.blue
     //
     //
     //
-    ListView {
-        id: questionList
+    SwipeView {
+        id: questionnaires
         //
         //
         //
         anchors.fill: parent
+        anchors.bottomMargin: 36
         //
         //
         //
         clip: true
-        spacing: 8
         //
         //
         //
-        model: ListModel {}
-        //
-        //
-        //
-        delegate: Question {
-            anchors.left: parent.left
-            anchors.right: parent.right
-            question: model.question
-            score: model.score
+        Repeater {
+            id: questionnaireRepeater
+            //
+            //
+            //
+            model: questionnaireModel
+            //
+            //
+            //
+            delegate: Page {
+                title: questionnaireModel.get(index).title
+                //
+                //
+                //
+                background: Rectangle {
+                    anchors.fill: parent
+                    color: "transparent"
+                }
+                //
+                //
+                //
+                ListView {
+                    anchors.fill: parent
+                    anchors.bottomMargin: 36
+                    clip: true
+                    spacing: 8
+                    model: questionnaireModel.get(index).questions
+                    delegate: Question {
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        question: model.question
+                    }
+                }
+                //
+                //
+                //
+                property string category: questionnaireModel.get(index).category
+            }
         }
     }
     //
     //
     //
+    AfterTrauma.PageIndicator {
+        anchors.horizontalCenter: questionnaires.horizontalCenter
+        anchors.bottom: questionnaires.bottom
+        anchors.bottomMargin: 8
+        currentIndex: questionnaires.currentIndex
+        count: questionnaires.count
+        colour: Colours.lightSlate
+    }
+    //
+    //
+    //
+    footer: Item {
+        height: 28
+    }
+    //
+    //
+    //
     StackView.onActivated: {
-        var data = [
-                    { question: "question one", score: 0. },
-                    { question: "question two", score: 0. },
-                    { question: "question three", score: 0. },
-                    { question: "question four", score: 0. },
-                    { question: "question five", score: 0. },
-                    { question: "question six", score: 0. },
-                    { question: "question seven", score: 0. },
-                    { question: "question eight", score: 0. }
-                ];
-        questionList.model.clear();
-        data.forEach(function(datum) {
-            questionList.model.append(datum);
-        });
     }
 }

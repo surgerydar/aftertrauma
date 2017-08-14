@@ -41,57 +41,26 @@ AfterTrauma.Page {
             //
             //
             //
-            Page {
-                background: Rectangle {
-                    anchors.fill: parent
-                    color: "transparent"
-                }
-                Text {
-                    anchors.fill: parent
-                    color: Colours.almostWhite
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                    text: "notification 1"
-                }
-            }
-            Page {
-                background: Rectangle {
-                    anchors.fill: parent
-                    color: "transparent"
-                }
-                Text {
-                    anchors.fill: parent
-                    color: Colours.almostWhite
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                    text: "notification 2"
-                }
-            }
-            Page {
-                background: Rectangle {
-                    anchors.fill: parent
-                    color: "transparent"
-                }
-                Text {
-                    anchors.fill: parent
-                    color: Colours.almostWhite
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                    text: "notification 3"
-                }
-            }
-            Page {
-                background: Rectangle {
-                    anchors.fill: parent
-                    color: "transparent"
-                }
-
-                Text {
-                    anchors.fill: parent
-                    color: Colours.almostWhite
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                    text: "notification 4"
+            Repeater {
+                //
+                //
+                //
+                model: notificationModel.count
+                //
+                //
+                //
+                delegate:             Page {
+                    background: Rectangle {
+                        anchors.fill: parent
+                        color: "transparent"
+                    }
+                    Text {
+                        anchors.fill: parent
+                        color: Colours.almostWhite
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                        text: notificationModel.get( index ).text
+                    }
                 }
             }
         }

@@ -5,7 +5,10 @@ ListModel {
     //
     //
     //
-
+    //dynamicRoles: true
+    //
+    //
+    //
     Component.onCompleted: {
         //
         // initial find
@@ -40,23 +43,13 @@ ListModel {
             if ( operation === 'find' ) {
                 console.log( 'Daily : loading daylies' );
                 model.clear();
-                result.forEach( function(daily) {
-                    /*
-                    console.log( 'appending daily : ' + JSON.stringify(entry));
-                    var object = {
-                        date: entry.date,
-                        year: entry.year,
-                        month: entry.month, // 0 - 11
-                        day: entry.day, // 1 - 31
-                        values: entry.values,
-                        notes: entry.notes,
-                        images: entry.images
-                    };
-                    model.append(object);
-                    */
-                    model.append(daily);
+                result.forEach( function(day) {
+                    console.log( 'appending day : ' + JSON.stringify(day));
+                    model.append(day);
                 });
                 model.updated();
+            } else if ( operation === 'update' ) {
+                console.log( 'Daily : updated : ' + JSON.stringify(result) );
             }
         }
     }
@@ -66,28 +59,78 @@ ListModel {
     //
     //
     //
+    function getDayIndex( date ) {
+        var day = date.getDate();
+        var month = date.getMonth();
+        var year = date.getFullYear();
+        var n = model.count;
+        console.log( 'seraching for year:' + year + ' month:' + month + ' day:' + day );
+        for ( var i = 0; i < n; i++ ) {
+            var item = model.get(i);
+            //console.log( 'year:' + item.year + ' month:' + item.month + ' day:' + item.day );
+            if ( item.year === year && item.month === month && item.day === day ) {
+                console.log( 'found year:' + item.year + ' month:' + item.month + ' day:' + item.day );
+                return i;
+            }
+        }
+        console.log( 'unable to find year:' + year + ' month:' + month + ' day:' + day );
+        return -1;
+    }
+
+    function getDay( date ) {
+        var index = getDayIndex( date );
+        return index >= 0 ? model.get(index ) : undefined;
+    }
+    function getDayAsObject( date ) {
+        var day = getDay(date);
+        if ( day ) {
+            //
+            // convert list fields into arrays
+            //
+            var _day = {
+                _id: day._id,
+                date: day.date,
+                year: day.year,
+                month: day.month,
+                day: day.day
+            };
+            //
+            //
+            //
+            ["notes","images","values"].forEach(function(field){
+                if( !Array.isArray(day[field]) ) {
+                    console.log( 'converting ' + field + ' to array');
+                    var n = day[field].count;
+                    var temp = [];
+                    for ( var i = 0; i < n; i++ ) {
+                        var object = day[field].get(i);
+                        console.log( 'appending ' + JSON.stringify(object) );
+                        temp.push( object );
+                    }
+                    _day[field] = temp;
+                }
+            });
+            console.log( 'getting : ' + JSON.stringify(_day) );
+            return _day;
+        }
+        return undefined;
+    }
+
 
     function getToday() {
         var today = new Date();
-        var day = today.getDate();
-        var month = today.getMonth();
-        var year = today.getYear();
-        var n = model.count;
-        for ( var i = 0; i < n; i++ ) {
-            var item = model.get(i);
-            if ( item.year === year && item.month === month && item.day === day ) {
-                return item;
-            }
-        }
-        return createToday();
+        var day = getDay( today );
+        return day || createToday();
     }
+
     function createToday() {
+        console.log( 'Daily.createToday')
         var today = new Date();
         var daily = {
-            date: day.getTime(),
-            year: day.getFullYear(),
-            month: day.getMonth(), // 0 - 11
-            day: day.getDate(), // 1 - 31
+            date: today.getTime(),
+            year: today.getFullYear(),
+            month: today.getMonth(), // 0 - 11
+            day: today.getDate(), // 1 - 31
             values: [
                 { name: 'emotions', value: 0. },
                 { name: 'mind', value: 0. },
@@ -101,10 +144,10 @@ ListModel {
         Database.insert('daily',daily);
         Database.save();
         model.append(daily);
-        return daily;
+        return model.get(model.count-1);
     }
     //
-    //
+    // get the closest date to
     //
     function indexOf(date) {
         if (model.count == 0)
@@ -133,5 +176,48 @@ ListModel {
         }
 
         return -1;
+    }
+    //
+    //
+    //
+    function update( day ) {
+        var index = getDayIndex(new Date(day.date));
+        if ( index >= 0 ) {
+
+            console.log( 'updating day : ' + JSON.stringify(day) + ' at index : ' + index );
+            model.set(index,day);
+            Database.update('daily', { _id: day._id }, day );
+            Database.save();
+            /*
+            //
+            // convert list fields into arrays
+            //
+            var _day = {
+                _id: day._id,
+                date: day.date,
+                year: day.year,
+                month: day.month,
+                day: day.day
+            };
+            //
+            //
+            //
+            ["notes","images","values"].forEach(function(field){
+                if( !Array.isArray(day[field]) ) {
+                    console.log( 'converting ' + field + ' to array');
+                    var n = day[field].count;
+                    var temp = [];
+                    for ( var i = 0; i < n; i++ ) {
+                        var object = day[field].get(i);
+                        console.log( 'appending ' + JSON.stringify(object) );
+                        temp.push( object );
+                    }
+                    _day[field] = temp;
+                }
+            });
+            console.log( 'updating : ' + JSON.stringify(_day) );
+            model.set(index,_day);
+            */
+        }
     }
 }

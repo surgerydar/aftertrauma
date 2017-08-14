@@ -11,107 +11,89 @@ AfterTrauma.Page {
     //
     //
     title: "IMAGES"
+    subtitle: date > 0 ? Utils.shortDate(date) : ""
     colour: Colours.blue
     //
     //
     //
-    ListView {
-        id: images
+    SwipeView {
+        id: imagesView
         anchors.fill: parent
+        anchors.bottomMargin: 36
         //
         //
         //
-        clip: true
-        spacing: 4
-        //
-        //
-        //
-        model: ListModel {}
-        //
-        //
-        //
-        delegate: ImageItem {
-            anchors.left: parent.left
-            anchors.right: parent.right
-            source: model.image
+        Repeater {
+            id: imagesRepeater
+            delegate: ImagePage {
+                image: images[ index ].image
+                onImageChanged: {
+                    //images[ index ].image = image;
+                    console.log('image charged : ' + image );
+                }
+            }
+        }
+    }
+    AfterTrauma.PageIndicator {
+        anchors.horizontalCenter: imagesView.horizontalCenter
+        anchors.bottom: imagesView.bottom
+        anchors.bottomMargin: 16
+        currentIndex: imagesView.currentIndex
+        count: imagesView.count
+        colour: Colours.lightSlate
+    }
+    AfterTrauma.Button {
+        id: addButton
+        anchors.top: parent.top
+        anchors.right: parent.right
+        anchors.margins: 8
+        image: "icons/add.png"
+        backgroundColour: "transparent"
+        //visible: images.length > 1 && images[ images.length -  1 ].image !== ""
+        onClicked: {
+            images.push({title:"", image:""});
+            imagesRepeater.model = images;
+            imagesView.currentIndex = images.length - 1;
         }
     }
     //
     //
     //
     footer: Item {
-        id: toolbar
-        height: 64
-        anchors.left: parent.left
-        anchors.right: parent.right
-        //
-        //
-        //
-        AfterTrauma.Button {
-            id: addImageLibrary
-            anchors.left: parent.left
-            anchors.bottom: parent.bottom
-            anchors.leftMargin: 8
-            anchors.bottomMargin: 64
-
-            backgroundColour: colour
-            image: "icons/add.png"
-            text: "gallery"
-            //
-            //
-            //
-            onClicked: {
-                ImagePicker.openGallery();
-            }
-        }
-        //
-        //
-        //
-        AfterTrauma.Button {
-            id: addImageCamera
-            anchors.right: parent.right
-            anchors.bottom: parent.bottom
-            anchors.rightMargin: 8
-            anchors.bottomMargin: 64
-            direction: "Right"
-            backgroundColour: colour
-            image: "icons/add.png"
-            text: "camera"
-            //
-            //
-            //
-            onClicked: {
-                ImagePicker.openCamera();
-            }
-        }
+        height: 28
     }
-    //
-    //
-    //
-    onDateChanged: {
-        subtitle = Utils.shortDate( date );
-    }
-
     //
     //
     //
     StackView.onActivated: {
-        //
-        // TODO: get this from database
-        //
-        var data  = {
-            date: Date.now(),
-            images:[
-                { image: "icons/title_logo.png" },
-                { image: "icons/title_logo.png" },
-                { image: "icons/title_logo.png" }
-            ]
-        };
-        date = data.date;
-        images.model.clear();
-        data.images.forEach(function(image) {
-            images.model.append(image);
-        });
+        console.log( 'ImagesManager : activating' );
+        var day;
+        if ( date === 0 ) {
+            console.log( 'ImagesManager : getting todays images' );
+            day = dailyModel.getDayAsObject(new Date());
+            date = day.date;
+        } else {
+            day = dailyModel.getDayAsObject(new Date(date));
+        }
+        images = day.images;
+        if ( images.length === 0 ) {
+            console.log( 'ImagesManager : no images so creating default' );
+            //
+            // add default empty image
+            //
+            images.push({title:"",image:""});
+         }
+         imagesRepeater.model = images;
+    }
+    StackView.onDeactivating: {
+        var day = dailyModel.getDayAsObject(new Date(date));
+        if ( day ) {
+            images.forEach(function(image){
+               console.log( 'saving image : ' + JSON.stringify(image) );
+            });
+            day.images = images;
+            dailyModel.update(day);
+        }
     }
     //
     //
@@ -119,12 +101,16 @@ AfterTrauma.Page {
     Connections {
         target: ImagePicker
         onImagePicked: {
-            images.model.append({image:'file://'+url});
+            var source = 'file://'+url;
+            console.log( 'image picked : ' + source );
+            images[imagesView.currentIndex].image = source;
+            imagesView.currentItem.image = images[imagesView.currentIndex].image;
         }
     }
 
     //
     //
     //
-    property var date: Date.now()
+    property var images: []
+    property var date: 0
 }

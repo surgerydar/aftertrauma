@@ -101,9 +101,11 @@ bool showPicker( UIImagePickerControllerSourceType source ) {
                 QString path;
                 do {
                     path = pathTemplate.arg(i++);
+                    qDebug() << "attempting to save image to : " << path;
                 } while( QFile::exists(path) );
-
+                qDebug() << "saving image to : " << path;
                 chosenQImage.save(path);
+                qDebug() << "image saved to to : " << path;
                 ImagePicker::shared()->imagePicked(path);
             }
             [picker dismissViewControllerAnimated:true completion:NULL];

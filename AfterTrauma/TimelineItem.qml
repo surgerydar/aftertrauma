@@ -9,7 +9,7 @@ Item {
     //
     //
     //
-    height: Math.max( 86, Math.min(5,values?values.count:0) * 8 * 2 )
+    height: Math.max( 86, Math.min(5,values?values.length:0) * 8 * 2 )
     //
     //
     //
@@ -49,9 +49,12 @@ Item {
         anchors.left: parent.left
         anchors.bottom: parent.bottom
         anchors.margins: 4
-        visible: (images&&images.count > 0)
+        visible: (images&&images.length > 0)
         image: "icons/image.png"
         backgroundColour: "transparent"
+        onClicked: {
+            stack.push( "qrc:///ImageManager.qml", { date: date } );
+        }
     }
     AfterTrauma.Button {
         id: notesIndicator
@@ -60,9 +63,12 @@ Item {
         anchors.left: imageIndicator.right
         anchors.bottom: parent.bottom
         anchors.margins: 4
-        visible: (notes&&notes.count > 0)
+        visible: (notes&&notes.length > 0)
         image: "icons/notes.png"
         backgroundColour: "transparent"
+        onClicked: {
+            stack.push( "qrc:///NotesManager.qml", { date: date } );
+        }
     }
     //
     //
@@ -82,10 +88,10 @@ Item {
         //
         //
         Repeater {
-            model: Math.min(5,values?values.count:0) // just use five main categories
+            model: Math.min(5,values?values.length:0) // just use five main categories
             Rectangle {
                 height: 8
-                width: bars.width * values.get(index).value
+                width: bars.width * values[index].value
                 radius: height / 2.
                 color: Colours.categoryColour(index);
             }
@@ -99,11 +105,20 @@ Item {
         text: JSON.stringify(images)
     }
     */
+    onDateChanged: {
+        var day = dailyModel.getDayAsObject(new Date(date) );
+        images = day.images;
+        notes = day.notes;
+        values = day.values;
+    }
+
     //
     //
     //
-    property variant date: Date.now()
-    property variant images: []
-    property variant notes: []
-    property variant values: []
+    property var date: 0
+
+    property var images: []
+    property var notes: []
+    property var values: []
+
 }

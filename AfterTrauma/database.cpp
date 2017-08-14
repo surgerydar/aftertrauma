@@ -49,6 +49,7 @@ void Database::load() {
     //
     m_collections.clear();
     QString dbPath = SystemUtils::shared()->documentDirectory().append("/aftertrauma.json");
+    qDebug() << "Loading database : " << dbPath;
     QFile db(dbPath);
     if (db.open(QIODevice::ReadOnly)) {
         //
@@ -128,9 +129,10 @@ QVariant Database::update( QString collection, QVariant query, QVariant object )
     for ( int i = 0; i< _collection.size(); i++ ) {
         QVariantMap& document = getStoredValueRef<QVariantMap>(_collection[i]);
         if ( _query.size() == 0 || matchDocument(document,_query ) ) {
+            matches.append(document["_id"]);
             for ( QVariantMap::iterator it = _update.begin(); it != _update.end(); ++it ) {
+                qDebug() << "updating : " << it.key() << " : with : " << _update[ it.key() ];
                 document[ it.key() ] = _update[ it.key() ];
-                matches.append(document["_id"]);
             }
         }
     }

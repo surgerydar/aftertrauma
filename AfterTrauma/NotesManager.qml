@@ -11,90 +11,89 @@ AfterTrauma.Page {
     //
     //
     title: "NOTES"
+    subtitle: date > 0 ? Utils.shortDate(date) : ""
     colour: Colours.blue
     //
     //
     //
-    ListView {
-        id: notes
+    SwipeView {
+        id: notesView
         anchors.fill: parent
+        anchors.bottomMargin: 36
         //
         //
         //
-        clip: true
-        spacing: 4
-        //
-        //
-        //
-        model: ListModel {}
-        //
-        //
-        //
-        delegate: NoteItem {
-            anchors.left: parent.left
-            anchors.right: parent.right
-            note: model.note
-            date: container.date
+        Repeater {
+            id: notesRepeater
+            delegate: NotePage {
+                note: notes[index].note
+                onNoteChanged: {
+                   notes[index].note = note;
+                }
+            }
+        }
+    }
+    AfterTrauma.PageIndicator {
+        anchors.horizontalCenter: notesView.horizontalCenter
+        anchors.bottom: notesView.bottom
+        anchors.bottomMargin: 16
+        currentIndex: notesView.currentIndex
+        count: notesView.count
+        colour: Colours.lightSlate
+    }
+    AfterTrauma.Button {
+        id: addButton
+        anchors.top: parent.top
+        anchors.right: parent.right
+        anchors.margins: 8
+        image: "icons/add.png"
+        backgroundColour: "transparent"
+        visible: notes.length >= 1 && notes[ notes.length -  1 ].note !== ""
+        onClicked: {
+            notes.push({title:"", note:""});
+            notesRepeater.model = notes;
+            notesView.currentIndex = notes.length - 1;
         }
     }
     //
     //
     //
     footer: Item {
-        id: toolbar
-        height: 64
-        anchors.left: parent.left
-        anchors.right: parent.right
-        //
-        //
-        //
-        AfterTrauma.Button {
-            id: addNote
-            anchors.left: parent.left
-            anchors.bottom: parent.bottom
-            anchors.leftMargin: 8
-            anchors.bottomMargin: 64
-
-            backgroundColour: colour
-            image: "icons/add.png"
-            text: "add note"
-            //
-            //
-            //
-            onClicked: {
-                stack.push( "qrc:///NoteEditor.qml", { date: date } );
-            }
-        }
-    }
-    //
-    //
-    //
-    onDateChanged: {
-        subtitle = Utils.shortDate( date );
+        height: 28
     }
     //
     //
     //
     StackView.onActivated: {
-        //
-        // TODO: get this from database
-        //
-        var data  = {
-            date: Date.now(),
-            notes:[
-                { note: "A little note to myself, don't give up" },
-                { note: "No really don't" },
-                { note: "Feeling a bit better today though" }
-            ]
-        };
-        date = data.date;
-        notes.model.clear();
-        data.notes.forEach(function(note) {
-            notes.model.append(note);
-        });
+        console.log( 'NotesManager : activating' );
+        var day;
+        if ( date === 0 ) {
+            console.log( 'NotesManager : getting todays notes' );
+            day = dailyModel.getDayAsObject(new Date());
+            date = day.date;
+        } else {
+            day = dailyModel.getDayAsObject(new Date(date));
+        }
+        notes = day.notes;
+        if ( notes.length === 0 ) {
+            console.log( 'NotesManager : no notes so creating default' );
+            //
+            // add default empty note
+            //
+            notes.push({name:"",note:""});
+         }
+         notesRepeater.model = notes;
+    }
+    StackView.onDeactivating: {
+        var day = dailyModel.getDayAsObject(new Date(date));
+        if ( day ) {
+            day.notes = notes
+            dailyModel.update(day);
+        }
     }
     //
     //
     //
-    property var date: Date.now()
+    property var notes: []
+    property var date: 0
 }

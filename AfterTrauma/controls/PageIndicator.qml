@@ -6,11 +6,11 @@ import "../colours.js" as Colours
 PageIndicator {
     id: control
     delegate: Rectangle {
-        implicitWidth: 8
-        implicitHeight: 8
+        implicitWidth: 16
+        implicitHeight: 16
 
         radius: width / 2
-        color: Colours.darkOrange
+        color: control.colour
 
         opacity: index === control.currentIndex ? 0.95 : 0.45
 
@@ -20,4 +20,5 @@ PageIndicator {
             }
         }
     }
+    property var colour: Colours.darkOrange
 }

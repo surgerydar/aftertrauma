@@ -88,5 +88,11 @@
         <file>icons/less_arrow.png</file>
         <file>controls/More.qml</file>
         <file>LineChart.qml</file>
+        <file>ImagePage.qml</file>
+        <file>Notifications.qml</file>
+        <file>Challenges.qml</file>
+        <file>Questionnaires.qml</file>
+        <file>Messages.qml</file>
+        <file>NotePage.qml</file>
     </qresource>
 </RCC>

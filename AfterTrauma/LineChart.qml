@@ -151,7 +151,7 @@ Rectangle {
     Text {
         id: fromDate
         color: Colours.veryDarkSlate
-        //font.family: fonts.light.name
+        //font.family: fonts.light.label
         font.pointSize: 8
         anchors.left: parent.left
         anchors.bottom: parent.bottom
@@ -161,7 +161,7 @@ Rectangle {
     Text {
         id: toDate
         color: Colours.veryDarkSlate
-        //font.family: fonts.light.name
+        //font.family: fonts.light.label
         font.pointSize: 8
         anchors.right: parent.right
         anchors.rightMargin: canvas.tickMargin
@@ -337,15 +337,15 @@ Rectangle {
                 previousDay = day;
                 for ( var j = 0; j < day.values.count; j++ ) {
                     var value = day.values.get(j);
-                    if ( points[value.name] === undefined ) {
-                        points[value.name] = [];
+                    if ( points[value.label] === undefined ) {
+                        points[value.label] = [];
                     }
                     var point = {
                         x: x,
                         y: h - ( h * value.value )
                     };
-                    console.log( value.name + ' : ' + i + ' : ' + JSON.stringify(point) );
-                    points[value.name].push(point);
+                    console.log( value.label + ' : ' + i + ' : ' + JSON.stringify(point) );
+                    points[value.label].push(point);
                 }
             }
             //
@@ -353,11 +353,11 @@ Rectangle {
             //
             var legend = [];
             i = 0;
-            for ( var name in points ) {
+            for ( var label in points ) {
                 //console.log( 'drawing : ' + name + ' : ' + points[ name ].length + ' points');
                 var colour = Colours.categoryColour(i++);
-                drawValues( ctx, points[ name ], colour);
-                legend.push( { name: name, colour: colour } );
+                drawValues( ctx, points[ label ], colour);
+                legend.push( { label: label, colour: colour } );
             }
             chart.legend = legend;
             //

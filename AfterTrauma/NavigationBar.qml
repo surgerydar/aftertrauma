@@ -47,8 +47,8 @@ Item {
             var options = [
                         { title: "Questionnaire", destination: "Questionnaire.qml" },
                         { title: "Challenge", destination: "ChallengeManager.qml" },
-                        { title: "Image", destination: "ImageManager.qml" },
-                        { title: "Notes", destination: "NotesManager.qml" }
+                        { title: "Image", destination: "ImageManager.qml", options: { date: 0 } },
+                        { title: "Notes", destination: "NotesManager.qml", options: { date: 0 } }
                     ];
             shortcut.setOptions( options );
             shortcut.open();

@@ -26,7 +26,7 @@ SystemUtils* SystemUtils::shared() {
 //
 //
 bool SystemUtils::isFirstRun() {
-    QString dbPath = documentDirectory().append("aftertrauma.json");
+    QString dbPath = documentDirectory().append("/aftertrauma.json");
     return !QFile::exists(dbPath);
 }
 

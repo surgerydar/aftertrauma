@@ -32,9 +32,9 @@ AfterTrauma.Page {
             anchors.left: parent?parent.left:undefined
             anchors.right: parent?parent.right:undefined
             date: model.date
-            images: model.images
-            notes: model.notes
-            values: model.values
+            //images: model.images
+            //notes: model.notes
+            //values: model.values
             //
             //
             //
