@@ -12,6 +12,7 @@ Image {
     //
     //
     MouseArea {
+        id: mouseArea
         anchors.fill: parent
         onClicked: {
             checked = !checked;
@@ -20,5 +21,6 @@ Image {
     //
     //
     //
+    property alias enabled: mouseArea.enabled
     property bool checked: false
 }

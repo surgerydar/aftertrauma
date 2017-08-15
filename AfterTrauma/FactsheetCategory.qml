@@ -32,8 +32,7 @@ AfterTrauma.Page {
         //
         //
         //
-        delegate: AfterTrauma.Button {
-            height: 64
+        delegate: FactsheetItem {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.margins: 16
@@ -49,9 +48,11 @@ AfterTrauma.Page {
         //
         //
         //
+        /*
         add: Transition {
             NumberAnimation { properties: "y"; from: contents.height; duration: 250 }
         }
+        */
     }
 
     StackView.onActivated: {

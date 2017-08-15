@@ -35,13 +35,11 @@ AfterTrauma.Page {
         //
         //
         //
-        delegate: AfterTrauma.Button {
-            height: 64
+        delegate: FactsheetItem {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.margins: 16
             textSize: 48
-            //textFit: Text.Fit
             text: model.title || ""
             backgroundColour: Colours.categoryColour(model.index)
             radius: model.index === 0 ? [8,8,0,0] : model.index === categories.model.count - 1 ? [0,0,8,8] : [0]
@@ -52,9 +50,11 @@ AfterTrauma.Page {
         //
         //
         //
+        /*
         add: Transition {
             NumberAnimation { properties: "y"; from: categories.height; duration: 250 }
         }
+        */
     }
 
     StackView.onActivated: {

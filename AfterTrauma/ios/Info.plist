@@ -13,7 +13,7 @@
 	<key>CFBundleExecutable</key>
 	<string>AfterTrauma</string>
 	<key>CFBundleIdentifier</key>
-	<string>uk.co.surgerydar.${PRODUCT_NAME:rfc1034identifier}</string>
+        <string>uk.co.soda.${PRODUCT_NAME:rfc1034identifier}</string>
 	<key>CFBundleDisplayName</key>
 	<string>${PRODUCT_NAME}</string>
 	<key>CFBundleName</key>

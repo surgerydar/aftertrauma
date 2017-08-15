@@ -104,7 +104,7 @@ ListModel {
                     for ( var i = 0; i < n; i++ ) {
                         var object = day[field].get(i);
                         //console.log( 'appending ' + JSON.stringify(object) );
-                        temp.push( object );
+                        temp.push( JSON.parse(JSON.stringify(object)) );
                     }
                     _day[field] = temp;
                 }
@@ -147,7 +147,8 @@ ListModel {
         }
         Database.insert('daily',daily);
         Database.save();
-        model.append(daily);
+        //model.append(daily);
+        model.insert(0,daily);
         return model.get(model.count-1);
     }
     //
@@ -187,11 +188,12 @@ ListModel {
     function update( day ) {
         var index = getDayIndex(new Date(day.date));
         if ( index >= 0 ) {
-
+            /*
             console.log( 'updating day : ' + JSON.stringify(day) + ' at index : ' + index );
             var updatedDay = Database.update('daily', { _id: day._id }, day );
             console.log( 'updated day : ' + JSON.stringify(updatedDay) + ' at index : ' + index );
             Database.save();
+            */
             //
             //
             //

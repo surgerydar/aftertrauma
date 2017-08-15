@@ -48,9 +48,9 @@ AfterTrauma.Page {
         anchors.margins: 8
         image: "icons/add.png"
         backgroundColour: "transparent"
-        visible: notes.length >= 1 && notes[ notes.length -  1 ].note !== ""
+        visible: notes.length >= 1 && notes[ notes.length -  1 ] !== ""
         onClicked: {
-            notes.push({title:"", note:""});
+            notes.push({title:"",note:""});
             notesRepeater.model = notes;
             notesView.currentIndex = notes.length - 1;
         }
@@ -80,7 +80,7 @@ AfterTrauma.Page {
             //
             // add default empty note
             //
-            notes.push({name:"",note:""});
+            notes.push({title:"",note:""});
          }
          notesRepeater.model = notes;
     }

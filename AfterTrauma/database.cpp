@@ -126,11 +126,14 @@ QVariant Database::update( QString collection, QVariant query, QVariant object )
     QVariantMap _update = object.toMap();
     QVariantList& _collection = getCollection(collection);
     QVariantList matches;
+    int targetIndex = -1;
     for ( int i = 0; i< _collection.size(); i++ ) {
         QVariantMap& document = getStoredValueRef<QVariantMap>(_collection[i]);
         if ( _query.size() == 0 || matchDocument(document,_query ) ) {
+            targetIndex = i;
+            break;
             //_collection.replace(i,_update);
-            _collection.replace(i,object);
+            //_collection.replace(i,object);
 
             /* FIXME: we are loosing the enclosed variant maps
             matches.append(document["_id"]);
@@ -145,6 +148,9 @@ QVariant Database::update( QString collection, QVariant query, QVariant object )
     QVariant results(matches);
     emit success(collection,"update",results);
     */
+    if ( targetIndex >= 0 ) {
+        _collection.replace(targetIndex,object);
+    }
     qDebug() << "Database.update : object : " << object;
     QVariant results(object);
     emit success(collection,"update",results);

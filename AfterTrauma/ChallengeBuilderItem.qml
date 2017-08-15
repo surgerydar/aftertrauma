@@ -9,7 +9,7 @@ Item {
     //
     //
     //
-    height: open ? 172 : 86
+    height: open ? labelText.height + editorItem.height + 48 : labelText.height + 32
     //
     //
     //
@@ -24,7 +24,10 @@ Item {
     MouseArea {
         anchors.fill: parent
         onClicked: {
-            open = !open;
+            if ( !( container.type === "number" || container.type === "switch" ) ) {
+                open = !open;
+                if ( open ) container.selected();
+            }
         }
     }
     //
@@ -46,7 +49,7 @@ Item {
     //
     Item {
         id: decorationItem
-        width: contentWidth
+        width: container.type === "number" ? numberDecoration.width : container.type === "switch" ? switchDecoration.width : revealDecoration.width
         height: 54
         anchors.top: parent.top
         anchors.right: parent.right
@@ -60,15 +63,14 @@ Item {
             anchors.right: parent.right
             visible: !( container.type === "number" || container.type === "switch" )
             checked: container.open
-            onCheckedChanged: {
-                container.open = checked;
-            }
+            enabled: false
         }
         AfterTrauma.SpinBox {
             id: numberDecoration
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
             visible: container.type === "number"
+            value: 1
         }
         AfterTrauma.Switch {
             id: switchDecoration
@@ -85,7 +87,7 @@ Item {
     //
     Item {
         id: editorItem
-        height: Math.max(48, container.type === "name" ? nameEditor.contentHeight : container.type === "description" ? descriptionEditor.contentHeight : container.type === "options" ? optionsEditor.contentHeight : 0)
+        height: Math.max(64, (container.type === "name" ? nameEditor.contentHeight : container.type === "description" ? descriptionEditor.contentHeight : container.type === "options" ? optionsEditor.contentHeight : 0 ) + 16 )
         anchors.left: parent.left
         anchors.bottom: parent.bottom
         anchors.right: decorationItem.left
@@ -98,25 +100,39 @@ Item {
             id: nameEditor
             anchors.fill: parent
             visible: container.type === "name"
+            placeholderText: "Type name for activity"
             onAccepted: {
                 labelText.text = text;
                 container.open = false
+            }
+            onContentHeightChanged: {
+                if( visible ) editorItem.height = contentHeight + 16;
             }
         }
         AfterTrauma.TextArea {
             id: descriptionEditor
             anchors.fill: parent
             visible: container.type === "description"
+            placeholderText: "Type description of activity"
+            wrapMode: Text.WordWrap
             onContentHeightChanged: {
-                editorItem.height = contentHeight;
+                if ( visible ) editorItem.height = contentHeight + 16;
             }
         }
         ListView {
             id: optionsEditor
+            /*
+            anchors.left: editorItem.left
+            anchors.bottom: editorItem.bottom
+            anchors.right: editorItem.right
+            */
             anchors.fill: parent
+            clip: true
             visible: container.type === "options"
             delegate: Text {
-                padding: 8
+                height: 32
+                anchors.left: parent.left
+                anchors.right: parent.right
                 color: Colours.almostWhite
                 font.family: fonts.light
                 font.pixelSize: 24
@@ -132,7 +148,6 @@ Item {
                     }
                 }
             }
-
         }
     }
     //
@@ -148,7 +163,12 @@ Item {
     //
     onOpenChanged: {
         editorItem.visible = container.open;
+        if ( !open && type === "description" ) labelText.text = descriptionEditor.text;
     }
+    //
+    //
+    //
+    signal selected();
     //
     //
     //
@@ -158,4 +178,6 @@ Item {
     property string type: "name" // "name" | "description" | "options" | "number" | "switch"
     property bool open: false
     property alias options: optionsEditor.model
+    property alias on: switchDecoration.checked
+    property alias value: numberDecoration.value
 }

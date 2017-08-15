@@ -42,6 +42,7 @@ AfterTrauma.Page {
             //
             //
             Repeater {
+                id: notificationsRepeater
                 //
                 //
                 //
@@ -49,7 +50,7 @@ AfterTrauma.Page {
                 //
                 //
                 //
-                delegate:             Page {
+                delegate: Page {
                     background: Rectangle {
                         anchors.fill: parent
                         color: "transparent"
@@ -72,13 +73,35 @@ AfterTrauma.Page {
             anchors.bottom: parent.bottom
             currentIndex: notifications.currentIndex
             count: notifications.count
+            colour: Colours.almostWhite
         }
-
     }
     //
     //
     //
+    Timer {
+        id: scrollTimer
+        interval: 30 * 1000
+        repeat: true
+        onTriggered: {
+            if ( notifications.count ) {
+                if ( notifications.currentIndex < notifications.count - 1 ) {
+                    notifications.currentIndex = 0;
+                } else {
+                    notifications.currentIndex++;
+                }
+            }
+        }
+    }
+
+    //
+    //
+    //
     StackView.onActivated: {
+        scrollTimer.start();
+    }
+    StackView.onDeactivated: {
+        scrollTimer.stop();
     }
     //
     //
@@ -88,6 +111,12 @@ AfterTrauma.Page {
         onDateRangeChanged: {
             dateSlider.startDate = startDate
             dateSlider.endDate = endDate
+        }
+    }
+    Connections {
+        target: notificationModel
+        onUpdated: {
+            notificationsRepeater.model = notificationModel.count
         }
     }
 }

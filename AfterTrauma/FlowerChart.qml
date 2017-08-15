@@ -3,7 +3,14 @@ import QtQuick.Controls 2.1
 import "flowerChart.js" as Flower
 Canvas {
     id: control
-
+    //
+    //
+    //
+    //renderStrategy: Canvas.Threaded
+    //renderTarget: Canvas.FramebufferObject
+    //
+    //
+    //
     onPaint: {
         var ctx = getContext("2d");
         Flower.draw(ctx,stack.depth===1);
@@ -41,6 +48,7 @@ Canvas {
     //
     Component.onCompleted: {
         generateData();
+        requestPaint();
     }
     //
     //

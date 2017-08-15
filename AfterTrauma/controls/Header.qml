@@ -1,5 +1,5 @@
 import QtQuick 2.6
-import QtQuick.Controls 2.1
+//import QtQuick.Controls 2.1
 
 import "../colours.js" as Colours
 
@@ -46,6 +46,24 @@ Item {
         visible: title.length > 0
     }
     //
+    // optional navigation
+    //
+    Button {
+        id: backButton
+        anchors.verticalCenter: titleText.verticalCenter
+        anchors.left: titleText.left
+        image: "../icons/left_arrow.png"
+        backgroundColour: "transparent"
+        visible: showNavigation && stack && stack.depth > 1
+        onClicked: {
+            if ( validate ) {
+                if ( validate() && stack ) stack.pop();
+            } else if ( stack ) {
+                stack.pop();
+            }
+        }
+    }
+    //
     //
     //
     Background {
@@ -84,4 +102,6 @@ Item {
     property alias subtitle: subTitleText.text
     property color backgroundColour: Colours.darkOrange
     property color textColour: Colours.almostWhite
+    property bool showNavigation: true
+    property var validate: null
 }

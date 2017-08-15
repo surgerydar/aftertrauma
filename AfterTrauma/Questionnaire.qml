@@ -56,7 +56,14 @@ AfterTrauma.Page {
                         anchors.left: parent.left
                         anchors.right: parent.right
                         question: model.question
+                        questionIndex: index
+                        score: questionnaireModel.getScore(ListView.view.questionnaireIndex,index)
+                        onScoreChanged: {
+                            console.log( 'category:' + questionnaireModel.get(ListView.view.questionnaireIndex).category + ' questionnaire:' + ListView.view.questionnaireIndex + ' question:' + questionIndex + ' score:' + score);
+                            questionnaireModel.putScore( JSON.stringify(questionnaireModel.get(ListView.view.questionnaireIndex).category), ListView.view.questionnaireIndex, questionIndex, score );
+                        }
                     }
+                    property int questionnaireIndex: index
                 }
                 //
                 //

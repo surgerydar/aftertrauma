@@ -23,6 +23,14 @@ ApplicationWindow {
     Daily {
         id: dailyModel
     }
+    Timer {
+        id: notificationTimer
+        interval: 60 * 1000
+        repeat: true
+        onTriggered: {
+            notificationModel.update();
+        }
+    }
     Notifications {
         id: notificationModel
     }
@@ -50,10 +58,13 @@ ApplicationWindow {
     //
     FlowerChart {
         id: flowerChart
+        height: width
         anchors.top: parent.top
         anchors.left: parent.left
-        anchors.bottom: parent.verticalCenter
         anchors.right: parent.right
+        anchors.topMargin: 16
+        anchors.leftMargin: 8
+        anchors.rightMargin: 8
     }
     //
     //
@@ -130,11 +141,11 @@ ApplicationWindow {
                 if ( i > 0 ) {
                     var nImages = Math.random() * 4;
                     for ( var j = 0; j < nImages; j++ ) {
-                        daily.images.push( { title: "image", image: "icons/image.png" });
+                        daily.images.push( { image: "icons/image.png" });
                     }
                     var nNotes = Math.random() * 4;
-                    for ( j = 0; j < nImages; j++ ) {
-                        daily.notes.push( { title: "note", note: "random note" + j });
+                    for ( j = 0; j < nNotes; j++ ) {
+                        daily.notes.push( {title:"",note:""} );
                     }
                 }
                 Database.insert('daily',daily);

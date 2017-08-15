@@ -5,14 +5,13 @@ import "controls" as AfterTrauma
 import "colours.js" as Colours
 
 AfterTrauma.Page {
-    title: "CHAT"
-    subtitle: "Ellie"
+    title: "CHATS"
     colour: Colours.darkPurple
     //
     //
     //
     ListView {
-        id: messages
+        id: chats
         anchors.fill: parent
         anchors.bottomMargin: 8
         //
@@ -27,20 +26,13 @@ AfterTrauma.Page {
         //
         //
         //
-        delegate: ChatMessage {
+        delegate: ChatItem {
             anchors.left: parent.left
             anchors.right: parent.right
-            from: model.from
-            avatar: model.avatar || "icons/profile_icon.png"
-            message: model.message
-        }
-        //
-        //
-        //
-        add: Transition {
-            NumberAnimation { properties: "y"; from: messages.height; duration: 250 }
+            to: model.to
         }
     }
+    /*
     //
     //
     //
@@ -82,17 +74,14 @@ AfterTrauma.Page {
             }
         }
     }
-
+    */
     StackView.onActivated: {
         var data = [
-                    { from: "me", message: "Hi how are you?" },
-                    { from: "ellie", message: "Good thanks hbu?" },
-                    { from: "me", message: "Better for a good nights sleep" },
-                    { from: "ellie", message: "I'm aching all over" },
-                ];
-        messages.model.clear();
+                    { to: "jack", message: "Hi how are you?" },
+                    { to: "ellie", message: "Good thanks hbu?" }                ];
+        chats.model.clear();
         data.forEach(function(datum) {
-            messages.model.append(datum);
+            chats.model.append(datum);
         });
     }
 }

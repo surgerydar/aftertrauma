@@ -96,4 +96,9 @@ AfterTrauma.Page {
             challenges.model.append(datum);
         });
     }
+    StackView.onDeactivated: {
+        //
+        // TODO: save scores
+        //
+    }
 }

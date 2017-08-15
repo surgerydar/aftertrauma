@@ -102,4 +102,5 @@ Item {
     //
     property alias question: questionText.text
     property real score: 0.
+    property int questionIndex: 0
 }

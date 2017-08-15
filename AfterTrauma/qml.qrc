@@ -94,5 +94,8 @@
         <file>Questionnaires.qml</file>
         <file>Messages.qml</file>
         <file>NotePage.qml</file>
+        <file>FactsheetItem.qml</file>
+        <file>ChatManager.qml</file>
+        <file>ChatItem.qml</file>
     </qresource>
 </RCC>

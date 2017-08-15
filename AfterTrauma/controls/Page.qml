@@ -33,4 +33,6 @@ Page {
     //
     property alias subtitle: headerBlock.subtitle
     property color colour: Colours.darkOrange
+    property alias showNavigation: headerBlock.showNavigation
+    property alias validate: headerBlock.validate
 }
