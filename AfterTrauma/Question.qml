@@ -9,7 +9,7 @@ Item {
     //
     //
     //
-    height: 86
+    height: questionText.height + stars.height + 24// 86
     //
     //
     //
@@ -23,18 +23,21 @@ Item {
     //
     Text {
         id: questionText
+        height: contentHeight
         anchors.top: parent.top
         anchors.left: parent.left
-        anchors.bottom: parent.verticalCenter
+        //anchors.bottom: parent.verticalCenter
         anchors.right: parent.right
+        anchors.margins: 8
         //
         //
         //
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
-        fontSizeMode: Text.Fit
+        //fontSizeMode: Text.Fit
+        wrapMode: Text.Wrap
         font.family: fonts.light
-        font.pixelSize: 32
+        font.pixelSize: 18
         color: Colours.almostWhite
     }
     //
@@ -45,11 +48,12 @@ Item {
         //
         //
         //
+        height: 42
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.top: parent.verticalCenter
+        //anchors.top: parent.verticalCenter
         anchors.bottom: parent.bottom
-        anchors.margins: 4
+        anchors.margins: 8
         //
         //
         //
@@ -68,7 +72,7 @@ Item {
     //
     //
     MouseArea {
-        anchors.top: parent.verticalCenter
+        anchors.top: stars.top
         anchors.left: parent.left
         anchors.bottom: parent.bottom
         anchors.right: parent.right

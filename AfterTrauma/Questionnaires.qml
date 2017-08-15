@@ -51,7 +51,7 @@ ListModel {
                ];
         model.clear();
         data.forEach(function(datum) {
-            console.log( 'adding questionnaire : ' + JSON.stringify(datum) );
+            //console.log( 'adding questionnaire : ' + JSON.stringify(datum) );
             model.append(datum);
         });
     }

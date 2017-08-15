@@ -69,7 +69,7 @@ AfterTrauma.Page {
         var day;
         if ( date === 0 ) {
             console.log( 'NotesManager : getting todays notes' );
-            day = dailyModel.getDayAsObject(new Date());
+            day = dailyModel.getTodayAsObject();
             date = day.date;
         } else {
             day = dailyModel.getDayAsObject(new Date(date));

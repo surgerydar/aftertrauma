@@ -3,6 +3,7 @@ import QtQuick.Controls 2.1
 
 import "controls" as AfterTrauma
 import "colours.js" as Colours
+import "utils.js" as Utils
 
 AfterTrauma.Page {
     title: "TIMELINE"
@@ -28,6 +29,15 @@ AfterTrauma.Page {
         //
         //
         //
+        /*
+        delegate: Text {
+            height: 32
+            anchors.left: parent?parent.left:undefined
+            anchors.right: parent?parent.right:undefined
+            text: Utils.shortDate(model.date)
+        }
+        */
+
         delegate: TimelineItem {
             anchors.left: parent?parent.left:undefined
             anchors.right: parent?parent.right:undefined
@@ -47,6 +57,7 @@ AfterTrauma.Page {
                 console.log('timeline item destroyed : ' + itemCount );
             }
         }
+
         //
         //
         //

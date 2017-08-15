@@ -6,7 +6,7 @@ Canvas {
 
     onPaint: {
         var ctx = getContext("2d");
-        Flower.draw(ctx);
+        Flower.draw(ctx,stack.depth===1);
     }
     //
     //
@@ -20,9 +20,7 @@ Canvas {
     }
 
     function setCurrentDate(date) {
-        console.log( 'FlowerChart.setCurrentDate : ' + JSON.stringify(date) );
         if ( currentDate !== date ) {
-            console.log( 'setting date' );
             currentDate = date;
             Flower.setCurrentDate(date);
             Flower.startAnimation();
@@ -53,6 +51,12 @@ Canvas {
             generateData()
         }
     }
+    Connections {
+        target: stack
+        onDepthChanged: {
+            requestPaint();
+        }
+    }
     //
     //
     //
@@ -65,7 +69,9 @@ Canvas {
                 var dataPoint = [daily.date,[]];
                 for ( var j = 0; j < 5; j++ ) {
                     var value = daily.values.get(j);
-                    if ( i === 0 ) dataSet.labels.push( value.name );
+                    if ( i === 0 ) {
+                        dataSet.labels.push( value.label );
+                    }
                     dataPoint[ 1 ].push( value.value );
                 }
                 dataSet.data.push(dataPoint);
@@ -76,4 +82,5 @@ Canvas {
             control.dateRangeChanged(new Date(Flower.startDate), new Date(Flower.endDate));
         }
     }
+
 }

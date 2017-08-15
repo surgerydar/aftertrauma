@@ -70,7 +70,7 @@ AfterTrauma.Page {
         var day;
         if ( date === 0 ) {
             console.log( 'ImagesManager : getting todays images' );
-            day = dailyModel.getDayAsObject(new Date());
+            day = dailyModel.getTodayAsObject();
             date = day.date;
         } else {
             day = dailyModel.getDayAsObject(new Date(date));

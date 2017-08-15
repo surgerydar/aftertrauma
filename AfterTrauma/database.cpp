@@ -129,14 +129,24 @@ QVariant Database::update( QString collection, QVariant query, QVariant object )
     for ( int i = 0; i< _collection.size(); i++ ) {
         QVariantMap& document = getStoredValueRef<QVariantMap>(_collection[i]);
         if ( _query.size() == 0 || matchDocument(document,_query ) ) {
+            //_collection.replace(i,_update);
+            _collection.replace(i,object);
+
+            /* FIXME: we are loosing the enclosed variant maps
             matches.append(document["_id"]);
             for ( QVariantMap::iterator it = _update.begin(); it != _update.end(); ++it ) {
                 qDebug() << "updating : " << it.key() << " : with : " << _update[ it.key() ];
                 document[ it.key() ] = _update[ it.key() ];
             }
+            */
         }
     }
+    /* TODO: return list of objects updated
     QVariant results(matches);
+    emit success(collection,"update",results);
+    */
+    qDebug() << "Database.update : object : " << object;
+    QVariant results(object);
     emit success(collection,"update",results);
     return results;
 }
@@ -177,7 +187,7 @@ QVariant Database::find( QString collection, QVariant query, QVariant sort ) {
     //
     QVariantMap _sort = sort.toMap();
     if ( _sort.size() > 0 ) {
-        qDebug() << "sorting";
+        //qDebug() << "sorting";
         try {
             qSort( matches.begin(), matches.end(),[&_sort]( QVariant &a, QVariant &b ) {
                 QVariantMap& _a = getStoredValueRef<QVariantMap>(a);
@@ -185,14 +195,14 @@ QVariant Database::find( QString collection, QVariant query, QVariant sort ) {
                 for ( QVariantMap::iterator it = _sort.begin(); it != _sort.end(); ++it ) {
                     if ( _a.contains(it.key()) && _b.contains(it.key()) ) {
                         if ( it.value().toInt() < 1 && _a[it.key()] < _b[it.key()] ) {
-                            qDebug() << "sorting descending : " << it.key() << " a: " << _a[it.key()].toString() << " b: " << _b[it.key()].toString();
+                            //qDebug() << "sorting descending : " << it.key() << " a: " << _a[it.key()].toString() << " b: " << _b[it.key()].toString();
                             return false;
                         } else if ( it.value().toInt() > 1 && _a[it.key()] > _b[it.key()] ) {
-                            qDebug() << "sorting ascending : " << it.key() << " a: " << _a[it.key()].toString() << " b: " << _b[it.key()].toString();
+                            //qDebug() << "sorting ascending : " << it.key() << " a: " << _a[it.key()].toString() << " b: " << _b[it.key()].toString();
                             return false;
                         }
                     } else {
-                        qDebug() << "nothing to sort";
+                        //qDebug() << "nothing to sort";
                     }
                 }
                 return true;

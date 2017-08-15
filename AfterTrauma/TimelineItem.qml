@@ -73,6 +73,7 @@ Item {
     //
     //
     //
+
     Column {
         id: bars
         anchors.top: parent.top
@@ -87,24 +88,50 @@ Item {
         //
         //
         //
+        /*
         Repeater {
             model: Math.min(5,values?values.length:0) // just use five main categories
             Rectangle {
                 height: 8
                 width: bars.width * values[index].value
                 radius: height / 2.
-                color: Colours.categoryColour(index);
+                color: Colours.categoryColour(index)
             }
         }
+        */
+        Rectangle {
+            height: 8
+            width: bars.width * values[0].value
+            radius: height / 2.
+            color: Colours.categoryColour(0)
+        }
+        Rectangle {
+            height: 8
+            width: bars.width * values[1].value
+            radius: height / 2.
+            color: Colours.categoryColour(1)
+        }
+        Rectangle {
+            height: 8
+            width: bars.width * values[2].value
+            radius: height / 2.
+            color: Colours.categoryColour(2)
+        }
+        Rectangle {
+            height: 8
+            width: bars.width * values[3].value
+            radius: height / 2.
+            color: Colours.categoryColour(3)
+        }
+        Rectangle {
+            height: 8
+            width: bars.width * values[4].value
+            radius: height / 2.
+            color: Colours.categoryColour(4)
+        }
     }
-    /*
-    Text {
-        anchors.fill: parent
-        horizontalAlignment: Text.AlignRight
-        verticalAlignment: Text.AlignRight
-        text: JSON.stringify(images)
-    }
-    */
+
+
     onDateChanged: {
         var day = dailyModel.getDayAsObject(new Date(date) );
         images = day.images;

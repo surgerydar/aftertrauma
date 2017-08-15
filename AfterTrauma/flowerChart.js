@@ -42,6 +42,7 @@ function setData( dataSet ) {
     //
     data = dataSet.data;
     labels = dataSet.labels;
+    //console.log( 'labels: ' + labels.join() );
     //
     // update date range and min / max values
     //
@@ -50,7 +51,7 @@ function setData( dataSet ) {
     minValue = 1.;
     maxValue = .0;
     data.forEach( function( entry ) {
-        console.log( 'datapoint date : ' + entry[ 0 ] );
+        //console.log( 'datapoint date : ' + entry[ 0 ] );
         if ( entry[ 0 ] < startDate ) startDate = entry[ 0 ];
         if ( entry[ 0 ] > endDate ) endDate = entry[ 0 ];
         var count = entry[ 1 ].length;
@@ -118,7 +119,7 @@ function update( factor ) {
     return interpolation <= 1.;
 }
 
-function draw( ctx ) {
+function draw( ctx, drawLabels ) {
     if( currentData ) {
         var sweep = (2*Math.PI) / 5.;
         var angle  = 0.;
@@ -149,8 +150,27 @@ function draw( ctx ) {
             angle += sweep;
         }
         //
-        // draw
         //
+        //
+        if ( drawLabels ) {
+            //
+            // draw labels
+            //
+            angle = sweep / 2;
+            radius /= 2;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.font = '18px ' + fonts.light || 'Roboto';
+            ctx.fillStyle = Colours.almostWhite;
+            for ( i = 0; i < 5; i++ ) {
+                var p = Qt.point(
+                            cp.x+(Math.cos(angle)*radius-Math.sin(angle)),
+                            cp.y+(Math.sin(angle)*radius-Math.cos(angle))
+                            );
+                ctx.fillText( labels[ i ], p.x, p.y );
+                angle += sweep;
+            }
+        }
         /*
         //
         // draw min / max
