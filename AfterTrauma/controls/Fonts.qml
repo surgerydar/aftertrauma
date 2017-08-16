@@ -5,14 +5,29 @@ Item {
     FontLoader {
         id: regularFont
         source: "../fonts/Roboto-Regular.ttf"
+        onStatusChanged: {
+            if (status == FontLoader.Ready) {
+                console.log('regularFont ready : name' + lightFont.name );
+            }
+        }
     }
     FontLoader {
         id: lightFont
         source: "../fonts/Roboto-Light.ttf"
+        onStatusChanged: {
+            if (status == FontLoader.Ready) {
+                console.log('lightFont ready : name' + lightFont.name );
+            }
+        }
     }
     FontLoader {
         id: boldFont
         source: "../fonts/Roboto-Bold.ttf"
+        onStatusChanged: {
+            if (status == FontLoader.Ready) {
+                console.log('boldFont ready : name' + lightFont.name );
+            }
+        }
     }
     /*
     //
@@ -29,6 +44,7 @@ Item {
         //
         font.family: regular
         font.pixelSize: 32
+        font.weight: Font.Normal
         text: regular + ' Regular'
     }
     Text {
@@ -42,6 +58,7 @@ Item {
         //
         font.family: light
         font.pixelSize: 32
+        font.weight: Font.Light
         text: light + ' Light'
     }
     Text {
@@ -55,6 +72,7 @@ Item {
         //
         font.family: bold
         font.pixelSize: 32
+        font.weight: Font.Bold
         text: bold + ' Bold'
     }
     */

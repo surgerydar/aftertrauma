@@ -16,7 +16,7 @@ ListModel {
     function update() {
         if(!questionnaireModel.dailyCompleted()) {
             if ( !findNotification("questionnaire") ) {
-                model.append({subject:"questionnaire", text:"you should complete your daily questionnaire"});
+                model.append({subject:"questionnaire", text:"don't forget to complete your daily questionnaire"});
                 updated();
             }
         } else {

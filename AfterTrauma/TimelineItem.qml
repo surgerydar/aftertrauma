@@ -34,6 +34,7 @@ Item {
         horizontalAlignment: Text.AlignLeft
         verticalAlignment: Text.AlignVCenter
         fontSizeMode: Text.Fit
+        font.weight: Font.Light
         font.family: fonts.light
         font.pixelSize: 32
         color: Colours.almostWhite

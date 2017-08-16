@@ -16,6 +16,8 @@ ApplicationWindow {
     //
     AfterTrauma.Fonts {
         id: fonts
+        anchors.fill: parent
+        z:10
     }
     //
     // global models
@@ -106,6 +108,14 @@ ApplicationWindow {
         width: appWindow.width - 32
         height: appWindow.height - 32
     }
+    AfterTrauma.ErrorDialog {
+        id: errorDialog
+        x: 0
+        y: 0
+        modal: true
+        width: appWindow.width
+        height: appWindow.height
+    }
     //
     //
     //
@@ -148,8 +158,43 @@ ApplicationWindow {
                         daily.notes.push( {title:"",note:""} );
                     }
                 }
-                Database.insert('daily',daily);
+                Database.insert(dailyModel.table,daily);
             }
+            //
+            // challenge test data
+            //
+            var challengeData  = [
+                        {
+                            name: "Lying Back Excercise",
+                            activity: "Lie on your back with both of your legs straight. In this position, bring your left knee up close to your chest. Hold this position for 10 seconds. Return your leg to the straight position. Repeat with the right leg.",
+                            repeats: 5,
+                            frequency: "morning and evening"
+                        },
+                        {
+                            name: "Standing Back Excercise",
+                            activity: "Stand up with your arms on your side. Bend to the left side while slowly sliding your left hand down your left leg. Come back up slowly and relax. Repeat with the right side of your body.",
+                            repeats: 10,
+                            frequency: "daily"
+                        },
+                        {
+                            name: "Neck stretch up",
+                            activity: "Keep your eyes centred on one object directly in front of you, now slowly move your head back. You will now be looking at the roof. Keep your whole body still. Hold this position for 5 seconds and slowly return your head to the start position.",
+                            repeats: 3,
+                            frequency: "hourly"
+                        },
+                        {
+                            name: "Foot writing",
+                            activity: "Barefooot write digits 1 to 10 using your toes raised up in the air.",
+                            repeats: 1,
+                            frequency: "weekly"
+                        },
+
+                    ];
+            challengeData.forEach(function(challengeDatum) {
+                challengeDatum.count = 0;
+                challengeDatum.date = Date.now();
+                Database.insert(challengeModel.table,challengeDatum);
+            });
             Database.save();
 
         }
@@ -175,13 +220,21 @@ ApplicationWindow {
         target: Database
         onSuccess: {
             //console.log( 'database success : ' + collection + ' : ' + operation + ' : ' + JSON.stringify(result) );
-            dailyModel.databaseSuccess(collection,operation,result);
-        }
+            models.forEach( function( model ) {
+                if ( model.table === collection ) {
+                    model.databaseSuccess(collection,operation,result);
+                }
+            });
+         }
         onError: {
             //console.log( 'database error : ' + collection + ' : ' + operation + ' : ' + JSON.stringify(error) );
-            dailyModel.databaseError(collection,operation,error);
+            models.forEach( function( model ) {
+                if ( model.table === collection ) {
+                    model.databaseError(collection,operation,error);
+                }
+            });
         }
-
+        property var models: [ dailyModel, challengeModel ];
     }
 
 }

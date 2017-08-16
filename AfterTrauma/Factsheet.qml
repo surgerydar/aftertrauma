@@ -31,6 +31,9 @@ AfterTrauma.Page {
             type: model.type
             media: model.media
         }
+        add: Transition {
+            NumberAnimation { properties: "y"; from: contents.height; duration: 250 }
+        }
     }
 
     StackView.onActivated: {

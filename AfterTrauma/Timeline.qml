@@ -66,7 +66,8 @@ AfterTrauma.Page {
             height: 48
             anchors.left: parent.left
             anchors.right: parent.right
-            //font.family: fonts.light.name
+            font.weight: Font.Light
+            font.family: fonts.light.name
             font.pixelSize: 32
             color: Colours.almostWhite
             text: section
@@ -82,6 +83,7 @@ AfterTrauma.Page {
     //
     //
     StackView.onActivated: {
+        dailyList.update();
     }
     //
     //

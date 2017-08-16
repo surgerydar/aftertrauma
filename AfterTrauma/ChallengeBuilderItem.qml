@@ -41,6 +41,7 @@ Item {
         anchors.right: decorationItem.left
         anchors.margins: 16
         color: Colours.almostWhite
+        font.weight: Font.Light
         font.family: fonts.light
         font.pixelSize: 32
     }
@@ -134,6 +135,7 @@ Item {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 color: Colours.almostWhite
+                font.weight: Font.Light
                 font.family: fonts.light
                 font.pixelSize: 24
                 text: model.label
@@ -163,7 +165,10 @@ Item {
     //
     onOpenChanged: {
         editorItem.visible = container.open;
-        if ( !open && type === "description" ) labelText.text = descriptionEditor.text;
+        if ( !open ) {
+            if( type === "description" && descriptionEditor.text.length > 0 ) labelText.text = descriptionEditor.text;
+            if( type === "name" && nameEditor.text.length > 0 ) labelText.text = nameEditor.text;
+        }
     }
     //
     //

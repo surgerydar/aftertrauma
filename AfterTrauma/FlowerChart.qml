@@ -62,7 +62,9 @@ Canvas {
     Connections {
         target: stack
         onDepthChanged: {
-            requestPaint();
+            if ( stack.depth <= 1 ) {
+                requestPaint();
+            }
         }
     }
     //

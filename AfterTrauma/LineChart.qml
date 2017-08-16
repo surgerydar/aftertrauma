@@ -35,7 +35,7 @@ Rectangle {
             break;
 
         }
-        console.log( 'LineChart.update : start : ' + chart.startDate.toDateString() + ' : end : ' + chart.endDate.toDateString() );
+        console.log( 'LineChart.setup : ' + period + ' : start : ' + chart.startDate.toDateString() + ' : end : ' + chart.endDate.toDateString() );
         canvas.requestPaint();
     }
 
@@ -56,6 +56,9 @@ Rectangle {
         AfterTrauma.Button {
             id: previousButton
             image: "icons/left_arrow.png"
+            backgroundColour: Colours.red
+            radius: [0]
+            direction: "Right"
             onClicked: {
                 var year    = chart.startDate.getFullYear();
                 var month   = chart.startDate.getMonth();
@@ -89,6 +92,9 @@ Rectangle {
         AfterTrauma.Button {
             id: nextButton
             image: "icons/right_arrow.png"
+            backgroundColour: Colours.red
+            radius: [0]
+            direction: "Left"
             onClicked: {
                 var year    = chart.startDate.getFullYear();
                 var month   = chart.startDate.getMonth();
@@ -122,7 +128,9 @@ Rectangle {
         AfterTrauma.Button {
             id: yearButton
             text: "Year"
+            backgroundColour: "transparent"
             enabled: chart.period !== "year"
+            textColour: Colours.darkSlate
             onClicked: {
                 chart.period = "year";
                 chart.setup();
@@ -131,7 +139,9 @@ Rectangle {
         AfterTrauma.Button {
             id: monthButton
             text: "Month"
+            backgroundColour: "transparent"
             enabled: chart.period !== "month"
+            textColour: Colours.darkSlate
             onClicked: {
                 chart.period = "month";
                 chart.setup();
@@ -140,7 +150,9 @@ Rectangle {
         AfterTrauma.Button {
             id: weekButton
             text: "Week"
+            backgroundColour: "transparent"
             enabled: chart.period !== "week"
+            textColour: Colours.darkSlate
             onClicked: {
                 chart.period = "week";
                 chart.setup();
@@ -151,7 +163,8 @@ Rectangle {
     Text {
         id: fromDate
         color: Colours.veryDarkSlate
-        //font.family: fonts.light.label
+        font.weight: Font.Light
+        font.family: fonts.light
         font.pointSize: 8
         anchors.left: parent.left
         anchors.bottom: parent.bottom
@@ -161,7 +174,8 @@ Rectangle {
     Text {
         id: toDate
         color: Colours.veryDarkSlate
-        //font.family: fonts.light.label
+        font.weight: Font.Light
+        font.family: fonts.light
         font.pointSize: 8
         anchors.right: parent.right
         anchors.rightMargin: canvas.tickMargin
@@ -317,7 +331,7 @@ Rectangle {
             var x = 0;
             var previousDay = undefined;
             var h = 9 * yGridStep;
-            console.log( 'start: ' + startIndex + ' end: ' + endIndex + ' numDays: ' + numDays );
+            if ( period === "week" ) console.log( 'start: ' + startIndex + ' end: ' + endIndex + ' numDays: ' + numDays );
             for (var i = startIndex; i >= endIndex; i-- ) {
                 //
                 // get daily
@@ -344,7 +358,7 @@ Rectangle {
                         x: x,
                         y: h - ( h * value.value )
                     };
-                    console.log( value.label + ' : ' + i + ' : ' + JSON.stringify(point) );
+                    //console.log( value.label + ' : ' + i + ' : ' + JSON.stringify(point) );
                     points[value.label].push(point);
                 }
             }
@@ -369,7 +383,9 @@ Rectangle {
     //
     //
     //
+    /*
     Component.onCompleted: {
         setup();
     }
+    */
 }

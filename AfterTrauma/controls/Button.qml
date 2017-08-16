@@ -39,6 +39,7 @@ Button {
             color: Colours.almostWhite
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter //control.direction === "Left" ? Text.AlignLeft : Text.AlignRight
+            font.weight: Font.Light
             font.family: fonts.light
             font.pixelSize: 24
             text: control.text

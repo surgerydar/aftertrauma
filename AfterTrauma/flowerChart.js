@@ -160,7 +160,7 @@ function draw( ctx, drawLabels ) {
             radius /= 2;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.font = '18px ' + fonts.light || 'Roboto';
+            ctx.font = '0 24px ' + ( fonts.light || 'Roboto' );
             ctx.fillStyle = Colours.almostWhite;
             for ( i = 0; i < 5; i++ ) {
                 var p = Qt.point(

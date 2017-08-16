@@ -14,6 +14,8 @@ AfterTrauma.Page {
     ListView {
         id: messages
         anchors.fill: parent
+        anchors.leftMargin: 8
+        anchors.rightMargin: 8
         anchors.bottomMargin: 8
         //
         //
@@ -38,7 +40,12 @@ AfterTrauma.Page {
         //
         //
         add: Transition {
-            NumberAnimation { properties: "y"; from: messages.height; duration: 250 }
+            NumberAnimation {
+                properties: "y"
+                from: messages.height
+                duration: 250
+            }
+
         }
     }
     //
@@ -73,6 +80,7 @@ AfterTrauma.Page {
                 if ( messageText.text.length > 0 ) {
                     messages.model.append( { from: "me", message: messageText.text } );
                     messageText.text = "";
+                    messages.positionViewAtEnd();
                 }
             }
         }

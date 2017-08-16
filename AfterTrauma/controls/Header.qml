@@ -42,6 +42,7 @@ Item {
         fontSizeMode: Text.Fit
         color: container.textColour
         font.pixelSize: 36
+        font.weight: Font.Light
         font.family: fonts.light
         visible: title.length > 0
     }
@@ -92,6 +93,7 @@ Item {
         fontSizeMode: Text.Fit
         color: container.textColour
         font.pixelSize: 36
+        font.weight: Font.Light
         font.family: fonts.light
         visible: subtitle.length > 0
     }

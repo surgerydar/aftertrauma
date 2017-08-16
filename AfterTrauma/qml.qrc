@@ -97,5 +97,6 @@
         <file>FactsheetItem.qml</file>
         <file>ChatManager.qml</file>
         <file>ChatItem.qml</file>
+        <file>controls/ErrorDialog.qml</file>
     </qresource>
 </RCC>

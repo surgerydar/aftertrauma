@@ -13,24 +13,8 @@ ListModel {
         //
         // initial find
         //
-        Database.find('daily',{},{date: -1});
+        Database.find(table,{},{date: -1});
     }
-    /*
-    Connections {
-        target: Database
-
-        onSuccess: {
-            if ( collection === 'daily' && operation === 'find' ) {
-                console.log( 'Daily : loading daylies' );
-                model.clear();
-                result.forEach( function(daily) {
-                    model.append(daily);
-                });
-                model.updated();
-            }
-        }
-    }
-    */
     //
     //
     //
@@ -39,7 +23,7 @@ ListModel {
     //
     //
     function databaseSuccess( collection, operation, result ) {
-        if ( collection === 'daily' ) {
+        if ( collection === table ) {
             if ( operation === 'find' ) {
                 console.log( 'Daily : loading daylies' );
                 model.clear();
@@ -145,7 +129,7 @@ ListModel {
             notes: [],
             images: []
         }
-        Database.insert('daily',daily);
+        Database.insert(table,daily);
         Database.save();
         //model.append(daily);
         model.insert(0,daily);
@@ -190,7 +174,7 @@ ListModel {
         if ( index >= 0 ) {
             /*
             console.log( 'updating day : ' + JSON.stringify(day) + ' at index : ' + index );
-            var updatedDay = Database.update('daily', { _id: day._id }, day );
+            var updatedDay = Database.update(table, { _id: day._id }, day );
             console.log( 'updated day : ' + JSON.stringify(updatedDay) + ' at index : ' + index );
             Database.save();
             */
@@ -231,4 +215,8 @@ ListModel {
             */
         }
     }
+    //
+    //
+    //
+    property string table: "daily"
 }

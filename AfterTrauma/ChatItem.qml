@@ -49,6 +49,7 @@ Item {
         //
         //
         //
+        font.weight: Font.Light
         font.family: fonts.light
         font.pixelSize: 18
         fontSizeMode: Text.Fit

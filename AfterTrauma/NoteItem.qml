@@ -34,6 +34,7 @@ Item {
         wrapMode: Text.WordWrap
         elide: Text.ElideRight
         minimumPixelSize: 18
+        font.weight: Font.Light
         font.family: fonts.light
         font.pixelSize: 32
         color: Colours.almostWhite

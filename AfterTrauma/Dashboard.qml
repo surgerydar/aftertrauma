@@ -15,6 +15,7 @@ AfterTrauma.Page {
         anchors.left: parent.left
         anchors.bottom: parent.bottom
         anchors.right: parent.right
+        anchors.topMargin: parent.height / 6
         //
         //
         //
@@ -23,6 +24,8 @@ AfterTrauma.Page {
             anchors.top: parent.top
             anchors.left: parent.left
             anchors.right: parent.right
+            anchors.leftMargin: 32
+            anchors.rightMargin: 32
             onDateChanged: {
                 if ( flowerChart ) {
                     flowerChart.setCurrentDate(currentDate.getTime());

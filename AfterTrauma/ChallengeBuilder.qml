@@ -54,6 +54,9 @@ AfterTrauma.Page {
                 container.closeall(index);
             }
         }
+        add: Transition {
+            NumberAnimation { properties: "y"; from: builder.height; duration: 250 }
+        }
     }
     //
     //
@@ -90,8 +93,9 @@ AfterTrauma.Page {
     //
     function validateChallenge() {
         console.log( 'validating challenge' );
+        closeall();
         //
-        // check for unique name
+        // check all required fields are filled
         //
         var completed = true;
         [ 0, 1, 3 ].forEach(function(index){
@@ -100,11 +104,24 @@ AfterTrauma.Page {
         });
         if ( !completed ) {
             // TODO: dialog
+            errorDialog.show( "please set all of the options",
+                             [
+                                 {label:"Retry", action: function() {} },
+                                 {label:"Cancel", action: function() { stack.pop(); } },
+                             ]);
             console.log('challenge incomplete');
         } else {
+            //
+            // check for unique name
+            //
             var name = builder.contentItem.children[ 0 ].label;
             if ( challengeModel.findChallenge(name) ) {
                 // TODO: dialog
+                errorDialog.show( "a challenge called '" + name + "' already exists",
+                                 [
+                                     {label:"Retry", action: function() {} },
+                                     {label:"Cancel", action: function() { stack.pop(); } },
+                                 ]);
                 console.log('challenge name not unique');
             } else {
                 //
@@ -112,13 +129,13 @@ AfterTrauma.Page {
                 //
                 var challenge = {
                     name: name,
-                    description: builder.contentItem.children[ 1].label,
+                    activity: builder.contentItem.children[ 1 ].label,
                     repeats: builder.contentItem.children[ 2 ].value,
                     frequency: builder.contentItem.children[ 3 ].label,
                     notifications: builder.contentItem.children[ 4 ].on,
                     active: builder.contentItem.children[ 5 ].on
                 };
-                challengeModel.append(challenge);
+                challengeModel.add(challenge);
                 return true;
             }
         }

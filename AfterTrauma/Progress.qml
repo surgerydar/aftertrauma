@@ -20,13 +20,9 @@ AfterTrauma.Page {
             //
             //
             //
+            /*
             ListView {
                 id: legendList
-                height: parent.height / 3
-                anchors.top: parent.top
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.margins: 16
                 spacing: 4
                 model: ListModel {}
                 delegate: ItemDelegate {
@@ -52,6 +48,55 @@ AfterTrauma.Page {
                     }
                 }
             }
+            */
+            Flow {
+                id: legendList
+                height: parent.height / 4
+                anchors.top: parent.top
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.margins: 16
+                //
+                //
+                //
+                //padding: 16
+                spacing: 4
+                flow: Flow.TopToBottom
+                //
+                //
+                //
+                Repeater {
+                    model: lineChart.legend
+                    Item {
+                        height: 32
+                        width: swatch.width + label.contentWidth + 12
+                        Rectangle {
+                            id: swatch
+                            height: 32
+                            width: 32
+                            anchors.top: parent.top
+                            anchors.left: parent.left
+                            radius:  height / 2
+                            color: lineChart.legend[index].colour
+                        }
+                        Text {
+                            id: label
+                            anchors.top: parent.top
+                            anchors.left: swatch.right
+                            anchors.bottom: parent.bottom
+                            anchors.right: parent.right
+                            anchors.margins: 4
+                            horizontalAlignment: Text.AlignLeft
+                            verticalAlignment: Text.AlignVCenter
+                            font.weight: Font.Light
+                            font.family: fonts.light
+                            font.pixelSize: 18
+                            color: Colours.veryDarkSlate
+                            text: lineChart.legend[index].label
+                        }
+                    }
+                }
+            }
             //
             //
             //
@@ -63,18 +108,21 @@ AfterTrauma.Page {
                 anchors.bottom: parent.bottom
                 anchors.margins: 16
 
-                period: container.period
-                onLegendChanged: {
+                //period: container.period
+                /*
+                onLegendChanged: {                    
                     legendList.model.clear();
                     legend.forEach(function(entry) {
                         legendList.model.append(entry);
                     });
                 }
+                */
             }
         }
     }
     StackView.onActivated: {
-        lineChart.period = "year"
+        console.log('period: ' + period );
+        lineChart.period = container.period;
         lineChart.setup();
     }
 

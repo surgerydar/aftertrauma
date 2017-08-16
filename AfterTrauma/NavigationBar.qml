@@ -64,9 +64,9 @@ Item {
         onClicked: {
             var options = [
                         { title: "Timeline", destination: "Timeline.qml" },
-                        { title: "Weekly", destination: "Progress.qml", options: { period: "weekly" } },
-                        { title: "Monthly", destination: "Progress.qml", options: { period: "monthly" } },
-                        { title: "Yearly", destination: "Progress.qml", options: { period: "yearly" } }
+                        { title: "Weekly", destination: "Progress.qml", options: { period: "week" } },
+                        { title: "Monthly", destination: "Progress.qml", options: { period: "month" } },
+                        { title: "Yearly", destination: "Progress.qml", options: { period: "year" } }
                     ];
             shortcut.setOptions( options );
             shortcut.open();

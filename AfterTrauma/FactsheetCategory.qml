@@ -48,11 +48,9 @@ AfterTrauma.Page {
         //
         //
         //
-        /*
         add: Transition {
             NumberAnimation { properties: "y"; from: contents.height; duration: 250 }
         }
-        */
     }
 
     StackView.onActivated: {

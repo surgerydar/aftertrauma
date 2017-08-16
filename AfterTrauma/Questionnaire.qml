@@ -47,6 +47,7 @@ AfterTrauma.Page {
                 //
                 //
                 ListView {
+                    id: questionnaire
                     anchors.fill: parent
                     anchors.bottomMargin: 36
                     clip: true
@@ -64,6 +65,10 @@ AfterTrauma.Page {
                         }
                     }
                     property int questionnaireIndex: index
+
+                    add: Transition {
+                        NumberAnimation { properties: "y"; from: questionnaire.height; duration: 250 }
+                    }
                 }
                 //
                 //
