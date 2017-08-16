@@ -26,23 +26,37 @@ Canvas {
         }
     }
 
+    function getStartDate() {
+        return new Date( Flower.startDate );
+    }
+    function getEndDate() {
+        return new Date( Flower.endDate );
+    }
+
+    function getCurrentDate() {
+        return new Date( currentDate );
+    }
+
     function setCurrentDate(date) {
         if ( currentDate !== date ) {
+            console.log( 'FlowerChart.setCurrentDate : ' + date );
             currentDate = date;
             Flower.setCurrentDate(date);
             Flower.startAnimation();
             animate();
+            dateChanged(new Date(date));
         }
     }
     //
     //
     //
     signal dateRangeChanged( var startDate, var endDate );
+    signal dateChanged( var date );
     //
     //
     //
     property var animationHandle: null
-    property int currentDate: 0
+    property var currentDate: 0
     //
     //
     //
@@ -55,9 +69,15 @@ Canvas {
     //
     Connections {
         target: dailyModel
+
         onUpdated: {
             generateData()
         }
+        /*
+        onDataChanged: {
+            generateData();
+        }
+        */
     }
     Connections {
         target: stack

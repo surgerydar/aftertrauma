@@ -45,9 +45,13 @@ AfterTrauma.Page {
             //images: model.images
             //notes: model.notes
             //values: model.values
+            imagesModel: model.images
+            notesModel: model.notes
+            valuesModel: model.values
             //
             //
             //
+            /*
             Component.onCompleted: {
                 itemCount++;
                 console.log('timeline item created : ' + itemCount );
@@ -56,8 +60,8 @@ AfterTrauma.Page {
                 itemCount--;
                 console.log('timeline item destroyed : ' + itemCount );
             }
+            */
         }
-
         //
         //
         //
@@ -72,18 +76,12 @@ AfterTrauma.Page {
             color: Colours.almostWhite
             text: section
         }
-        //
-        //
-        //
-        onCountChanged: {
-            console.log( 'timeline ListView.count : ' + count + 'ListView.model.count : ' + model.count );
-        }
     }
     //
     //
     //
     StackView.onActivated: {
-        dailyList.update();
+        //dailyList.forceLayout();
     }
     //
     //
@@ -91,7 +89,12 @@ AfterTrauma.Page {
     Connections {
         target: dailyModel
         onUpdated : {
-            dailyList.forceLayout();
+            console.log('dailyModel.onUpdate');
+            //dailyList.forceLayout();
+        }
+        onDataChanged : {
+            console.log('dailyModel.onDataChanged');
+            //dailyList.forceLayout();
         }
     }
     property int itemCount: 0

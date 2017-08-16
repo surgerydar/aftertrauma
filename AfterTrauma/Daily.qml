@@ -32,7 +32,7 @@ ListModel {
                 });
                 model.updated();
             } else if ( operation === 'update' ) {
-                console.log( 'Daily : updated : ' + JSON.stringify(result) );
+                //console.log( 'Daily : updated : ' + JSON.stringify(result) );
             }
         }
     }
@@ -82,15 +82,19 @@ ListModel {
             //
             ["notes","images","values"].forEach(function(field){
                 if( !Array.isArray(day[field]) ) {
-                    //console.log( 'converting ' + field + ' to array');
-                    var n = day[field].count;
-                    var temp = [];
-                    for ( var i = 0; i < n; i++ ) {
-                        var object = day[field].get(i);
-                        //console.log( 'appending ' + JSON.stringify(object) );
-                        temp.push( JSON.parse(JSON.stringify(object)) );
+                    try {
+                        //console.log( 'converting ' + field + ' to array');
+                        var n = day[field].count;
+                        var temp = [];
+                        for ( var i = 0; i < n; i++ ) {
+                            var object = day[field].get(i);
+                            //console.log( 'appending ' + JSON.stringify(object) );
+                            temp.push( JSON.parse(JSON.stringify(object)) );
+                        }
+                        _day[field] = temp;
+                    } catch( err ) {
+                        console.log( 'error converting day into object : field ' + field + ' missing\n' + JSON.stringify(day) );
                     }
-                    _day[field] = temp;
                 }
             });
             //console.log( 'getting : ' + JSON.stringify(_day) );
@@ -178,6 +182,7 @@ ListModel {
             // update list
             //
             model.set(index,day);
+            //model.sync();
             model.updated();
         }
     }

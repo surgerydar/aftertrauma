@@ -102,6 +102,11 @@ AfterTrauma.Page {
     //
     StackView.onActivated: {
         scrollTimer.start();
+        if ( false ) { //flowerChart ) {
+            dateSlider.endDate = flowerChart.getEndDate();
+            dateSlider.startDate = flowerChart.getStartDate();
+            dateSlider.setDate(flowerChart.getCurrentDate());
+        }
     }
     StackView.onDeactivated: {
         scrollTimer.stop();
@@ -112,8 +117,12 @@ AfterTrauma.Page {
     Connections {
         target: flowerChart
         onDateRangeChanged: {
-            dateSlider.startDate = startDate
-            dateSlider.endDate = endDate
+            dateSlider.startDate = flowerChart.getStartDate();
+            dateSlider.endDate = flowerChart.getEndDate();
+            //dateSlider.setDate(flowerChart.getCurrentDate());
+        }
+        onDateChanged: {
+
         }
     }
     Connections {

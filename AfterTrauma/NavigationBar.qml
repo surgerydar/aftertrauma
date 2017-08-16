@@ -89,5 +89,8 @@ Item {
         anchors.left: factsheetButton.right
         anchors.margins: 4
         icon: "icons/search.png"
+        onClicked: {
+            stack.push("qrc:///Search.qml");
+        }
     }
 }

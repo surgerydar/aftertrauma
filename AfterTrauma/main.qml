@@ -158,7 +158,7 @@ ApplicationWindow {
                         daily.notes.push( {title:"",note:""} );
                     }
                 }
-                Database.insert(dailyModel.table,daily);
+                Database.insert(dailyModel.collection,daily);
             }
             //
             // challenge test data
@@ -193,7 +193,7 @@ ApplicationWindow {
             challengeData.forEach(function(challengeDatum) {
                 challengeDatum.count = 0;
                 challengeDatum.date = Date.now();
-                Database.insert(challengeModel.table,challengeDatum);
+                Database.insert(challengeModel.collection,challengeDatum);
             });
             Database.save();
 

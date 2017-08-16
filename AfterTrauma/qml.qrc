@@ -98,5 +98,7 @@
         <file>ChatManager.qml</file>
         <file>ChatItem.qml</file>
         <file>controls/ErrorDialog.qml</file>
+        <file>Search.qml</file>
+        <file>SearchItem.qml</file>
     </qresource>
 </RCC>

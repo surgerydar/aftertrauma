@@ -8,9 +8,19 @@
 	<string>AfterTrauma</string>
 	<key>CFBundleGetInfoString</key>
 	<string>Created by Qt/QMake</string>
-	<key>CFBundleIconFile</key>
-	<string></string>
-	<key>CFBundleIdentifier</key>
+        <key>CFBundleIcons</key>
+        <dict>
+            <key>CFBundlePrimaryIcon</key>
+            <dict>
+                <key>CFBundleIconFiles</key>
+                <array>
+                    <string>AppIcon76x76.png</string>
+                    <string>AppIcon120x120.png</string>
+                    <string>AppIcon152x152.png</string>
+                </array>
+            </dict>
+        </dict>
+        <key>CFBundleIdentifier</key>
 	<string>uk.co.soda.${PRODUCT_NAME:rfc1034identifier}</string>
 	<key>CFBundleName</key>
 	<string>${PRODUCT_NAME}</string>

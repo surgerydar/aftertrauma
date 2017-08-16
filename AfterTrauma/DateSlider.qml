@@ -50,6 +50,24 @@ Item {
         display.text = currentDate.toDateString();
         control.dateChanged();
     }
+    function setDate(date) {
+        if ( currentDate != date ) {
+            var start = startDate.getTime();
+            var end = endDate.getTime();
+            var current = date.getTime();
+            if ( current < start ) {
+                startDate = date;
+                start = current;
+            }
+            if ( current > end ) {
+                endDate = date;
+                end = current;
+            }
+            var value = ( current - start ) / ( end - start );
+            updateDisplay(value);
+        }
+    }
+
     //
     //
     //

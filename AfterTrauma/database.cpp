@@ -126,15 +126,12 @@ QVariant Database::insert( QString collection, QVariant object ) {
 QVariant Database::update( QString collection, QVariant query, QVariant object ) {
     QVariantMap _query  = query.value<QVariantMap>();
     QVariantMap _update = object.value<QVariantMap>();
-    qDebug() << "query : " << _query;
-    //qDebug() << "update : " << _update;
     QVariantList& _collection = getCollection(collection);
     QVariantList matches;
     int targetIndex = -1;
     for ( int i = 0; i< _collection.size(); i++ ) {
         QVariantMap& current = getStoredValueRef<QVariantMap>(_collection[i]);
         if ( _query.size() == 0 || matchDocument(current,_query ) ) {
-            qDebug() << "update : found document at index " << i << " : " << current;
             targetIndex = i;
             break;
             /*
@@ -154,7 +151,6 @@ QVariant Database::update( QString collection, QVariant query, QVariant object )
     if ( targetIndex >= 0 ) {
         _collection.replace(targetIndex,_update);
     }
-    qDebug() << "Database.update : object : " << object;
     QVariant results(_update);
     emit success(collection,"update",results);
     return results;

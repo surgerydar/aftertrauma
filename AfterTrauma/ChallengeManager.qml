@@ -113,8 +113,13 @@ AfterTrauma.Page {
     //
     Connections {
         target: challengeModel
+        /*
         onUpdated : {
-            challenges.update();
+            //challenges.update();
+        }
+        */
+        onDataChanged: {
+            console.log( 'challengeModel.onDataChanged');
         }
     }
 }

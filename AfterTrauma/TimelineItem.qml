@@ -137,12 +137,27 @@ Item {
     //
     //
     onDateChanged: {
+        refresh();
+    }
+    onImagesModelChanged: {
+        refresh();
+    }
+    onNotesModelChanged: {
+        refresh();
+    }
+    onValuesModelChanged: {
+        refresh();
+    }
+    //
+    //
+    //
+    function refresh() {
+        console.log( 'refreshing : ' + container.date?Utils.shortDate(container.date):"" )
         var day = dailyModel.getDayAsObject(new Date(date));
         images = day.images;
         notes = day.notes;
         values = day.values;
     }
-
     //
     //
     //
@@ -153,5 +168,9 @@ Item {
     property var images: []
     property var notes: []
     property var values: []
+
+    property var imagesModel: null
+    property var notesModel: null
+    property var valuesModel: null
 
 }
