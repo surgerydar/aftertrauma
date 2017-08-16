@@ -215,13 +215,15 @@ ApplicationWindow {
         target: SystemUtils
 
     }
-
+    //
+    // TODO: look at best way to move this into separate component or just let models connect directly ( possibly wastefull )
+    //
     Connections {
         target: Database
         onSuccess: {
             //console.log( 'database success : ' + collection + ' : ' + operation + ' : ' + JSON.stringify(result) );
             models.forEach( function( model ) {
-                if ( model.table === collection ) {
+                if ( model.collection === collection ) {
                     model.databaseSuccess(collection,operation,result);
                 }
             });
@@ -229,7 +231,7 @@ ApplicationWindow {
         onError: {
             //console.log( 'database error : ' + collection + ' : ' + operation + ' : ' + JSON.stringify(error) );
             models.forEach( function( model ) {
-                if ( model.table === collection ) {
+                if ( model.collection === collection ) {
                     model.databaseError(collection,operation,error);
                 }
             });

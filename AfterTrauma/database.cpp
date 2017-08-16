@@ -96,18 +96,20 @@ void Database::save() {
         QJsonDocument doc;
         doc.setObject(QJsonObject::fromVariantMap(m_collections));
         db.write(doc.toJson());
+    } else {
+        qDebug() << "Database::save : unable to open : " << dbPath;
     }
 }
 
 QVariant Database::insert( QString collection, QVariant object ) {
-    QVariantMap document = object.toMap();
+    QVariantMap document = object.value<QVariantMap>();
     if ( document.find("_id") != document.end() ) {
         //
         // promote to update
         //
         QVariantMap query;
         query["_id"] = document["_id"];
-        return update( collection, query, document );
+        return update( collection, query, object );
     } else {
         //
         //
@@ -122,24 +124,25 @@ QVariant Database::insert( QString collection, QVariant object ) {
 }
 
 QVariant Database::update( QString collection, QVariant query, QVariant object ) {
-    QVariantMap _query = query.toMap();
-    QVariantMap _update = object.toMap();
+    QVariantMap _query  = query.value<QVariantMap>();
+    QVariantMap _update = object.value<QVariantMap>();
+    qDebug() << "query : " << _query;
+    //qDebug() << "update : " << _update;
     QVariantList& _collection = getCollection(collection);
     QVariantList matches;
     int targetIndex = -1;
     for ( int i = 0; i< _collection.size(); i++ ) {
-        QVariantMap& document = getStoredValueRef<QVariantMap>(_collection[i]);
-        if ( _query.size() == 0 || matchDocument(document,_query ) ) {
+        QVariantMap& current = getStoredValueRef<QVariantMap>(_collection[i]);
+        if ( _query.size() == 0 || matchDocument(current,_query ) ) {
+            qDebug() << "update : found document at index " << i << " : " << current;
             targetIndex = i;
             break;
-            //_collection.replace(i,_update);
-            //_collection.replace(i,object);
-
-            /* FIXME: we are loosing the enclosed variant maps
-            matches.append(document["_id"]);
+            /*
+            //* FIXME: we are loosing the enclosed variant maps
+            matches.append(current["_id"]);
             for ( QVariantMap::iterator it = _update.begin(); it != _update.end(); ++it ) {
                 qDebug() << "updating : " << it.key() << " : with : " << _update[ it.key() ];
-                document[ it.key() ] = _update[ it.key() ];
+                current[ it.key() ] = _update[ it.key() ];
             }
             */
         }
@@ -149,16 +152,16 @@ QVariant Database::update( QString collection, QVariant query, QVariant object )
     emit success(collection,"update",results);
     */
     if ( targetIndex >= 0 ) {
-        _collection.replace(targetIndex,object);
+        _collection.replace(targetIndex,_update);
     }
     qDebug() << "Database.update : object : " << object;
-    QVariant results(object);
+    QVariant results(_update);
     emit success(collection,"update",results);
     return results;
 }
 
 QVariant Database::remove( QString collection, QVariant query ) {
-    QVariantMap _query = query.toMap();
+    QVariantMap _query = query.value<QVariantMap>();
     QVariantList& _collection = getCollection(collection);
     QVariantList matches;
     for ( int i = 0; i< _collection.size(); ) {
@@ -179,7 +182,7 @@ QVariant Database::find( QString collection, QVariant query, QVariant sort ) {
     //
     // TODO: sort and full query
     //
-    QVariantMap _query = query.toMap();
+    QVariantMap _query = query.value<QVariantMap>();
     QVariantList& _collection = getCollection(collection);
     QVariantList matches;
     for ( int i = 0; i< _collection.size(); i++ ) {
@@ -191,7 +194,7 @@ QVariant Database::find( QString collection, QVariant query, QVariant sort ) {
     //
     // sort
     //
-    QVariantMap _sort = sort.toMap();
+    QVariantMap _sort = sort.value<QVariantMap>();
     if ( _sort.size() > 0 ) {
         //qDebug() << "sorting";
         try {
@@ -228,7 +231,7 @@ QVariant Database::find( QString collection, QVariant query, QVariant sort ) {
 }
 
 QVariant Database::findOne( QString collection, QVariant query ) {
-    QVariantMap _query = query.toMap();
+    QVariantMap _query = query.value<QVariantMap>();
     QVariantList& _collection = getCollection(collection);
     for ( int i = 0; i< _collection.size(); i++ ) {
         QVariantMap& document = getStoredValueRef<QVariantMap>(_collection[i]);

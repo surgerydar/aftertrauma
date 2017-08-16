@@ -6,7 +6,7 @@ ListModel {
     //
     //
     Component.onCompleted: {
-        Database.find(table,{},{date: -1});
+        Database.find(collection,{},{date: -1});
     }
     //
     //
@@ -16,7 +16,7 @@ ListModel {
     //
     //
     function databaseSuccess( collection, operation, result ) {
-        if ( collection === table ) {
+        if ( collection === collection ) {
             if ( operation === 'find' ) {
                 console.log( 'Challenges : loading challenges' );
                 model.clear();
@@ -38,7 +38,7 @@ ListModel {
     function add(challenge) {
         challenge.count = 0;
         challenge.date = Date.now();
-        var result = Database.insert(table,challenge);
+        var result = Database.insert(collection,challenge);
         if ( result ) {
             model.append(result);
             Database.save();
@@ -51,7 +51,7 @@ ListModel {
                 var query = {
                     _id: challenge._id
                 };
-                Database.remove(table,query);
+                Database.remove(collection,query);
                 Database.save();
                 model.remove(i);
                 break;
@@ -72,5 +72,5 @@ ListModel {
     //
     //
     //
-    property string table: "challenge"
+    property string collection: "challenge"
 }

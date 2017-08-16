@@ -67,7 +67,7 @@ AfterTrauma.Page {
             anchors.left: parent.left
             anchors.right: parent.right
             font.weight: Font.Light
-            font.family: fonts.light.name
+            font.family: fonts.light
             font.pixelSize: 32
             color: Colours.almostWhite
             text: section
@@ -91,7 +91,7 @@ AfterTrauma.Page {
     Connections {
         target: dailyModel
         onUpdated : {
-            dailyList.update();
+            dailyList.forceLayout();
         }
     }
     property int itemCount: 0

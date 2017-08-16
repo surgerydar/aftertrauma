@@ -11,7 +11,6 @@ var startDate = 0;
 var endDate = 0;
 var minValue = 0;
 var maxValue = 0;
-var pallet = [ Colours.darkPurple, Colours.blue, Colours.darkOrange, Colours.lightPurple, Colours.darkGreen ];
 var frameAnimation = null;
 var interpolation = 0.;
 //
@@ -146,7 +145,7 @@ function draw( ctx, drawLabels ) {
         //
         for ( var i = 0; i < 5; i++ ) {
             var value = currentData[ i ] * radius;
-            drawFlower(ctx, cp, value, angle, sweep, pallet[ i ]);
+            drawFlower(ctx, cp, value, angle, sweep, Colours.categoryColour(i));
             angle += sweep;
         }
         //

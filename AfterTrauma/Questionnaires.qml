@@ -107,8 +107,9 @@ ListModel {
         //
         var today = dailyModel.getTodayAsObject();
         for ( i = 0; i < today.values.length; i++ ) {
+            console.log( 'putScore : updating daily : looking for ' + category + ' : found : ' + today.values[ i ].label );
             if ( today.values[ i ].label === category ) {
-                today.values[ i ].value = avaerage;
+                today.values[ i ].value = average;
                 dailyModel.update(today);
                 break;
             }

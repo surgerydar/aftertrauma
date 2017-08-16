@@ -9,7 +9,7 @@ Item {
     //
     //
     //
-    height: Math.max( 86, Math.min(5,values?values.length:0) * 8 * 2 )
+    height: 86 //Math.max( 108, Math.min(5,values?values.length:0) * 8 * 2 )
     //
     //
     //
@@ -25,7 +25,7 @@ Item {
         id: dateText
         anchors.top: parent.top
         anchors.left: parent.left
-        anchors.bottom: parent.verticalCenter
+        anchors.bottom: notesIndicator.top
         anchors.right: notesIndicator.right
         anchors.margins: 4
         //
@@ -85,11 +85,12 @@ Item {
         //
         //
         //
-        spacing: 4
+        topPadding: spacing
+        spacing: ( height - 8 * 5 ) / 6
         //
         //
         //
-        /*
+
         Repeater {
             model: Math.min(5,values?values.length:0) // just use five main categories
             Rectangle {
@@ -99,7 +100,7 @@ Item {
                 color: Colours.categoryColour(index)
             }
         }
-        */
+        /*
         Rectangle {
             height: 8
             width: bars.width * values[0].value
@@ -130,11 +131,13 @@ Item {
             radius: height / 2.
             color: Colours.categoryColour(4)
         }
+        */
     }
-
-
+    //
+    //
+    //
     onDateChanged: {
-        var day = dailyModel.getDayAsObject(new Date(date) );
+        var day = dailyModel.getDayAsObject(new Date(date));
         images = day.images;
         notes = day.notes;
         values = day.values;
@@ -144,7 +147,9 @@ Item {
     //
     //
     property var date: 0
-
+    //
+    //
+    //
     property var images: []
     property var notes: []
     property var values: []

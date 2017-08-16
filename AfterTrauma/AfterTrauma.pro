@@ -7,7 +7,8 @@ SOURCES += main.cpp \
     systemutils.cpp \
     installer.cpp \
     jsonfile.cpp \
-    database.cpp
+    database.cpp \
+    databaselist.cpp
 
 RESOURCES += qml.qrc
 
@@ -77,4 +78,5 @@ HEADERS += \
     systemutils.h \
     installer.h \
     jsonfile.h \
-    database.h
+    database.h \
+    databaselist.h

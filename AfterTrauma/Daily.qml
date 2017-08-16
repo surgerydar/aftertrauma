@@ -13,7 +13,7 @@ ListModel {
         //
         // initial find
         //
-        Database.find(table,{},{date: -1});
+        Database.find(collection,{},{date: -1});
     }
     //
     //
@@ -23,7 +23,7 @@ ListModel {
     //
     //
     function databaseSuccess( collection, operation, result ) {
-        if ( collection === table ) {
+        if ( collection === collection ) {
             if ( operation === 'find' ) {
                 console.log( 'Daily : loading daylies' );
                 model.clear();
@@ -98,8 +98,6 @@ ListModel {
         }
         return undefined;
     }
-
-
     function getToday() {
         var today = new Date();
         var day = getDay( today );
@@ -120,20 +118,19 @@ ListModel {
             month: today.getMonth(), // 0 - 11
             day: today.getDate(), // 1 - 31
             values: [
-                { name: 'emotions', value: 0. },
-                { name: 'mind', value: 0. },
-                { name: 'body', value: 0. },
-                { name: 'life', value: 0. },
-                { name: 'relationships', value: 0. },
+                { label: 'emotions', value: 0. },
+                { label: 'mind', value: 0. },
+                { label: 'body', value: 0. },
+                { label: 'life', value: 0. },
+                { label: 'relationships', value: 0. },
             ],
             notes: [],
             images: []
         }
-        Database.insert(table,daily);
+        Database.insert(collection,daily);
         Database.save();
-        //model.append(daily);
         model.insert(0,daily);
-        return model.get(model.count-1);
+        return model.get(0);
     }
     //
     // get the closest date to
@@ -172,51 +169,20 @@ ListModel {
     function update( day ) {
         var index = getDayIndex(new Date(day.date));
         if ( index >= 0 ) {
-            /*
-            console.log( 'updating day : ' + JSON.stringify(day) + ' at index : ' + index );
-            var updatedDay = Database.update(table, { _id: day._id }, day );
-            console.log( 'updated day : ' + JSON.stringify(updatedDay) + ' at index : ' + index );
+            //
+            // update database
+            //
+            var updatedDay = Database.update(collection, { _id: day._id }, day );
             Database.save();
-            */
             //
-            //
+            // update list
             //
             model.set(index,day);
             model.updated();
-            /*
-            //
-            // convert list fields into arrays
-            //
-            var _day = {
-                _id: day._id,
-                date: day.date,
-                year: day.year,
-                month: day.month,
-                day: day.day
-            };
-            //
-            //
-            //
-            ["notes","images","values"].forEach(function(field){
-                if( !Array.isArray(day[field]) ) {
-                    console.log( 'converting ' + field + ' to array');
-                    var n = day[field].count;
-                    var temp = [];
-                    for ( var i = 0; i < n; i++ ) {
-                        var object = day[field].get(i);
-                        console.log( 'appending ' + JSON.stringify(object) );
-                        temp.push( object );
-                    }
-                    _day[field] = temp;
-                }
-            });
-            console.log( 'updating : ' + JSON.stringify(_day) );
-            model.set(index,_day);
-            */
         }
     }
     //
     //
     //
-    property string table: "daily"
+    property string collection: "daily"
 }
