@@ -1,6 +1,7 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.1
 import QtQuick.Layouts 1.0
+import SodaControls 1.0
 
 import "controls" as AfterTrauma
 import "colours.js" as Colours
@@ -44,6 +45,9 @@ ApplicationWindow {
     }
     Messages {
         id: messageModel
+    }
+    TestDailyModel {
+        id: testDailyModel
     }
     //
     //

@@ -96,17 +96,33 @@ AfterTrauma.Page {
             }
         }
     }
+    //
+    //
+    //
+    Component.onCompleted:  {
+        scrollTimer.start();
+        var dateRange = testDailyModel.getDateRange();
+        console.log( 'dateRange : ' + JSON.stringify(dateRange) );
+        dateSlider.startDate = new Date(dateRange.min);
+        dateSlider.endDate = new Date(dateRange.max);
+        dateSlider.setDate(dateSlider.endDate);
+    }
 
     //
     //
     //
     StackView.onActivated: {
         scrollTimer.start();
-        if ( false ) { //flowerChart ) {
-            dateSlider.endDate = flowerChart.getEndDate();
-            dateSlider.startDate = flowerChart.getStartDate();
+        var dateRange = testDailyModel.getDateRange();
+        console.log( 'dateRange : ' + JSON.stringify(dateRange) );
+        dateSlider.startDate = new Date(dateRange.min);
+        dateSlider.endDate = new Date(dateRange.max);
+        dateSlider.setDate(dateSlider.endDate);
+        /*
+        if ( flowerChart ) {
             dateSlider.setDate(flowerChart.getCurrentDate());
         }
+        */
     }
     StackView.onDeactivated: {
         scrollTimer.stop();
@@ -114,17 +130,6 @@ AfterTrauma.Page {
     //
     //
     //
-    Connections {
-        target: flowerChart
-        onDateRangeChanged: {
-            dateSlider.startDate = flowerChart.getStartDate();
-            dateSlider.endDate = flowerChart.getEndDate();
-            //dateSlider.setDate(flowerChart.getCurrentDate());
-        }
-        onDateChanged: {
-
-        }
-    }
     Connections {
         target: notificationModel
         onUpdated: {

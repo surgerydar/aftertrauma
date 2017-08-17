@@ -6,7 +6,7 @@
 #include "systemutils.h"
 #include "jsonfile.h"
 #include "database.h"
-
+#include "databaselist.h"
 int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
     //
     //
     //
-
+    qmlRegisterType<DatabaseList>("SodaControls", 1, 0, "DatabaseList");
     //
     //
     //

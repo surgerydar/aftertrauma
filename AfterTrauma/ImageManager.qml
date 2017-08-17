@@ -70,10 +70,10 @@ AfterTrauma.Page {
         var day;
         if ( date === 0 ) {
             console.log( 'ImagesManager : getting todays images' );
-            day = dailyModel.getTodayAsObject();
+            day = testDailyModel.getToday();
             date = day.date;
         } else {
-            day = dailyModel.getDayAsObject(new Date(date));
+            day = testDailyModel.getDay(new Date(date));
         }
         images = day.images;
         if ( images.length === 0 ) {
@@ -86,14 +86,8 @@ AfterTrauma.Page {
          imagesRepeater.model = images;
     }
     StackView.onDeactivating: {
-        var day = dailyModel.getDayAsObject(new Date(date));
-        if ( day ) {
-            images.forEach(function(image){
-               console.log( 'saving image : ' + JSON.stringify(image) );
-            });
-            day.images = images;
-            dailyModel.update(day);
-        }
+        testDailyModel.update({date: date},{images: images});
+        testDailyModel.save();
     }
     //
     //
@@ -107,7 +101,6 @@ AfterTrauma.Page {
             imagesView.currentItem.image = images[imagesView.currentIndex].image;
         }
     }
-
     //
     //
     //

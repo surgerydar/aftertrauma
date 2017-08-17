@@ -105,18 +105,21 @@ ListModel {
         //
         // update daily
         //
-        var today = dailyModel.getTodayAsObject();
+        //var today = dailyModel.getTodayAsObject();
+        var today = testDailyModel.getToday();
         for ( i = 0; i < today.values.length; i++ ) {
             console.log( 'putScore : updating daily : looking for ' + category + ' : found : ' + today.values[ i ].label );
             if ( today.values[ i ].label === category ) {
                 today.values[ i ].value = average;
-                dailyModel.update(today);
+                testDailyModel.update({ date: today.date }, { values: today.values });
                 break;
             }
         }
 
     }
-
+    //
+    //
+    //
     function dailyCompleted() {
         //
         // average scores

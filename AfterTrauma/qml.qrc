@@ -100,5 +100,9 @@
         <file>controls/ErrorDialog.qml</file>
         <file>Search.qml</file>
         <file>SearchItem.qml</file>
+        <file>ProfileManager.qml</file>
+        <file>TestTimeline.qml</file>
+        <file>TestTimelineItem.qml</file>
+        <file>TestDailyModel.qml</file>
     </qresource>
 </RCC>

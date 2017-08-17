@@ -10,13 +10,21 @@ DatabaseList::DatabaseList(QObject *parent) : QAbstractListModel(parent) {
 //
 //
 //
+QHash<int, QByteArray> DatabaseList::roleNames() const {
+    QHash<int, QByteArray> roles;
+    for ( int i = 0; i < m_roles.size(); i++ ) {
+        roles[ i ] = m_roles[ i ].toUtf8();
+    }
+    return roles;
+}
+
 int DatabaseList::rowCount(const QModelIndex &parent) const {
     return m_objects.size();
 }
 
 QVariant DatabaseList::data(const QModelIndex &index, int role) const {
-    if ( index.row() >= 0 && index.row() < m_objects.size() ) {
-        return QVariant(m_objects[index.row()]);
+    if ( index.row() >= 0 && index.row() < m_objects.size() && role < m_roles.size() ) {
+        return QVariant(m_objects[index.row()][m_roles[role]]);
     }
     return QVariant();
 }
@@ -38,7 +46,7 @@ void DatabaseList::load() {
     // clear existing
     //
     m_objects.clear();
-    QString dbPath = SystemUtils::shared()->documentDirectory().append("/aftertrauma.json");
+    QString dbPath = _path();
     QFile db(dbPath);
     if (db.open(QIODevice::ReadOnly)) {
         //
@@ -54,11 +62,13 @@ void DatabaseList::load() {
         //
         //
         if ( doc.isArray() ) {
-            qDebug() << "Database : read database";
+            qDebug() << "DatabaseList : read database";
             QVariantList objects = doc.array().toVariantList();
             for ( auto& object : objects ) {
                 m_objects.append(object.value<QVariantMap>());
             }
+            emit dataChanged(createIndex(0,0),createIndex(m_objects.size()-1,0));
+            emit countChanged();
         } else {
             if ( parseError.error != QJsonParseError::NoError ) {
                 emit error("open",parseError.errorString());
@@ -68,7 +78,7 @@ void DatabaseList::load() {
         }
     } else {
         //
-        // create defaults
+        // create default db
         //
         save();
     }
@@ -93,38 +103,55 @@ void DatabaseList::save() {
 //
 //
 //
-QVariant DatabaseList::add(QVariant&o) {
+void DatabaseList::clear() {
+    if ( m_objects.size() > 0 ) {
+        int objectCount = m_objects.size();
+        m_objects.clear();
+        emit dataChanged(createIndex(0,0),createIndex(objectCount-1,0));
+        emit countChanged();
+    }
+}
+
+QVariant DatabaseList::add(QVariant o) {
     QVariantMap object = o.value<QVariantMap>();
     object["_id"] = QUuid::createUuid().toString();
     m_objects.append(object);
     _sort();
     emit dataChanged(createIndex(m_objects.size()-1,0),createIndex(m_objects.size()-1,0));
+    emit countChanged();
     QVariantMap id;
     id["_id"] = object["_id"];
     return QVariant(id);
 }
 
-QVariant DatabaseList::update(QVariant&q,QVariant&u) {
+QVariant DatabaseList::update(QVariant q,QVariant u) {
     QVariantMap query = q.value<QVariantMap>();
     QVariantMap update = u.value<QVariantMap>();
     QVariantList matches;
     int count = m_objects.size();
+    int minIndex = std::numeric_limits<int>::max();
+    int maxIndex = std::numeric_limits<int>::min();
     for ( int i = 0; i < count; i++ ) {
         if ( _match(m_objects[i],query) ) {
+            if ( i < minIndex ) minIndex = i;
+            if ( i > maxIndex ) maxIndex = i;
             QVariantMap object = m_objects[i];
             matches.append(QVariantMap({{"_id",object["_id"]}}));
             _update(object,update);
             m_objects.replace(i,object);
         }
     }
+    if ( matches.size() > 0 ) {
+        qDebug() << "updated from : " << minIndex << " : to : " << maxIndex;
+        emit dataChanged(createIndex(minIndex,0),createIndex(maxIndex,0));
+    }
     return QVariant(matches);
 }
 
-QVariant DatabaseList::remove(QVariant&q) {
+QVariant DatabaseList::remove(QVariant q) {
     QVariantMap query = q.value<QVariantMap>();
     QVariantList matches;
-    int count = m_objects.size();
-    for ( int i = 0; i < count; ) {
+    for ( int i = 0; i < m_objects.size(); ) {
         if ( _match(m_objects[i],query) ) {
             matches.append(QVariantMap({{"_id",m_objects[i]["_id"]}}));
             m_objects.removeAt(i);
@@ -132,10 +159,14 @@ QVariant DatabaseList::remove(QVariant&q) {
             i++;
         }
     }
+    if ( matches.size() > 0 ) {
+        emit dataChanged(createIndex(0,0),createIndex(m_objects.size()-1,0));
+        emit countChanged();
+    }
     return QVariant(matches);
 }
 
-QVariant DatabaseList::find(QVariant&q) {
+QVariant DatabaseList::find(QVariant q) {
     QVariantMap query = q.value<QVariantMap>();
     QVariantList matches;
     int count = m_objects.size();
@@ -146,10 +177,19 @@ QVariant DatabaseList::find(QVariant&q) {
     }
     return QVariant(matches);
 }
-void DatabaseList::sort(QVariant&s) {
+
+QVariant DatabaseList::get(int i) {
+    if ( i >= 0 && i < m_objects.size() ) {
+        return QVariant(m_objects[i]);
+    }
+    return QVariant();
+}
+
+void DatabaseList::sort(QVariant s) {
     if ( m_sort != s ) {
         m_sort = s.value<QVariantMap>();
         _sort();
+        emit dataChanged(createIndex(0,0),createIndex(m_objects.size()-1,0));
     }
 }
 //
@@ -159,10 +199,11 @@ void DatabaseList::_sort() {
     if ( !m_sort.empty() ) {
         QString field = m_sort.firstKey();
         int direction = m_sort.first().value<int>();
-        std::sort(m_objects.begin(),m_objects.end(),[&field,&direction](QVariantMap& a, QVariantMap& b) -> bool {
+        qDebug() << "sorting by : " << field << " direction : " << direction;
+        std::sort(m_objects.begin(),m_objects.end(),[&field,&direction](const QVariantMap& a, const QVariantMap& b) -> bool {
             bool aHasIt = a.contains(field);
             bool bHasIt = b.contains(field);
-            if ( direction > 1 ) {
+            if ( direction > 0 ) {
                 if ( aHasIt && bHasIt ) {
                     return a[field] < b[field];
                 } else if ( aHasIt && !bHasIt ) {
@@ -191,6 +232,9 @@ bool DatabaseList::_match( QVariantMap& object, QVariantMap& query ) {
 }
 void DatabaseList::_update( QVariantMap& object, QVariantMap& update ) {
     for ( QVariantMap::iterator it = update.begin(); it != update.end(); ++it ) {
+        //
+        // TODO: handle array updates
+        //
         object[ it.key() ] = it.value();
     }
 }

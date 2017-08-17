@@ -62,22 +62,22 @@ Canvas {
     //
     Component.onCompleted: {
         generateData();
+        setCurrentDate(Flower.endDate);
         requestPaint();
     }
     //
     //
     //
     Connections {
-        target: dailyModel
-
-        onUpdated: {
-            generateData()
-        }
-        /*
+        target: testDailyModel
         onDataChanged: {
+            console.log( 'FlowerChart dataChanged : currentDate : ' + currentDate );
             generateData();
+            Flower.setCurrentDate(currentDate);
+            Flower.startAnimation();
+            animate();
+            requestPaint();
         }
-        */
     }
     Connections {
         target: stack
@@ -91,14 +91,14 @@ Canvas {
     //
     //
     function generateData() {
-        if ( dailyModel ) {
+        if( testDailyModel ) {
             var dataSet = {labels:[],data:[]};
-            var n = dailyModel.count;
+            var n = testDailyModel.count;
             for ( var i = 0; i < n; i++ ) {
-                var daily = dailyModel.get(i);
+                var daily = testDailyModel.get(i);
                 var dataPoint = [daily.date,[]];
                 for ( var j = 0; j < 5; j++ ) {
-                    var value = daily.values.get(j);
+                    var value = daily.values[j];
                     if ( i === 0 ) {
                         dataSet.labels.push( value.label );
                     }
@@ -108,8 +108,7 @@ Canvas {
             }
             // TODO: got to be a better way of doing this
             Flower.setData(dataSet);
-            setCurrentDate(Flower.endDate);
-            control.dateRangeChanged(new Date(Flower.startDate), new Date(Flower.endDate));
+            //control.dateRangeChanged(new Date(Flower.startDate), new Date(Flower.endDate));
         }
     }
 

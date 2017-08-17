@@ -63,7 +63,8 @@ Item {
         icon: "icons/chart.png"
         onClicked: {
             var options = [
-                        { title: "Timeline", destination: "Timeline.qml" },
+                        //{ title: "Timeline", destination: "Timeline.qml" },
+                        { title: "Timeline", destination: "TestTimeline.qml" },
                         { title: "Weekly", destination: "Progress.qml", options: { period: "week" } },
                         { title: "Monthly", destination: "Progress.qml", options: { period: "month" } },
                         { title: "Yearly", destination: "Progress.qml", options: { period: "year" } }
