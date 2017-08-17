@@ -69,10 +69,10 @@ AfterTrauma.Page {
         var day;
         if ( date === 0 ) {
             console.log( 'NotesManager : getting todays notes' );
-            day = testDailyModel.getToday();
+            day = dailyModel.getToday();
             date = day.date;
         } else {
-            day = testDailyModel.getDay(new Date(date));
+            day = dailyModel.getDay(new Date(date));
         }
         notes = day.notes;
         if ( notes.length === 0 ) {
@@ -86,7 +86,7 @@ AfterTrauma.Page {
     }
     StackView.onDeactivating: {
         dailyModel.update({ date: date },{ notes: notes });
-        testDailyModel.save();
+        dailyModel.save();
     }
     //
     //

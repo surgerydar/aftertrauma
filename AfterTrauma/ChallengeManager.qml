@@ -75,6 +75,9 @@ AfterTrauma.Page {
             onCountChanged: {
                 challengeModel.updateCount( model.index, count );
             }
+            onClicked: {
+                stack.push( "qrc:///ChallengeBuilder.qml", {source: challengeModel.get(index)});
+            }
         }
         add: Transition {
             NumberAnimation { properties: "y"; from: challenges.height; duration: 250 }
@@ -106,20 +109,16 @@ AfterTrauma.Page {
     //
     //
     StackView.onActivated: {
-        challenges.update();
+        //challenges.update();
     }
     //
     //
     //
     Connections {
         target: challengeModel
-        /*
-        onUpdated : {
-            //challenges.update();
-        }
-        */
         onDataChanged: {
             console.log( 'challengeModel.onDataChanged');
+            challenges.forceLayout();
         }
     }
 }

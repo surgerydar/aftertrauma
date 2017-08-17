@@ -15,6 +15,7 @@ class DatabaseList : public QAbstractListModel
     Q_PROPERTY(QString collection WRITE setCollection MEMBER m_collection NOTIFY collectionChanged)
     Q_PROPERTY(int count READ rowCount NOTIFY countChanged)
     Q_PROPERTY(QStringList roles MEMBER m_roles )
+    Q_PROPERTY(QVariantMap sort MEMBER m_sort )
     //
     //
     //

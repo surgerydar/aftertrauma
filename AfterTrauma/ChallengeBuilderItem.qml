@@ -41,6 +41,9 @@ Item {
         anchors.right: decorationItem.left
         anchors.margins: 16
         color: Colours.almostWhite
+        fontSizeMode: Text.Fit
+        wrapMode: Text.WordWrap
+        minimumPixelSize: 12
         font.weight: Font.Light
         font.family: fonts.light
         font.pixelSize: 32

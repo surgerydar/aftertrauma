@@ -46,12 +46,29 @@ AfterTrauma.Page {
             //
             //
             //
-            label: model.label
+            label: !( model.type === "number" || model.type === "switch" ) && source  ? source[ model.field ] : model.label
             type: model.type
             options: model.options || undefined
             radius: model.index === 0 ? [16,16,0,0] : model.index === builder.model.count - 1 ? [0,0,16,16] : [0]
+            on: model.type === "switch"  && source ? source[ model.field ] : false
+            value: model.type === "number" && source ? source[ model.field ] : 1
             onSelected: {
                 container.closeall(index);
+            }
+            onLabelChanged: {
+                if ( !( model.type === "switch" || model.type === "number" ) ) {
+                    challenge[ model.field ] = label;
+                }
+            }
+            onOnChanged: {
+                if ( model.type === "switch" ) {
+                    challenge[ model.field ] = value;
+                }
+            }
+            onValueChanged: {
+                if ( model.type === "number" ) {
+                    challenge[ model.field ] = value;
+                }
             }
         }
         add: Transition {
@@ -63,19 +80,28 @@ AfterTrauma.Page {
     //
     StackView.onActivated: {
         var data = [
-                    { label: "Challenge name", type: "name" },
-                    { label: "Challenge activity", type: "description" },
-                    { label: "Repeats", type: "number" },
-                    { label: "How often", type: "options", options: [ { label: "Every hour" }, { label: "Morning and evening" }, { label: "Daily" }, { label: "Weekly" } ] },
-                    { label: "Notifications", type: "switch" },
-                    { label: "Active", type: "switch" }
+                    { label: "Challenge name", type: "name", field: "name" },
+                    { label: "Challenge activity", type: "description", field: "activity" },
+                    { label: "Repeats", type: "number", field: "repeats" },
+                    { label: "How often", type: "options", options: [ { label: "Every hour" }, { label: "Morning and evening" }, { label: "Daily" }, { label: "Weekly" } ], field: "frequency"  },
+                    { label: "Active", type: "switch", field: "active" },
+                    { label: "Notifications", type: "switch", field: "notifications"  }
                 ];
         builder.model.clear();
         data.forEach(function(datum){
             builder.model.append(datum);
         });
+        challenge = {
+            name: ( source ? source.name : undefined ),
+            activity: ( source ? source.activity : undefined ),
+            repeats: ( source ? source.repeats : 1 ),
+            frequency: ( source ? source.frequency : undefined ),
+            active: source ? source.active : false,
+            notifications: source ? source.notifications : false
+        };
     }
     StackView.onDeactivated: {
+        source = null;
     }
     //
     //
@@ -100,7 +126,8 @@ AfterTrauma.Page {
         var completed = true;
         [ 0, 1, 3 ].forEach(function(index){
             console.log( 'builder:' + builder.contentItem.children[ index ].label + ' model:' + builder.model.get( index ).label );
-            if ( builder.contentItem.children[ index ].label == builder.model.get( index ).label ) completed = false
+            var item = builder.model.get( index );
+            if ( challenge[ item.field ] === undefined || challenge[ item.field ] === item.label ) completed = false
         });
         if ( !completed ) {
             // TODO: dialog
@@ -114,10 +141,9 @@ AfterTrauma.Page {
             //
             // check for unique name
             //
-            var name = builder.contentItem.children[ 0 ].label;
-            if ( challengeModel.findChallenge(name) ) {
+            if ( !source && challengeModel.findChallenge(challenge.name) ) {
                 // TODO: dialog
-                errorDialog.show( "a challenge called '" + name + "' already exists",
+                errorDialog.show( "a challenge called '" + challenge.name + "' already exists",
                                  [
                                      {label:"Retry", action: function() {} },
                                      {label:"Cancel", action: function() { stack.pop(); } },
@@ -127,18 +153,21 @@ AfterTrauma.Page {
                 //
                 // add challenge
                 //
-                var challenge = {
-                    name: name,
-                    activity: builder.contentItem.children[ 1 ].label,
-                    repeats: builder.contentItem.children[ 2 ].value,
-                    frequency: builder.contentItem.children[ 3 ].label,
-                    notifications: builder.contentItem.children[ 4 ].on,
-                    active: builder.contentItem.children[ 5 ].on
-                };
-                challengeModel.add(challenge);
+                console.log( 'saving challenge : ' + JSON.stringify(challenge));
+                if ( source ) {
+                    challenge._id = source._id;
+                    challengeModel.updateChallenge(challenge);
+                } else {
+                    challengeModel.addChallenge(challenge);
+                }
                 return true;
             }
         }
         return false;
     }
+    //
+    //
+    //
+    property var challenge: null
+    property var source: null
 }

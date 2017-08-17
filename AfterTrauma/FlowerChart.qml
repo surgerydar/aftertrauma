@@ -69,7 +69,7 @@ Canvas {
     //
     //
     Connections {
-        target: testDailyModel
+        target: dailyModel
         onDataChanged: {
             console.log( 'FlowerChart dataChanged : currentDate : ' + currentDate );
             generateData();
@@ -91,11 +91,11 @@ Canvas {
     //
     //
     function generateData() {
-        if( testDailyModel ) {
+        if( dailyModel ) {
             var dataSet = {labels:[],data:[]};
-            var n = testDailyModel.count;
+            var n = dailyModel.count;
             for ( var i = 0; i < n; i++ ) {
-                var daily = testDailyModel.get(i);
+                var daily = dailyModel.get(i);
                 var dataPoint = [daily.date,[]];
                 for ( var j = 0; j < 5; j++ ) {
                     var value = daily.values[j];

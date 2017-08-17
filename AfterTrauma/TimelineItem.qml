@@ -100,77 +100,12 @@ Item {
                 color: Colours.categoryColour(index)
             }
         }
-        /*
-        Rectangle {
-            height: 8
-            width: bars.width * values[0].value
-            radius: height / 2.
-            color: Colours.categoryColour(0)
-        }
-        Rectangle {
-            height: 8
-            width: bars.width * values[1].value
-            radius: height / 2.
-            color: Colours.categoryColour(1)
-        }
-        Rectangle {
-            height: 8
-            width: bars.width * values[2].value
-            radius: height / 2.
-            color: Colours.categoryColour(2)
-        }
-        Rectangle {
-            height: 8
-            width: bars.width * values[3].value
-            radius: height / 2.
-            color: Colours.categoryColour(3)
-        }
-        Rectangle {
-            height: 8
-            width: bars.width * values[4].value
-            radius: height / 2.
-            color: Colours.categoryColour(4)
-        }
-        */
-    }
-    //
-    //
-    //
-    onDateChanged: {
-        refresh();
-    }
-    onImagesModelChanged: {
-        refresh();
-    }
-    onNotesModelChanged: {
-        refresh();
-    }
-    onValuesModelChanged: {
-        refresh();
-    }
-    //
-    //
-    //
-    function refresh() {
-        console.log( 'refreshing : ' + container.date?Utils.shortDate(container.date):"" )
-        var day = dailyModel.getDayAsObject(new Date(date));
-        images = day.images;
-        notes = day.notes;
-        values = day.values;
     }
     //
     //
     //
     property var date: 0
-    //
-    //
-    //
     property var images: []
     property var notes: []
     property var values: []
-
-    property var imagesModel: null
-    property var notesModel: null
-    property var valuesModel: null
-
 }

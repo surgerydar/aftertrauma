@@ -101,6 +101,6 @@ AfterTrauma.Page {
     StackView.onActivated: {
     }
     StackView.onDeactivated: {
-        testDailyModel.save();
+        dailyModel.save();
     }
 }

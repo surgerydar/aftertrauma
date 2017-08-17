@@ -117,7 +117,7 @@ QVariant DatabaseList::add(QVariant o) {
     object["_id"] = QUuid::createUuid().toString();
     m_objects.append(object);
     _sort();
-    emit dataChanged(createIndex(m_objects.size()-1,0),createIndex(m_objects.size()-1,0));
+    emit dataChanged(createIndex(0,0),createIndex(m_objects.size()-1,0));
     emit countChanged();
     QVariantMap id;
     id["_id"] = object["_id"];

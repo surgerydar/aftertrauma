@@ -38,29 +38,13 @@ AfterTrauma.Page {
         }
         */
 
-        delegate: TimelineItem {
+        delegate: TestTimelineItem {
             anchors.left: parent?parent.left:undefined
             anchors.right: parent?parent.right:undefined
             date: model.date
-            //images: model.images
-            //notes: model.notes
-            //values: model.values
-            imagesModel: model.images
-            notesModel: model.notes
-            valuesModel: model.values
-            //
-            //
-            //
-            /*
-            Component.onCompleted: {
-                itemCount++;
-                console.log('timeline item created : ' + itemCount );
-            }
-            Component.onDestruction: {
-                itemCount--;
-                console.log('timeline item destroyed : ' + itemCount );
-            }
-            */
+            images: model.images
+            notes: model.notes
+            values: model.values
         }
         //
         //
@@ -88,14 +72,9 @@ AfterTrauma.Page {
     //
     Connections {
         target: dailyModel
-        onUpdated : {
-            console.log('dailyModel.onUpdate');
-            //dailyList.forceLayout();
-        }
         onDataChanged : {
             console.log('dailyModel.onDataChanged');
             //dailyList.forceLayout();
         }
     }
-    property int itemCount: 0
 }

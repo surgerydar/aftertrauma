@@ -101,7 +101,7 @@ AfterTrauma.Page {
     //
     Component.onCompleted:  {
         scrollTimer.start();
-        var dateRange = testDailyModel.getDateRange();
+        var dateRange = dailyModel.getDateRange();
         console.log( 'dateRange : ' + JSON.stringify(dateRange) );
         dateSlider.startDate = new Date(dateRange.min);
         dateSlider.endDate = new Date(dateRange.max);
@@ -113,7 +113,7 @@ AfterTrauma.Page {
     //
     StackView.onActivated: {
         scrollTimer.start();
-        var dateRange = testDailyModel.getDateRange();
+        var dateRange = dailyModel.getDateRange();
         console.log( 'dateRange : ' + JSON.stringify(dateRange) );
         dateSlider.startDate = new Date(dateRange.min);
         dateSlider.endDate = new Date(dateRange.max);

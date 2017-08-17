@@ -70,10 +70,10 @@ AfterTrauma.Page {
         var day;
         if ( date === 0 ) {
             console.log( 'ImagesManager : getting todays images' );
-            day = testDailyModel.getToday();
+            day = dailyModel.getToday();
             date = day.date;
         } else {
-            day = testDailyModel.getDay(new Date(date));
+            day = dailyModel.getDay(new Date(date));
         }
         images = day.images;
         if ( images.length === 0 ) {
@@ -86,8 +86,8 @@ AfterTrauma.Page {
          imagesRepeater.model = images;
     }
     StackView.onDeactivating: {
-        testDailyModel.update({date: date},{images: images});
-        testDailyModel.save();
+        dailyModel.update({date: date},{images: images});
+        dailyModel.save();
     }
     //
     //

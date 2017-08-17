@@ -1,43 +1,64 @@
 import QtQuick 2.7
+import SodaControls 1.0
 
-ListModel {
+DatabaseList {
     id: model
-    //
-    //
-    //
-    //dynamicRoles: true
+    collection: "daily"
+    roles: [ "date", "year", "month", "day", "values", "notes", "images" ]
+    sort: { "date": -1 }
     //
     //
     //
     Component.onCompleted: {
-        //
-        // initial find
-        //
-        Database.find(collection,{},{date: -1});
-    }
-    //
-    //
-    //
-    signal updated();
-    //
-    //
-    //
-    function databaseSuccess( collection, operation, result ) {
-        if ( collection === collection ) {
-            if ( operation === 'find' ) {
-                console.log( 'Daily : loading daylies' );
-                model.clear();
-                result.forEach( function(day) {
-                    model.append(day);
-                });
-                model.updated();
-            } else if ( operation === 'update' ) {
-                //console.log( 'Daily : updated : ' + JSON.stringify(result) );
+        if ( count <= 0 ) {
+            //
+            // generate test data if database is empty
+            //
+            var week = 1000 * 60 * 60 * 24 * 7;
+            for ( var i = 0; i < 52; i++ ) {
+                var day = new Date(Date.now()-(week*i));
+                var multiplier = ( ( 51 - i ) + 1 ) / 52.;
+                var daily = {
+                    date: day.getTime(),
+                    year: day.getFullYear(),
+                    month: day.getMonth(), // 0 - 11
+                    day: day.getDate(), // 1 - 31
+                    values: [
+                        { label: 'emotions', value: Math.random() * multiplier },
+                        { label: 'mind', value: Math.random() * multiplier },
+                        { label: 'body', value: Math.random() * multiplier },
+                        { label: 'life', value: Math.random() * multiplier },
+                        { label: 'relationships', value: Math.random() * multiplier },
+                    ],
+                    notes: [],
+                    images: []
+                }
+                if ( i > 0 ) {
+                    var nImages = Math.random() * 4;
+                    for ( var j = 0; j < nImages; j++ ) {
+                        daily.images.push( { image: "icons/image.png" });
+                    }
+                    var nNotes = Math.random() * 4;
+                    for ( j = 0; j < nNotes; j++ ) {
+                        daily.notes.push( {title:"",note:""} );
+                    }
+                }
+                add(daily);
             }
+            save();
         }
     }
-    function databaseError( collection, operation, error ) {
-        console.log( 'database error : ' + collection + ' : ' + operation + ' : ' + error );
+    function getDateRange() {
+        var range = {
+            min: Number.MAX_VALUE,
+            max: Number.MIN_VALUE
+        };
+        for ( var i = 0; i < model.count; i++ ) {
+            var date = model.get(i).date;
+            if ( date < range.min ) range.min = date;
+            if ( date > range.max ) range.max = date;
+        }
+        return range;
     }
     //
     //
@@ -46,8 +67,8 @@ ListModel {
         var day = date.getDate();
         var month = date.getMonth();
         var year = date.getFullYear();
+
         var n = model.count;
-        //console.log( 'seraching for year:' + year + ' month:' + month + ' day:' + day );
         for ( var i = 0; i < n; i++ ) {
             var item = model.get(i);
             //console.log( 'year:' + item.year + ' month:' + item.month + ' day:' + item.day );
@@ -59,60 +80,20 @@ ListModel {
         //console.log( 'unable to find year:' + year + ' month:' + month + ' day:' + day );
         return -1;
     }
-
     function getDay( date ) {
-        var index = getDayIndex( date );
-        return index >= 0 ? model.get(index ) : undefined;
-    }
-    function getDayAsObject( date ) {
-        var day = getDay(date);
-        if ( day ) {
-            //
-            // convert list fields into arrays
-            //
-            var _day = {
-                _id: day._id,
-                date: day.date,
-                year: day.year,
-                month: day.month,
-                day: day.day
-            };
-            //
-            //
-            //
-            ["notes","images","values"].forEach(function(field){
-                if( !Array.isArray(day[field]) ) {
-                    try {
-                        //console.log( 'converting ' + field + ' to array');
-                        var n = day[field].count;
-                        var temp = [];
-                        for ( var i = 0; i < n; i++ ) {
-                            var object = day[field].get(i);
-                            //console.log( 'appending ' + JSON.stringify(object) );
-                            temp.push( JSON.parse(JSON.stringify(object)) );
-                        }
-                        _day[field] = temp;
-                    } catch( err ) {
-                        console.log( 'error converting day into object : field ' + field + ' missing\n' + JSON.stringify(day) );
-                    }
-                }
-            });
-            //console.log( 'getting : ' + JSON.stringify(_day) );
-            return _day;
+        var query = {
+            day: date.getDate(),
+            month: date.getMonth(),
+            year: date.getFullYear()
         }
-        return undefined;
+        var finds = model.find(query);
+        return finds.length > 0 ? finds[ 0 ] : undefined
     }
     function getToday() {
         var today = new Date();
         var day = getDay( today );
         return day || createToday();
     }
-    function getTodayAsObject() {
-        var today = new Date();
-        var day = getDay( today ) || createToday();
-        return getDayAsObject(today);
-    }
-
     function createToday() {
         console.log( 'Daily.createToday')
         var today = new Date();
@@ -131,63 +112,12 @@ ListModel {
             notes: [],
             images: []
         }
-        Database.insert(collection,daily);
-        Database.save();
-        model.insert(0,daily);
-        return model.get(0);
-    }
-    //
-    // get the closest date to
-    //
-    function indexOf(date) {
-        if (model.count == 0)
-            return -1;
-
-        var newest = new Date(model.get(0).date);
-        var oldest = new Date(model.get(model.count - 1).date);
-        if (newest <= date)
-            return 0; //???
-
-        if (oldest >= date)
-            return model.count - 1;
-
-        var currDiff = 0;
-        var bestDiff = Math.abs(date.getTime() - newest.getTime());
-        var retval = 0;
-        for (var i = 0; i < model.count; i++) {
-            var d = new Date(model.get(i).date);
-            currDiff = Math.abs(d.getTime() - date.getTime());
-            if (currDiff < bestDiff) {
-                bestDiff = currDiff;
-                retval = i;
-            }
-            if (currDiff > bestDiff)
-                return retval;
-        }
-
-        return -1;
+        return model.add(daily);
     }
     //
     //
     //
-    function update( day ) {
-        var index = getDayIndex(new Date(day.date));
-        if ( index >= 0 ) {
-            //
-            // update database
-            //
-            var updatedDay = Database.update(collection, { _id: day._id }, day );
-            Database.save();
-            //
-            // update list
-            //
-            model.set(index,day);
-            //model.sync();
-            model.updated();
-        }
+    function indexOf( date ) {
+        return 0;
     }
-    //
-    //
-    //
-    property string collection: "daily"
 }
