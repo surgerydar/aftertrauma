@@ -1,0 +1,21 @@
+{
+  "name": "aftertrauma",
+  "version": "0.0.1",
+  "description": "AfterTrauma WebApp",
+  "main": "start.js",
+  "scripts": {
+    "start": "node --use_strict aftertrauma.js"
+  },
+  "author": "Jonathan Jones-Morris <jons@soda.co.uk>",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.0",
+    "body-parser": "^1.16.0",
+    "express": "^4.14.0",
+    "mongodb": "^2.1.18",
+    "nodemailer": "^4.0.1",
+    "pug": "^2.0.0-beta3",
+    "socket.io": "^1.7.2",
+    "ws": "^2.0.3"
+  }
+}

@@ -1,0 +1,44 @@
+html
+	head
+		title= title
+		link(rel='stylesheet', href='styles/mymusic.css')
+		meta( name='viewport' content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0' )
+	body
+		#container
+			header.content 
+				nav.content
+					.tab-button( onclick='mymusic.datasource.get("tracks");' ) tracks
+					.tab-button( onclick='mymusic.datasource.get("artists");' ) artists
+					.tab-button( onclick='mymusic.datasource.get("albums");' ) albums
+					form#search-wrapper( action='' )
+						input#search( type='search' placeholder='search' )
+			#player
+				.player-group
+					img.button#player-button.disabled( src='images/ui/play.png' )
+					input#player-progress.disabled( type='range', value='0' )
+					input#player-volume( type='range', value='100', min='0', max='100' )
+				.player-group
+					img.button#playlist-previous( src='images/ui/previous.png' )
+					#playlist-nowplaying
+					a#playlist-download-link
+						img.button#playlist-download.disabled( src='images/ui/download.png' )
+					img.button#playlist-next( src='images/ui/next.png' )
+					img.button#playlist-shuffle.disabled( src='images/ui/shuffle.png' )
+			main.content
+				.list_scroller#scrollview
+				#filedrag
+		script(src='javascripts/id3.js')
+		script(src='javascripts/mymusic.js')
+		script(src='javascripts/mymusic.rest.js')
+		script(src='javascripts/mymusic.player.js')
+		script(src='javascripts/mymusic.playlist.js')
+		script(src='javascripts/mymusic.scrollview.js')
+		script(src='javascripts/mymusic.scrolldelegate.js')
+		script(src='javascripts/mymusic.scrolldatasource.js')
+		script(src='javascripts/mymusic.mp3parser.js')
+		script(src='javascripts/mp3-parser/lib/lib.js')
+		script(src='javascripts/mp3-parser/lib/xing.js')
+		script(src='javascripts/mp3-parser/lib/id3v2.js')
+		script(src='javascripts/mp3-parser/main.js')
+		script init();
+					
