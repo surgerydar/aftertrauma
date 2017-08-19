@@ -38,7 +38,13 @@ AfterTrauma.Page {
                 anchors.right: parent.right
                 anchors.margins: 16
                 fillMode: Image.PreserveAspectFit
-                source: profile && profile.avatar ? 'file://' + SystemUtils.documentDirectory() + '/' + profile.avatar : "icons/add.png"
+                source: profile && profile.avatar ? /*'file://' + SystemUtils.documentDirectory() + '/' + */profile.avatar : "icons/add.png"
+                //source: "icons/add.png"
+                onStatusChanged: {
+                    if( status === Image.Error ) {
+                        source = "icons/add.png";
+                    }
+                }
                 //
                 //
                 //
@@ -76,6 +82,10 @@ AfterTrauma.Page {
                 anchors.right: parent.right
                 anchors.margins: 16
                 wrapMode: Text.WordWrap
+                inputMethodHints: Qt.ImhNoAutoUppercase
+                validator: RegExpValidator {
+                    regExp: /[a-z,]{6,}/
+                }
                 placeholderText: "Tags"
                 text: profile && profile.tags ? profile.tags.join() : ""
                 onTextChanged: {
@@ -114,16 +124,19 @@ AfterTrauma.Page {
                         if ( profile ) {
                             for ( var key in profile ) {
                                 userProfile[ key ] = profile[ key ];
+                                //
+                                // save to server
+                                //
+                                var command = {
+                                    command: 'updateprofile',
+                                    profile: profile
+                                };
+                                console.log('updating profile: ' + JSON.stringify(profile));
+                                profileChannel.send(command);
                             }
+                        } else {
+                            stack.pop();
                         }
-                        //
-                        // save to server
-                        //
-                        var command = {
-                            command: 'updateprofile',
-                            profile: profile
-                        };
-                        profileChannel.send(command);
                     }
                 }
             }
@@ -139,9 +152,11 @@ AfterTrauma.Page {
     Connections {
         target: ImagePicker
         onImagePicked: {
-            avatar.source = 'file://' + url;
+            var encoded = ImageUtils.urlEncode(url,64,64);
+            avatar.source = encoded;
             if( profile ) {
-                profile.avatar = url.substring(url.lastIndexOf('/')+1,url.length);
+                profile.avatar = encoded;
+                //profile.avatar = url.substring(url.lastIndexOf('/')+1,url.length);
             }
         }
     }

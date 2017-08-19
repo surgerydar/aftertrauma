@@ -9,6 +9,7 @@
 #include "databaselist.h"
 #include "websocketchannel.h"
 #include "guidgenerator.h"
+#include "imageutils.h"
 
 int main(int argc, char *argv[])
 {
@@ -30,6 +31,7 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("Database", Database::shared());
     engine.rootContext()->setContextProperty("ImagePicker", ImagePicker::shared());
     engine.rootContext()->setContextProperty("SystemUtils", SystemUtils::shared());
+    engine.rootContext()->setContextProperty("ImageUtils", ImageUtils::shared());
     engine.rootContext()->setContextProperty("JSONFile", JSONFile::shared());
     //
     //
