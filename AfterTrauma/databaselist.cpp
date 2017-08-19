@@ -64,11 +64,13 @@ void DatabaseList::load() {
         if ( doc.isArray() ) {
             qDebug() << "DatabaseList : read database";
             QVariantList objects = doc.array().toVariantList();
+            beginResetModel();
             for ( auto& object : objects ) {
                 m_objects.append(object.value<QVariantMap>());
             }
-            emit dataChanged(createIndex(0,0),createIndex(m_objects.size()-1,0));
-            emit countChanged();
+            endResetModel();
+            //emit dataChanged(createIndex(0,0),createIndex(m_objects.size()-1,0));
+            //emit countChanged();
         } else {
             if ( parseError.error != QJsonParseError::NoError ) {
                 emit error("open",parseError.errorString());
@@ -105,20 +107,24 @@ void DatabaseList::save() {
 //
 void DatabaseList::clear() {
     if ( m_objects.size() > 0 ) {
-        int objectCount = m_objects.size();
+        //int objectCount = m_objects.size();
+        beginResetModel();
         m_objects.clear();
-        emit dataChanged(createIndex(0,0),createIndex(objectCount-1,0));
-        emit countChanged();
+        endResetModel();
+        //emit dataChanged(createIndex(0,0),createIndex(objectCount-1,0));
+        //emit countChanged();
     }
 }
 
 QVariant DatabaseList::add(QVariant o) {
     QVariantMap object = o.value<QVariantMap>();
     object["_id"] = QUuid::createUuid().toString();
+    //beginResetModel();
     m_objects.append(object);
     _sort();
-    emit dataChanged(createIndex(0,0),createIndex(m_objects.size()-1,0));
-    emit countChanged();
+    //endResetModel();
+    //emit dataChanged(createIndex(0,0),createIndex(m_objects.size()-1,0));
+    //emit countChanged();
     QVariantMap id;
     id["_id"] = object["_id"];
     return QVariant(id);
@@ -131,6 +137,7 @@ QVariant DatabaseList::update(QVariant q,QVariant u) {
     int count = m_objects.size();
     int minIndex = std::numeric_limits<int>::max();
     int maxIndex = std::numeric_limits<int>::min();
+    beginResetModel();
     for ( int i = 0; i < count; i++ ) {
         if ( _match(m_objects[i],query) ) {
             if ( i < minIndex ) minIndex = i;
@@ -141,16 +148,20 @@ QVariant DatabaseList::update(QVariant q,QVariant u) {
             m_objects.replace(i,object);
         }
     }
+    endResetModel();
+    /*
     if ( matches.size() > 0 ) {
         qDebug() << "updated from : " << minIndex << " : to : " << maxIndex;
         emit dataChanged(createIndex(minIndex,0),createIndex(maxIndex,0));
     }
+    */
     return QVariant(matches);
 }
 
 QVariant DatabaseList::remove(QVariant q) {
     QVariantMap query = q.value<QVariantMap>();
     QVariantList matches;
+    beginResetModel();
     for ( int i = 0; i < m_objects.size(); ) {
         if ( _match(m_objects[i],query) ) {
             matches.append(QVariantMap({{"_id",m_objects[i]["_id"]}}));
@@ -159,10 +170,13 @@ QVariant DatabaseList::remove(QVariant q) {
             i++;
         }
     }
+    endResetModel();
+    /*
     if ( matches.size() > 0 ) {
         emit dataChanged(createIndex(0,0),createIndex(m_objects.size()-1,0));
         emit countChanged();
     }
+    */
     return QVariant(matches);
 }
 
@@ -188,8 +202,10 @@ QVariant DatabaseList::get(int i) {
 void DatabaseList::sort(QVariant s) {
     if ( m_sort != s ) {
         m_sort = s.value<QVariantMap>();
+        beginResetModel();
         _sort();
-        emit dataChanged(createIndex(0,0),createIndex(m_objects.size()-1,0));
+        endResetModel();
+        //emit dataChanged(createIndex(0,0),createIndex(m_objects.size()-1,0));
     }
 }
 //

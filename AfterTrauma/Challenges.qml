@@ -11,6 +11,7 @@ DatabaseList {
     //
     Component.onCompleted: {
         if ( count <= 0 ) {
+            console.log( 'generating challenge test data');
             //
             // test data
             //

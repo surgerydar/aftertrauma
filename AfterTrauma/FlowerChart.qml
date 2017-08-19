@@ -15,6 +15,12 @@ Canvas {
         var ctx = getContext("2d");
         Flower.draw(ctx,stack.depth===1);
     }
+    onEnabledChanged: {
+        if ( enabled ) {
+            generateData();
+            setCurrentDate(Date.now());
+        }
+    }
     //
     //
     //
@@ -71,6 +77,7 @@ Canvas {
     Connections {
         target: dailyModel
         onDataChanged: {
+            if ( !enabled ) return;
             console.log( 'FlowerChart dataChanged : currentDate : ' + currentDate );
             generateData();
             Flower.setCurrentDate(currentDate);

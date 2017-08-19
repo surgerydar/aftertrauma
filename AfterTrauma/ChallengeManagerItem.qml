@@ -17,7 +17,9 @@ AfterTrauma.EditableListItem {
         width: parent.width
         anchors.top: parent.top
         anchors.bottom: parent.bottom
-
+        //
+        //
+        //
         AfterTrauma.Background {
             id: background
             anchors.fill: parent
@@ -67,38 +69,16 @@ AfterTrauma.EditableListItem {
             font.pixelSize: 24
             color: Colours.almostWhite
         }
-        /*
-        MouseArea {
-            anchors.top: parent.top
-            anchors.left: parent.left
-            anchors.bottom: parent.bottom
-            anchors.right: countSpinner.left
-            anchors.rightMargin: 8
-            //
-            //
-            //
-            onClicked: {
-                container.clicked();
-            }
-        }
-        */
+        //
+        //
+        //
         AfterTrauma.SpinBox {
             id: countSpinner
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
             anchors.margins: 8
         }
-        //
-        //
-        //
-        SwipeDelegate.onClicked: {
-            container.clicked();
-        }
     }
-    //
-    //
-    //
-    signal clicked();
     //
     //
     //

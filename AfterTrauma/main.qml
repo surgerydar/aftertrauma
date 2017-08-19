@@ -23,6 +23,11 @@ ApplicationWindow {
     //
     // global models
     //
+    /*
+    Settings {
+        id: settingsModel
+    }
+    */
     Daily {
         id: dailyModel
     }
@@ -68,6 +73,7 @@ ApplicationWindow {
         anchors.topMargin: 16
         anchors.leftMargin: 8
         anchors.rightMargin: 8
+        enabled: false
     }
     //
     //
@@ -117,6 +123,13 @@ ApplicationWindow {
         width: appWindow.width
         height: appWindow.height
     }
+    Text {
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.margins: 2
+        text: "(" + parent.width + "," + parent.height + ")"
+    }
+
     //
     //
     //
@@ -125,22 +138,29 @@ ApplicationWindow {
         // TODO: check settings for first use
         //
         if ( SystemUtils.isFirstRun() ) {
+            console.log( 'installing' );
+            SystemUtils.install();
             intro.open();
+        } else {
+            //
+            //
+            //
+            stack.push("qrc:///Dashboard.qml");
+            flowerChart.enabled = true;
         }
-        //register.open();
-        //
-        //
-        //
-        //
-        //
-        //
-        stack.push("qrc:///Dashboard.qml");
     }
     //
     //
     //
     Connections {
         target: SystemUtils
+        //
+        //
+        //
+        onInstallComplete: {
+            stack.push("qrc:///Dashboard.qml");
+            flowerChart.enabled = true;
+        }
 
     }
     //
@@ -171,4 +191,5 @@ ApplicationWindow {
     // global properties
     //
     property bool loggedIn: false
+    property var userProfile: null
 }

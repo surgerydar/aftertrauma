@@ -49,12 +49,16 @@ Item {
         textVerticalAlignment: Text.AlignTop
         textSize: 12
         image: "icons/profile_icon.png"
-        text: "login or register"
+        text: userProfile ? userProfile.username : "login or register"
         //
         //
         //
         onClicked: {
-            register.show();
+            if ( loggedIn ) {
+                stack.push("qrc:///ProfileManager.qml", { profile: userProfile } );
+            } else {
+                register.open();
+            }
         }
     }
 }

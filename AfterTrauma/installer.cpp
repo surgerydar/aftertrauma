@@ -18,6 +18,7 @@ void Installer::run() {
     // copy factsheets
     //
     QDir factsheetSourceDirectory( applicationPath.append("/factsheets") );
+    qDebug() << "factsheet source: " << factsheetSourceDirectory;
     if ( !documentDirectory.exists("factsheets") ) {
         documentDirectory.mkdir("factsheets");
     }

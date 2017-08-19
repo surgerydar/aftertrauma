@@ -8,9 +8,11 @@ TextField {
     color: Colours.veryDarkSlate
     font.pixelSize: 24
     background: Rectangle {
-            anchors.fill: parent
-            radius: 4
-            color: Colours.veryLightSlate
-            border.color: "transparent"
-        }
+        id: background
+        anchors.fill: parent
+        radius: 4
+        color: Colours.veryLightSlate
+        border.color: "transparent"
+    }
+    property alias backgroundColour: background.color
 }

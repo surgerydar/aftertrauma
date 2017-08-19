@@ -152,6 +152,11 @@ db.connect(
     var authentication = require('./authentication.js');
     authentication.setup(wsr,db);
     //
+    // connect profile
+    //
+    var profile = require('./profile.js');
+    profile.setup(wsr,db);
+    //
     // create server
     //
     var httpx = require('./httpx');
