@@ -219,6 +219,7 @@ Popup {
                 anchors.right: parent.right
                 anchors.margins: 8
                 placeholderText: "username"
+                inputMethodHints: Qt.ImhNoAutoUppercase
                 validator: RegExpValidator {
                     regExp: /[0-9a-zA-Z]{6,}/
                 }
