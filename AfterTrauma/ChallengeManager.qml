@@ -78,6 +78,9 @@ AfterTrauma.Page {
             onClicked: {
                 stack.push( "qrc:///ChallengeBuilder.qml", {source: challengeModel.get(index)});
             }
+            onRemove: {
+                challengeModel.remove({_id:challengeModel.get(index)._id});
+            }
         }
         add: Transition {
             NumberAnimation { properties: "y"; from: challenges.height; duration: 250 }

@@ -13,6 +13,7 @@ SwipeDelegate {
     //
     //
     leftPadding: 0
+    rightPadding: 4
     //
     //
     //
@@ -36,6 +37,10 @@ SwipeDelegate {
         background: Rectangle {
             color: Colours.red
         }
-        SwipeDelegate.onClicked: listView.model.remove(index)
+        SwipeDelegate.onClicked: container.remove();
     }
+    //
+    //
+    //
+    signal remove()
 }

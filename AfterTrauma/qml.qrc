@@ -102,5 +102,7 @@
         <file>SearchItem.qml</file>
         <file>ProfileManager.qml</file>
         <file>controls/EditableListItem.qml</file>
+        <file>Settings.qml</file>
+        <file>Help.qml</file>
     </qresource>
 </RCC>

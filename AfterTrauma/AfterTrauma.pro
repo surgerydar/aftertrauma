@@ -1,4 +1,4 @@
-QT += qml quick multimedia
+QT += qml quick multimedia websockets
 
 CONFIG += c++11
 
@@ -8,7 +8,10 @@ SOURCES += main.cpp \
     installer.cpp \
     jsonfile.cpp \
     database.cpp \
-    databaselist.cpp
+    databaselist.cpp \
+    websocketvalidator.cpp \
+    websocketchannel.cpp \
+    guidgenerator.cpp
 
 RESOURCES += qml.qrc
 
@@ -77,10 +80,19 @@ ios {
 
 }
 
+osx {
+    factsheet.files = ./factsheets
+    factsheet.path = Contents/MacOS/
+    QMAKE_BUNDLE_DATA += factsheet
+}
+
 HEADERS += \
     imagepicker.h \
     systemutils.h \
     installer.h \
     jsonfile.h \
     database.h \
-    databaselist.h
+    databaselist.h \
+    websocketvalidator.h \
+    websocketchannel.h \
+    guidgenerator.h

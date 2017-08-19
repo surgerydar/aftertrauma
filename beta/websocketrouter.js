@@ -51,6 +51,12 @@ WebSocketRouter.prototype.message = function( wss, ws, message ) {
                 this.jsonRoutes[ command.command ]( wss, ws, command );
             } else {
                 console.log( 'WebSocketRouter.message : unable to process message ' + message  );
+                let response = {
+                    command: command.command,
+                    status: 'ERROR',
+                    error: 'Unknown command'
+                };
+                ws.send(JSON.stringify(response));
             }
         } else {
             //
@@ -62,10 +68,18 @@ WebSocketRouter.prototype.message = function( wss, ws, message ) {
                 this.binaryRoutes[ selector ]( wss, ws, message );
             } else {
                 console.log( 'WebSocketRouter.message : unable to process binary message ' + selector  );
+                //
+                // TODO: binary 'unknown command' error response
+                //
             }
         }
     } catch( error ) {
         console.log( 'WebSocketRouter.message : ' + error + ' : unable to process message ' + typeof message === 'string' ? message : '' );
+        let response = {
+            command: 'error',
+            message: error + ' : unable to process message ' + typeof message === 'string' ? message : message.toString('ascii',0,4)
+        }
+        ws.send(JSON.stringify(response));
     }
 }
 

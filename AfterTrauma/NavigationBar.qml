@@ -25,6 +25,9 @@ Item {
         anchors.right: chatButton.left
         anchors.margins: 4
         icon: "icons/help.png"
+        onClicked: {
+            stack.push("qrc:///Help.qml");
+        }
     }
     NavigationButton {
         id: chatButton

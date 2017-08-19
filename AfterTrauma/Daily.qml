@@ -14,6 +14,7 @@ DatabaseList {
             //
             // generate test data if database is empty
             //
+            console.log( 'generating daily test data');
             var week = 1000 * 60 * 60 * 24 * 7;
             for ( var i = 0; i < 52; i++ ) {
                 var day = new Date(Date.now()-(week*i));
