@@ -35,7 +35,7 @@ Authentication.prototype.register = function( wss, ws, command ) {
         _db.putUser(user).then(function( response ) {
             command.status = 'OK';
             command.response = { // TODO: findout why putUser is adding _id to user
-                id: user.id,
+                id: command.id,
                 username: user.username,
                 email: user.email,
                 password: user.password,
@@ -65,8 +65,9 @@ Authentication.prototype.login = function( wss, ws, command ) {
         _db.validateUser(user).then(function( response ) {
             //
             // filter response
-            // TODO: should probably happen in the db call
+            // TODO: should probably happen in the db call use projection to exclude password
             //
+            user.id = response.id;
             user.email = response.email;
             user.avatar = response.avatar;
             user.profile = response.profile;

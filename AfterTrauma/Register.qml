@@ -320,7 +320,7 @@ Popup {
         //
         //
         onReceived: {
-            console.log( message );
+            busyIndicator.running = false;
             var command = JSON.parse(message); // TODO: channel should probably emit object
             if ( command.command === 'register' || command.command === 'login' ) {
                 if( command.status === "OK" ) {
@@ -334,6 +334,13 @@ Popup {
                                      ] );
                 }
             }
+        }
+        onError: {
+            busyIndicator.running = false;
+            errorDialog.show( '<h1>Network error</h1><br/>' + error, [
+                                 { label: 'try again', action: function() {} },
+                                 { label: 'forget about it', action: function() { container.close(); } },
+                             ] );
         }
     }
     Component.onCompleted: {
@@ -354,6 +361,7 @@ Popup {
         if ( target === register ) {
             console.log( 'validating registration' );
             if ( username.acceptableInput && email.acceptableInput && password.acceptableInput && confirmPassword.text === password.text ) {
+                busyIndicator.running = true;
                 user = {
                     command: 'register',
                     username: username.text,

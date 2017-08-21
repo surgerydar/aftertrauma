@@ -46,16 +46,16 @@ Db.prototype.putUser = function( data ) {
             db.collection( 'users' ).findOne({$or: [ { id:data.id }, { username:data.username }, { email:data.email } ]},function(err,user) {
                 if ( user ) {
                     if ( user.id === data.id ) {
-                        console.log( 'db.putUser : user id exists' )
+                        console.log( 'db.putUser : user id exists' );
                         reject( 'a user with this id is already registered' ); // this shouldn't happen
                     } else {
-                        console.log( 'db.putUser : user exists' )
+                        console.log( 'db.putUser : user exists' );
                         reject( 'user already registered with this email or password' );
                     }
                 } else {
                     db.collection( 'users' ).insertOne(data,function(err,result) {
                        if ( err ) {
-                           console.log( 'db.putUser : error : ' + err )
+                           console.log( 'db.putUser : error : ' + err );
                            reject( err );
                        } else {
                            console.log( 'db.putUser : ok' );
@@ -153,6 +153,27 @@ Db.prototype.getUser = function( id ) {
     });
 }
 
+Db.prototype.findUsers = function( query, projection, sort ) {
+    var db = this.db;
+    return new Promise( function( resolve, reject ) {
+         try {
+             db.collection('users').find(query,projection||{}).sort(sort||{}).toArray( function( err, result ) {
+                if ( err ) {
+                    console.log( err );
+                    reject( err );
+                } else if( result ) {
+                    resolve( result );
+                } else {
+                    reject( { error: 'unable to find users : ' + query } );
+                }
+             });
+        } catch( err ) {
+            console.log( err );
+            reject( err );
+        }
+    });
+}
+
 Db.prototype.getUserByEmail = function( email ) {
     var db = this.db;
     return new Promise( function( resolve, reject ) {
@@ -238,6 +259,99 @@ Db.prototype.getGroupList = function() {
 }
 //
 //
+//
+
+Db.prototype.putChat = function( chat ) {
+    var db = this.db;
+    return new Promise( function( resolve, reject ) {
+        try {
+            db.collection( 'chats' ).insertOne(chat,function(err,result) {
+               if ( err ) {
+                   reject( err );
+               } else {
+                   resolve( 'saved' );
+               }
+            });
+        } catch( err ) {
+            console.log( err );
+            reject( err );
+        }
+    });
+}
+Db.prototype.updateChat = function( id, chat ) {
+    var db = this.db;
+    return new Promise( function( resolve, reject ) {
+         try {
+             db.collection('chats').findOneAndUpdate( { id: id }, chat, function( err, result ) {
+                if ( err ) {
+                    console.log( err );
+                    reject( err );
+                } else {
+                    resolve( result );
+                }
+             });
+        } catch( err ) {
+            console.log( err );
+            reject( err );
+        }
+    });
+}
+Db.prototype.deleteChat = function( id ) {
+    var db = this.db;
+    return new Promise( function( resolve, reject ) {
+        try {
+            db.collection( 'chats' ).deleteOne({id:id},function(err,result) {
+               if ( err ) {
+                   reject( err );
+               } else {
+                   resolve( 'deleted' );
+               }
+            });
+        } catch( err ) {
+            console.log( err );
+            reject( err );
+        }
+    });
+}
+Db.prototype.getChat = function( id ) {
+    var db = this.db;
+    return new Promise( function( resolve, reject ) {
+         try {
+             db.collection('chats').findOne( { id: id }, function( err, result ) {
+                if ( err ) {
+                    console.log( err );
+                    reject( err );
+                } else {
+                    resolve( result );
+                }
+             });
+        } catch( err ) {
+            console.log( err );
+            reject( err );
+        }
+    });
+}
+Db.prototype.findChats = function( query, order ) {
+    var db = this.db;
+    return new Promise( function( resolve, reject ) {
+        try {
+            db.collection('chats').find(query).sort(sort||{}).toArray( function( err, result ) {
+                if ( err ) {
+                    console.log( err );
+                    reject( err );
+                } else {
+                     resolve( result );
+                }
+            });  
+        } catch( err ) {
+            console.log( err );
+            reject( err );
+        }
+    });
+}
+
+//
+// TODO: replace entities with specific collections
 //
 Db.prototype.putEntity = function( entity ) {
     var db = this.db;
@@ -411,7 +525,7 @@ Db.prototype.updateConversation = function( id, snippet ) {
 //
 //
 //
-
+/*
 Db.prototype.findUsers = function( filter ) {
     var db = this.db;
     return new Promise( function( resolve, reject ) {
@@ -434,6 +548,7 @@ Db.prototype.findUsers = function( filter ) {
         }
     });
 }
+
 Db.prototype.findUserGroups = function( userId, filter ) {
     var db = this.db;
     return new Promise( function( resolve, reject ) {
@@ -462,6 +577,7 @@ Db.prototype.findUserGroups = function( userId, filter ) {
         }
     });
 }
+*/
 //
 //
 //

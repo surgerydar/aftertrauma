@@ -131,7 +131,7 @@ db.connect(
         });
     });
     app.get('/testemail/:message', function(req,res) {
-        mailer.send( 'jons@soda.co.uk', 'Testing collaborative sketch at Ravensbourne', req.params.message ).then( function( response ) {
+        mailer.send( 'jons@soda.co.uk', 'Testing AfterTrauma', req.params.message ).then( function( response ) {
             res.json( {status: 'OK'} );
         }).catch( function( error ) {
             res.json( {status: 'ERROR', message: JSON.stringify( error ) } );

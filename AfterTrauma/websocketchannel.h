@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QWebSocket>
+#include <QAbstractSocket>
 
 class WebSocketChannel : public QObject
 {
@@ -15,7 +16,9 @@ public:
 
 signals:
     void received(QString message);
-
+    void error(QString error);
+    void opened();
+    void closed();
 public slots:
     void open();
     void close();
@@ -29,6 +32,7 @@ private slots:
     void connected();
     void disconnected();
     void textMessageReceived(const QString& message);
+    void socketError(QAbstractSocket::SocketError error);
 
 private:
     QString     m_url;

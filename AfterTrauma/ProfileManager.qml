@@ -38,7 +38,7 @@ AfterTrauma.Page {
                 anchors.right: parent.right
                 anchors.margins: 16
                 fillMode: Image.PreserveAspectFit
-                source: profile && profile.avatar ? /*'file://' + SystemUtils.documentDirectory() + '/' + */profile.avatar : "icons/add.png"
+                source: profile && profile.avatar ? profile.avatar : "icons/add.png"
                 //source: "icons/add.png"
                 onStatusChanged: {
                     if( status === Image.Error ) {
@@ -131,7 +131,7 @@ AfterTrauma.Page {
                                     command: 'updateprofile',
                                     profile: profile
                                 };
-                                console.log('updating profile: ' + JSON.stringify(profile));
+                                busyIndicator.running = true;
                                 profileChannel.send(command);
                             }
                         } else {
@@ -152,7 +152,7 @@ AfterTrauma.Page {
     Connections {
         target: ImagePicker
         onImagePicked: {
-            var encoded = ImageUtils.urlEncode(url,64,64);
+            var encoded = ImageUtils.urlEncode(url, 256, 256);
             avatar.source = encoded;
             if( profile ) {
                 profile.avatar = encoded;
@@ -162,7 +162,6 @@ AfterTrauma.Page {
     }
     StackView.onActivated: {
         if ( profile ) {
-            console.log( 'profile : ' + JSON.stringify(profile) );
         } else {
             console.log( 'no profile!' );
         }
@@ -181,6 +180,7 @@ AfterTrauma.Page {
         //
         //
         onReceived: {
+            busyIndicator.running = false;
             var command = JSON.parse(message); // TODO: channel should probably emit object
             if ( command.command === 'updateprofile' ) {
                 if( command.status === "OK" ) {
