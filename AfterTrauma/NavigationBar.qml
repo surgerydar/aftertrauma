@@ -36,7 +36,7 @@ Item {
         anchors.margins: 4
         icon: "icons/chat.png"
         onClicked: {
-            stack.push("qrc:///Chat.qml");
+            stack.push("qrc:///ChatManager.qml");
         }
     }
     NavigationButton {

@@ -1,5 +1,6 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.1
+import SodaControls 1.0
 
 import "controls" as AfterTrauma
 import "colours.js" as Colours
@@ -32,49 +33,29 @@ AfterTrauma.Page {
             to: model.to
         }
     }
-    /*
     //
     //
     //
     footer: Item {
-        height: Math.max( addMessage.height, messageText.contentHeight ) + 64
+        height: 128
         anchors.left: parent.left
         anchors.right: parent.right
         //
         //
         //
-        AfterTrauma.TextArea {
-            id: messageText
-            height: contentHeight + 16
-            anchors.top: parent.top
-            anchors.left: parent.left
-            //anchors.bottom: parent.bottom
-            anchors.right: addMessage.left
-            anchors.leftMargin: 8
-            anchors.rightMargin: 4
-            anchors.bottomMargin: 28
-        }
         AfterTrauma.Button {
-            id: addMessage
+            id: addChat
             anchors.top: parent.top
             anchors.right: parent.right
             anchors.rightMargin: 8
             backgroundColour: "transparent"
             image: "icons/add.png"
             onClicked: {
-                if ( messageText.text.length > 0 ) {
-                    messages.model.append( { from: "me", message: messageText.text } );
-                    messageText.text = "";
-                }
-            }
-        }
-        Behavior on height {
-            NumberAnimation {
-                duration: 50
+                stack.push("qrc:///ProfileList.qml");
             }
         }
     }
-    */
+
     StackView.onActivated: {
         var data = [
                     { to: "jack", message: "Hi how are you?" },
@@ -83,5 +64,22 @@ AfterTrauma.Page {
         data.forEach(function(datum) {
             chats.model.append(datum);
         });
+        //
+        //
+        //
+        chatChannel.open();
+
+    }
+    StackView.onDeactivated: {
+
+        chatChannel.close();
+    }
+
+    //
+    //
+    //
+    WebSocketChannel {
+        id: chatChannel
+
     }
 }

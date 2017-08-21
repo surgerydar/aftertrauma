@@ -123,6 +123,12 @@ ApplicationWindow {
         width: appWindow.width
         height: appWindow.height
     }
+    AfterTrauma.BusyIndicator {
+        id: busyIndicator
+        anchors.centerIn: parent
+        running: false
+    }
+
     Text {
         anchors.top: parent.top
         anchors.left: parent.left
