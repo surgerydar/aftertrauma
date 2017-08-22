@@ -40,11 +40,11 @@ Item {
     //
     //
     Text {
-        id: toText
+        id: withUsernameText
         anchors.top: parent.top
         anchors.left: avatarImage.right
         anchors.bottom: parent.bottom
-        anchors.right: parent.right
+        anchors.right: acceptButton.visible ? acceptButton.left : parent.right
         anchors.margins: 8
         //
         //
@@ -60,9 +60,39 @@ Item {
         horizontalAlignment: Text.AlignLeft
         verticalAlignment: Text.AlignVCenter
     }
+    MouseArea {
+        anchors.fill: parent
+        enabled: container.status === "active"
+        onClicked: {
+            chat();
+        }
+    }
+    //
+    //
+    //
+    AfterTrauma.Button {
+        id: acceptButton
+        anchors.top: parent.top
+        anchors.right: parent.right
+        anchors.margins: 8
+        text: "Accept"
+        backgroundColour: "transparent"
+        onClicked: {
+            accept();
+        }
+    }
+    //
+    //
+    //
+    signal accept()
+    signal chat()
     //
     //
     //
     property alias avatar: avatarImage.source
-    property alias to: toText.text
+    property alias withUsername: withUsernameText.text
+    property string to: ""
+    property string from: ""
+    property string status: ""
+    property alias showAccept: acceptButton.visible
 }

@@ -18,17 +18,18 @@ Item {
         width: 48
         height: width
         anchors.top: parent.top
-        anchors.left: from === "me" ? parent.left : undefined
-        anchors.right: from === "me" ? undefined : parent.right
+        anchors.left: from === userProfile.id ? parent.left : undefined
+        anchors.right: from === userProfile.id ? undefined : parent.right
         fillMode: Image.PreserveAspectFit
+        source: "https://aftertrauma.uk:4000/avatar/" + from;
     }
     //
     //
     //
     Item {
         anchors.fill: parent
-        anchors.leftMargin: from === "me" ? 56 : 0
-        anchors.rightMargin: from === "me" ? 0 : 56
+        anchors.leftMargin: from === userProfile.id ? 56 : 0
+        anchors.rightMargin: from === userProfile.id ? 0 : 56
         //
         //
         //
@@ -52,6 +53,5 @@ Item {
     //
     //
     property alias message: messageText.text
-    property alias avatar: avatarImage.source
     property string from: ""
 }
