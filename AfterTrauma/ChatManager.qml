@@ -31,6 +31,32 @@ AfterTrauma.Page {
             anchors.left: parent.left
             anchors.right: parent.right
             to: model.to
+            from: model.from
+            withUsername: model.to === userProfile.id ? model.fromUsername : model.toUsername
+            avatar: "https://aftertrauma.uk:4000/avatar/" + ( model.to === userProfile.id ? model.from : model.to )
+            status: model.status || "unknown"
+            showAccept: model.status === "invite" && model.to === userProfile.id
+            onAccept: {
+                var command = {
+                    command: 'acceptinvite',
+                    id: model.id,
+                    from: model.from,
+                    to: model.to,
+                    fromUsername: model.fromUsername,
+                    toUsername: model.toUsername
+                };
+                console.log( 'accepting invite : ' + JSON.stringify(command) );
+                chatChannel.send(command);
+            }
+            onChat: {
+                var properties = {
+                    chatId:model.id,
+                    messages:model.messages||[],
+                    recipient: model.to === userProfile.id ? model.from : model.to,
+                    recipientUsername:model.to === userProfile.id ? model.fromUsername : model.toUsername
+                };
+                stack.push( "qrc:///Chat.qml", properties);
+            }
         }
     }
     //
@@ -57,13 +83,6 @@ AfterTrauma.Page {
     }
 
     StackView.onActivated: {
-        var data = [
-                    { to: "jack", message: "Hi how are you?" },
-                    { to: "ellie", message: "Good thanks hbu?" }                ];
-        chats.model.clear();
-        data.forEach(function(datum) {
-            chats.model.append(datum);
-        });
         //
         //
         //
@@ -71,7 +90,6 @@ AfterTrauma.Page {
 
     }
     StackView.onDeactivated: {
-
         chatChannel.close();
     }
 
@@ -80,6 +98,70 @@ AfterTrauma.Page {
     //
     WebSocketChannel {
         id: chatChannel
+        url: "wss://aftertrauma.uk:4000"
+        //
+        //
+        //
+        onOpened: {
+            //
+            // go live
+            //
+            var command = {
+                command: 'golive',
+                id: userProfile.id,
+                username: userProfile.username
+            }
+            send( command );
+            //
+            // request chats
+            //
+            command = {
+                command: 'getuserchats',
+                id: userProfile.id
+            }
+            send( command );
+        }
+        onClosed: {
 
+        }
+        onReceived: {
+            //
+            // TODO: move this to global chatModel ????
+            //
+            var command = JSON.parse(message);
+            if ( command.command === 'getuserchats' ) {
+                if( command.status === "OK" ) {
+                    chats.model.clear();
+                    command.response.forEach(function(chat) {
+                        chats.model.append(chat);
+                    });
+                } else {
+                    console.log( 'error : ' + message );
+                    errorDialog.show( '<h1>Server says</h1><br/>' + ( typeof command.error === 'string' ? command.error : command.error.error ), [
+                                         { label: 'try again', action: function() {} },
+                                         { label: 'forget about it', action: function() { stack.pop(); } },
+                                     ] );
+                }
+            } else if ( command.command === 'sendinvite' ) {
+                if ( command.to === userProfile.id ) {
+                    chats.model.append( command );
+                }
+            } else if ( command.command === 'acceptinvite' ) {
+                //
+                // TODO: possible error here
+                //
+                if ( command.to === userProfile.from ) {
+                    //chats.model.append( command );
+                    var count = chats.model.count;
+                    for ( var i = 0; i < count; i++ ) {
+                        var chat = chats.model.get(i);
+                        if ( chat.id === command.id ) {
+                            chats.model.set({status: "accepted"});
+                            break;
+                        }
+                    }
+                }
+            }
+        }
     }
 }

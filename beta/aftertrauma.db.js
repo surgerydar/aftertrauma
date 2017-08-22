@@ -423,25 +423,10 @@ Db.prototype.getDay = function( id ) {
     });
 }
 Db.prototype.findDays = function( query, projection, order, limit ) {
-    var db = this.db;
-    return new Promise( function( resolve, reject ) {
-        try {
-            db.collection( 'days' ).find(query||{},projection||{}).sort(sort||{}).limit(limit||0).toArray( function( err, result ) {
-                if ( err ) {
-                    console.log( err );
-                    reject( err );
-                } else {
-                     resolve( result );
-                }
-            });  
-        } catch( err ) {
-            console.log( err );
-            reject( err );
-        }
-    });
+    return this.find( 'days', query, projection, order, limit );
 }
 //
-//
+// generic function
 //
 Db.prototype.drop = function( collection ) {
 	var db = this.db;
@@ -449,17 +434,94 @@ Db.prototype.drop = function( collection ) {
 		try {
 			db.collection( collection ).drop(function(err,result) {
 				if ( err ) {
+                    console.log( 'drop : ' + collection + ' : error : ' + err );
 					reject( err );
 				} else {
 					resolve( result );
 				}
 			});
 		} catch( err ) {
+            console.log( 'drop : ' + collection + ' : error : ' + err );
 			reject( err );
 		}
 	});
 }
 
+Db.prototype.insert = function( collection, day ) {
+    var db = this.db;
+    return new Promise( function( resolve, reject ) {
+        try {
+            db.collection( collection ).insertOne( day,function(err,result) {
+               if ( err ) {
+                    console.log( 'insert : ' + collection + ' : error : ' + err );
+                   reject( err );
+               } else {
+                   resolve( result );
+               }
+            });
+        } catch( err ) {
+            console.log( 'insert : ' + collection + ' : error : ' + err );
+            reject( err );
+        }
+    });
+}
+
+Db.prototype.update = function( collection, id, update ) {
+    var db = this.db;
+    return new Promise( function( resolve, reject ) {
+         try {
+             db.collection( collection ).findOneAndUpdate( { id: id }, update, function( err, result ) {
+                if ( err ) {
+                    console.log( 'update : ' + collection + ' : error : ' + err );
+                    reject( err );
+                } else {
+                    resolve( result );
+                }
+             });
+        } catch( err ) {
+            console.log( 'update : ' + collection + ' : error : ' + err );
+            reject( err );
+        }
+    });
+}
+
+Db.prototype.find = function( collection, query, projection, order, limit ) {
+    var db = this.db;
+    return new Promise( function( resolve, reject ) {
+        try {
+            db.collection( collection ).find(query||{},projection||{}).sort(order||{}).limit(limit||0).toArray( function( err, result ) {
+                if ( err ) {
+                    console.log( 'find : ' + collection + ' : error : ' + err );
+                    reject( err );
+                } else {
+                     resolve( result );
+                }
+            });  
+        } catch( err ) {
+            console.log( 'find : ' + collection + ' : error : ' + err );
+            reject( err );
+        }
+    });
+}
+
+Db.prototype.findOne = function( collection, query, projection ) {
+    var db = this.db;
+    return new Promise( function( resolve, reject ) {
+        try {
+            db.collection(collection).findOne(query,projection||{}, function( err, result ) {
+                if ( err ) {
+                    console.log( 'findOne : ' + collection + ' : error : ' + err );
+                    reject( err );
+                } else if( result ) {
+                    resolve( result );
+                }
+            });
+        } catch( err ) {
+            console.log( err );
+            reject( err );
+        }
+    });
+}
 
 module.exports = new Db();
 

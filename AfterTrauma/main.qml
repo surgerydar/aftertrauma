@@ -23,7 +23,7 @@ ApplicationWindow {
     //
     // global models
     //
-    /*
+    /* TODO:
     Settings {
         id: settingsModel
     }

@@ -1,18 +1,19 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.1
+import SodaControls 1.0
 
 import "controls" as AfterTrauma
 import "colours.js" as Colours
 
 AfterTrauma.Page {
+    id: container
     title: "CHAT"
-    subtitle: "Ellie"
     colour: Colours.darkPurple
     //
     //
     //
     ListView {
-        id: messages
+        id: messageList
         anchors.fill: parent
         anchors.leftMargin: 8
         anchors.rightMargin: 8
@@ -25,7 +26,8 @@ AfterTrauma.Page {
         //
         //
         //
-        model: ListModel {}
+        model: ListModel {
+        }
         //
         //
         //
@@ -33,7 +35,6 @@ AfterTrauma.Page {
             anchors.left: parent.left
             anchors.right: parent.right
             from: model.from
-            avatar: model.avatar || "icons/profile_icon.png"
             message: model.message
         }
         //
@@ -42,7 +43,7 @@ AfterTrauma.Page {
         add: Transition {
             NumberAnimation {
                 properties: "y"
-                from: messages.height
+                from: messageList.height
                 duration: 250
             }
 
@@ -78,9 +79,21 @@ AfterTrauma.Page {
             image: "icons/add.png"
             onClicked: {
                 if ( messageText.text.length > 0 ) {
-                    messages.model.append( { from: "me", message: messageText.text } );
+                    var message = { from: userProfile.id, message: messageText.text };
+                    messageList.model.append( message );
                     messageText.text = "";
-                    messages.positionViewAtEnd();
+                    messageList.positionViewAtEnd();
+                    //
+                    //
+                    //
+                    var command = {
+                        command: 'sendmessage',
+                        id: chatId,
+                        from: message.from,
+                        to: recipient,
+                        message: message.message
+                    };
+                    chatChannel.send(command);
                 }
             }
         }
@@ -90,17 +103,65 @@ AfterTrauma.Page {
             }
         }
     }
-
+    //
+    //
+    //
     StackView.onActivated: {
-        var data = [
-                    { from: "me", message: "Hi how are you?" },
-                    { from: "ellie", message: "Good thanks hbu?" },
-                    { from: "me", message: "Better for a good nights sleep" },
-                    { from: "ellie", message: "I'm aching all over" },
-                ];
-        messages.model.clear();
-        data.forEach(function(datum) {
-            messages.model.append(datum);
-        });
+        chatChannel.open();
+        if( messages ) {
+            try {
+                messages.forEach(function(message){
+                    messageList.model.append(message);
+                });
+            } catch( err ) {
+                var count = messages.count;
+                for ( var i = 0; i < count; i++ ) {
+                    messageList.model.append( messages.get(i) );
+                }
+            }
+        }
     }
+    StackView.onDeactivated: {
+        chatChannel.close();
+    }
+    //
+    //
+    //
+    WebSocketChannel {
+        id: chatChannel
+        url: "wss://aftertrauma.uk:4000"
+        //
+        //
+        //
+        onOpened: {
+            //
+            // go live
+            //
+            var command = {
+                command: 'golive',
+                id: userProfile.id,
+                username: userProfile.username
+            }
+            send( command );
+        }
+        onReceived: {
+            var command = JSON.parse(message);
+            if ( command === 'sendmessage' ) {
+                if ( command.id === chatId && command.status === 'OK' && command.from !== userProfile.id ) {
+                    //
+                    // TODO: sort by date
+                    //
+                    messageList.model.append( { from: command.from, message: command.message } );
+                    messageList.positionViewAtEnd();
+                }
+            }
+        }
+    }
+    //
+    //
+    //
+    property var messages: null
+    property alias recipientUsername: container.subtitle
+    property string recipient: ""
+    property string chatId: ""
 }

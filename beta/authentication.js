@@ -19,7 +19,7 @@ Authentication.prototype.setup = function( wsr, db ) {
 Authentication.prototype.register = function( wss, ws, command ) {
     console.log( 'Authentication.register : username:' + command.username + ' email:' + command.email + ' password:' + command.password );
     //
-    // create user
+    // create new user
     //
     var user = {
         id: command.id,
@@ -32,9 +32,10 @@ Authentication.prototype.register = function( wss, ws, command ) {
     };
     process.nextTick(function(){   
         console.log('registering user : ' + JSON.stringify(user));
-        _db.putUser(user).then(function( response ) {
+        _db.insert('users', user ).then(function( response ) {
+            console.log( 'inserted: ' + JSON.stringify(user) + ' : response:' + JSON.stringify(response) );
             command.status = 'OK';
-            command.response = { // TODO: findout why putUser is adding _id to user
+            command.response = { 
                 id: command.id,
                 username: user.username,
                 email: user.email,
@@ -44,7 +45,7 @@ Authentication.prototype.register = function( wss, ws, command ) {
                 tags: user.tags
             };
             ws.send(JSON.stringify(command));
-        }).catch( function( error ) {
+        }).catch(function(error){
             command.status = 'ERROR';
             command.error = error;
             ws.send(JSON.stringify(command));
@@ -54,26 +55,21 @@ Authentication.prototype.register = function( wss, ws, command ) {
 Authentication.prototype.login = function( wss, ws, command ) {
     console.log( 'Authentication.login : username:' + command.username + ' password:' + command.password );
     //
-    // create user
+    // find user
     //
-    var user = {
-        username: command.username,
-        password: command.password
-    };
     process.nextTick(function(){   
-        console.log('authenticating user : ' + JSON.stringify(user));
-        _db.validateUser(user).then(function( response ) {
-            //
-            // filter response
-            // TODO: should probably happen in the db call use projection to exclude password
-            //
-            user.id = response.id;
-            user.email = response.email;
-            user.avatar = response.avatar;
-            user.profile = response.profile;
-            user.tags = response.tags;
-            command.status = 'OK';
-            command.response = user;
+        _db.findOne('users', {$and: [ { username:command.username }, { password:command.password } ]}, { password: 0 } ).then(function( response ) {
+            if ( response === null ) {
+                command.status = 'ERROR';
+                command.error = 'username or password incorrect';
+            } else {
+                //
+                // filter response
+                //
+                command.status = 'OK';
+                command.response = response;
+            }
+            console.log('authentications response : ' + JSON.stringify( response ) );
             ws.send(JSON.stringify(command));
         }).catch( function( error ) {
             command.status = 'ERROR';

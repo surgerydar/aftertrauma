@@ -37,12 +37,10 @@ function removeFromLive( id ) {
     }    
 }
 function sendToLive( id, message ) {
-    
     let live = findLive( id );
     if ( live ) {
         live.ws.send( JSON.stringify( message ) );
     }
-    
 }
 //
 //
@@ -60,6 +58,24 @@ Chat.prototype.setup = function( wsr, db ) {
     }
 }
 
+Chat.prototype.getuserchats = function( wss, ws, command ) {
+    console.log( 'Chat.getuserchats : user id:' + command.id );
+    //
+    // add chat to db
+    //
+    process.nextTick(function(){   
+        _db.find('chats',{$or:[{to: command.id},{from: command.id}]}).then(function( response ) {
+            command.status = 'OK';
+            command.response = response;
+            ws.send(JSON.stringify(command));
+        }).catch( function( error ) {
+            command.status = 'ERROR';
+            command.error = error;
+            ws.send(JSON.stringify(command));
+        });
+    }); 
+}
+
 Chat.prototype.sendinvite = function( wss, ws, command ) {
     console.log( 'Chat.sendinvite : from id:' + command.from + 'from username:' + command.fromUsername + ' to id:' + command.to + ' to username:' + command.toUsername );
     //
@@ -73,7 +89,7 @@ Chat.prototype.sendinvite = function( wss, ws, command ) {
             fromUsername: command.fromUsername,
             to: command.to,
             toUsername: command.toUsername,
-            status: "pending"
+            status: "invite"
         };
         _db.putChat(chat).then(function( response ) {
             command.status = 'OK';
@@ -89,10 +105,6 @@ Chat.prototype.sendinvite = function( wss, ws, command ) {
             ws.send(JSON.stringify(command));
         });
     }); 
-    //
-    // relay
-    //
-    
 }
 
 Chat.prototype.acceptinvite = function( wss, ws, command ) {
@@ -101,11 +113,7 @@ Chat.prototype.acceptinvite = function( wss, ws, command ) {
     // update chat status
     //
     process.nextTick(function(){   
-        //console.log('updating user : ' + JSON.stringify(command.Chat));
-        var chat = {
-            status: "active"
-        };
-        _db.updateChat(command.id,chat).then(function( response ) {
+        _db.update('chats', command.id, {$set:{status:"active"}}).then(function( response ) {
             command.status = 'OK';
             command.response = response;
             ws.send(JSON.stringify(command));
@@ -117,6 +125,26 @@ Chat.prototype.acceptinvite = function( wss, ws, command ) {
         });
     }); 
 }
+
+Chat.prototype.sendmessage = function( wss, ws, command ) {
+    console.log( 'Chat.sendmessage : chat id:' + command.id + 'from id:' + command.from + ' message:' + command.message );
+    //
+    // update chat status
+    //
+    process.nextTick(function(){   
+        _db.update('chats', command.id, {$push: { messages: { from: command.from, message: command.message } } }).then(function( response ) {
+            command.status = 'OK';
+            command.response = response;
+            ws.send(JSON.stringify(command));
+            sendToLive( command.to, command );
+        }).catch( function( error ) {
+            command.status = 'ERROR';
+            command.error = error;
+            ws.send(JSON.stringify(command));
+        });
+    }); 
+}
+
 
 Chat.prototype.golive = function( wss, ws, command ) {
     console.log( 'Chat.golive : id:' + command.id + ' username:' + command.username );
