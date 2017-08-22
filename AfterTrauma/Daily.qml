@@ -121,4 +121,24 @@ DatabaseList {
     function indexOf( date ) {
         return 0;
     }
+    function indexOfFirstDayBefore( d ) {
+        var date = d.getTime();
+        for ( var i = 0; i < count; i++ ) {
+            var day = get(i);
+            if ( day.date < date ) {
+                return Math.min( i, count - 1);
+            }
+        }
+        return count - 1;
+    }
+    function indexOfFirstDayAfter( d ) {
+        var date = d.getTime();
+        for ( var i = count - 1; i >= 0; i-- ) {
+            var day = get(i);
+            if ( day.date > date ) {
+                return Math.max( i, 0);
+            }
+        }
+        return 0;
+    }
 }

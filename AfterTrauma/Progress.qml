@@ -107,16 +107,6 @@ AfterTrauma.Page {
                 anchors.right: parent.right
                 anchors.bottom: parent.bottom
                 anchors.margins: 16
-
-                //period: container.period
-                /*
-                onLegendChanged: {                    
-                    legendList.model.clear();
-                    legend.forEach(function(entry) {
-                        legendList.model.append(entry);
-                    });
-                }
-                */
             }
         }
     }

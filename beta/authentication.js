@@ -74,7 +74,6 @@ Authentication.prototype.login = function( wss, ws, command ) {
             user.tags = response.tags;
             command.status = 'OK';
             command.response = user;
-            console.log( JSON.stringify(command.response) );
             ws.send(JSON.stringify(command));
         }).catch( function( error ) {
             command.status = 'ERROR';

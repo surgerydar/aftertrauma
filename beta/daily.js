@@ -3,27 +3,27 @@
 //
 var _db;
 
-function Profile() {
+function Daily() {
 }
 
-Profile.prototype.setup = function( wsr, db ) {
+Daily.prototype.setup = function( wsr, db ) {
     _db = db;
     for ( var key in this ) {
         if ( key !== 'setup' && typeof this[ key ] === 'function' ) {
-            console.log( 'Profile connecting : ' + key );
+            console.log( 'Daily connecting : ' + key );
             wsr.json( key, this[ key ] );
         }
     }
 }
 
-Profile.prototype.updateprofile = function( wss, ws, command ) {
-    console.log( 'Profile.updateprofile : id:' + command.profile.id + ' username:' + command.profile.username + ' email:' + command.profile.email );
+Daily.prototype.updateDaily = function( wss, ws, command ) {
+    console.log( 'Daily.updateDaily : id:' + command.userId );
     //
     // update user
     //
     process.nextTick(function(){   
-        //console.log('updating user : ' + JSON.stringify(command.profile));
-        _db.updateUser(command.profile.id,command.profile).then(function( response ) {
+        //console.log('updating user : ' + JSON.stringify(command.Daily));
+        _db.updateUser(command.Daily.id,command.Daily).then(function( response ) {
             command.status = 'OK';
             command.response = response;
             ws.send(JSON.stringify(command));
@@ -35,8 +35,8 @@ Profile.prototype.updateprofile = function( wss, ws, command ) {
     }); 
 }
 
-Profile.prototype.getpublicprofiles = function( wss, ws, command ) {
-    console.log( 'Profile.getpublicprofiles : exclude:' + command.exclude );
+Daily.prototype.getpublicDailys = function( wss, ws, command ) {
+    console.log( 'Daily.getpublicDailys : exclude:' + command.exclude );
     //
     // update user
     //
@@ -57,5 +57,5 @@ Profile.prototype.getpublicprofiles = function( wss, ws, command ) {
     }); 
 }
 
-module.exports = new Profile();
+module.exports = new Daily();
 

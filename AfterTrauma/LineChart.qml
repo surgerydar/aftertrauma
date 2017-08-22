@@ -316,10 +316,9 @@ Rectangle {
             if (chart.gridSize == 0)
                 chart.gridSize = numDays
 
-            var startIndex = dailyModel.indexOf( chart.startDate );
-            //if ( startIndex > 0 ) startIndex--;
-            var endIndex = dailyModel.indexOf( chart.endDate );
-            //if ( endIndex < dailyModel.count - 1 ) endIndex++;
+            var startIndex = dailyModel.indexOfFirstDayBefore( chart.startDate );
+            var endIndex = dailyModel.indexOfFirstDayAfter( chart.endDate );
+            console.log( 'start: ' + startIndex + ' end: ' + endIndex + ' numDays: ' + numDays );
 
             var ctx = canvas.getContext("2d");
             ctx.globalCompositeOperation = "source-over";
@@ -329,9 +328,7 @@ Rectangle {
 
             var points = {};
             var x = 0;
-            var previousDay = undefined;
             var h = 9 * yGridStep;
-            if ( period === "week" ) console.log( 'start: ' + startIndex + ' end: ' + endIndex + ' numDays: ' + numDays );
             for (var i = startIndex; i >= endIndex; i-- ) {
                 //
                 // get daily
@@ -340,17 +337,12 @@ Rectangle {
                 //
                 // increment x by diference between samples
                 //
-                if ( previousDay !== undefined ) {
-                    x += Utils.daysBetweenMs(previousDay.date,day.date) * xGridStep;
-                } else {
-                    x = Utils.daysBetweenMs(chart.startDate.getTime(),day.date) * xGridStep;
-                }
+                x = Utils.daysBetweenMs(chart.startDate.getTime(),day.date) * xGridStep;
                 //
                 // calculate points for each value
                 //
-                previousDay = day;
-                for ( var j = 0; j < day.values.count; j++ ) {
-                    var value = day.values.get(j);
+                for ( var j = 0; j < day.values.length; j++ ) {
+                    var value = day.values[j];
                     if ( points[value.label] === undefined ) {
                         points[value.label] = [];
                     }
@@ -358,7 +350,6 @@ Rectangle {
                         x: x,
                         y: h - ( h * value.value )
                     };
-                    //console.log( value.label + ' : ' + i + ' : ' + JSON.stringify(point) );
                     points[value.label].push(point);
                 }
             }
@@ -383,6 +374,15 @@ Rectangle {
     //
     //
     //
+    onStartDateChanged: {
+        var index = dailyModel.indexOfFirstDayBefore(startDate);
+        previousButton.enabled = index < dailyModel.count - 1;
+    }
+    onEndDateChanged: {
+        var index = dailyModel.indexOfFirstDayAfter(endDate);
+        nextButton.enabled = index > 0;
+    }
+
     /*
     Component.onCompleted: {
         setup();
