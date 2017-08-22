@@ -349,15 +349,14 @@ Db.prototype.findChats = function( query, order ) {
         }
     });
 }
-
 //
-// TODO: replace entities with specific collections
+// Days
 //
-Db.prototype.putEntity = function( entity ) {
+Db.prototype.putDay = function( day ) {
     var db = this.db;
     return new Promise( function( resolve, reject ) {
         try {
-            db.collection( 'entities' ).insertOne(entity,function(err,result) {
+            db.collection( 'days' ).insertOne(daily,function(err,result) {
                if ( err ) {
                    reject( err );
                } else {
@@ -370,11 +369,11 @@ Db.prototype.putEntity = function( entity ) {
         }
     });
 }
-Db.prototype.updateEntity = function( id, entity ) {
+Db.prototype.updateDay = function( id, day ) {
     var db = this.db;
     return new Promise( function( resolve, reject ) {
          try {
-             db.collection('entities').findOneAndUpdate( { id: id }, entity, function( err, result ) {
+             db.collection( 'days' ).findOneAndUpdate( { id: id }, day, function( err, result ) {
                 if ( err ) {
                     console.log( err );
                     reject( err );
@@ -388,11 +387,11 @@ Db.prototype.updateEntity = function( id, entity ) {
         }
     });
 }
-Db.prototype.deleteEntity = function( id ) {
+Db.prototype.deleteDay = function( id ) {
     var db = this.db;
     return new Promise( function( resolve, reject ) {
         try {
-            db.collection( 'entities' ).deleteOne({id:id},function(err,result) {
+            db.collection( 'days' ).deleteOne({id:id},function(err,result) {
                if ( err ) {
                    reject( err );
                } else {
@@ -405,11 +404,11 @@ Db.prototype.deleteEntity = function( id ) {
         }
     });
 }
-Db.prototype.getEntity = function( id ) {
+Db.prototype.getDay = function( id ) {
     var db = this.db;
     return new Promise( function( resolve, reject ) {
          try {
-             db.collection('entities').findOne( { id: id }, function( err, result ) {
+             db.collection( 'days' ).findOne( { id: id }, function( err, result ) {
                 if ( err ) {
                     console.log( err );
                     reject( err );
@@ -423,16 +422,11 @@ Db.prototype.getEntity = function( id ) {
         }
     });
 }
-Db.prototype.getUserEntities = function( userId, type, order ) {
+Db.prototype.findDays = function( query, projection, order, limit ) {
     var db = this.db;
     return new Promise( function( resolve, reject ) {
         try {
-            var query = {$and:[{userId:userId},{type:type}]};
-            var sort = {};
-            if ( order ) {
-                sort = order;
-            }
-            db.collection('entities').find(query).sort(sort).toArray( function( err, result ) {
+            db.collection( 'days' ).find(query||{},projection||{}).sort(sort||{}).limit(limit||0).toArray( function( err, result ) {
                 if ( err ) {
                     console.log( err );
                     reject( err );
@@ -446,138 +440,6 @@ Db.prototype.getUserEntities = function( userId, type, order ) {
         }
     });
 }
-Db.prototype.findUserEntities = function( userId, type, filter, order ) {
-    var db = this.db;
-    return new Promise( function( resolve, reject ) {
-        try {
-            //
-            //
-            //
-            var query = {}; 
-            if ( filter && filter.length > 0 ) {
-                query = {$and:[{userId:userId},{type:type},{ $text: { $search: filter } }]};
-            } else {
-                query = {$and:[{userId:userId},{type:type}]};
-            }
-            var sort = {};
-            if ( order ) {
-                sort = order;
-            }
-            db.collection('entities').find(query).sort(sort).toArray( function( err, result ) {
-                if ( err ) {
-                    console.log( err );
-                    reject( err );
-                } else {
-                    resolve( result );
-                }
-            });  
-        } catch( err ) {
-            console.log( err );
-            reject( err );
-        }
-    });
-}
-Db.prototype.findUserConversations = function( userId, privacy, filter ) {
-    var db = this.db;
-    return new Promise( function( resolve, reject ) {
-        try {
-            //
-            //
-            //
-            var query = privacy === 'public' ? {privacy:'public'} : {$or:[{userId:userId},{fromid:userId},{toid:userId}]}; 
-            if ( filter && filter.length > 0 ) {
-                query = {$and:[query,{type:'conversation'},{ $text: { $search: filter } }]};
-            } else {
-                query = {$and:[query,{type:'conversation'}]};
-            }
-            db.collection('entities').find(query).toArray( function( err, result ) {
-                if ( err ) {
-                    console.log( err );
-                    reject( err );
-                } else {
-                    resolve( result );
-                }
-            });  
-        } catch( err ) {
-            console.log( err );
-            reject( err );
-        }
-    });
-}
-Db.prototype.updateConversation = function( id, snippet ) {
-    var db = this.db;
-    return new Promise( function( resolve, reject ) {
-         try {
-             db.collection('entities').findOneAndUpdate( { id: id }, { $push: { snippets: snippet } }, function( err, result ) {
-                if ( err ) {
-                    console.log( err );
-                    reject( err );
-                } else {
-                    resolve( result );
-                }
-             });
-        } catch( err ) {
-            console.log( err );
-            reject( err );
-        }
-    });
-}
-//
-//
-//
-/*
-Db.prototype.findUsers = function( filter ) {
-    var db = this.db;
-    return new Promise( function( resolve, reject ) {
-        try {
-            //
-            //
-            //
-            var query = filter ? { $text: { $search: filter } } : {};
-            db.collection('users').find(query,{ password: 0 }).sort({username:1}).toArray( function( err, result ) {
-                if ( err ) {
-                    console.log( err );
-                    reject( err );
-                } else {
-                    resolve( result );
-                }
-            });  
-        } catch( err ) {
-            console.log( err );
-            reject( err );
-        }
-    });
-}
-
-Db.prototype.findUserGroups = function( userId, filter ) {
-    var db = this.db;
-    return new Promise( function( resolve, reject ) {
-        try {
-            //
-            //
-            //
-            var query = {type:'group'};
-            if( userId ) {
-                query = {$and:[{type:"group"},{members:{$elemMatch: {id:userId}}}]};
-            }
-            if ( filter && filter.length > 0 ) {
-                query = {$and:[query,{ $text: { $search: filter } }]};
-            }
-            db.collection('entities').find(query).toArray( function( err, result ) {
-                if ( err ) {
-                    console.log( err );
-                    reject( err );
-                } else {
-                    resolve( result );
-                }
-            });  
-        } catch( err ) {
-            console.log( err );
-            reject( err );
-        }
-    });
-}
-*/
 //
 //
 //

@@ -32,7 +32,19 @@ AfterTrauma.Page {
             anchors.right: parent.right
             avatar: model.avatar
             username: model.username
-
+            profile: model.profile
+            userId: model.id
+            onSendChatInvite: {
+                var command = {
+                    command: "sendinvite",
+                    id: GuidGenerator.generate(),
+                    from: userProfile.id,
+                    fromUsername: userProfile.username,
+                    to: model.id,
+                    toUsername: model.username
+                }
+                profileChannel.send(command);
+            }
         }
     }
     StackView.onActivated: {
@@ -76,6 +88,7 @@ AfterTrauma.Page {
         }
         onOpened: {
             console.log('profileChannel open');
+            busyIndicator.running = true;
             send({command: 'getpublicprofiles'});
         }
         onClosed: {

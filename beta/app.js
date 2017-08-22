@@ -157,6 +157,11 @@ db.connect(
     var profile = require('./profile.js');
     profile.setup(wsr,db);
     //
+    // connect chat
+    //
+    var chat = require('./chat.js');
+    chat.setup(wsr,db);
+    //
     // create server
     //
     var httpx = require('./httpx');
