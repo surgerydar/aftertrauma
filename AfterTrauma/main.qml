@@ -48,8 +48,8 @@ ApplicationWindow {
     Questionnaires {
         id: questionnaireModel
     }
-    Messages {
-        id: messageModel
+    Chats {
+        id: chatModel
     }
     //
     //
@@ -83,6 +83,25 @@ ApplicationWindow {
         anchors.fill: parent
         anchors.topMargin: titleBar.height
         //anchors.bottomMargin: 28
+        //
+        //
+        //
+        function navigateTo( qmlSource, properties ) {
+            var item = find(function(current) {
+                //console.log( 'item url:' + current);
+                return current.qmlSource === qmlSource;
+            });
+
+            if ( item ) {
+                pop(item);
+            } else {
+                item = push(qmlSource, properties);
+                if ( item && item.qmlSource !== undefined ) {
+                    item.qmlSource = qmlSource;
+                }
+            }
+
+        }
     }
     //
     //
@@ -182,7 +201,7 @@ ApplicationWindow {
                     model.databaseSuccess(collection,operation,result);
                 }
             });
-         }
+        }
         onError: {
             //console.log( 'database error : ' + collection + ' : ' + operation + ' : ' + JSON.stringify(error) );
             models.forEach( function( model ) {
@@ -193,9 +212,14 @@ ApplicationWindow {
         }
         property var models: [ dailyModel, challengeModel ];
     }
+    function testUser() {
+        return { id:"{5f9ba729-6a16-48c6-81a2-2de6d3db69ca}", username: "justTestin" };
+    }
     //
     // global properties
     //
     property bool loggedIn: false
-    property var userProfile: null
+    property var userProfile: null //testUser()
+    property string baseURL: "https://aftertrauma.uk:4000"
+    property string baseWS: "wss://aftertrauma.uk:4000"
 }

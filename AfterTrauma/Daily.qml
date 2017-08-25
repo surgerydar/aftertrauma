@@ -16,6 +16,7 @@ DatabaseList {
             //
             console.log( 'generating daily test data');
             var week = 1000 * 60 * 60 * 24 * 7;
+            beginBatch();
             for ( var i = 0; i < 52; i++ ) {
                 var day = new Date(Date.now()-(week*i));
                 var multiplier = ( ( 51 - i ) + 1 ) / 52.;
@@ -44,8 +45,9 @@ DatabaseList {
                         daily.notes.push( {title:"",note:""} );
                     }
                 }
-                add(daily);
+                batchAdd(daily);
             }
+            endBatch();
             save();
         }
     }

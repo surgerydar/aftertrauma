@@ -21,7 +21,12 @@ Item {
         anchors.left: from === userProfile.id ? parent.left : undefined
         anchors.right: from === userProfile.id ? undefined : parent.right
         fillMode: Image.PreserveAspectFit
-        source: "https://aftertrauma.uk:4000/avatar/" + from;
+        source: baseURL + "/avatar/" + from
+        onStatusChanged: {
+            if ( status === Image.Error ) {
+                source = "icons/profile_icon.png";
+            }
+        }
     }
     //
     //
@@ -47,6 +52,7 @@ Item {
             anchors.margins: 8
             color: Colours.veryDarkSlate
             verticalAlignment: Text.AlignVCenter
+            wrapMode: Text.WordWrap
         }
     }
     //

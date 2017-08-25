@@ -39,6 +39,7 @@ function removeFromLive( id ) {
 function sendToLive( id, message ) {
     let live = findLive( id );
     if ( live ) {
+        console.log( 'sending to live : ' + id + ' : ' + message );
         live.ws.send( JSON.stringify( message ) );
     }
 }

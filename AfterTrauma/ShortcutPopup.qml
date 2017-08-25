@@ -75,7 +75,7 @@ Popup {
             //
             onClicked: {
 
-                stack.push("qrc:///"+model.destination,model.options);
+                stack.navigateTo("qrc:///"+model.destination,model.options);
                 close();
             }
         }

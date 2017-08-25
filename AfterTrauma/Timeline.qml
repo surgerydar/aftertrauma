@@ -38,7 +38,7 @@ AfterTrauma.Page {
         }
         */
 
-        delegate: TestTimelineItem {
+        delegate: TimelineItem {
             anchors.left: parent?parent.left:undefined
             anchors.right: parent?parent.right:undefined
             date: model.date

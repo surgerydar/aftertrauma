@@ -168,7 +168,10 @@ Item {
     //
     onOpenChanged: {
         editorItem.visible = container.open;
-        if ( !open ) {
+        if ( open ) {
+            if( type === "description" && sourceText.length > 0 ) descriptionEditor.text = sourceText;
+            if( type === "name" && sourceText.length > 0 ) nameEditor.text = sourceText;
+        } else {
             if( type === "description" && descriptionEditor.text.length > 0 ) labelText.text = descriptionEditor.text;
             if( type === "name" && nameEditor.text.length > 0 ) labelText.text = nameEditor.text;
         }
@@ -188,4 +191,5 @@ Item {
     property alias options: optionsEditor.model
     property alias on: switchDecoration.checked
     property alias value: numberDecoration.value
+    property string sourceText: ""
 }

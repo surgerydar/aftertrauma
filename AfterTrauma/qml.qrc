@@ -92,7 +92,7 @@
         <file>Notifications.qml</file>
         <file>Challenges.qml</file>
         <file>Questionnaires.qml</file>
-        <file>Messages.qml</file>
+        <file>MessageModel.qml</file>
         <file>NotePage.qml</file>
         <file>FactsheetItem.qml</file>
         <file>ChatManager.qml</file>
@@ -106,5 +106,6 @@
         <file>Help.qml</file>
         <file>ProfileList.qml</file>
         <file>ProfileListItem.qml</file>
+        <file>Chats.qml</file>
     </qresource>
 </RCC>

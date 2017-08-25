@@ -52,6 +52,8 @@ AfterTrauma.Page {
             radius: model.index === 0 ? [16,16,0,0] : model.index === builder.model.count - 1 ? [0,0,16,16] : [0]
             on: model.type === "switch"  && source ? source[ model.field ] : false
             value: model.type === "number" && source ? source[ model.field ] : 1
+            sourceText: ( model.field === "name" || model.field === "activity" ) && source ? source[model.field] : ""
+
             onSelected: {
                 container.closeall(index);
             }

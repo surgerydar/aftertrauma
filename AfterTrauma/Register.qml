@@ -93,6 +93,9 @@ Popup {
                         backgroundColour =  Colours.veryLightSlate
                     }
                 }
+                onAccepted: {
+                    email.forceActiveFocus();
+                }
             }
             AfterTrauma.TextField {
                 id: email
@@ -112,9 +115,8 @@ Popup {
                         backgroundColour = Colours.veryLightSlate
                     }
                 }
-
-                onAcceptableInputChanged: {
-                    console.log( 'email ' + ( acceptableInput ? 'valid' : 'invalid' ) );
+                onAccepted: {
+                    password.forceActiveFocus();
                 }
             }
             AfterTrauma.TextField {
@@ -135,6 +137,9 @@ Popup {
                         backgroundColour =  Colours.veryLightSlate;
                     }
                 }
+                onAccepted: {
+                    confirmPassword.forceActiveFocus();
+                }
             }
             AfterTrauma.TextField {
                 id: confirmPassword
@@ -153,6 +158,9 @@ Popup {
                     } else {
                         backgroundColour =  Colours.veryLightSlate
                     }
+                }
+                onAccepted: {
+                    acceptTerms.forceActiveFocus();
                 }
             }
             AfterTrauma.CheckBox {
@@ -177,7 +185,7 @@ Popup {
             //
             //
             AfterTrauma.Button {
-                id: loginButton
+                id: gotoLoginButton
                 anchors.left: parent.left
                 anchors.bottom: parent.bottom
                 anchors.margins: 8
@@ -230,6 +238,9 @@ Popup {
                         backgroundColour =  Colours.veryLightSlate;
                     }
                 }
+                onAccepted: {
+                    loginPassword.forceActiveFocus();
+                }
             }
             AfterTrauma.TextField {
                 id: loginPassword
@@ -249,6 +260,9 @@ Popup {
                         backgroundColour =  Colours.veryLightSlate;
                     }
                 }
+                onAccepted: {
+                    loginButton.clicked();
+                }
             }
             AfterTrauma.CheckBox {
                 id: loginStayLoggedIn
@@ -263,6 +277,7 @@ Popup {
             //
             //
             AfterTrauma.Button {
+                id: gotoRegisterButton
                 anchors.left: parent.left
                 anchors.bottom: parent.bottom
                 anchors.margins: 8
@@ -274,26 +289,19 @@ Popup {
                 }
             }
             AfterTrauma.Button {
+                id: loginButton
                 anchors.right: parent.right
                 anchors.bottom: parent.bottom
                 anchors.margins: 8
                 backgroundColour: Colours.darkGreen
                 text: "LOGIN"
                 onClicked: {
-                    if( validate(login) ) {
-                        var command = {
-                            command: "login",
-                            username: "testing",
-                            password: "testing"
-                        }
-                        authenticationChannel.send(command);
+                    if ( validate(login) ) {
                         container.close();
                     }
-
                 }
             }
         }
-
     }
     //
     //
@@ -342,6 +350,12 @@ Popup {
                                  { label: 'forget about it', action: function() { container.close(); } },
                              ] );
         }
+        onOpened: {
+
+        }
+        onClosed: {
+
+        }
     }
     Component.onCompleted: {
 
@@ -351,6 +365,15 @@ Popup {
     }
     onClosed: {
         authenticationChannel.close();
+        username.text = "";
+        email.text = "";
+        password.text = "";
+        confirmPassword.text = "";
+        acceptTerms.checked = false;
+        stayLoggedIn.checked = false;
+        loginUsername.text = "";
+        loginPassword.text = "";
+        loginStayLoggedIn.checked = false;
     }
 
     //

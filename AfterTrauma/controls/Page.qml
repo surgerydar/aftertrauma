@@ -35,4 +35,5 @@ Page {
     property color colour: Colours.darkOrange
     property alias showNavigation: headerBlock.showNavigation
     property alias validate: headerBlock.validate
+    property string qmlSource: ""
 }
