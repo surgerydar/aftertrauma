@@ -12,7 +12,8 @@ SOURCES += main.cpp \
     websocketvalidator.cpp \
     websocketchannel.cpp \
     guidgenerator.cpp \
-    imageutils.cpp
+    imageutils.cpp \
+    databasesync.cpp
 
 RESOURCES += qml.qrc
 
@@ -97,4 +98,5 @@ HEADERS += \
     websocketvalidator.h \
     websocketchannel.h \
     guidgenerator.h \
-    imageutils.h
+    imageutils.h \
+    databasesync.h

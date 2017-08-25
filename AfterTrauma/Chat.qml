@@ -68,7 +68,8 @@ AfterTrauma.Page {
             anchors.right: addMessage.left
             anchors.leftMargin: 8
             anchors.rightMargin: 4
-            anchors.bottomMargin: 28
+            //anchors.bottomMargin: 28
+            wrapMode: TextArea.WordWrap
         }
         AfterTrauma.Button {
             id: addMessage
@@ -93,7 +94,10 @@ AfterTrauma.Page {
                         to: recipient,
                         message: message.message
                     };
-                    chatChannel.send(command);
+                    var guid = chatChannel.send(command);
+                    if ( guid.length === 0 ) {
+                        pendingMessages.push( command );
+                    }
                 }
             }
         }
@@ -108,21 +112,12 @@ AfterTrauma.Page {
     //
     StackView.onActivated: {
         chatChannel.open();
-        if( messages ) {
-            try {
-                messages.forEach(function(message){
-                    messageList.model.append(message);
-                });
-            } catch( err ) {
-                var count = messages.count;
-                for ( var i = 0; i < count; i++ ) {
-                    messageList.model.append( messages.get(i) );
-                }
-            }
-        }
+        messageList.positionViewAtEnd();
+
     }
     StackView.onDeactivated: {
         chatChannel.close();
+        chatModel.releaseMessageModel(chatId);
     }
     //
     //
@@ -130,6 +125,7 @@ AfterTrauma.Page {
     WebSocketChannel {
         id: chatChannel
         url: "wss://aftertrauma.uk:4000"
+        autoreconnect: true
         //
         //
         //
@@ -137,17 +133,30 @@ AfterTrauma.Page {
             //
             // go live
             //
+            console.log( 'Chat : chatChannel open going live' );
             var command = {
                 command: 'golive',
                 id: userProfile.id,
                 username: userProfile.username
             }
             send( command );
+            //
+            // send pending messages
+            //
+            // TODO: this may fail half way through
+            //
+            pendingMessages.forEach(function(message){
+                send(message);
+            });
+            pendingMessages = [];
         }
         onReceived: {
             var command = JSON.parse(message);
-            if ( command === 'sendmessage' ) {
-                if ( command.id === chatId && command.status === 'OK' && command.from !== userProfile.id ) {
+            //console.log( 'Chat received message : ' + message );
+            if ( command.command === 'sendmessage' ) {
+                console.log( 'chatId:' + chatId + 'incomming chat id:' + command.id + 'from:' + command.from + ' to:' + command.to + ' userProfile.id:' + userProfile.id );
+                if ( command.id === chatId && command.to === userProfile.id /*command.status === 'OK' */) {
+                    console.log( 'appending message ' );
                     //
                     // TODO: sort by date
                     //
@@ -160,7 +169,8 @@ AfterTrauma.Page {
     //
     //
     //
-    property var messages: null
+    property var pendingMessages: []
+    property alias messages: messageList.model
     property alias recipientUsername: container.subtitle
     property string recipient: ""
     property string chatId: ""

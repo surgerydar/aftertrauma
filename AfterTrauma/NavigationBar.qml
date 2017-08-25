@@ -26,7 +26,7 @@ Item {
         anchors.margins: 4
         icon: "icons/help.png"
         onClicked: {
-            stack.push("qrc:///Help.qml");
+            stack.navigateTo("qrc:///Help.qml");
         }
     }
     NavigationButton {
@@ -36,7 +36,11 @@ Item {
         anchors.margins: 4
         icon: "icons/chat.png"
         onClicked: {
-            stack.push("qrc:///ChatManager.qml");
+            if ( loggedIn ) {
+                stack.navigateTo("qrc:///ChatManager.qml");
+            } else {
+                register.open();
+            }
         }
     }
     NavigationButton {
@@ -47,14 +51,18 @@ Item {
         anchors.rightMargin: -4
         icon: "icons/add.png"
         onClicked: {
-            var options = [
-                        { title: "Questionnaire", destination: "Questionnaire.qml" },
-                        { title: "Challenge", destination: "ChallengeManager.qml" },
-                        { title: "Image", destination: "ImageManager.qml", options: { date: 0 } },
-                        { title: "Notes", destination: "NotesManager.qml", options: { date: 0 } }
-                    ];
-            shortcut.setOptions( options );
-            shortcut.open();
+            if( loggedIn ) {
+                var options = [
+                            { title: "Questionnaire", destination: "Questionnaire.qml" },
+                            { title: "Challenge", destination: "ChallengeManager.qml" },
+                            { title: "Image", destination: "ImageManager.qml", options: { date: 0 } },
+                            { title: "Notes", destination: "NotesManager.qml", options: { date: 0 } }
+                        ];
+                shortcut.setOptions( options );
+                shortcut.open();
+            } else {
+                register.open();
+            }
         }
     }
     NavigationButton {
@@ -65,15 +73,18 @@ Item {
         anchors.leftMargin: -4
         icon: "icons/chart.png"
         onClicked: {
-            var options = [
-                        //{ title: "Timeline", destination: "Timeline.qml" },
-                        { title: "Timeline", destination: "TestTimeline.qml" },
-                        { title: "Weekly", destination: "Progress.qml", options: { period: "week" } },
-                        { title: "Monthly", destination: "Progress.qml", options: { period: "month" } },
-                        { title: "Yearly", destination: "Progress.qml", options: { period: "year" } }
-                    ];
-            shortcut.setOptions( options );
-            shortcut.open();
+            if( loggedIn ) {
+                var options = [
+                            { title: "Timeline", destination: "Timeline.qml" },
+                            { title: "Weekly", destination: "Progress.qml", options: { period: "week" } },
+                            { title: "Monthly", destination: "Progress.qml", options: { period: "month" } },
+                            { title: "Yearly", destination: "Progress.qml", options: { period: "year" } }
+                        ];
+                shortcut.setOptions( options );
+                shortcut.open();
+            } else {
+                register.open();
+            }
         }
     }
 
@@ -84,7 +95,7 @@ Item {
         anchors.margins: 4
         icon: "icons/factsheet.png"
         onClicked: {
-            stack.push("qrc:///FactsheetCategories.qml");
+            stack.navigateTo("qrc:///FactsheetCategories.qml");
         }
     }
     NavigationButton {
@@ -94,7 +105,7 @@ Item {
         anchors.margins: 4
         icon: "icons/search.png"
         onClicked: {
-            stack.push("qrc:///Search.qml");
+            stack.navigateTo("qrc:///Search.qml");
         }
     }
 }

@@ -39,16 +39,17 @@ DatabaseList {
                             activity: "Barefooot write digits 1 to 10 using your toes raised up in the air.",
                             repeats: 1,
                             frequency: "weekly"
-                        },
-
+                        }
                     ];
-                data.forEach(function(datum) {
-                    datum.count = 0;
-                    datum.date  = Date.now();
-                    datum.notifications = false;
-                    datum.active = false;
-                    model.add(datum);
-                });
+            beginBatch();
+            data.forEach(function(datum) {
+                datum.count = 0;
+                datum.date  = Date.now();
+                datum.notifications = false;
+                datum.active = false;
+                batchAdd(datum);
+            });
+            endBatch();
             save();
         }
     }

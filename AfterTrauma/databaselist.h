@@ -46,6 +46,12 @@ signals:
     //
     //
     //
+    void syncStart();
+    void syncProgress(double complete,double total);
+    void syncDone();
+    //
+    //
+    //
 public slots:
     //
     //
@@ -60,8 +66,19 @@ public slots:
     QVariant update(QVariant q,QVariant u);
     QVariant remove(QVariant q);
     QVariant find(QVariant q);
+    QVariant findOne(QVariant q);
     QVariant get(int i);
     void sort(QVariant s);
+    //
+    //
+    //
+    void beginBatch();
+    QVariant batchAdd(QVariant o);
+    void endBatch();
+    //
+    //
+    //
+    void sync( QString url );
     //
     //
     //

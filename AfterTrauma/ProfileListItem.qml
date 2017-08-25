@@ -53,6 +53,7 @@ Item {
         anchors.top: parent.top
         anchors.left: avatarImage.right
         anchors.right: parent.right
+        anchors.bottom: parent.verticalCenter
         anchors.margins: 8
         //
         //
@@ -67,11 +68,11 @@ Item {
     //
     Text {
         id: profileText
-        anchors.top: usernameText.bottom
+        anchors.top: parent.verticalCenter
         anchors.left: avatarImage.right
         anchors.bottom: parent.bottom
         anchors.right: parent.right
-        anchors.margins: 8
+        anchors.margins: 4
         //
         //
         //
@@ -91,7 +92,7 @@ Item {
         anchors.right: parent.right
         anchors.margins: 8
         backgroundColour: "transparent"
-        image: "icons/chat.png"
+        text: "Invite"
         onClicked: {
             //
             // send chat invite

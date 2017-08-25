@@ -45,7 +45,7 @@ Canvas {
 
     function setCurrentDate(date) {
         if ( currentDate !== date ) {
-            console.log( 'FlowerChart.setCurrentDate : ' + date );
+            //console.log( 'FlowerChart.setCurrentDate : ' + date );
             currentDate = date;
             Flower.setCurrentDate(date);
             Flower.startAnimation();

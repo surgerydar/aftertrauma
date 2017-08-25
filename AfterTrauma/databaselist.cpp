@@ -119,10 +119,10 @@ void DatabaseList::clear() {
 QVariant DatabaseList::add(QVariant o) {
     QVariantMap object = o.value<QVariantMap>();
     object["_id"] = QUuid::createUuid().toString();
-    //beginResetModel();
+    beginResetModel();
     m_objects.append(object);
     _sort();
-    //endResetModel();
+    endResetModel();
     //emit dataChanged(createIndex(0,0),createIndex(m_objects.size()-1,0));
     //emit countChanged();
     QVariantMap id;
@@ -192,6 +192,18 @@ QVariant DatabaseList::find(QVariant q) {
     return QVariant(matches);
 }
 
+QVariant DatabaseList::findOne(QVariant q) {
+    QVariantMap query = q.value<QVariantMap>();
+    QVariantList matches;
+    int count = m_objects.size();
+    for ( int i = 0; i < count; i++ ) {
+        if ( _match(m_objects[i],query) ) {
+            return QVariant(m_objects[i]);
+        }
+    }
+    return QVariant();
+}
+
 QVariant DatabaseList::get(int i) {
     if ( i >= 0 && i < m_objects.size() ) {
         return QVariant(m_objects[i]);
@@ -207,6 +219,30 @@ void DatabaseList::sort(QVariant s) {
         endResetModel();
         //emit dataChanged(createIndex(0,0),createIndex(m_objects.size()-1,0));
     }
+}
+//
+//
+//
+void DatabaseList::beginBatch() {
+    beginResetModel();
+}
+QVariant DatabaseList::batchAdd(QVariant o) {
+    QVariantMap object = o.value<QVariantMap>();
+    object["_id"] = QUuid::createUuid().toString();
+    m_objects.append(object);
+    QVariantMap id;
+    id["_id"] = object["_id"];
+    return QVariant(id);
+}
+void DatabaseList::endBatch() {
+    _sort();
+    endResetModel();
+}
+//
+//
+//
+void DatabaseList::sync( QString url ) {
+
 }
 //
 //

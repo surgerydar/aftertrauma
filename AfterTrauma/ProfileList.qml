@@ -62,7 +62,6 @@ AfterTrauma.Page {
         console.log('closing profileChannel');
         profileChannel.close();
     }
-
     //
     //
     //
@@ -89,7 +88,7 @@ AfterTrauma.Page {
         onOpened: {
             console.log('profileChannel open');
             busyIndicator.running = true;
-            send({command: 'getpublicprofiles'});
+            send({command: 'getpublicprofiles', exclude: userProfile.id });
         }
         onClosed: {
             console.log('profileChannel closed');

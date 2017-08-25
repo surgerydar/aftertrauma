@@ -43,7 +43,7 @@ Profile.prototype.getpublicprofiles = function( wss, ws, command ) {
     process.nextTick(function() {  
         let query = {};
         if ( command.exclude ) {
-            query.id = { $not:command.exclude };
+            query = {id:{$not:{$eq:command.exclude}}};
         }
         _db.findUsers(query,{password: 0, email: 0},{}).then(function( response ) {
             command.status = 'OK';

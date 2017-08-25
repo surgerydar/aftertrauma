@@ -23,7 +23,7 @@ AfterTrauma.Page {
         //
         //
         //
-        model: ListModel {}
+        model: chatModel //ListModel {}
         //
         //
         //
@@ -51,7 +51,7 @@ AfterTrauma.Page {
             onChat: {
                 var properties = {
                     chatId:model.id,
-                    messages:model.messages||[],
+                    messages:chatModel.getMessageModel(model.id),
                     recipient: model.to === userProfile.id ? model.from : model.to,
                     recipientUsername:model.to === userProfile.id ? model.fromUsername : model.toUsername
                 };
@@ -83,16 +83,11 @@ AfterTrauma.Page {
     }
 
     StackView.onActivated: {
-        //
-        //
-        //
         chatChannel.open();
-
     }
     StackView.onDeactivated: {
         chatChannel.close();
     }
-
     //
     //
     //
@@ -126,15 +121,18 @@ AfterTrauma.Page {
         }
         onReceived: {
             //
-            // TODO: move this to global chatModel ????
+            //
             //
             var command = JSON.parse(message);
             if ( command.command === 'getuserchats' ) {
                 if( command.status === "OK" ) {
-                    chats.model.clear();
+                    chatModel.clear();
+                    chatModel.beginBatch();
                     command.response.forEach(function(chat) {
-                        chats.model.append(chat);
+                        chatModel.batchAdd(chat);
                     });
+                    chatModel.endBatch();
+                    chatModel.save();
                 } else {
                     console.log( 'error : ' + message );
                     errorDialog.show( '<h1>Server says</h1><br/>' + ( typeof command.error === 'string' ? command.error : command.error.error ), [
@@ -144,21 +142,22 @@ AfterTrauma.Page {
                 }
             } else if ( command.command === 'sendinvite' ) {
                 if ( command.to === userProfile.id ) {
-                    chats.model.append( command );
+                    chatModel.add( command );
+                    chatModel.save();
                 }
             } else if ( command.command === 'acceptinvite' ) {
                 //
                 // TODO: possible error here
                 //
-                if ( command.to === userProfile.from ) {
-                    //chats.model.append( command );
-                    var count = chats.model.count;
-                    for ( var i = 0; i < count; i++ ) {
-                        var chat = chats.model.get(i);
-                        if ( chat.id === command.id ) {
-                            chats.model.set({status: "accepted"});
-                            break;
-                        }
+                chatModel.update({id: command.id},{status:"accepted"});
+                chatModel.save();
+            } else if ( command.command === 'sendmessage' ) {
+                if ( command.to === userProfile.id ) {
+                    var chat = chatModel.findOne({id:command.id});
+                    if ( chat ) {
+                        var newMessage = { from: command.from, message: command.message };
+                        chat.messages.push( newMessage );
+                        chatModel.update({id:command.id},{messages:chat.messages});
                     }
                 }
             }
