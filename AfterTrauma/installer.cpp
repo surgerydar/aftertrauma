@@ -17,20 +17,41 @@ void Installer::run() {
     //
     // copy factsheets
     //
-    QDir factsheetSourceDirectory( applicationPath.append("/factsheets") );
-    qDebug() << "factsheet source: " << factsheetSourceDirectory;
-    if ( !documentDirectory.exists("factsheets") ) {
-        documentDirectory.mkdir("factsheets");
-    }
-    QDir factsheetDestinationDirectory( documentPath.append("/factsheets") );
-    QFileInfoList factsheetList = factsheetSourceDirectory.entryInfoList();
-    for (int i = 0; i < factsheetList.size(); ++i) {
-        QFileInfo fileInfo = factsheetList.at(i);
-        qDebug() << "filename:" << fileInfo.fileName();
-        qDebug() << "filepath:" << fileInfo.filePath();
-        if ( !QFile::copy(fileInfo.filePath(),factsheetDestinationDirectory.absoluteFilePath(fileInfo.fileName())) ) {
-            qDebug() << "Unable to copy to : " << factsheetDestinationDirectory.absoluteFilePath(fileInfo.fileName());
-        }
-    }
+    installDirectory("factsheets");
+    //
+    // copy media
+    //
+    //
+    installDirectory("media");
+    //
+    //
     emit complete();
+}
+
+void Installer::installDirectory( QString directory ) {
+    //
+    //
+    //
+    QString documentPath = SystemUtils::shared()->documentDirectory();
+    QString applicationPath = SystemUtils::shared()->applicationDirectory();
+    QDir documentDirectory(documentPath);
+    //
+    // copy files
+    //
+    QDir sourceDirectory( applicationPath.append("/").append(directory) );
+    qDebug() << "installer source: " << sourceDirectory;
+    if ( !documentDirectory.exists(directory) ) {
+        documentDirectory.mkdir(directory);
+    }
+    QDir destinationDirectory( documentPath.append("/").append(directory) );
+    QFileInfoList fileList = sourceDirectory.entryInfoList();
+    for (int i = 0; i < fileList.size(); ++i) {
+        QFileInfo fileInfo = fileList.at(i);
+        qDebug() << "installing filename:" << fileInfo.fileName();
+        qDebug() << "filepath:" << fileInfo.filePath();
+        if ( !QFile::copy(fileInfo.filePath(),destinationDirectory.absoluteFilePath(fileInfo.fileName())) ) {
+            qDebug() << "Unable to copy to : " << destinationDirectory.absoluteFilePath(fileInfo.fileName());
+        }
+        QThread::yieldCurrentThread();
+    }
 }

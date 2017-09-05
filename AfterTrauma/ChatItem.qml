@@ -84,6 +84,20 @@ Item {
     //
     //
     //
+    Text {
+        id: statusText
+        anchors.top: parent.top
+        anchors.right: parent.right
+        anchors.margins: 2
+        color: Colours.almostWhite
+        text: status
+    }
+    onStatusChanged: {
+        statusText.text = status;
+    }
+    //
+    //
+    //
     signal accept()
     signal chat()
     //

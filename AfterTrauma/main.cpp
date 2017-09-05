@@ -1,6 +1,7 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
+#include <QDebug>
 
 #include "imagepicker.h"
 #include "systemutils.h"
@@ -22,11 +23,13 @@ int main(int argc, char *argv[])
     //
     //
     //
+    qDebug() << "Registering controls";
     qmlRegisterType<DatabaseList>("SodaControls", 1, 0, "DatabaseList");
     qmlRegisterType<WebSocketChannel>("SodaControls", 1, 0, "WebSocketChannel");
     //
     //
     //
+    qDebug() << "Registering Items";
     engine.rootContext()->setContextProperty("GuidGenerator", GuidGenerator::shared());
     engine.rootContext()->setContextProperty("Database", Database::shared());
     engine.rootContext()->setContextProperty("ImagePicker", ImagePicker::shared());
@@ -36,6 +39,7 @@ int main(int argc, char *argv[])
     //
     //
     //
+    qDebug() << "Launching main";
     engine.load(QUrl(QLatin1String("qrc:/main.qml")));
 
     return app.exec();

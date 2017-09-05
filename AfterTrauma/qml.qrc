@@ -107,5 +107,6 @@
         <file>ProfileList.qml</file>
         <file>ProfileListItem.qml</file>
         <file>Chats.qml</file>
+        <file>Install.qml</file>
     </qresource>
 </RCC>

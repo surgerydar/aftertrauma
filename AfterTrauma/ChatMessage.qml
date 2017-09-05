@@ -53,6 +53,8 @@ Item {
             color: Colours.veryDarkSlate
             verticalAlignment: Text.AlignVCenter
             wrapMode: Text.WordWrap
+            font.family: fonts.light
+            font.pixelSize: 24
         }
     }
     //

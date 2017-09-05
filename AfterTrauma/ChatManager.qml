@@ -147,9 +147,9 @@ AfterTrauma.Page {
                 }
             } else if ( command.command === 'acceptinvite' ) {
                 //
-                // TODO: possible error here
+                // FIXME: possible error here
                 //
-                chatModel.update({id: command.id},{status:"accepted"});
+                chatModel.update({id: command.id},{status:"active"});
                 chatModel.save();
             } else if ( command.command === 'sendmessage' ) {
                 if ( command.to === userProfile.id ) {

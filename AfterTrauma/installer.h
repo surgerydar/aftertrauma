@@ -11,6 +11,8 @@ class Installer : public QThread {
 signals:
     void complete();
     void error( QString& error );
+private:
+    void installDirectory( QString directory );
 };
 
 

@@ -64,15 +64,21 @@ DISTFILES += \
     factsheets/services.introduction.json \
     factsheets/services.json \
     factsheets/traumasurvivorandcarerstories.introduction.json \
-    factsheets/traumasurvivorandcarerstories.json
+    factsheets/traumasurvivorandcarerstories.json \
+    media/emotions.introduction.image1.png
 
 ios {
     OBJECTIVE_SOURCES += ios/ImagePicker.mm
+
     QMAKE_INFO_PLIST = ios/Info.plist
 
     factsheet.files = ./factsheets
     factsheet.path =
     QMAKE_BUNDLE_DATA += factsheet
+
+    factsheetmedia.files = ./media
+    factsheetmedia.path =
+    QMAKE_BUNDLE_DATA += factsheetmedia
 
     launch_images.files = $$files($$PWD/ios/launchimages/LaunchImage*.png)
     QMAKE_BUNDLE_DATA += launch_images
@@ -80,12 +86,19 @@ ios {
     ios_icon.files = $$files($$PWD/ios/icons/AppIcon*.png)
     QMAKE_BUNDLE_DATA += ios_icon
 
+    ios_launch.files = ios/Launch.storyboard
+    QMAKE_BUNDLE_DATA += ios_launch
+
 }
 
 osx {
     factsheet.files = ./factsheets
     factsheet.path = Contents/MacOS/
     QMAKE_BUNDLE_DATA += factsheet
+
+    factsheetmedia.files = ./media
+    factsheetmedia.path = Contents/MacOS/
+    QMAKE_BUNDLE_DATA += factsheetmedia
 }
 
 HEADERS += \
