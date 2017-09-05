@@ -43,7 +43,7 @@ Item {
         //
         font.weight: Font.Light
         font.family: fonts.light
-        font.pixelSize: 12
+        font.pixelSize: 24
     }
     //
     //

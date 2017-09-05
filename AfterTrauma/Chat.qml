@@ -143,7 +143,7 @@ AfterTrauma.Page {
             //
             // send pending messages
             //
-            // TODO: this may fail half way through
+            // TODO: this may fail half way through so need to requeue those which are not sent
             //
             pendingMessages.forEach(function(message){
                 send(message);

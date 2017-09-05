@@ -81,8 +81,10 @@ Rectangle {
                     gridSize = 0;
                     break;
                 case "week" :
-                    chart.startDate.setDate(day-7);
-                    chart.endDate.setDate(chart.endDate.getDate()-7);
+                    var newStart = chart.startDate;
+                    newStart.setDate(day-7)
+                    chart.startDate = newStart;
+                    chart.endDate = Utils.getEndOfWeek( startDate );
                     gridSize = 0;
                     break;
                 }
@@ -117,8 +119,10 @@ Rectangle {
                     gridSize = 0;
                     break;
                 case "week" :
-                    chart.startDate.setDate(day+7);
-                    chart.endDate.setDate(chart.endDate.getDate()+7);
+                    var newStart = chart.startDate;
+                    newStart.setDate(day+7)
+                    chart.startDate = newStart;
+                    chart.endDate = Utils.getEndOfWeek( startDate );
                     gridSize = 0;
                     break;
                 }
@@ -377,10 +381,12 @@ Rectangle {
     onStartDateChanged: {
         var index = dailyModel.indexOfFirstDayBefore(startDate);
         previousButton.enabled = index < dailyModel.count - 1;
+        fromDate.text = '| ' + startDate.toDateString();
     }
     onEndDateChanged: {
         var index = dailyModel.indexOfFirstDayAfter(endDate);
         nextButton.enabled = index > 0;
+        toDate.text = endDate.toDateString() + ' |';
     }
 
     /*

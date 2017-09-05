@@ -164,7 +164,9 @@ ApplicationWindow {
         //
         if ( SystemUtils.isFirstRun() ) {
             console.log( 'installing' );
+            //stack.push("qrc:///Install.qml")
             SystemUtils.install();
+
             intro.open();
         } else {
             //

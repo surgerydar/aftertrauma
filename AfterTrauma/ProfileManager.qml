@@ -99,6 +99,7 @@ AfterTrauma.Page {
                 height: 48
                 anchors.horizontalCenter: parent.horizontalCenter
                 spacing: 16
+                /*
                 AfterTrauma.Button {
                     id: cancel
                     //
@@ -110,6 +111,7 @@ AfterTrauma.Page {
                         stack.pop();
                     }
                 }
+                */
                 AfterTrauma.Button {
                     id: save
                     //

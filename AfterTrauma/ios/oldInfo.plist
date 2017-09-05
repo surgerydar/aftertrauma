@@ -39,8 +39,6 @@
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>${PRODUCT_NAME} Wants access to your photos</string>
         <key>UILaunchStoryboardName</key>
-        <string>Launch</string>
-        <key>UILaunchImages</key>
 	<array>
 		<dict>
 			<key>UILaunchImageMinimumOSVersion</key>

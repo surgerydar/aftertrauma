@@ -26,6 +26,9 @@ Item {
         onPlaybackStateChanged: {
 
         }
+        onError: {
+
+        }
     }
     VideoOutput {
         id: output
