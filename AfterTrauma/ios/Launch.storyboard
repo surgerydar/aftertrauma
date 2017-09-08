@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12121" systemVersion="16G29" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
-    <device id="retina4_7" orientation="portrait">
+    <device id="retina5_5" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
@@ -18,11 +18,14 @@
                         <viewControllerLayoutGuide type="bottom" id="xb3-aO-Qok"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="Ze5-6b-2t3">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="AppIcon120x120.png" translatesAutoresizingMaskIntoConstraints="NO" id="S1i-lQ-3Ah">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                            <imageView userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="LaunchBackground.png" translatesAutoresizingMaskIntoConstraints="NO" id="S1i-lQ-3Ah">
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
+                            </imageView>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="LaunchLogo.png" translatesAutoresizingMaskIntoConstraints="NO" id="aef-Tl-5iM">
+                                <rect key="frame" x="117" y="341.66666666666669" width="180" height="53"/>
                             </imageView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -30,7 +33,9 @@
                             <constraint firstItem="S1i-lQ-3Ah" firstAttribute="top" secondItem="Ze5-6b-2t3" secondAttribute="top" id="0nB-6i-26G"/>
                             <constraint firstAttribute="trailing" secondItem="S1i-lQ-3Ah" secondAttribute="trailing" id="9wV-Eu-J1M"/>
                             <constraint firstItem="S1i-lQ-3Ah" firstAttribute="bottom" secondItem="xb3-aO-Qok" secondAttribute="top" id="NvC-HW-Jnb"/>
+                            <constraint firstItem="aef-Tl-5iM" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="QcP-Yi-a0t"/>
                             <constraint firstItem="S1i-lQ-3Ah" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" id="bBv-Si-imu"/>
+                            <constraint firstItem="aef-Tl-5iM" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="vZ2-bB-F1g"/>
                         </constraints>
                     </view>
                 </viewController>
@@ -40,6 +45,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="AppIcon120x120.png" width="120" height="120"/>
+        <image name="LaunchBackground.png" width="1242" height="2208"/>
+        <image name="LaunchLogo.png" width="180" height="53"/>
     </resources>
 </document>

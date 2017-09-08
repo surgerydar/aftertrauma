@@ -11,10 +11,38 @@
 #include "websocketchannel.h"
 #include "guidgenerator.h"
 #include "imageutils.h"
-
+//
+// TODO: find a better way of doing this
+//
+void setHiDPIScaleFactor(int argc, char *argv[]) {
+    QGuiApplication app(argc, argv);
+    double pixelRatio = app.devicePixelRatio();
+    double scale = 1. / pixelRatio;
+    qDebug() << "pixel ratio : " << pixelRatio << " scale : " << scale;
+    if ( scale < .5 ) {
+        scale *= 2.5;
+        qputenv("QT_SCALE_FACTOR", QString::number(scale).toUtf8() );
+    } /*else if ( scale < 1. ) {
+        scale *= 1.5;
+        qputenv("QT_SCALE_FACTOR", QString::number(scale).toUtf8() );
+    }*/
+}
+//
+//
+//
 int main(int argc, char *argv[])
 {
+    //
+    //
+    //
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    //
+    //
+    //
+    setHiDPIScaleFactor(argc, argv);
+    //
+    //
+    //
     QGuiApplication app(argc, argv);
     //
     //
@@ -41,6 +69,8 @@ int main(int argc, char *argv[])
     //
     qDebug() << "Launching main";
     engine.load(QUrl(QLatin1String("qrc:/main.qml")));
-
+    //
+    //
+    //
     return app.exec();
 }

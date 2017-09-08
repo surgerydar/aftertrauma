@@ -86,7 +86,7 @@ ios {
     ios_icon.files = $$files($$PWD/ios/icons/AppIcon*.png)
     QMAKE_BUNDLE_DATA += ios_icon
 
-    ios_launch.files = ios/Launch.storyboard
+    ios_launch.files = $$PWD/ios/Launch.storyboard $$PWD/ios/LaunchBackground.png $$PWD/ios/LaunchLogo.png
     QMAKE_BUNDLE_DATA += ios_launch
 
 }
