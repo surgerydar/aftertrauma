@@ -81,7 +81,9 @@ DatabaseList {
         // TODO: update daily count
         //
         var challenge = get(index);
-        update({_id:challenge._id},{count:count});
-        save();
+        if ( challenge && challenge.count !== count ) {
+            update({_id:challenge._id},{count:count});
+            save();
+        }
     }
 }

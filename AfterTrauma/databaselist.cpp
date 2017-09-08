@@ -137,7 +137,7 @@ QVariant DatabaseList::update(QVariant q,QVariant u) {
     int count = m_objects.size();
     int minIndex = std::numeric_limits<int>::max();
     int maxIndex = std::numeric_limits<int>::min();
-    beginResetModel();
+    //beginResetModel();
     for ( int i = 0; i < count; i++ ) {
         if ( _match(m_objects[i],query) ) {
             if ( i < minIndex ) minIndex = i;
@@ -148,13 +148,13 @@ QVariant DatabaseList::update(QVariant q,QVariant u) {
             m_objects.replace(i,object);
         }
     }
-    endResetModel();
-    /*
+    //endResetModel();
+
     if ( matches.size() > 0 ) {
         qDebug() << "updated from : " << minIndex << " : to : " << maxIndex;
         emit dataChanged(createIndex(minIndex,0),createIndex(maxIndex,0));
     }
-    */
+
     return QVariant(matches);
 }
 
@@ -285,7 +285,7 @@ bool DatabaseList::_match( QVariantMap& object, QVariantMap& query ) {
 void DatabaseList::_update( QVariantMap& object, QVariantMap& update ) {
     for ( QVariantMap::iterator it = update.begin(); it != update.end(); ++it ) {
         //
-        // TODO: handle array updates
+        // TODO: handle nested array updates
         //
         object[ it.key() ] = it.value();
     }

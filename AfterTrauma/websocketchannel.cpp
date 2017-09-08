@@ -4,24 +4,17 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QDebug>
-
 #include "websocketchannel.h"
 //
-// TODO: error handling
+//
 //
 WebSocketChannel::WebSocketChannel(QObject *parent) : QObject(parent) {
     connect(&m_webSocket, &QWebSocket::connected, this, &WebSocketChannel::connected);
     connect(&m_webSocket, &QWebSocket::disconnected, this, &WebSocketChannel::disconnected);
     connect(&m_webSocket, &QWebSocket::textMessageReceived, this, &WebSocketChannel::textMessageReceived);
-    //connect(&m_webSocket, &QWebSocket::error, this, &WebSocketChannel::socketError);
-    /*
-    connect(&m_webSocket, &QWebSocket::error, [this](QAbstractSocket::SocketError error) {
-        // Handle error here...
-        //qDebug() << m_webSocket.errorString();
-        this->socketError(error);
-    });
-    */
+    connect(&m_webSocket, static_cast<void (QWebSocket::*)(QAbstractSocket::SocketError)>(&QWebSocket::error), this, &WebSocketChannel::socketError);
 }
+
 void WebSocketChannel::open() {
     m_webSocket.open(m_url);
 }

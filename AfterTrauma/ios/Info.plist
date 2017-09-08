@@ -8,19 +8,19 @@
 	<string>AfterTrauma</string>
 	<key>CFBundleGetInfoString</key>
 	<string>Created by Qt/QMake</string>
-        <key>CFBundleIcons</key>
-        <dict>
-            <key>CFBundlePrimaryIcon</key>
-            <dict>
-                <key>CFBundleIconFiles</key>
-                <array>
-                    <string>AppIcon76x76.png</string>
-                    <string>AppIcon120x120.png</string>
-                    <string>AppIcon152x152.png</string>
-                </array>
-            </dict>
-        </dict>
-        <key>CFBundleIdentifier</key>
+	<key>CFBundleIcons</key>
+	<dict>
+		<key>CFBundlePrimaryIcon</key>
+		<dict>
+			<key>CFBundleIconFiles</key>
+			<array>
+				<string>AppIcon76x76.png</string>
+				<string>AppIcon120x120.png</string>
+				<string>AppIcon152x152.png</string>
+			</array>
+		</dict>
+	</dict>
+	<key>CFBundleIdentifier</key>
 	<string>uk.co.soda.${PRODUCT_NAME:rfc1034identifier}</string>
 	<key>CFBundleName</key>
 	<string>${PRODUCT_NAME}</string>
@@ -38,13 +38,11 @@
 	<string>${PRODUCT_NAME} Wants to use your camera</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>${PRODUCT_NAME} Wants access to your photos</string>
-        <key>UILaunchStoryboardName</key>
-        <string>Launch</string>
-        <key>UILaunchImages</key>
+	<key>UILaunchImages</key>
 	<array>
 		<dict>
 			<key>UILaunchImageMinimumOSVersion</key>
-                        <string>8.0</string>
+			<string>8.0</string>
 			<key>UILaunchImageName</key>
 			<string>LaunchImage-iOS7</string>
 			<key>UILaunchImageOrientation</key>
@@ -54,7 +52,7 @@
 		</dict>
 		<dict>
 			<key>UILaunchImageMinimumOSVersion</key>
-                        <string>8.0</string>
+			<string>8.0</string>
 			<key>UILaunchImageName</key>
 			<string>LaunchImage-iOS7-568h</string>
 			<key>UILaunchImageOrientation</key>
@@ -64,7 +62,7 @@
 		</dict>
 		<dict>
 			<key>UILaunchImageMinimumOSVersion</key>
-                        <string>8.0</string>
+			<string>8.0</string>
 			<key>UILaunchImageName</key>
 			<string>LaunchImage-iOS7-667h</string>
 			<key>UILaunchImageOrientation</key>
@@ -74,9 +72,9 @@
 		</dict>
 		<dict>
 			<key>UILaunchImageMinimumOSVersion</key>
-                        <string>8.0</string>
+			<string>8.0</string>
 			<key>UILaunchImageName</key>
-                        <string>LaunchImage-iOS7-736h</string>
+			<string>LaunchImage-iOS7-736h</string>
 			<key>UILaunchImageOrientation</key>
 			<string>Portrait</string>
 			<key>UILaunchImageSize</key>
@@ -84,7 +82,7 @@
 		</dict>
 		<dict>
 			<key>UILaunchImageMinimumOSVersion</key>
-                        <string>8.0</string>
+			<string>8.0</string>
 			<key>UILaunchImageName</key>
 			<string>LaunchImage-iOS7-Landscape-736h</string>
 			<key>UILaunchImageOrientation</key>
@@ -97,7 +95,7 @@
 	<array>
 		<dict>
 			<key>UILaunchImageMinimumOSVersion</key>
-                        <string>8.0</string>
+			<string>8.0</string>
 			<key>UILaunchImageName</key>
 			<string>LaunchImage-iOS7-Landscape</string>
 			<key>UILaunchImageOrientation</key>
@@ -107,7 +105,7 @@
 		</dict>
 		<dict>
 			<key>UILaunchImageMinimumOSVersion</key>
-                        <string>8.0</string>
+			<string>8.0</string>
 			<key>UILaunchImageName</key>
 			<string>LaunchImage-iOS7-Portrait</string>
 			<key>UILaunchImageOrientation</key>
@@ -117,7 +115,7 @@
 		</dict>
 		<dict>
 			<key>UILaunchImageMinimumOSVersion</key>
-                        <string>8.0</string>
+			<string>8.0</string>
 			<key>UILaunchImageName</key>
 			<string>LaunchImage-iOS7</string>
 			<key>UILaunchImageOrientation</key>
@@ -127,7 +125,7 @@
 		</dict>
 		<dict>
 			<key>UILaunchImageMinimumOSVersion</key>
-                        <string>8.0</string>
+			<string>8.0</string>
 			<key>UILaunchImageName</key>
 			<string>LaunchImage-iOS7</string>
 			<key>UILaunchImageOrientation</key>
@@ -136,6 +134,8 @@
 			<string>{320, 480}</string>
 		</dict>
 	</array>
+	<key>UILaunchStoryboardName</key>
+	<string>Launch</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
