@@ -19,6 +19,7 @@ Page {
     Item {
         anchors.fill: parent
         anchors.bottomMargin: 32
+        visible: imageItem.source == ""
         Row {
             anchors.centerIn: parent
             spacing: 16
