@@ -1,6 +1,6 @@
 #include "imagepicker.h"
 
-#ifdef Q_OS_IOS
+#if defined(Q_OS_IOS) || defined(Q_OS_ANDROID)
 extern void _openGallery();
 extern void _openCamera();
 #endif
@@ -20,13 +20,13 @@ ImagePicker* ImagePicker::shared() {
 }
 
 void ImagePicker::openGallery() {
-#ifdef Q_OS_IOS
+#if defined(Q_OS_IOS) || defined(Q_OS_ANDROID)
     _openGallery();
 #endif
 }
 
 void ImagePicker::openCamera() {
-#ifdef Q_OS_IOS
+#if defined(Q_OS_IOS) || defined(Q_OS_ANDROID)
     _openCamera();
 #endif
 }

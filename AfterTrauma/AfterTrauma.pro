@@ -13,7 +13,8 @@ SOURCES += main.cpp \
     websocketchannel.cpp \
     guidgenerator.cpp \
     imageutils.cpp \
-    databasesync.cpp
+    databasesync.cpp \
+    cachedimageprovider.cpp
 
 RESOURCES += qml.qrc
 
@@ -101,6 +102,14 @@ osx {
     QMAKE_BUNDLE_DATA += factsheetmedia
 }
 
+android {
+    QT += androidextras
+    SOURCES += ./android/androidimagepicker.cpp
+    ANDROID_EXTRA_LIBS += $$PWD/android/OpenSSL/armeabi-v7a/libcrypto.so
+    ANDROID_EXTRA_LIBS += $$PWD/android/OpenSSL/armeabi-v7a/libssl.so
+    ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
+}
+
 HEADERS += \
     imagepicker.h \
     systemutils.h \
@@ -112,4 +121,6 @@ HEADERS += \
     websocketchannel.h \
     guidgenerator.h \
     imageutils.h \
-    databasesync.h
+    databasesync.h \
+    cachedimageprovider.h
+

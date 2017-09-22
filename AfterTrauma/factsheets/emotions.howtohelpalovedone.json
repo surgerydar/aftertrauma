@@ -1,3 +1,4 @@
 [
-    { type: "text", media: "coming soon" },
+    { "type": "image", "media": "emotions.howtohelpalovedone.image1.png" },
+    { "type": "text", "media": "If your loved one has experienced a trauma, here are some tips for dealing with some common reactions:<br/><ul><li>Remain calm if an emotional outburst happens. Do not react with emotion</li><li>Be patient. Recovery can take time and everyone’s reaction to trauma is different</li><li>Take the person to a quiet location if they are upset to restore some calm</li><li>Acknowledge their feelings and allow them to express their feelings</li><li>Provide supportive feedback</li><li>Move the person away from the emotional topic</li><li>Provide day to day practical support</li><li>Do not force the person to relate their feelings but listen when they are ready to open up</li><li>Try not to get upset if you are affected by the person’s emotional outbursts as this is no reflection on how they feel for you</li></ul>" }
 ]
