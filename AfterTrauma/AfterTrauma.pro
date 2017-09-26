@@ -14,7 +14,24 @@ SOURCES += main.cpp \
     guidgenerator.cpp \
     imageutils.cpp \
     databasesync.cpp \
-    cachedimageprovider.cpp
+    cachedimageprovider.cpp \
+    androidbackkeyfilter.cpp
+
+HEADERS += \
+    imagepicker.h \
+    systemutils.h \
+    installer.h \
+    jsonfile.h \
+    database.h \
+    databaselist.h \
+    websocketvalidator.h \
+    websocketchannel.h \
+    guidgenerator.h \
+    imageutils.h \
+    databasesync.h \
+    cachedimageprovider.h \
+    androidbackkeyfilter.h
+
 
 RESOURCES += qml.qrc
 
@@ -104,23 +121,21 @@ osx {
 
 android {
     QT += androidextras
+
     SOURCES += ./android/androidimagepicker.cpp
+
     ANDROID_EXTRA_LIBS += $$PWD/android/OpenSSL/armeabi-v7a/libcrypto.so
     ANDROID_EXTRA_LIBS += $$PWD/android/OpenSSL/armeabi-v7a/libssl.so
     ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
-}
 
-HEADERS += \
-    imagepicker.h \
-    systemutils.h \
-    installer.h \
-    jsonfile.h \
-    database.h \
-    databaselist.h \
-    websocketvalidator.h \
-    websocketchannel.h \
-    guidgenerator.h \
-    imageutils.h \
-    databasesync.h \
-    cachedimageprovider.h
+    factsheet.files = ./factsheets
+    factsheet.path = /assets
+    INSTALLS += factsheet
+
+    factsheetmedia.files = ./media
+    factsheetmedia.path = /assets
+    INSTALLS += factsheetmedia
+
+    OTHER_FILES += ./android/AndroidManifest.xml
+}
 

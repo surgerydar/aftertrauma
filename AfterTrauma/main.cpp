@@ -2,6 +2,7 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QDebug>
+#include <QStandardPaths>
 
 #include "imagepicker.h"
 #include "systemutils.h"
@@ -11,6 +12,7 @@
 #include "websocketchannel.h"
 #include "guidgenerator.h"
 #include "imageutils.h"
+#include "androidbackkeyfilter.h"
 //
 // TODO: find a better way of doing this
 //
@@ -44,6 +46,9 @@ int main(int argc, char *argv[])
     //
     //
     QGuiApplication app(argc, argv);
+#ifdef Q_OS_ANDROID
+    app.installEventFilter(AndroidBackKeyFilter::shared());
+#endif
     //
     //
     //
@@ -64,6 +69,28 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("SystemUtils", SystemUtils::shared());
     engine.rootContext()->setContextProperty("ImageUtils", ImageUtils::shared());
     engine.rootContext()->setContextProperty("JSONFile", JSONFile::shared());
+#ifdef Q_OS_ANDROID
+    engine.rootContext()->setContextProperty("BackKeyFilter", AndroidBackKeyFilter::shared());
+#endif
+    //
+    //
+    //
+    qDebug() << "Standard Paths";
+    qDebug() << "RuntimeLocation";
+    QStringList paths = QStandardPaths::standardLocations(QStandardPaths::RuntimeLocation);
+    for ( auto& path : paths ) {
+        qDebug() << path;
+    }
+    qDebug() << "DocumentsLocation";
+    paths = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation);
+    for ( auto& path : paths ) {
+        qDebug() << path;
+    }
+    qDebug() << "AppDataLocation";
+    paths = QStandardPaths::standardLocations(QStandardPaths::AppDataLocation);
+    for ( auto& path : paths ) {
+        qDebug() << path;
+    }
     //
     //
     //

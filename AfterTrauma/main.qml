@@ -217,6 +217,30 @@ ApplicationWindow {
     function testUser() {
         return { id:"{5f9ba729-6a16-48c6-81a2-2de6d3db69ca}", username: "justTestin" };
     }
+    Shortcut {
+        sequence: StandardKey.Back
+        onActivated: {
+            console.log( 'Back' );
+            if ( stack.depth <= 1 ) {
+                Qt.quit();
+            } else {
+                stack.pop();
+            }
+        }
+    }
+    Connections {
+        target: BackKeyFilter
+
+        onBackKeyPressed : {
+            console.log( 'BackKeyPressed' );
+            if ( stack.depth <= 1 ) {
+                Qt.quit();
+            } else {
+                stack.pop();
+            }
+        }
+    }
+
     //
     // global properties
     //

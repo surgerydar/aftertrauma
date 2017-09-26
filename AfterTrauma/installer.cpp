@@ -9,12 +9,6 @@
 
 void Installer::run() {
     //
-    //
-    //
-    QString documentPath = SystemUtils::shared()->documentDirectory();
-    QString applicationPath = SystemUtils::shared()->applicationDirectory();
-    QDir documentDirectory(documentPath);
-    //
     // copy factsheets
     //
     installDirectory("factsheets");
@@ -33,12 +27,16 @@ void Installer::installDirectory( QString directory ) {
     //
     //
     QString documentPath = SystemUtils::shared()->documentDirectory();
-    QString applicationPath = SystemUtils::shared()->applicationDirectory();
+#ifdef Q_OS_ANDROID
+    QString assetPath("assets:");
+#else
+    QString assetPath = SystemUtils::shared()->applicationDirectory();
+#endif
     QDir documentDirectory(documentPath);
     //
     // copy files
     //
-    QDir sourceDirectory( applicationPath.append("/").append(directory) );
+    QDir sourceDirectory( assetPath.append("/").append(directory) );
     qDebug() << "installer source: " << sourceDirectory;
     if ( !documentDirectory.exists(directory) ) {
         documentDirectory.mkdir(directory);
