@@ -3,13 +3,19 @@
 #include <QAndroidActivityResultReceiver>
 #include <QAndroidJniEnvironment>
 #include <QDebug>
+#include <QFile>
 
 #include "imagepicker.h"
+#include "systemutils.h"
 
 class AndroidImagePicker: public QAndroidActivityResultReceiver {
 private:
     static AndroidImagePicker* s_shared;
 public:
+    enum {
+        SOURCE_GALLERY = 101,
+        SOURCE_CAMERA = 102
+    };
     AndroidImagePicker() {}
     static AndroidImagePicker* shared() {
         if ( s_shared == nullptr ) {
@@ -17,109 +23,105 @@ public:
         }
         return s_shared;
     }
-    void show() {
-        QAndroidJniObject ACTION_PICK = QAndroidJniObject::fromString("android.intent.action.GET_CONTENT");
+
+    QString uniquePath() {
+        QString pathTemplate = SystemUtils::shared()->documentDirectory().append("/image%1.jpg");
+        int i = 0;
+        QString path;
+        do {
+            path = pathTemplate.arg(i++);
+        } while( QFile::exists(path) );
+        return path;
+    }
+
+    void showGallery() {
+        QAndroidJniObject GET_CONTENT = QAndroidJniObject::fromString("android.intent.action.GET_CONTENT");
         QAndroidJniObject intent("android/content/Intent");
-        if (ACTION_PICK.isValid() && intent.isValid()) {
-            intent.callObjectMethod("setAction", "(Ljava/lang/String;)Landroid/content/Intent;", ACTION_PICK.object<jstring>());
+        if (GET_CONTENT.isValid() && intent.isValid()) {
+            intent.callObjectMethod("setAction", "(Ljava/lang/String;)Landroid/content/Intent;", GET_CONTENT.object<jstring>());
             intent.callObjectMethod("setType", "(Ljava/lang/String;)Landroid/content/Intent;", QAndroidJniObject::fromString("image/*").object<jstring>());
-            QtAndroid::startActivity(intent.object<jobject>(), 101, this);
+            QtAndroid::startActivity(intent.object<jobject>(), SOURCE_GALLERY, this);
+        }
+    }
+
+    void showCamera() {
+        QAndroidJniObject IMAGE_CAPTURE = QAndroidJniObject::fromString("android.media.action.IMAGE_CAPTURE");
+        QAndroidJniObject intent=QAndroidJniObject("android/content/Intent");
+        if ( IMAGE_CAPTURE.isValid() && intent.isValid() ) {
+            intent.callObjectMethod("setAction", "(Ljava/lang/String;)Landroid/content/Intent;", IMAGE_CAPTURE.object<jstring>());
+            QtAndroid::startActivity(intent, SOURCE_CAMERA, this);
         }
     }
 
     virtual void handleActivityResult(int receiverRequestCode, int resultCode, const QAndroidJniObject & data) override {
         jint RESULT_OK = QAndroidJniObject::getStaticField<jint>("android/app/Activity", "RESULT_OK");
         qDebug() << "AndroidImagePicker : receiverRequestCode : " << receiverRequestCode << " : resultCode : " << resultCode << " : data : " << data.toString();
-        if (receiverRequestCode == 101 && resultCode == RESULT_OK) {
-            //
-            // get path
-            //
-            QAndroidJniEnvironment env;
-            //
-            //
-            //
-            QAndroidJniObject uri = data.callObjectMethod("getData", "()Landroid/net/Uri;");
-            qDebug() << "uri : " << uri.toString();
-            //
-            // open file
-            //
-            QAndroidJniObject contentResolver = QtAndroid::androidActivity().callObjectMethod("getContentResolver", "()Landroid/content/ContentResolver;");
-            if (env->ExceptionCheck()) {
-                env->ExceptionDescribe();
-                env->ExceptionClear();
-            }
-            QAndroidJniObject inputStream = contentResolver.callObjectMethod("openInputStream","(Landroid/net/Uri)Ljava/io/InputStream;", uri.object<jobject>());
-            if (env->ExceptionCheck()) {
-                env->ExceptionDescribe();
-                env->ExceptionClear();
-            }
-            if ( inputStream.isValid() ) {
-                qDebug() << "reading file";
-                jbyteArray buffer = env->NewByteArray(2048);
-                while(true) {
-                    //
-                    // read
-                    //
-                    jint read = inputStream.callMethod<jint>("read","([B)I",buffer);
-                    qDebug() << "read " << read << " bytes";
-                    //
-                    // write
-                    //
-                    if( read <= 2048 ) {
-                        break;
+        if( resultCode == RESULT_OK ) {
+            if (receiverRequestCode == SOURCE_GALLERY ) {
+                //
+                // get path
+                //
+                QAndroidJniEnvironment env;
+                //
+                //
+                //
+                QAndroidJniObject uri = data.callObjectMethod("getData", "()Landroid/net/Uri;");
+                qDebug() << "uri : " << uri.toString();
+                //
+                // open file
+                //
+                QAndroidJniObject contentResolver = QtAndroid::androidActivity().callObjectMethod("getContentResolver", "()Landroid/content/ContentResolver;");
+                qDebug() << "contentResolver.isValid : " << contentResolver.isValid();
+                //
+                //
+                //
+                QAndroidJniObject inputStream = contentResolver.callObjectMethod("openInputStream","(Landroid/net/Uri;)Ljava/io/InputStream;", uri.object<jobject>());
+                if ( inputStream.isValid() ) {
+
+                    QString path = uniquePath();
+                    QFile destination(path);
+                    if ( destination.open(QIODevice::WriteOnly) ) {
+                        qDebug() << "reading file";
+                        jbyteArray buffer = env->NewByteArray(2048);
+                        jint total = 0;
+                        while(true) {
+                            //
+                            // read
+                            //
+                            jint read = inputStream.callMethod<jint>("read","([B)I", buffer);
+                            //
+                            // write
+                            //
+                            jbyte *bytes = env->GetByteArrayElements(buffer, false);
+                            destination.write((char*)bytes,read);
+                            env->ReleaseByteArrayElements(buffer, bytes, 0);
+                            //
+                            //
+                            //
+                            total += read;
+                            if( read < 2048 ) {
+                                break;
+                            }
+                        }
+                        destination.close();
+                        //
+                        //
+                        //
+                        qDebug() << "written " << total << " bytes to " << path;
+                        ImagePicker::shared()->imagePicked( path );
+                    } else {
+                        qDebug() << "unable to open destination file : " << path;
                     }
+                } else {
+                    qDebug() << "unable to open source file : " << uri.toString();
                 }
-            } else {
-                qDebug() << "unable to open file";
+
+
+            } else if ( receiverRequestCode == SOURCE_CAMERA ) {
+
             }
-            /*
-            //
-            // extract id
-            //
-            QStringList id = getMediaId(path);
-            //
-            //
-            //
+        } else {
 
-            QAndroidJniObject dataKey = QAndroidJniObject::getStaticObjectField("android/provider/MediaStore$MediaColumns", "DATA", "Ljava/lang/String;");
-            qDebug() << "dataKey : " << dataKey.toString();
-            QAndroidJniObject externalMediaURI = QAndroidJniObject::getStaticObjectField("android/provider/MediaStore/Images/Media", "EXTERNAL_CONTENT_URI", "Ljava/lang/String;");
-            qDebug() << "externalMediaURI : " << externalMediaURI.toString();
-            QAndroidJniObject internalMediaURI = QAndroidJniObject::getStaticObjectField("android/provider/MediaStore/Images/Media", "INTERNAL_CONTENT_URI", "Ljava/lang/String;");
-            qDebug() << "internalMediaURI : " << internalMediaURI.toString();
-
-            qDebug() << "building projection";
-            jobjectArray projection = (jobjectArray)env->NewObjectArray(1, env->FindClass("java/lang/String"), NULL);
-            jstring dataString = env->NewStringUTF(dataKey.toString().toStdString().c_str());
-            env->SetObjectArrayElement(projection, 0, dataString );
-
-            qDebug() << "building selection";
-            jstring selection = env->NewStringUTF("_id=?");
-            jobjectArray selectionArgs = (jobjectArray)env->NewObjectArray(1, env->FindClass("java/lang/String"), NULL);
-            env->SetObjectArrayElement(projection, 0, env->NewStringUTF(id[1].toStdString().c_str()));
-
-            qDebug() << "query content resolver";
-            QAndroidJniObject contentResolver = QtAndroid::androidActivity().callObjectMethod("getContentResolver", "()Landroid/content/ContentResolver;");
-            QAndroidJniObject cursor = contentResolver.callObjectMethod("query", "(Landroid/net/Uri;[Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;Ljava/lang/String;)Landroid/database/Cursor;", uri.object<jobject>(), NULL, NULL, NULL, NULL );//selection, selectionArgs, NULL);
-            cursor.callMethod<jboolean>("moveToFirst", "()Z");
-
-            jint rowCount = cursor.callMethod<jint>("getCount", "()I");
-            qDebug() << "rowCount : " << rowCount;
-            jint columnCount = cursor.callMethod<jint>("getColumnCount", "()I");
-            qDebug() << "columnCount : " << columnCount;
-            for ( int col =  0; col < columnCount; col++ ) {
-                QAndroidJniObject colName = cursor.callObjectMethod("getColumnName", "(I)Ljava/lang/String;", col);
-                QAndroidJniObject colValue = cursor.callObjectMethod("getString", "(I)Ljava/lang/String;", col);
-                qDebug() << colName.toString() << " : " << colValue.toString();
-            }
-
-            jint columnIndex = cursor.callMethod<jint>("getColumnIndex", "(Ljava/lang/String;)I", dataKey.object<jstring>());
-            qDebug() << "column index : " << columnIndex;
-            QAndroidJniObject result = cursor.callObjectMethod("getString", "(I)Ljava/lang/String;", columnIndex);
-            QString url = result.toString();
-            qDebug() << "url : " << url;
-            ImagePicker::shared()->imagePicked( url );
-            */
         }
     }
 
@@ -137,10 +139,11 @@ AndroidImagePicker* AndroidImagePicker::s_shared = nullptr;
 
 void _openGallery() {
     //showPicker( UIImagePickerControllerSourceTypePhotoLibrary );
-    AndroidImagePicker::shared()->show();
+    AndroidImagePicker::shared()->showGallery();
 }
 
 void _openCamera() {
     //showPicker( UIImagePickerControllerSourceTypeCamera );
+    AndroidImagePicker::shared()->showCamera();
 }
 

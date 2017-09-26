@@ -29,7 +29,7 @@ AfterTrauma.Page {
                 image: images[ index ].image
                 onImageChanged: {
                     //images[ index ].image = image;
-                    console.log('image charged : ' + image );
+                    console.log('image changed : ' + image );
                 }
             }
         }
@@ -76,12 +76,13 @@ AfterTrauma.Page {
             day = dailyModel.getDay(new Date(date));
         }
         images = day.images;
-        if ( images.length === 0 ) {
+        if ( images === undefined || images.length === 0 ) {
             console.log( 'ImagesManager : no images so creating default' );
             //
             // add default empty image
             //
-            images.push({title:"",image:""});
+            images = [{title:"",image:""}];
+            //images.push({title:"",image:""});
          }
          imagesRepeater.model = images;
     }
@@ -95,7 +96,7 @@ AfterTrauma.Page {
     Connections {
         target: ImagePicker
         onImagePicked: {
-            var source = 'file://'+url;
+            var source = 'file://' + url;
             console.log( 'image picked : ' + source );
             images[imagesView.currentIndex].image = source;
             imagesView.currentItem.image = images[imagesView.currentIndex].image;

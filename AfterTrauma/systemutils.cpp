@@ -41,13 +41,15 @@ void SystemUtils::install() {
 //
 //
 QString SystemUtils::applicationDirectory() {
-    //return QStandardPaths::writableLocation(QStandardPaths::HomeLocation).append("/Documents/");
     return QCoreApplication::applicationDirPath();
 }
 
 QString SystemUtils::documentDirectory() {
-    //return QStandardPaths::writableLocation(QStandardPaths::HomeLocation).append("/Documents/");
+#ifdef Q_OS_ANDROID
+    return QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+#else
     return QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+#endif
 }
 
 QString SystemUtils::temporaryDirectory() {
