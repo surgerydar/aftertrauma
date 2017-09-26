@@ -98,10 +98,29 @@ AfterTrauma.Page {
         onImagePicked: {
             var source = 'file://' + url;
             console.log( 'image picked : ' + source );
-            images[imagesView.currentIndex].image = source;
-            imagesView.currentItem.image = images[imagesView.currentIndex].image;
+            //images[imagesView.currentIndex].image = source;
+            //imagesView.currentItem.image = images[imagesView.currentIndex].image;
+            setImageTimer.source = source;
+            setImageTimer.start();
         }
     }
+    //
+    //
+    //
+    Timer {
+        id: setImageTimer
+        interval: 10
+        repeat: false
+        onTriggered: {
+            if ( source.length > 0 ) {
+                images[imagesView.currentIndex].image = source;
+                imagesView.currentItem.image = images[imagesView.currentIndex].image;
+                source = "";
+            }
+        }
+        property string source: ""
+    }
+
     //
     //
     //
