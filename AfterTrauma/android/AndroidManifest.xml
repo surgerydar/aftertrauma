@@ -61,8 +61,16 @@
     </activity>
 
     <!-- For adding service(s) please check: https://wiki.qt.io/AndroidServices -->
-
+    <!-- JONS: look into FileProvider support
+    <provider
+        android:name="android.support.v4.content.FileProvider"
+        android:authorities="uk.co.soda.aftertrauma.fileprovider"
+        android:exported="false"
+        android:grantUriPermissions="true">
+        </provider>
+        -->
     </application>
+
 
     <uses-sdk android:minSdkVersion="16" android:targetSdkVersion="16"/>
     <supports-screens android:largeScreens="true" android:normalScreens="true" android:anyDensity="true" android:smallScreens="true"/>
