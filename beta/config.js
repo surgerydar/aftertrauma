@@ -1,7 +1,31 @@
 let fs = require('fs');
 
+function key() {
+    try {
+        return fs.readFileSync('./ssl/privkey.pem');
+    } catch( err ) {
+        return fs.readFileSync('./ssl/server.key');
+    }
+}
+
+function cert() {
+    try {
+        return fs.readFileSync('./ssl/fullchain.pem');
+    } catch( err ) {
+        return fs.readFileSync('./ssl/server.crt');
+    }
+}
+
+function ca() {
+    try {
+        return fs.readFileSync('./ssl/chain.pem');
+    } catch( err ) {
+        return undefined;
+    }
+}
+
 exports.ssl = {
-    key: fs.readFileSync('./ssl/privkey.pem'),
-    cert: fs.readFileSync('./ssl/fullchain.pem'),
-    ca: fs.readFileSync('./ssl/chain.pem')
+    key: key(),
+    cert: cert(),
+    ca: ca()
 }

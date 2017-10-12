@@ -1,3 +1,11 @@
+//
+// TODO: domains or scopes for routes eg chat.sendmessage so routes would look something like
+// {
+//    chat: {
+//        sendmessage: function() {},
+//    }
+// }
+//
 var WebSocket = require('ws');
 
 function WebSocketRouter() {

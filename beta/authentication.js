@@ -58,7 +58,7 @@ Authentication.prototype.login = function( wss, ws, command ) {
     // find user
     //
     process.nextTick(function(){   
-        _db.findOne('users', {$and: [ { username:command.username }, { password:command.password } ]}, { password: 0 } ).then(function( response ) {
+        _db.findOne('users', {$and: [ { username:command.username }, { password:command.password } ]}, { password: 0, _id: 0 } ).then(function( response ) {
             if ( response === null ) {
                 command.status = 'ERROR';
                 command.error = 'username or password incorrect';
@@ -69,7 +69,7 @@ Authentication.prototype.login = function( wss, ws, command ) {
                 command.status = 'OK';
                 command.response = response;
             }
-            console.log('authentications response : ' + JSON.stringify( response ) );
+            //console.log('authentications response : ' + JSON.stringify( command ) );
             ws.send(JSON.stringify(command));
         }).catch( function( error ) {
             command.status = 'ERROR';
