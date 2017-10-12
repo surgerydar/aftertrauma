@@ -77,6 +77,7 @@ Db.prototype.updateUser = function( id, user ) {
     var db = this.db;
     return new Promise( function( resolve, reject ) {
          try {
+             if ( user._id ) user._id = undefined; // avoid conflicts
              db.collection('users').findOneAndUpdate( { id: id }, user, function( err, result ) {
                 if ( err ) {
                     console.log( err );
@@ -512,7 +513,7 @@ Db.prototype.findOne = function( collection, query, projection ) {
                 if ( err ) {
                     console.log( 'findOne : ' + collection + ' : error : ' + err );
                     reject( err );
-                } else if( result ) {
+                } else {
                     resolve( result );
                 }
             });

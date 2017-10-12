@@ -1,8 +1,6 @@
 var env = process.env;
 var config = require('./config');
 var fs = require('fs');
-//var config = { ssl: { key: fs.readFileSync('./ssl/server.key'), cert: fs.readFileSync('./ssl/server.crt')}};
-
 //
 // connect to database
 //
@@ -39,6 +37,7 @@ db.connect(
         //
         // express routes
         //
+        console.log('express routes');
         app.get('/', function (req, res) {
             res.json({ status: 'ok' });
         });
@@ -158,40 +157,48 @@ db.connect(
         //
         // configure websockets
         //
+        console.log('configuring websocket router');
         let wsr = require('./websocketrouter');
         //
         // connect validator
         //
+        console.log('validator');
         let validator = require('./validator');
         validator.setup(wsr,db);
         //
         // connect authentication
         //
+        console.log('authentication');
         let authentication = require('./authentication');
         authentication.setup(wsr,db);
         //
         // connect profile
         //
+        console.log('profile');
         let profile = require('./profile');
         profile.setup(wsr,db);
         //
         // connect chat
         //
+        console.log('chat');
         let chat = require('./chat');
         chat.setup(wsr,db);
         //
         // connect day
         //
+        console.log('day');
         let day = require('./day');
         day.setup(wsr,db);
         //
         // create server
         //
+        console.log('creating server');
         let httpx = require('./httpx');
         let server = httpx.createServer(config.ssl, { http:app, ws:wsr });
         //
         // start listening
         //
+        console.log('starting server');
         server.listen(env.NODE_PORT || 3000, env.NODE_IP || 'localhost', () => console.log('Server started'));
     } catch( error ) {
         console.log( 'unable to start server : ' + error );
