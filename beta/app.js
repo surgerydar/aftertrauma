@@ -61,74 +61,138 @@ db.connect(
                 res.json( {status: 'ERROR', message: JSON.stringify( error ) } );
             });
         });
-        /*
-        app.post('/user', jsonParser, function (req, res) {
-            // create new user
-            console.log( 'user : ' + JSON.stringify(req.body) );
-            db.putUser( req.body ).then( function( response ) {
-                res.json( {status: 'OK'} );
-            } ).catch( function( error ) {
-                res.json( {status: 'ERROR', message: JSON.stringify( error ) } );
-            });
+        //
+        // admin
+        //
+        app.get('/admin', function (req, res) {
+            res.render('admin', {title:'AfterTrauma Admin'});
         });
-        app.put('/user/:id', jsonParser, function (req, res) {
-            // update user
-            db.updateUser( req.params.id, req.body ).then( function( response ) {
+        app.get('/admin/:category', function (req, res) {
+            var category = req.params.category;
+            db.find( 'content', { category: category }, { title: 1 } ).then( function( response ) {
+                res.render('category', {title:'AfterTrauma > ' + ( category && category.charAt(0).toUpperCase() + category.slice(1) ), category: category, items: response });
+            }).catch( function( error ) {
                 //
+                // TODO: error
                 //
+                res.render('error', {title:'AfterTrauma Admin', error: error});
+            });
+            
+        });
+        app.post('/admin/:category', jsonParser, function (req, res) { // new item
+            var category    = req.params.category;
+            var item        = req.body;
+            item.date       = Date.now();
+            item.category   = category;
+            item.blocks     = item.blocks || [];
+            db.insert( 'content',  item ).then( function( response ) {
+                res.json({ status: 'OK', response: response, item: item });
+            }).catch( function( error ) {
+                res.json({ status: 'ERROR', error: error});
+            });
+        });
+        app.put('/admin/:category/:item', jsonParser, function (req, res) { // update item
+            var category    = req.params.category;
+            var item        = req.body;
+            item.date       = Date.now();
+            item.category   = category;
+            var id          = db.ObjectId(req.params.item);
+            db.updateOne( 'content',  { _id: id }, item ).then( function( response ) {
+                res.json({ status: 'OK', response: response});
+            }).catch( function( error ) {
+                res.json({ status: 'ERROR', error: error});
+            });
+        });
+        app.delete('/admin/:category/:item', function (req, res) {
+            var category    = req.params.category;
+            var id          = db.ObjectId(req.params.item);
+            db.remove( 'content', { _id: id } ).then( function( response ) {
+                res.json({ status: 'OK', response: response});
+             }).catch( function( error ) {
+                res.json({ status: 'ERROR', error: error});
+            });
+            
+        });
+        app.get('/admin/:category/:item', function (req, res) {
+            var category    = req.params.category;
+            var id          = db.ObjectId(req.params.item);
+            db.findOne( 'content', { _id: id } ).then( function( response ) {
+                res.render('item', {title:'AfterTrauma > ' + capitalise(category) + ' > ' + response.title, category: category, itemTitle: response.title, item: response._id, blocks: response.blocks || [] });
+            }).catch( function( error ) {
                 //
-                res.json( {status: 'OK'} );
-            } ).catch( function( error ) {
-                res.json( {status: 'ERROR', message: JSON.stringify( error ) } );
+                // TODO: error
+                //
+                res.render('error', {title:'AfterTrauma Admin', error: error});
             });
+            
         });
-        app.get('/user/byid/:id', function(req, res) {
-            // get single user
-            db.getUser(req.params.id).then( function( response ) {
-                console.log( '/user/byid/' + req.params.id + ' : ' + JSON.stringify(response) );
-                res.json( formatResponse( response, 'OK' ) );
+        app.get('/admin/:category/:item/:block', function (req, res) {
+            var category    = req.params.category;
+            var id          = db.ObjectId(req.params.item);
+            var blockIndex  = parseInt(req.params.block);
+            var type        = req.query.type;
+            db.findOne( 'content', { _id: id } ).then( function( response ) {
+                var block = blockIndex >= 0 && blockIndex < response.blocks.length ? response.blocks[ blockIndex ] : {type: type, title:"", content:"", tags:[]};
+                res.render('block', {title:'AfterTrauma > ' + capitalise(category) + ' > ' + response.title, category: category, item: id, index: blockIndex, block: block} );
             }).catch( function( error ) {
-                res.json( formatResponse( null, 'ERROR', JSON.stringify( error ) ) );
+                //
+                // TODO: error
+                //
+                res.render('error', {title:'AfterTrauma Admin', error: error});
             });
         });
-        app.get('/user/byemail/:email', function(req, res) {
-            // get single user
-            db.getUserByEmail(req.params.email).then( function( response ) {
-                console.log( '/user/byemail/' + req.params.email + ' : ' + JSON.stringify(response) );
-                if ( response ) {
-                    res.json( formatResponse( response, 'OK' ) );
-                } else {
-                    res.json( formatResponse( null, 'ERROR', "Unknown user" ) );
-                }
+        app.put('/admin/:category/:item/:block', jsonParser, function (req, res) { // update item
+            var category    = req.params.category;
+            var id          = db.ObjectId(req.params.item);
+            var blockIndex  = parseInt(req.params.block);
+            var block       = req.body; 
+            var operation;
+            if ( blockIndex < 0 ) {
+                operation = {
+                    $push: {
+                        blocks : block
+                    },
+                    $set: {
+                        date : Date.now()
+                    }
+                };
+            } else {
+                operation = { 
+                    $set: {}, 
+                    $set: {
+                        date : Date.now()
+                    } 
+                };
+                operation[ '$set' ][ 'blocks.' + blockIndex ] = block;
+            }
+            db.updateOne( 'content',  { _id: id }, operation ).then( function( response ) {
+                res.json({ status: 'OK', response: response});
             }).catch( function( error ) {
-                res.json( formatResponse( null, 'ERROR', JSON.stringify( error ) ) );
+                res.json({ status: 'ERROR', error: error});
             });
         });
-        app.get('/user/byname/:name', function(req, res) {
-            // get single user
-            db.getUserByName(req.params.name).then( function( response ) {
-                console.log( '/user/byname/' + req.params.name + ' : ' + JSON.stringify(response) );
-                if ( response ) {
-                    res.json( formatResponse( response, 'OK' ) );
-                } else {
-                    res.json( formatResponse( null, 'ERROR', "Unknown user" ) );
-                }
+        app.delete('/admin/:category/:item/:block', function (req, res) { // delete block
+            var category    = req.params.category;
+            var id          = db.ObjectId(req.params.item);
+            var blockIndex  = parseInt(req.params.block);
+            var operation   = { $unset: { } };
+            operation['$unset'][ 'blocks.' + blockIndex ] = null;
+            db.updateOne( 'content',  { _id: id }, operation ).then( function( response ) {
+                db.updateOne( 'content',  { _id: id }, { $pull: { blocks: null }, $set: { date: Date.now() } } ).then( function( response ) {
+                    res.json({ status: 'OK', response: response});
+                }).catch( function( error ) {
+                    res.json({ status: 'ERROR', error: error});
+                });
             }).catch( function( error ) {
-                res.json( formatResponse( null, 'ERROR', JSON.stringify( error ) ) );
+                res.json({ status: 'ERROR', error: error});
             });
         });
-        app.delete('/user/:id', function(req, res) {
-            // get single route
-            db.deleteUser(req.params.id).then( function( response ) {
-                res.json( formatResponse( response, 'OK' ) );
-            }).catch( function( error ) {
-                res.json( formatResponse( null, 'ERROR', JSON.stringify( error ) ) );
-            });
-        });
-        */
+       //
         //
         //
-        //
+        function capitalise( word ) {
+            return word && word.charAt(0).toUpperCase() + word.slice(1);
+        }
         function formatResponse( data, status, message ) {
             var response = {};
             if ( message ) response[ 'message' ] = message;

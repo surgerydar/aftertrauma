@@ -114,7 +114,7 @@ Chat.prototype.acceptinvite = function( wss, ws, command ) {
     // update chat status
     //
     process.nextTick(function(){   
-        _db.update('chats', command.id, {$set:{status:"active"}}).then(function( response ) {
+        _db.updateOne('chats', { id: command.id }, {$set:{status:"active"}}).then(function( response ) {
             command.status = 'OK';
             command.response = response;
             ws.send(JSON.stringify(command));
@@ -133,7 +133,7 @@ Chat.prototype.sendmessage = function( wss, ws, command ) {
     // update chat status
     //
     process.nextTick(function(){   
-        _db.update('chats', command.id, {$push: { messages: { from: command.from, message: command.message } } }).then(function( response ) {
+        _db.updateOne('chats', { id: command.id }, {$push: { messages: { from: command.from, message: command.message } } }).then(function( response ) {
             command.status = 'OK';
             command.response = response;
             ws.send(JSON.stringify(command));

@@ -1,0 +1,19 @@
+html
+    head
+        title= title
+        link(rel='stylesheet', href='/style/aftertrauma.css')
+        meta( name='viewport' content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0' )
+    body
+        .container#container
+            nav.titlebar
+                h1= title
+            .list
+                .list-item( data-type='category' data-id='users' ) 
+                    h2 Users
+                .list-item( data-type='category' data-id='introduction' ) 
+                    h2 Introduction
+                .list-item( data-type='category' data-id='resources' )
+                    h2 Resources
+                .list-item( data-type='category' data-id='about' ) 
+                    h2 About 
+        script(src='/scripts/aftertrauma.js')

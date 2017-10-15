@@ -448,13 +448,13 @@ Db.prototype.drop = function( collection ) {
 	});
 }
 
-Db.prototype.insert = function( collection, day ) {
+Db.prototype.insert = function( collection, document ) {
     var db = this.db;
     return new Promise( function( resolve, reject ) {
         try {
-            db.collection( collection ).insertOne( day,function(err,result) {
+            db.collection( collection ).insertOne( document,function(err,result) {
                if ( err ) {
-                    console.log( 'insert : ' + collection + ' : error : ' + err );
+                   console.log( 'insert : ' + collection + ' : error : ' + err );
                    reject( err );
                } else {
                    resolve( result );
@@ -467,11 +467,30 @@ Db.prototype.insert = function( collection, day ) {
     });
 }
 
-Db.prototype.update = function( collection, id, update ) {
+Db.prototype.remove = function( collection, query ) {
+    var db = this.db;
+    return new Promise( function( resolve, reject ) {
+        try {
+            db.collection( collection ).remove( query,function(err,result) {
+               if ( err ) {
+                   console.log( 'remove : ' + collection + ' : error : ' + err );
+                   reject( err );
+               } else {
+                   resolve( result );
+               }
+            });
+        } catch( err ) {
+            console.log( 'remove : ' + collection + ' : error : ' + err );
+            reject( err );
+        }
+    });
+}
+
+Db.prototype.updateOne = function( collection, query, update ) {
     var db = this.db;
     return new Promise( function( resolve, reject ) {
          try {
-             db.collection( collection ).findOneAndUpdate( { id: id }, update, function( err, result ) {
+             db.collection( collection ).findOneAndUpdate( query, update, function( err, result ) {
                 if ( err ) {
                     console.log( 'update : ' + collection + ' : error : ' + err );
                     reject( err );
@@ -524,5 +543,8 @@ Db.prototype.findOne = function( collection, query, projection ) {
     });
 }
 
+Db.prototype.ObjectId = function( hex ) {
+    return new ObjectId.createFromHexString(hex);
+}
 module.exports = new Db();
 
