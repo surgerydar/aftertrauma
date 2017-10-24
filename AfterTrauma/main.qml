@@ -11,6 +11,7 @@ ApplicationWindow {
     visible: true
     width: 480
     height: 640
+
     title: qsTr("AfterTrauma")
     //
     // global font

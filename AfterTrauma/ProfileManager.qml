@@ -126,16 +126,16 @@ AfterTrauma.Page {
                         if ( profile ) {
                             for ( var key in profile ) {
                                 userProfile[ key ] = profile[ key ];
-                                //
-                                // save to server
-                                //
-                                var command = {
-                                    command: 'updateprofile',
-                                    profile: profile
-                                };
-                                busyIndicator.running = true;
-                                profileChannel.send(command);
                             }
+                            //
+                            // save to server
+                            //
+                            var command = {
+                                command: 'updateprofile',
+                                profile: profile
+                            };
+                            busyIndicator.running = true;
+                            profileChannel.send(command);
                         } else {
                             stack.pop();
                         }

@@ -135,7 +135,7 @@ QVariant Database::update( QString collection, QVariant query, QVariant object )
             targetIndex = i;
             break;
             /*
-            //* FIXME: we are loosing the enclosed variant maps
+            // FIXME: we are loosing the enclosed variant maps
             matches.append(current["_id"]);
             for ( QVariantMap::iterator it = _update.begin(); it != _update.end(); ++it ) {
                 qDebug() << "updating : " << it.key() << " : with : " << _update[ it.key() ];
@@ -176,7 +176,7 @@ QVariant Database::remove( QString collection, QVariant query ) {
 
 QVariant Database::find( QString collection, QVariant query, QVariant sort ) {
     //
-    // TODO: sort and full query
+    // TODO: projection
     //
     QVariantMap _query = query.value<QVariantMap>();
     QVariantList& _collection = getCollection(collection);
@@ -251,6 +251,7 @@ QVariantList& Database::getCollection( QString& collection ) {
 bool Database::matchDocument( QVariantMap& document, QVariantMap& query ) {
     //
     // TODO: mongo style queries
+    // $and, $or, $eq, $gt, $lt ...
     //
     for ( QVariantMap::iterator it = query.begin(); it != query.end(); ++it ) {
         if ( !document.contains(it.key()) || document[ it.key() ] != query[ it.key() ] ) return false;

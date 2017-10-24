@@ -97,7 +97,7 @@ WebSocketRouter.prototype.json = function( command, handler ) {
 }
 
 WebSocketRouter.prototype.binary = function( selector, handler ) {
-    if ( this.jsonRoutes[ command ] ) throw 'WebSocketRouter : error : duplicate binary command : ' + command;
+    if ( this.jsonRoutes[ selector ] ) throw 'WebSocketRouter : error : duplicate binary command : ' + selector;
     this.binaryRoutes[ selector ] = handler;
 }
 

@@ -413,12 +413,108 @@ var rest = {
             dropArea.classList.remove('active');
             var target = dropArea.querySelector('img') || dropArea.querySelector('video');
             if ( target ) {
-                var files = evt.dataTransfer.files;
-                for (var i = 0, f; f = files[i]; i++) {
-                    // Read the File objects in this FileList.
-                    console.log('file:\n'+f.name);
+                function pad(n, width=3, z=0) {return (String(z).repeat(width) + String(n)).slice(String(n).length)};
+                function toASCII( str ) { var ascii = new Uint8Array(str.length); for ( var i = 0; i < str.length; ++i ) ascii[i] = str.charCodeAt(i); return ascii };
+                function makeCommandHeader( selector, guid, size ) {
+                    var header  = new ArrayBuffer(size);
+                    var dv      = new DataView(header);
+                    var offset = 0;
+                    toASCII(selector).forEach( function(c) {
+                        dv.setUint8( offset, c );
+                        offset++;
+                    });
+                    toASCII(guid).forEach( function(c) {
+                        dv.setUint8( offset, c );
+                        offset++;
+                    });
+                    return header;
                 }
-                target.src = files[ 0 ].getAsDataURL();
+                var file = evt.dataTransfer.files[0];
+                console.log( file.name + ':' + file.size + ':' + file.type );
+                //
+                //
+                //
+                var guid = pad(Date.now(),16,'0');
+                var filename = file.name;
+                var filesize = file.size;
+                var ws = new WebSocket('ws://aftertrauma.uk:4000');
+                ws.binaryType = 'arraybuffer';
+                ws.onmessage = function(evt) {
+                    if ( typeof evt.data === 'string' ) {
+                        console.log( evt.data );
+                        var response = JSON.parse(evt.data);
+                        if ( response.status === "DONE" ) {
+                            target.src = response.destination;
+                        }
+                    } else {
+                        var dv = new DataView(evt.data);
+                        //
+                        // TODO: process progress and completion
+                        //
+                        
+                    }
+                }
+                ws.onopen = function() {
+                    //
+                    // write header
+                    // command : 0-3 = selector, 4-19 = uuid, 20-23 = stage ( 'head' | 'chnk' )
+                    //
+                    var command = makeCommandHeader( 'upld', guid, 20 + 4 + 2 + 4 + filename.length );
+                    var dv = new DataView(command);
+                    var offset = 20;
+                    toASCII('head').forEach( function(c) {
+                        dv.setUint8( offset, c );
+                        offset++;
+                    }); 
+                    dv.setUint16(offset,filename.length);
+                    offset += 2;
+                    toASCII(filename).forEach( function(c) {
+                        dv.setUint8( offset, c );
+                        offset++;
+                    }); 
+                    dv.setUint32(offset,filesize);
+                    ws.send(command);
+                    //
+                    //
+                    //
+                    var remaining = filesize;
+                    var chunkSize = 2048;
+                    var fileOffset = 0;
+                    var sent = 0;
+                    while( remaining > 0 ) {
+                        var reader = new FileReader();
+                        reader.onloadend = function(evt) {
+                            if (evt.target.readyState == FileReader.DONE) { // DONE == 2
+                                //
+                                // write chunk
+                                //
+                                var buffer = evt.target.result;
+                                console.log( 'read ' + buffer.byteLength + ' bytes' );
+                                command = makeCommandHeader( 'upld', guid, 24 + buffer.byteLength );
+                                dv = new DataView(command);
+                                offset = 20;
+                                toASCII('chnk').forEach( function(c) {
+                                    dv.setUint8( offset, c );
+                                    offset++;
+                                }); 
+                                var source = new Int8Array(buffer);
+                                var destination = new Int8Array(command);
+                                for ( var i = 0; i < buffer.byteLength; ++i) {
+                                    destination[ offset + i ] = source[ i ];
+                                }
+                                //destination.set( source, offset );
+                                ws.send(command);
+                                sent += buffer.byteLength;
+                                if ( sent >= filesize ) {
+                                    console.log('done');
+                                }
+                           }
+                        }; 
+                        reader.readAsArrayBuffer(file.slice(fileOffset,fileOffset+chunkSize));
+                        fileOffset += chunkSize;
+                        remaining -= chunkSize;
+                    }
+                }
             }
             return false;
         }

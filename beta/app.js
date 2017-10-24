@@ -254,6 +254,11 @@ db.connect(
         let day = require('./day');
         day.setup(wsr,db);
         //
+        // connect fileuploader
+        //
+        let fileuploader = require('./fileuploader');
+        fileuploader.setup(wsr);
+        //
         // create server
         //
         console.log('creating server');
