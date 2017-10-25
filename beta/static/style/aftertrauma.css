@@ -78,11 +78,10 @@ h3 {
 
 .reorder {
     position: absolute;
-    top: 8px;
-    left: 8px;
-    width: 24px;
-    height: 24px;
-    padding: 8px;
+    bottom: 8px;
+    right: 8px;
+    width: 18px;
+    height: 12px;
     background-image: url( 'images/reorder.png' );
     background-size: contain;
     background-repeat: no-repeat;
@@ -93,8 +92,8 @@ h3 {
     position: absolute;
     top: 8px;
     right: 8px;
-    width: 24px;
-    height: 24px;
+    width: 18px;
+    height: 18px;
     background-image: url( 'images/delete.png' );
     background-size: contain;
     background-repeat: no-repeat;
@@ -174,7 +173,7 @@ textarea {
 }
 
 .drop-area {
-    height: 256px;
+    min-height: 256px;
     flex: 1 1 1;
     background-color: #F5F7FA;
     color: #202C35;  
@@ -191,4 +190,20 @@ textarea {
 
 .drop-area > video {
     
+}
+
+video.block {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 16px;
+    margin-bottom: 16px;
+}
+
+img.block {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 16px;
+    margin-bottom: 16px;
 }

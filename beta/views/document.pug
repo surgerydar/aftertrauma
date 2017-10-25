@@ -1,0 +1,41 @@
+html
+    head
+        title= title
+        link(rel='stylesheet', href='/style/aftertrauma.css')
+        meta( name='viewport' content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0' )
+    body
+        .container#container
+            nav.titlebar
+                button#back back
+                h1= title
+                button#add( data-section= section data-category= document.category data-document= document._id ) +
+                button#save( data-section= section data-category= document.category data-document= document._id ) save
+            input#title( type='text' value= document.title ) 
+            .list#blocks( data-sortable=true )
+                for block, index in document.blocks
+                    if block
+                        - var tags = block.tags.join();
+                        if block.type == "text"
+                            .block( data-type= block.type data-document= document._id data-index= index data-title= block.title data-content= block.content data-tags= tags ) !{block.content}
+                                .delete
+                                .reorder
+                        else if block.type == "image"
+                            .block( data-type= block.type data-document= document._id data-index= index data-title= block.title data-content= block.content data-tags= tags )
+                                img.block( src= block.content )
+                                .delete
+                                .reorder
+                        else
+                            .block( data-type= block.type data-document= document._id data-index= index data-title= block.title data-content= block.content data-tags= tags )
+                                video.block( src= block.content controls )
+                                .delete
+                                .reorder
+                            
+                else 
+                    .list-item
+                        h2 no data
+        .menu
+            .menu-item( data-type='text' ) Text
+            .menu-item( data-type='image' ) Image
+            .menu-item( data-type='video' ) Video
+        script(src='/scripts/Sortable.js')
+        script(src='/scripts/aftertrauma.js')

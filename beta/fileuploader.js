@@ -7,6 +7,7 @@ let uploads = [];
 function FileWriter( guid, filename, fileSize ) {
     this.guid       = guid;
     this.fileSize   = fileSize;
+    this.processed  = 0;
     this.filename   = filename;
     this.file       = fs.createWriteStream('./upload/' + filename);
     if ( !this.file ) {
@@ -21,9 +22,9 @@ FileWriter.prototype.writeChunk = function( ws, data ) {
         console.log( 'file is closed' );
         return true;
     }
-    this.fileSize -= data.length;
+    this.processed += data.length;
     //console.log( this.fileSize + ' bytes remaining' );
-    if ( this.fileSize <= 0 ) {
+    if ( this.processed >= this.fileSize ) {
         console.log( 'closing file');
         this.file.end();
         
@@ -48,7 +49,7 @@ FileWriter.prototype.writeChunk = function( ws, data ) {
                 }
                 copyFile( source, destination ).then( function() {
                     console.log(source + ' was copied to ' + destination);
-                    ws.send( JSON.stringify({status:"DONE",destination:'/media/' + self.filename}) );
+                    ws.send( JSON.stringify({status:"DONE", guid: self.guid, destination:'/media/' + self.filename}) );
                 }).catch( function( error ) {
                     console.log('error copying ' + source + ' to ' + destination + ' : ' + error );
                 });
@@ -63,6 +64,11 @@ FileWriter.prototype.writeChunk = function( ws, data ) {
             }
         });
         return true;
+    } else {
+        //
+        // request next chunk
+        //
+        ws.send( JSON.stringify({status:"READY", guid: self.guid, progress: ( self.processed / self.fileSize) }) );
     }
     return false;
 }
@@ -103,7 +109,11 @@ FileUploader.prototype.upld = function( wss, ws, command ) {
                     //
                     console.log('processing file : ' + filename + ' : size : ' + filesize );
                     uploads.push( new FileWriter(guid,filename,filesize) );
-                    respond('ok  ');
+                    //respond('ok  ');
+                    //
+                    // request first chunk
+                    //
+                    ws.send( JSON.stringify({status:"READY", guid: guid, progress:0.}) );
                     break;
                 case 'chnk' :
                     //
@@ -119,11 +129,11 @@ FileUploader.prototype.upld = function( wss, ws, command ) {
                             break;
                         }
                     }
-                    respond('ok  ');
+                    //respond('ok  ');
                     break;
                 default :
                     console.log( 'unknown stage : ' + stage );
-                    respond('unkn');
+                    //respond('unkn');
             }
         } catch( error ) {
             console.log( 'fileupload : error : ' + error );

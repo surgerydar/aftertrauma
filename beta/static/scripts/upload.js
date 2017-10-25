@@ -1,175 +1,164 @@
-	'use strict';
+var files = [];
+var processing = false;
+//
+// utility functions
+//
+function pad(n, width=3, z=0) {
+    return (String(z).repeat(width) + String(n)).slice(String(n).length);
+}
+function toASCII( str ) { 
+    var ascii = new Uint8Array(str.length); 
+    for ( var i = 0; i < str.length; ++i ) ascii[i] = str.charCodeAt(i); 
+    return ascii;
+}
+function makeCommandHeader( selector, guid, size ) {
+    var header  = new ArrayBuffer(size);
+    var dv      = new DataView(header);
+    var offset = 0;
+    toASCII(selector).forEach( function(c) {
+        dv.setUint8( offset, c );
+        offset++;
+    });
+    toASCII(guid).forEach( function(c) {
+        dv.setUint8( offset, c );
+        offset++;
+    });
+    return header;
+}
+//
+//
+//
+function upload( file ) {
+    //
+    //
+    //
+    var guid = pad(Date.now(),16,'0');
+    var filename = file.name;
+    var filesize = file.size;
+    var ws = new WebSocket('ws://aftertrauma.uk:4000');
+    ws.binaryType = 'arraybuffer';
+    ws.pendingCommands = [];
+    //
+    //
+    //
+    ws.onmessage = function(evt) {
+        //console.log( 'upload worker : message from server : ' + JSON.stringify(evt.data) );
+        if ( typeof evt.data === 'string' ) {
+            var response = JSON.parse(evt.data);
+            if ( response.status === "DONE" ) {
+                self.postMessage({ command: "uploaddone", guid: guid, destination: response.destination });
+            } else if ( response.status === "READY" ) {
+                self.postMessage({ command: "uploadprogress", guid: guid, progress: response.progress });
+                if ( ws.pendingCommands.length > 0 ) {
+                    ws.send(ws.pendingCommands.shift());
+                } else {
+                    console.log( 'upload worker : ran out of blocks before upload end' );
+                    self.postMessage({ command: "uploaderror", guid: guid, error: "ran out of blocks before upload end" });
+                }
+            }
+        }
+    }
+    ws.onopen = function() {
+        //
+        // write header
+        // command : 0-3 = selector, 4-19 = uuid, 20-23 = stage ( 'head' | 'chnk' )
+        //
+        var header = makeCommandHeader( 'upld', guid, 20 + 4 + 2 + 4 + filename.length );
+        var dv = new DataView(header);
+        var offset = 20;
+        toASCII('head').forEach( function(c) {
+            dv.setUint8( offset, c );
+            offset++;
+        }); 
+        dv.setUint16(offset,filename.length);
+        offset += 2;
+        toASCII(filename).forEach( function(c) {
+            dv.setUint8( offset, c );
+            offset++;
+        }); 
+        dv.setUint32(offset,filesize);
+        ws.send(header);
+        //
+        //
+        //
+        self.postMessage({ command: "uploadstart", guid: guid, filename: filename });
+        //
+        //
+        //
+        var remaining = filesize;
+        var chunkSize = 2048;
+        var fileOffset = 0;
+        var sent = 0;
+        while( remaining > 0 ) {
+            var reader = new FileReader();
+            reader.onloadend = function(evt) {
+                if (evt.target.readyState == FileReader.DONE) { // DONE == 2
+                    //
+                    // write chunk
+                    //
+                    var buffer = evt.target.result;
+                    console.log( 'read ' + buffer.byteLength + ' bytes' );
+                    var command = makeCommandHeader( 'upld', guid, 24 + buffer.byteLength );
+                    dv = new DataView(command);
+                    offset = 20;
+                    toASCII('chnk').forEach( function(c) {
+                        dv.setUint8( offset, c );
+                        offset++;
+                    }); 
+                    var source = new Int8Array(buffer);
+                    var destination = new Int8Array(command);
+                    for ( var i = 0; i < buffer.byteLength; ++i) {
+                        destination[ offset + i ] = source[ i ];
+                    }
+                    //destination.set( source, offset );
+                    //ws.send(command);
+                    ws.pendingCommands.push( command );
+                    sent += buffer.byteLength;
+                    if ( sent >= filesize ) {
+                        console.log('done');
+                    }
+               }
+            }; 
+            reader.readAsArrayBuffer(file.slice(fileOffset,fileOffset+chunkSize));
+            fileOffset += chunkSize;
+            remaining -= chunkSize;
+        }
+    }
+    ws.onerror = function(evt) {
+        self.postMessage({ command: "uploaderror", guid: guid, error: "websocket error" });
+    }
+}
 
-	;( function ( document, window, index )
-	{
-		// feature detection for drag&drop upload
-		var isAdvancedUpload = function()
-			{
-				var div = document.createElement( 'div' );
-				return ( ( 'draggable' in div ) || ( 'ondragstart' in div && 'ondrop' in div ) ) && 'FormData' in window && 'FileReader' in window;
-			}();
+function process() {
+    processing = true;
+    while ( files.length > 0 ) {
+        upload(files.shift());
+    }
+    processing = false;
+}
 
-
-		// applying the effect for every form
-		var forms = document.querySelectorAll( '.box' );
-		Array.prototype.forEach.call( forms, function( form )
-		{
-			var input		 = form.querySelector( 'input[type="file"]' ),
-				label		 = form.querySelector( 'label' ),
-				errorMsg	 = form.querySelector( '.box__error span' ),
-				restart		 = form.querySelectorAll( '.box__restart' ),
-				droppedFiles = false,
-				showFiles	 = function( files )
-				{
-					label.textContent = files.length > 1 ? ( input.getAttribute( 'data-multiple-caption' ) || '' ).replace( '{count}', files.length ) : files[ 0 ].name;
-				},
-				triggerFormSubmit = function()
-				{
-					var event = document.createEvent( 'HTMLEvents' );
-					event.initEvent( 'submit', true, false );
-					form.dispatchEvent( event );
-				};
-
-			// letting the server side to know we are going to make an Ajax request
-			var ajaxFlag = document.createElement( 'input' );
-			ajaxFlag.setAttribute( 'type', 'hidden' );
-			ajaxFlag.setAttribute( 'name', 'ajax' );
-			ajaxFlag.setAttribute( 'value', 1 );
-			form.appendChild( ajaxFlag );
-
-			// automatically submit the form on file select
-			input.addEventListener( 'change', function( e )
-			{
-				showFiles( e.target.files );
-
-				
-			});
-
-			// drag&drop files if the feature is available
-			if( isAdvancedUpload )
-			{
-				form.classList.add( 'has-advanced-upload' ); // letting the CSS part to know drag&drop is supported by the browser
-
-				[ 'drag', 'dragstart', 'dragend', 'dragover', 'dragenter', 'dragleave', 'drop' ].forEach( function( event )
-				{
-					form.addEventListener( event, function( e )
-					{
-						// preventing the unwanted behaviours
-						e.preventDefault();
-						e.stopPropagation();
-					});
-				});
-				[ 'dragover', 'dragenter' ].forEach( function( event )
-				{
-					form.addEventListener( event, function()
-					{
-						form.classList.add( 'is-dragover' );
-					});
-				});
-				[ 'dragleave', 'dragend', 'drop' ].forEach( function( event )
-				{
-					form.addEventListener( event, function()
-					{
-						form.classList.remove( 'is-dragover' );
-					});
-				});
-				form.addEventListener( 'drop', function( e )
-				{
-					droppedFiles = e.dataTransfer.files; // the files that were dropped
-					showFiles( droppedFiles );
-
-									});
-			}
-
-
-			// if the form was submitted
-			form.addEventListener( 'submit', function( e )
-			{
-				// preventing the duplicate submissions if the current one is in progress
-				if( form.classList.contains( 'is-uploading' ) ) return false;
-
-				form.classList.add( 'is-uploading' );
-				form.classList.remove( 'is-error' );
-
-				if( isAdvancedUpload ) // ajax file upload for modern browsers
-				{
-					e.preventDefault();
-
-					// gathering the form data
-					var ajaxData = new FormData( form );
-					if( droppedFiles )
-					{
-						Array.prototype.forEach.call( droppedFiles, function( file )
-						{
-							ajaxData.append( input.getAttribute( 'name' ), file );
-						});
-					}
-
-					// ajax request
-					var ajax = new XMLHttpRequest();
-					ajax.open( form.getAttribute( 'method' ), form.getAttribute( 'action' ), true );
-
-					ajax.onload = function()
-					{
-						form.classList.remove( 'is-uploading' );
-						if( ajax.status >= 200 && ajax.status < 400 )
-						{
-							var data = JSON.parse( ajax.responseText );
-							form.classList.add( data.success == true ? 'is-success' : 'is-error' );
-							if( !data.success ) errorMsg.textContent = data.error;
-						}
-						else alert( 'Error. Please, contact the webmaster!' );
-					};
-
-					ajax.onerror = function()
-					{
-						form.classList.remove( 'is-uploading' );
-						alert( 'Error. Please, try again!' );
-					};
-
-					ajax.send( ajaxData );
-				}
-				else // fallback Ajax solution upload for older browsers
-				{
-					var iframeName	= 'uploadiframe' + new Date().getTime(),
-						iframe		= document.createElement( 'iframe' );
-
-						$iframe		= $( '<iframe name="' + iframeName + '" style="display: none;"></iframe>' );
-
-					iframe.setAttribute( 'name', iframeName );
-					iframe.style.display = 'none';
-
-					document.body.appendChild( iframe );
-					form.setAttribute( 'target', iframeName );
-
-					iframe.addEventListener( 'load', function()
-					{
-						var data = JSON.parse( iframe.contentDocument.body.innerHTML );
-						form.classList.remove( 'is-uploading' )
-						form.classList.add( data.success == true ? 'is-success' : 'is-error' )
-						form.removeAttribute( 'target' );
-						if( !data.success ) errorMsg.textContent = data.error;
-						iframe.parentNode.removeChild( iframe );
-					});
-				}
-			});
-
-
-			// restart the form if has a state of error/success
-			Array.prototype.forEach.call( restart, function( entry )
-			{
-				entry.addEventListener( 'click', function( e )
-				{
-					e.preventDefault();
-					form.classList.remove( 'is-error', 'is-success' );
-					input.click();
-				});
-			});
-
-			// Firefox focus bug fix for file input
-			input.addEventListener( 'focus', function(){ input.classList.add( 'has-focus' ); });
-			input.addEventListener( 'blur', function(){ input.classList.remove( 'has-focus' ); });
-
-		});
-	}( document, window, 0 ));
-
+self.onmessage = function(evt) {
+    switch ( evt.data.command) {
+        case "upload" : {
+            //
+            // store files
+            //
+            for (var i = 0; i < evt.data.files.length; i++) {
+                files.push(evt.data.files[i]);
+            }
+            //
+            // start processing
+            //
+            if ( !processing ) process();
+            break;
+        }
+        case "cancel" : {
+            //
+            // TODO: add websocket to array with guid
+            //
+            break;
+        }
+        default :
+            console.log( "upload worker : unknown command : " + evt.data.command );  
+    }
+};

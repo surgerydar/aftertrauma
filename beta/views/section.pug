@@ -8,11 +8,11 @@ html
             nav.titlebar
                 button#back back
                 h1= title
-                button#add( data-section= section data-category= category ) +
+                button#add( data-section= section ) +
             .list( data-sortable=true )
-                each document in documents
-                    .list-item( data-type='document' data-category= category data-id= document._id )
-                        h2= document.title
+                each category in categories
+                    .list-item( data-type='item' data-section= category.section data-id= category._id )
+                        h2= category.title
                         .delete
                         .reorder
                 else 

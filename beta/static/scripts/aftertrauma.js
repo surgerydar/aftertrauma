@@ -200,9 +200,10 @@ var rest = {
     }
     var add = d.querySelector('#add');
     if ( add ) {
-        var category = add.getAttribute('data-category');
-        var id = add.getAttribute('data-item');
-        if ( id ) {
+        var section     = add.getAttribute('data-section');
+        var category    = add.getAttribute('data-category');
+        var document    = add.getAttribute('data-document');
+        if ( document ) {
             //
             // new block menu
             //
@@ -221,23 +222,41 @@ var rest = {
                     var type = item.getAttribute('data-type');
                     if ( type ) {
                         item.onclick = function() {
-                            w.location = '/admin/' + category + '/' + id + '/-1?type=' + type;
+                            w.location = '/admin/' + section + '/' + category + '/' + document + '/-1?type=' + type;
                         }
                     }
                 })(menuItems[i]);
             }
-       } else {
+        } else if( category ) {
             //
             // new document
             //
             add.onclick = function() {
-                rest.post('/admin/' + category, { title: 'New document' }, {
+                rest.post('/admin/' + section + '/' + category, { title: 'New document' }, {
                     onloadend: function(evt) {
                         //
                         // load new document
                         //
                         var response = rest.parseresponse(evt);
-                        w.location = '/admin/' + category + '/' + response.item._id;
+                        w.location = '/admin/' + section + '/' + category + '/' + response.document._id;
+                    },
+                    onerror: function(error) {
+                        alert( error );
+                    }
+                } );
+            };
+       } else if( section ) {
+            //
+            // new document
+            //
+            add.onclick = function() {
+                rest.post('/admin/' + section, { title: 'New category' }, {
+                    onloadend: function(evt) {
+                        //
+                        // load new document
+                        //
+                        var response = rest.parseresponse(evt);
+                        w.location = '/admin/' + section + '/' + response.category._id;
                     },
                     onerror: function(error) {
                         alert( error );
@@ -249,15 +268,16 @@ var rest = {
     var save = d.querySelector('#save');
     if ( save ) {
         save.onclick = function() {
+            var section    = save.getAttribute('data-section');
             var category    = save.getAttribute('data-category');
-            var item        = save.getAttribute('data-item');
+            var document    = save.getAttribute('data-document');
             var index       = save.getAttribute('data-index'); 
             if ( index ) {
-                var endpoint    = '/admin/' + category + '/' + item + '/' + index;
+                var endpoint    = '/admin/' + section + '/' + category + '/' + document + '/' + index;
                 var block = {
                     type: save.getAttribute('data-type'),
                     title: d.querySelector('#title').value,
-                    content: d.querySelector('#content').value,
+                    content: d.querySelector('#content').src || d.querySelector('#content').value,
                     tags: d.querySelector('#tags').value.split()
                 };
                 rest.put( endpoint, block, {
@@ -265,27 +285,32 @@ var rest = {
                         //
                         // return to document
                         //
-                        w.location = '/admin/' + category + '/' + item;
+                        w.location = '/admin/' + section + '/' + category + '/' + document;
                     },
                     onerror: function(error) {
                         alert( error );
                     }
                 });
-            } else {
-                var endpoint    = '/admin/' + category + '/' + item;
+            } else if( document ) {
+                var endpoint = '/admin/' + section + '/'  + category + '/' + document;
                 var blocks = [];
-                var blockList = d.querySelectorAll('.block');
-                for ( var i = 0; i < blockList.length; ++i ) {
-                    (function(block){
-                        blocks.push({
-                            title: block.getAttribute('data-title'),
-                            content: block.getAttribute('data-content'),
-                            tags: block.getAttribute('data-tags').split()
-                        });
-                    })( blockList[i]);
+                var blockContainer = d.querySelector('#blocks');
+                if ( blockContainer ) {
+                    var blockList = blockContainer.querySelectorAll('div.block');
+                    for ( var i = 0; i < blockList.length; ++i ) {
+                        (function(block){
+                            blocks.push({
+                                type: block.getAttribute('data-type'),
+                                title: block.getAttribute('data-title'),
+                                content: block.getAttribute('data-content'),
+                                tags: block.getAttribute('data-tags') ? block.getAttribute('data-tags').split() : []
+                            });
+                        })( blockList[i]);
+                    }
                 }
                 var document = {
                     title: d.querySelector('#title').value,
+                    category: category,
                     blocks: blocks
                 };
                 rest.put( endpoint, document, {
@@ -303,7 +328,10 @@ var rest = {
         };
     }
     var list = d.querySelector('.list');
-    if ( list ){
+    if ( list ) {
+        if ( list.getAttribute('data-sortable') ) {
+            var sortable = Sortable.create(list,{handle:".reorder"});
+        }
         //
         // hook list items
         //
@@ -311,7 +339,7 @@ var rest = {
             var listItems = list.querySelectorAll('.list-item');
             for ( var i = 0; i < listItems.length; ++i ) {
                 ( function( item ) {
-                    var id = item.getAttribute('data-id');
+                    var id = item.getAttribute('data-id') || item.getAttribute('data-index');
                     item.onclick = function() {
                         if ( id ) {
                             w.location = w.location + '/' + id;
@@ -344,10 +372,10 @@ var rest = {
             for ( var i = 0; i < blocks.length; ++i ) {
                 ( function( block ) {
                     var category    = block.getAttribute('data-category');
-                    var item        = block.getAttribute('data-item');
+                    var document    = block.getAttribute('data-document');
                     var index       = block.getAttribute('data-index');
                     block.onclick = function() {
-                        w.location = '/admin/' + category + '/' + item + '/' + index;
+                        w.location = w.location + '/' + index;
                     };
                     var del = block.querySelector('.delete');
                     if( del ) {
@@ -391,6 +419,47 @@ var rest = {
     //
     var dropArea = d.querySelector('.drop-area');
     if ( dropArea ) {
+        var target = dropArea.querySelector('img') || dropArea.querySelector('video');
+        var progress = d.querySelector('.progress');
+        if ( progress )
+            progress.innerHTML = "<h1>Drop file to upload</h1>"
+        //
+        // start upload worker
+        //
+        var uploadWorker = new Worker('/scripts/upload.js');
+        uploadWorker.onmessage = function(evt) {
+            //console.log( 'upload worker : message : ' + JSON.stringify( evt.data ) );
+            switch ( evt.data.command ) {
+                case "uploadstart" :
+                    if ( progress ) {
+                        progress.innerHTML = "<h1>0%</h1>";
+                    }
+                    break;
+                case "uploadprogress" :
+                    if ( progress ) {
+                        var percent = Math.round( 100. * evt.data.progress );
+                        if ( isNaN( percent ) ) {
+                            console.log( 'invalid progress : ' + evt.data.progress );
+                        }
+                        progress.innerHTML = "<h1>" + percent + "%</h1>";
+                    }
+                    break;
+                case "uploaddone" :
+                    if ( target ) {
+                        target.src = evt.data.destination;
+                    }
+                    if ( progress ) {
+                        progress.innerHTML = "<h1>Drop file to upload</h1>"
+                    }
+                    break;
+            }
+        }
+        uploadWorker.onerror = function(evt) { 
+            console.log('upload worker : ERROR : line ', evt.lineno, ' in ', evt.filename, ': ', evt.message); 
+        }        
+        //
+        //
+        //
         function dragEnter(evt) {
             dropArea.classList.add('active');
             evt.stopPropagation();
@@ -411,110 +480,13 @@ var rest = {
             evt.preventDefault();
             evt.stopPropagation();
             dropArea.classList.remove('active');
-            var target = dropArea.querySelector('img') || dropArea.querySelector('video');
+            
             if ( target ) {
-                function pad(n, width=3, z=0) {return (String(z).repeat(width) + String(n)).slice(String(n).length)};
-                function toASCII( str ) { var ascii = new Uint8Array(str.length); for ( var i = 0; i < str.length; ++i ) ascii[i] = str.charCodeAt(i); return ascii };
-                function makeCommandHeader( selector, guid, size ) {
-                    var header  = new ArrayBuffer(size);
-                    var dv      = new DataView(header);
-                    var offset = 0;
-                    toASCII(selector).forEach( function(c) {
-                        dv.setUint8( offset, c );
-                        offset++;
-                    });
-                    toASCII(guid).forEach( function(c) {
-                        dv.setUint8( offset, c );
-                        offset++;
-                    });
-                    return header;
-                }
-                var file = evt.dataTransfer.files[0];
-                console.log( file.name + ':' + file.size + ':' + file.type );
-                //
-                //
-                //
-                var guid = pad(Date.now(),16,'0');
-                var filename = file.name;
-                var filesize = file.size;
-                var ws = new WebSocket('ws://aftertrauma.uk:4000');
-                ws.binaryType = 'arraybuffer';
-                ws.onmessage = function(evt) {
-                    if ( typeof evt.data === 'string' ) {
-                        console.log( evt.data );
-                        var response = JSON.parse(evt.data);
-                        if ( response.status === "DONE" ) {
-                            target.src = response.destination;
-                        }
-                    } else {
-                        var dv = new DataView(evt.data);
-                        //
-                        // TODO: process progress and completion
-                        //
-                        
-                    }
-                }
-                ws.onopen = function() {
-                    //
-                    // write header
-                    // command : 0-3 = selector, 4-19 = uuid, 20-23 = stage ( 'head' | 'chnk' )
-                    //
-                    var command = makeCommandHeader( 'upld', guid, 20 + 4 + 2 + 4 + filename.length );
-                    var dv = new DataView(command);
-                    var offset = 20;
-                    toASCII('head').forEach( function(c) {
-                        dv.setUint8( offset, c );
-                        offset++;
-                    }); 
-                    dv.setUint16(offset,filename.length);
-                    offset += 2;
-                    toASCII(filename).forEach( function(c) {
-                        dv.setUint8( offset, c );
-                        offset++;
-                    }); 
-                    dv.setUint32(offset,filesize);
-                    ws.send(command);
-                    //
-                    //
-                    //
-                    var remaining = filesize;
-                    var chunkSize = 2048;
-                    var fileOffset = 0;
-                    var sent = 0;
-                    while( remaining > 0 ) {
-                        var reader = new FileReader();
-                        reader.onloadend = function(evt) {
-                            if (evt.target.readyState == FileReader.DONE) { // DONE == 2
-                                //
-                                // write chunk
-                                //
-                                var buffer = evt.target.result;
-                                console.log( 'read ' + buffer.byteLength + ' bytes' );
-                                command = makeCommandHeader( 'upld', guid, 24 + buffer.byteLength );
-                                dv = new DataView(command);
-                                offset = 20;
-                                toASCII('chnk').forEach( function(c) {
-                                    dv.setUint8( offset, c );
-                                    offset++;
-                                }); 
-                                var source = new Int8Array(buffer);
-                                var destination = new Int8Array(command);
-                                for ( var i = 0; i < buffer.byteLength; ++i) {
-                                    destination[ offset + i ] = source[ i ];
-                                }
-                                //destination.set( source, offset );
-                                ws.send(command);
-                                sent += buffer.byteLength;
-                                if ( sent >= filesize ) {
-                                    console.log('done');
-                                }
-                           }
-                        }; 
-                        reader.readAsArrayBuffer(file.slice(fileOffset,fileOffset+chunkSize));
-                        fileOffset += chunkSize;
-                        remaining -= chunkSize;
-                    }
-                }
+                var message = {
+                    command: "upload",
+                    files: evt.dataTransfer.files||evt.target.files
+                };   
+                uploadWorker.postMessage(message);
             }
             return false;
         }

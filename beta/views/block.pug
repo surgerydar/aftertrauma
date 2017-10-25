@@ -8,18 +8,22 @@ html
             nav.titlebar
                 button#back cancel
                 h1= title
-                button#save( data-category= category data-item= item data-index= index data-type= block.type ) save
-            .block-editor( data-category= )
+                button#save( data-section= section data-category= document.category data-document= document._id data-index= index data-type= block.type ) save
+            .block-editor
                 input#title(type='text' value= block.title placeholder='title') 
                 if block.type == "text"
                     textarea#content  !{block.content}
                     .block#preview !{block.content}
                 else if block.type == "image"
                     .drop-area
-                        img( src= block.content )
+                        .progress
+                        img#content.block( src= block.content )
+                    
                 else 
                     .drop-area
-                        video( src= block.content )
+                        .progress
+                        video#content.block( src= block.content controls )
+                    
                 - var tags = block.tags ? block.tags.join() : '';
                 input#tags(type='text' value= tags placeholder='tags')   
         script(src='/scripts/aftertrauma.js')
