@@ -22,6 +22,10 @@ DatabaseList {
                         {
                             name: "registered",
                             value: false
+                        },
+                        {
+                            name: "lastupdate",
+                            value: 0
                         }
                     ];
                 data.forEach(function(datum) {

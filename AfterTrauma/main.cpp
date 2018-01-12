@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
     qDebug() << "Registering controls";
     qmlRegisterType<DatabaseList>("SodaControls", 1, 0, "DatabaseList");
     qmlRegisterType<WebSocketChannel>("SodaControls", 1, 0, "WebSocketChannel");
-    qmlRegisterType<FlowerChart>("SodaControls", 1, 0, "FlowerChartTest");
+    qmlRegisterType<FlowerChart>("SodaControls", 1, 0, "FlowerChart");
     //
     //
     //

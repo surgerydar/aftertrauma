@@ -5,7 +5,7 @@
 #include <QDebug>
 #include <QUuid>
 
-DatabaseList::DatabaseList(QObject *parent) : QAbstractListModel(parent) {
+DatabaseList::DatabaseList(QObject *parent) : QAbstractListModel(parent), m_activeList(m_objects) {
 }
 //
 //
@@ -18,13 +18,13 @@ QHash<int, QByteArray> DatabaseList::roleNames() const {
     return roles;
 }
 
-int DatabaseList::rowCount(const QModelIndex &parent) const {
-    return m_objects.size();
+int DatabaseList::rowCount(const QModelIndex& /*parent*/) const {
+    return m_activeList.size();
 }
 
 QVariant DatabaseList::data(const QModelIndex &index, int role) const {
-    if ( index.row() >= 0 && index.row() < m_objects.size() && role < m_roles.size() ) {
-        return QVariant(m_objects[index.row()][m_roles[role]]);
+    if ( index.row() >= 0 && index.row() < rowCount(index.parent()) && role < m_roles.size() ) {
+        return QVariant(m_activeList[index.row()][m_roles[role]]);
     }
     return QVariant();
 }
@@ -68,6 +68,8 @@ void DatabaseList::load() {
             for ( auto& object : objects ) {
                 m_objects.append(object.value<QVariantMap>());
             }
+            _sort();
+            _filter();
             endResetModel();
             //emit dataChanged(createIndex(0,0),createIndex(m_objects.size()-1,0));
             //emit countChanged();
@@ -110,6 +112,7 @@ void DatabaseList::clear() {
         //int objectCount = m_objects.size();
         beginResetModel();
         m_objects.clear();
+        m_filtered.clear();
         endResetModel();
         //emit dataChanged(createIndex(0,0),createIndex(objectCount-1,0));
         //emit countChanged();
@@ -122,6 +125,7 @@ QVariant DatabaseList::add(QVariant o) {
     beginResetModel();
     m_objects.append(object);
     _sort();
+    _filter();
     endResetModel();
     //emit dataChanged(createIndex(0,0),createIndex(m_objects.size()-1,0));
     //emit countChanged();
@@ -130,7 +134,7 @@ QVariant DatabaseList::add(QVariant o) {
     return QVariant(id);
 }
 
-QVariant DatabaseList::update(QVariant q,QVariant u) {
+QVariant DatabaseList::update(QVariant q,QVariant u, bool upsert) {
     QVariantMap query = q.value<QVariantMap>();
     QVariantMap update = u.value<QVariantMap>();
     QVariantList matches;
@@ -153,6 +157,9 @@ QVariant DatabaseList::update(QVariant q,QVariant u) {
     if ( matches.size() > 0 ) {
         qDebug() << "updated from : " << minIndex << " : to : " << maxIndex;
         emit dataChanged(createIndex(minIndex,0),createIndex(maxIndex,0));
+
+    } else if ( upsert ) {
+        return add(u);
     }
 
     return QVariant(matches);
@@ -170,6 +177,7 @@ QVariant DatabaseList::remove(QVariant q) {
             i++;
         }
     }
+    _filter();
     endResetModel();
     /*
     if ( matches.size() > 0 ) {
@@ -183,10 +191,11 @@ QVariant DatabaseList::remove(QVariant q) {
 QVariant DatabaseList::find(QVariant q) {
     QVariantMap query = q.value<QVariantMap>();
     QVariantList matches;
-    int count = m_objects.size();
+    int count = m_activeList.size();
+    qDebug() << "finding : " << query << " : from : " << count << " entries";
     for ( int i = 0; i < count; i++ ) {
-        if ( _match(m_objects[i],query) ) {
-            matches.append(m_objects[i]);
+        if ( _match(m_activeList[i],query) ) {
+            matches.append(m_activeList[i]);
         }
     }
     return QVariant(matches);
@@ -195,29 +204,39 @@ QVariant DatabaseList::find(QVariant q) {
 QVariant DatabaseList::findOne(QVariant q) {
     QVariantMap query = q.value<QVariantMap>();
     QVariantList matches;
-    int count = m_objects.size();
+    int count = m_activeList.size();
     for ( int i = 0; i < count; i++ ) {
-        if ( _match(m_objects[i],query) ) {
-            return QVariant(m_objects[i]);
+        if ( _match(m_activeList[i],query) ) {
+            return QVariant(m_activeList[i]);
         }
     }
     return QVariant();
 }
 
 QVariant DatabaseList::get(int i) {
-    if ( i >= 0 && i < m_objects.size() ) {
-        return QVariant(m_objects[i]);
+    if ( i >= 0 && i < m_activeList.size() ) {
+        return QVariant(m_activeList[i]);
     }
     return QVariant();
 }
-
+/*
 void DatabaseList::sort(QVariant s) {
     if ( m_sort != s ) {
         m_sort = s.value<QVariantMap>();
         beginResetModel();
         _sort();
+        _filter();
         endResetModel();
-        //emit dataChanged(createIndex(0,0),createIndex(m_objects.size()-1,0));
+    }
+}
+*/
+void DatabaseList::filter(QVariant f) {
+    if ( m_filter != f ) {
+        m_filter = f.value<QVariantMap>();
+        beginResetModel();
+        _sort();
+        _filter();
+        endResetModel();
     }
 }
 //
@@ -236,12 +255,13 @@ QVariant DatabaseList::batchAdd(QVariant o) {
 }
 void DatabaseList::endBatch() {
     _sort();
+    _filter();
     endResetModel();
 }
 //
 //
 //
-void DatabaseList::sync( QString url ) {
+void DatabaseList::sync( QString /*url*/ ) {
 
 }
 //
@@ -274,6 +294,21 @@ void DatabaseList::_sort() {
             }
             return false;
         });
+    }
+}
+void DatabaseList::_filter() {
+    if ( !m_filter.isEmpty() ) {
+        m_filtered.clear();
+        int count = m_objects.size();
+        for ( int i = 0; i < count; i++ ) {
+            if ( _match(m_objects[i],m_filter) ) {
+                m_filtered.append(m_objects[i]);
+            }
+        }
+        m_activeList = m_filtered;
+    } else {
+        m_filtered.clear();
+        m_activeList = m_objects;
     }
 }
 bool DatabaseList::_match( QVariantMap& object, QVariantMap& query ) {

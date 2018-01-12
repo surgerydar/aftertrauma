@@ -4,8 +4,6 @@
         <file>qtquickcontrols2.conf</file>
         <file>colours.js</file>
         <file>DateSlider.qml</file>
-        <file>flowerChart.js</file>
-        <file>FlowerChart.qml</file>
         <file>Intro.qml</file>
         <file>NavigationBar.qml</file>
         <file>NavigationButton.qml</file>
@@ -108,5 +106,7 @@
         <file>ProfileListItem.qml</file>
         <file>Chats.qml</file>
         <file>Install.qml</file>
+        <file>controls/ConfirmDialog.qml</file>
+        <file>Categories.qml</file>
     </qresource>
 </RCC>

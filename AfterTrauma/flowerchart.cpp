@@ -51,6 +51,8 @@ FlowerChart::FlowerChart( QQuickItem* parent ) : QQuickPaintedItem( parent ) {
     m_values        = { 0., 0., 0., 0., 0. };
     m_targetValues  = { 0., 0., 0., 0., 0. };
     m_startValues   = { 0., 0., 0., 0., 0. };
+    m_valuesAnimationStart  = { 0., 0., 0., 0., 0. };
+    m_valuesAnimationEnd    = { 0., 0., 0., 0., 0. };
 }
 //
 //
@@ -236,6 +238,7 @@ void FlowerChart::setValues( const QVariantList values ) {
     }
     update();
     */
+    if( values.size() < 5 ) return;
     for ( int i = 0; i < 5; i++ ) {
         m_valuesAnimationStart[ i ] = m_values[ i ];
         m_valuesAnimationEnd[ i ] = values[ i ].toReal();

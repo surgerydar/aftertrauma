@@ -329,23 +329,49 @@ Popup {
         //
         onReceived: {
             busyIndicator.running = false;
-            var command = JSON.parse(message); // TODO: channel should probably emit object
-            if ( command.command === 'register' || command.command === 'login' ) {
-                if( command.status === "OK" ) {
+            var command = JSON.parse(message); // TODO: channel should probably emit object???
+            if ( command.status === "OK" ) {
+                if ( command.command === 'register' || command.command === 'login' ) {
                     loggedIn    = true;
                     userProfile = command.response;
-                    container.close();
+                    //container.close();
                     //
-                    // TODO: check for update
+                    // sync content
                     //
+                    send({command:'categories',date:0});
+                } else if ( command.command === 'categories' ) {
+                    if ( command.response.length > 0 ) {
+                        processCategories(command.response);
+                    }
+                    send({command:'manifest',date:0});
+                } else if ( command.command === 'manifest' ) {
+                    //console.log( 'manifest : ' + JSON.stringify(command.response) );
+                    if ( command.response.length > 0 ) {
+                        confirmDialog.show('<h1>Updates Available</h1>Do you want to download and install now?', [
+                                           { label: 'yes', action: function() { processUpdate(command.response) } },
+                                           { label: 'no', action: function() { container.close(); } }
+                                           ] );
+                    } else {
+                        container.close();
+                    }
+                } else if ( command.command === 'documents' ) {
 
-                } else {
-                    errorDialog.show( '<h1>Server says</h1><br/>' + ( typeof command.error === 'string' ? command.error : command.error.error ), [
-                                         { label: 'try again', action: function() {} },
-                                         { label: 'forget about it', action: function() { container.close(); } },
-                                     ] );
+                    if ( command.response.length > 0 ) {
+                        console.log( 'documents : ' + JSON.stringify(command.response[0]) );
+                        installDocuments(command.response);
+                    } else {
+                        container.close();
+                    }
                 }
+            } else if ( command.error ) {
+                errorDialog.show( '<h1>Server says</h1><br/>' + ( typeof command.error === 'string' ? command.error : command.error.error ), [
+                                     { label: 'try again', action: function() {} },
+                                     { label: 'forget about it', action: function() { container.close(); } },
+                                 ] );
+            } else {
+                console.log( 'unknown message: ' + message );
             }
+
         }
         onError: {
             busyIndicator.running = false;
@@ -416,5 +442,61 @@ Popup {
     }
     function testUsername( name ) {
 
+    }
+    function processCategories( categories ) {
+        categories.forEach( function( category ) {
+            console.log( 'updating category : ' + JSON.stringify(category) );
+            var entry = {
+                section:    category.section,
+                category:   category._id,
+                title:      category.title,
+                date:       category.date
+            };
+            categoryModel.update({category: category._id},entry,true);
+        });
+        categoryModel.save();
+
+    }
+    function processUpdate( manifest ) {
+        //
+        // delete removed
+        //
+        var documentsAvailable = false;
+        manifest.forEach( function( delta ) {
+            if ( delta.operation === 'remove' ) {
+                //
+                // TODO: delete file, possibly delete associated media
+                //
+                var category = categoryModel.findOne({category:delta.category});
+                if ( category && category.section ) {
+                    var path = category.section + '/' + delta.category + '.' + delta.document + '.json';
+                    console.log( 'removing:' + path );
+                } else {
+                    console.log( 'remove : unable to find catgegory : ' + delta.category );
+                }
+            } else {
+                documentsAvailable = true;
+            }
+        });
+        //
+        // request updated
+        //
+        if ( documentsAvailable ) {
+            authenticationChannel.send({command:'documents',date:0});
+        } else {
+            container.close();
+        }
+    }
+    function installDocuments( documents ) {
+        documents.forEach( function( document ) {
+            var category = categoryModel.findOne({category:document.category});
+            if ( category && category.section ) {
+                var path = category.section + '/' + document.category + '.' + document._id + '.json';
+                console.log( 'installing:' + path );
+            } else {
+                console.log( 'install : unable to find catgegory : ' + document.category );
+            }
+        });
+        container.close();
     }
 }

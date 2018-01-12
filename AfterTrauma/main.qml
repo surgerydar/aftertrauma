@@ -11,7 +11,9 @@ ApplicationWindow {
     visible: true
     width: 480
     height: 640
-
+    //
+    //
+    //
     title: qsTr("AfterTrauma")
     //
     // global font
@@ -24,11 +26,9 @@ ApplicationWindow {
     //
     // global models
     //
-    /* TODO:
     Settings {
         id: settingsModel
     }
-    */
     Daily {
         id: dailyModel
     }
@@ -52,6 +52,9 @@ ApplicationWindow {
     Chats {
         id: chatModel
     }
+    Categories {
+        id: categoryModel
+    }
     //
     //
     //
@@ -65,20 +68,7 @@ ApplicationWindow {
     //
     //
     //
-    /*
     FlowerChart {
-        id: flowerChart
-        height: width
-        anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.topMargin: 16
-        anchors.leftMargin: 8
-        anchors.rightMargin: 8
-        enabled: false
-    }
-    */
-    FlowerChartTest {
         id: flowerChart
         height: width
         anchors.top: parent.top
@@ -130,7 +120,7 @@ ApplicationWindow {
         id: shortcut
     }
     //
-    //
+    // dialogs
     //
     Intro {
         id: intro
@@ -148,6 +138,14 @@ ApplicationWindow {
         width: appWindow.width - 32
         height: appWindow.height - 32
     }
+    AfterTrauma.ConfirmDialog {
+        id: confirmDialog
+        x: 0
+        y: 0
+        modal: true
+        width: appWindow.width
+        height: appWindow.height
+    }
     AfterTrauma.ErrorDialog {
         id: errorDialog
         x: 0
@@ -156,19 +154,23 @@ ApplicationWindow {
         width: appWindow.width
         height: appWindow.height
     }
+    //
+    //
+    //
     AfterTrauma.BusyIndicator {
         id: busyIndicator
         anchors.centerIn: parent
         running: false
     }
-
+    //
+    //
+    //
     Text {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.margins: 2
         text: "(" + parent.width + "," + parent.height + ")"
     }
-
     //
     //
     //
@@ -203,30 +205,6 @@ ApplicationWindow {
         }
 
     }
-    //
-    // TODO: look at best way to move this into separate component or just let models connect directly ( possibly wastefull )
-    // UPDATE: now removing this replacing with DatabaseList
-    //
-    Connections {
-        target: Database
-        onSuccess: {
-            //console.log( 'database success : ' + collection + ' : ' + operation + ' : ' + JSON.stringify(result) );
-            models.forEach( function( model ) {
-                if ( model.collection === collection ) {
-                    model.databaseSuccess(collection,operation,result);
-                }
-            });
-        }
-        onError: {
-            //console.log( 'database error : ' + collection + ' : ' + operation + ' : ' + JSON.stringify(error) );
-            models.forEach( function( model ) {
-                if ( model.collection === collection ) {
-                    model.databaseError(collection,operation,error);
-                }
-            });
-        }
-        property var models: [ dailyModel, challengeModel ];
-    }
     function testUser() {
         return { id:"{5f9ba729-6a16-48c6-81a2-2de6d3db69ca}", username: "justTestin" };
     }
@@ -243,7 +221,6 @@ ApplicationWindow {
     }
     Connections {
         target: BackKeyFilter
-
         onBackKeyPressed : {
             console.log( 'BackKeyPressed' );
             if ( stack.depth <= 1 ) {
@@ -253,7 +230,6 @@ ApplicationWindow {
             }
         }
     }
-
     //
     // global properties
     //
