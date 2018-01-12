@@ -15,7 +15,9 @@ SOURCES += main.cpp \
     imageutils.cpp \
     databasesync.cpp \
     cachedimageprovider.cpp \
-    androidbackkeyfilter.cpp
+    androidbackkeyfilter.cpp \
+    flowerchart.cpp \
+    daily.cpp
 
 HEADERS += \
     imagepicker.h \
@@ -30,7 +32,9 @@ HEADERS += \
     imageutils.h \
     databasesync.h \
     cachedimageprovider.h \
-    androidbackkeyfilter.h
+    androidbackkeyfilter.h \
+    flowerchart.h \
+    daily.h
 
 
 RESOURCES += qml.qrc

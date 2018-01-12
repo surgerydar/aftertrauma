@@ -1,0 +1,19 @@
+html
+    head
+        title= title
+        link(rel='stylesheet', href='/style/aftertrauma.css')
+        meta( name='viewport' content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0' )
+    body
+        .container#container
+            nav.titlebar
+                button#back back
+                h1= title
+                button#add +
+            .list
+                each user in users
+                    .list-item( data-id= user._id )
+                        h2= user.username
+                else 
+                    .list-item
+                        h2 no data
+        script(src='/scripts/aftertrauma.js')

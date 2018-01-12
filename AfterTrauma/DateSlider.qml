@@ -51,7 +51,7 @@ Item {
         control.dateChanged();
     }
     function setDate(date) {
-        if ( currentDate != date ) {
+        if ( currentDate !== date ) {
             var start = startDate.getTime();
             var end = endDate.getTime();
             var current = date.getTime();

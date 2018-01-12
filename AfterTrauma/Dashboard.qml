@@ -28,7 +28,9 @@ AfterTrauma.Page {
             anchors.rightMargin: 32
             onDateChanged: {
                 if ( flowerChart ) {
-                    flowerChart.setCurrentDate(currentDate.getTime());
+                    //flowerChart.setCurrentDate(currentDate.getTime());
+                    flowerChart.currentDate = currentDate.getTime();
+                    flowerChart.values = dailyModel.valuesForDate( currentDate.getTime() );
                 }
             }
         }

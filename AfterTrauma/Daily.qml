@@ -143,4 +143,50 @@ DatabaseList {
         }
         return 0;
     }
+    //
+    //
+    //
+    function dayBefore( date ) {
+        for ( var i = 0; i < count; i++ ) {
+            var day = get(i);
+            if ( day.date <= date ) return day;
+        }
+        return undefined;
+    }
+    function dayAfter( date ) {
+        for ( var i = count - 1; i >= 0; i-- ) {
+            var day = get(i);
+            if ( day.date >= date ) {
+                return day;
+            }
+        }
+        return undefined;
+    }
+    function valuesForDate( date ) {
+        var before = dayBefore( date );
+        var after = dayAfter( date );
+        if ( before && after ) {
+            var values = [];
+            var i;
+            if ( before.date === date ) {
+                for ( i = 0; i < 5; i++ ) {
+                    values.push(before.values[ i ].value);
+                }
+            } else if ( after.date === date ) {
+                for ( i = 0; i < 5; i++ ) {
+                    values.push(after.values[ i ].value);
+                }
+            } else {
+                var range = after.date - before.date;
+                var position = date - before.date;
+                var interpolation = position / range;
+                for ( i = 0; i < 5; i++ ) {
+                    var value = before.values[ i ].value + ( ( after.values[ i ].value - before.values[ i ].value ) * interpolation );
+                    values.push(value);
+                }
+            }
+            return values;
+        }
+        return [ 0., 0., 0., 0., 0.]
+    }
 }

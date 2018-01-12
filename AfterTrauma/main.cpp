@@ -12,6 +12,7 @@
 #include "websocketchannel.h"
 #include "guidgenerator.h"
 #include "imageutils.h"
+#include "flowerchart.h"
 #include "androidbackkeyfilter.h"
 //
 // TODO: find a better way of doing this
@@ -59,6 +60,7 @@ int main(int argc, char *argv[])
     qDebug() << "Registering controls";
     qmlRegisterType<DatabaseList>("SodaControls", 1, 0, "DatabaseList");
     qmlRegisterType<WebSocketChannel>("SodaControls", 1, 0, "WebSocketChannel");
+    qmlRegisterType<FlowerChart>("SodaControls", 1, 0, "FlowerChartTest");
     //
     //
     //

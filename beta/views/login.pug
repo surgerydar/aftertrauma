@@ -1,17 +1,18 @@
 html
-	head
-		title= title
-		link(rel='stylesheet', href='styles/mymusic.css')
-		meta( name='viewport' content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0' )
-	body
-		#container
-			h1( style='text-align: center' ) MyMusic
-			form#login( action='/login', method='POST')
-				input(type='text', name='username' placeholder='username',required, autofocus)
-				input(type='password', name='password' class='form-control', placeholder='password', required)
-				button(class='login', type='submit') Sign in
-				br
-				//- a(href='/signup', class='text-center new-account') Create an account
-				#message
-				if message
-					h1.text-center.error-message #{message}
+    head
+        title= title
+        link(rel='stylesheet', href='style/aftertrauma.css')
+        meta( name='viewport' content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0' )
+    body
+        .container#container
+            nav.titlebar
+                h1 AfterTrauma
+            form#login( action='/login', method='POST')
+                input(type='text', name='username' placeholder='username',required, autofocus)
+                input(type='password', name='password' class='form-control', placeholder='password', required)
+                button(class='login', type='submit') Sign in
+            br
+            //- a(href='/signup', class='text-center new-account') Create an account
+            #message
+            if message
+                h1.text-center.error-message #{message}

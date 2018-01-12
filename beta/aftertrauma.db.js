@@ -543,6 +543,26 @@ Db.prototype.findOne = function( collection, query, projection ) {
     });
 }
 
+Db.prototype.findAndModify = function( collection, query, sort, update, options ) {
+    var db = this.db;
+    return new Promise( function( resolve, reject ) {
+        try {
+            db.collection(collection).findAndModify( query, sort, update, options, function( err, result ) {
+                if ( err ) {
+                    console.log( 'findAndModify : ' + collection + ' : error : ' + err + ' : param : ' + JSON.stringify(document) );
+                    reject( err );
+                } else {
+                    resolve( result );
+                }
+            });
+        } catch( err ) {
+            console.log( err );
+            reject( err );
+        }
+    });
+}
+
+
 Db.prototype.ObjectId = function( hex ) {
     return new ObjectId.createFromHexString(hex);
 }

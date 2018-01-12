@@ -334,7 +334,11 @@ Popup {
                 if( command.status === "OK" ) {
                     loggedIn    = true;
                     userProfile = command.response;
-                    container.close()
+                    container.close();
+                    //
+                    // TODO: check for update
+                    //
+
                 } else {
                     errorDialog.show( '<h1>Server says</h1><br/>' + ( typeof command.error === 'string' ? command.error : command.error.error ), [
                                          { label: 'try again', action: function() {} },

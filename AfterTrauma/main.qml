@@ -65,7 +65,20 @@ ApplicationWindow {
     //
     //
     //
+    /*
     FlowerChart {
+        id: flowerChart
+        height: width
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.topMargin: 16
+        anchors.leftMargin: 8
+        anchors.rightMargin: 8
+        enabled: false
+    }
+    */
+    FlowerChartTest {
         id: flowerChart
         height: width
         anchors.top: parent.top
@@ -167,7 +180,6 @@ ApplicationWindow {
             console.log( 'installing' );
             //stack.push("qrc:///Install.qml")
             SystemUtils.install();
-
             intro.open();
         } else {
             //

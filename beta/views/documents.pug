@@ -1,0 +1,26 @@
+html
+    head
+        title= title
+        link(rel='stylesheet', href='/style/aftertrauma.css')
+        meta( name='viewport' content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0' )
+    body
+        .container( style='overflow-y: auto;')
+            for document in documents
+                div( style='width: 100%; height: auto;' )
+                    h2= document.title
+                    .list
+                        for block, index in document.blocks
+                            if block
+                                - var tags = block.tags.join();
+                                if block.type == "text"
+                                    .block= block.content
+                                else if block.type == "image"
+                                    .block
+                                        img.block( src= block.content )
+                                else
+                                    .block
+                                        video.block( src= block.content controls )
+
+                        else 
+                            .list-item
+                                h2 no data
