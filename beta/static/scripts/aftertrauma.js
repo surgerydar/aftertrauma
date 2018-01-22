@@ -268,7 +268,7 @@ var rest = {
     var save = d.querySelector('#save');
     if ( save ) {
         save.onclick = function() {
-            var section    = save.getAttribute('data-section');
+            var section     = save.getAttribute('data-section');
             var category    = save.getAttribute('data-category');
             var document    = save.getAttribute('data-document');
             var index       = save.getAttribute('data-index'); 

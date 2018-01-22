@@ -29,59 +29,27 @@ AfterTrauma.Page {
             anchors.left: parent.left
             anchors.right: parent.right
             type: model.type
-            media: model.media
+            media: model.content
         }
         add: Transition {
             NumberAnimation { properties: "y"; from: contents.height; duration: 250 }
         }
     }
-
-    StackView.onActivated: {
-        /*
-         var data = [
-                    { type: "text", media: "this is an introduction<br/>this is an introduction<br/>this is an introduction<br/>" },
-                    { type: "text", media: "this is an introduction<br/>this is an introduction<br/>this is an introduction<br/>this is an introduction<br/>this is an introduction<br/>this is an introduction<br/>this is an introduction<br/>" },
-                    { type: "text", media: "this is an introduction<br/>this is an introduction<br/>this is an introduction<br/>this is an introduction<br/>this is an introduction<br/>" },
-                    { type: "text", media: "this is an introduction<br/>this is an introduction<br/>this is an introduction<br/>this is an introduction<br/>this is an introduction<br/>this is an introduction<br/>this is an introduction<br/>this is an introduction<br/>" },
-                    { type: "image", media: "/icons/title_logo.png" },
-                    { type: "video", media: "video.mp4" }
-                ];
-        content.model.clear();
-        data.forEach(function(datum){
-            content.model.append(datum);
-        });
-        */
+    //
+    //
+    //
+    StackView.onActivating: {
         contents.model.clear();
-        if ( content.length > 0 ) {
-            JSONFile.read('/factsheets/' + content);
-        }
-    }
-    //
-    //
-    //
-    Connections {
-        target: JSONFile
-
-        onArrayReadFrom: {
-            console.log( 'path:' + path );
-            console.log( 'array:' + JSON.stringify(array) );
-            contents.model.clear();
-            array.forEach(function(entry) {
-                contents.model.append(entry);
+        var doc = documentModel.findOne( { document: document } );
+        if ( doc ) {
+            doc.blocks.forEach( function( block ) {
+                contents.model.append( block );
             });
         }
-        onObjectReadFrom: {
-            console.log( 'path:' + path );
-            console.log( 'object:' + JSON.stringify(object) );
-        }
-        onErrorReadingFrom: {
-            console.log( 'path:' + path );
-            console.log( 'error:' + error );
-        }
     }
     //
     //
     //
-    property string content: ""
+    property string document: ""
 
 }

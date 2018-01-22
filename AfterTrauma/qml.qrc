@@ -108,5 +108,6 @@
         <file>Install.qml</file>
         <file>controls/ConfirmDialog.qml</file>
         <file>Categories.qml</file>
+        <file>Documents.qml</file>
     </qresource>
 </RCC>

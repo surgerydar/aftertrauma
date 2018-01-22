@@ -5,7 +5,7 @@
 #include <QDebug>
 #include <QUuid>
 
-DatabaseList::DatabaseList(QObject *parent) : QAbstractListModel(parent), m_activeList(m_objects) {
+DatabaseList::DatabaseList(QObject *parent) : QAbstractListModel(parent) {
 }
 //
 //
@@ -19,12 +19,12 @@ QHash<int, QByteArray> DatabaseList::roleNames() const {
 }
 
 int DatabaseList::rowCount(const QModelIndex& /*parent*/) const {
-    return m_activeList.size();
+    return _activeList().size();
 }
 
 QVariant DatabaseList::data(const QModelIndex &index, int role) const {
     if ( index.row() >= 0 && index.row() < rowCount(index.parent()) && role < m_roles.size() ) {
-        return QVariant(m_activeList[index.row()][m_roles[role]]);
+        return QVariant(_activeList()[index.row()][m_roles[role]]);
     }
     return QVariant();
 }
@@ -191,11 +191,11 @@ QVariant DatabaseList::remove(QVariant q) {
 QVariant DatabaseList::find(QVariant q) {
     QVariantMap query = q.value<QVariantMap>();
     QVariantList matches;
-    int count = m_activeList.size();
+    int count = _activeList().size();
     qDebug() << "finding : " << query << " : from : " << count << " entries";
     for ( int i = 0; i < count; i++ ) {
-        if ( _match(m_activeList[i],query) ) {
-            matches.append(m_activeList[i]);
+        if ( _match(_activeList()[i],query) ) {
+            matches.append(_activeList()[i]);
         }
     }
     return QVariant(matches);
@@ -204,23 +204,23 @@ QVariant DatabaseList::find(QVariant q) {
 QVariant DatabaseList::findOne(QVariant q) {
     QVariantMap query = q.value<QVariantMap>();
     QVariantList matches;
-    int count = m_activeList.size();
+    int count = _activeList().size();
     for ( int i = 0; i < count; i++ ) {
-        if ( _match(m_activeList[i],query) ) {
-            return QVariant(m_activeList[i]);
+        if ( _match(_activeList()[i],query) ) {
+            return QVariant(_activeList()[i]);
         }
     }
     return QVariant();
 }
 
 QVariant DatabaseList::get(int i) {
-    if ( i >= 0 && i < m_activeList.size() ) {
-        return QVariant(m_activeList[i]);
+    if ( i >= 0 && i < _activeList().size() ) {
+        return QVariant(_activeList()[i]);
     }
     return QVariant();
 }
-/*
-void DatabaseList::sort(QVariant s) {
+
+void DatabaseList::setSort(QVariant s) {
     if ( m_sort != s ) {
         m_sort = s.value<QVariantMap>();
         beginResetModel();
@@ -229,8 +229,8 @@ void DatabaseList::sort(QVariant s) {
         endResetModel();
     }
 }
-*/
-void DatabaseList::filter(QVariant f) {
+
+void DatabaseList::setFilter(QVariant f) {
     if ( m_filter != f ) {
         m_filter = f.value<QVariantMap>();
         beginResetModel();
@@ -261,17 +261,11 @@ void DatabaseList::endBatch() {
 //
 //
 //
-void DatabaseList::sync( QString /*url*/ ) {
-
-}
-//
-//
-//
 void DatabaseList::_sort() {
     if ( !m_sort.empty() ) {
         QString field = m_sort.firstKey();
         int direction = m_sort.first().value<int>();
-        qDebug() << "sorting by : " << field << " direction : " << direction;
+        //qDebug() << "sorting " << m_objects.size() << " items by : " << field << " direction : " << direction;
         std::sort(m_objects.begin(),m_objects.end(),[&field,&direction](const QVariantMap& a, const QVariantMap& b) -> bool {
             bool aHasIt = a.contains(field);
             bool bHasIt = b.contains(field);
@@ -298,17 +292,23 @@ void DatabaseList::_sort() {
 }
 void DatabaseList::_filter() {
     if ( !m_filter.isEmpty() ) {
+        //qDebug() << "filtering " << m_objects.size() << " items by : " << m_filter;
         m_filtered.clear();
         int count = m_objects.size();
         for ( int i = 0; i < count; i++ ) {
+            /*
+            if ( m_collection == "documents" ) {
+                if ( m_filter.contains("section") ) {
+                    qDebug() << "matching: " << m_objects[ i ][ "section" ];
+                }
+            }
+            */
             if ( _match(m_objects[i],m_filter) ) {
                 m_filtered.append(m_objects[i]);
             }
         }
-        m_activeList = m_filtered;
     } else {
         m_filtered.clear();
-        m_activeList = m_objects;
     }
 }
 bool DatabaseList::_match( QVariantMap& object, QVariantMap& query ) {

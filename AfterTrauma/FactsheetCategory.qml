@@ -28,7 +28,7 @@ AfterTrauma.Page {
         //
         //
         //
-        model: ListModel {}
+        model: documentModel //ListModel {}
         //
         //
         //
@@ -42,7 +42,7 @@ AfterTrauma.Page {
             backgroundColour: container.colour
             radius: model.index === 0 ? [8,8,0,0] : model.index === contents.model.count - 1 ? [0,0,8,8] : [0]
             onClicked: {
-                stack.push( "qrc:///Factsheet.qml", { title: container.title, subtitle: model.title, colour: container.colour, content: model.content });
+                stack.push( "qrc:///Factsheet.qml", { title: container.title, subtitle: model.title, colour: container.colour, document: model.document });
             }
         }
         //
@@ -53,33 +53,9 @@ AfterTrauma.Page {
         }
     }
 
-    StackView.onActivated: {
-        contents.model.clear();
-        if ( content.length > 0 ) {
-            JSONFile.read('/factsheets/' + content );
-        }
+    StackView.onActivating: {
+        documentModel.setFilter({ category: category });
     }
-
-    Connections {
-        target: JSONFile
-
-        onArrayReadFrom: {
-            console.log( 'path:' + path );
-            console.log( 'array:' + JSON.stringify(array) );
-            contents.model.clear();
-            array.forEach(function(entry) {
-                contents.model.append(entry);
-            });
-        }
-        onObjectReadFrom: {
-            console.log( 'path:' + path );
-            console.log( 'object:' + JSON.stringify(object) );
-        }
-        onErrorReadingFrom: {
-            console.log( 'path:' + path );
-            console.log( 'error:' + error );
-        }
-    }
-    property string content: ""
+    property string category: ""
 
 }

@@ -21,8 +21,12 @@ Item {
         font.pixelSize: 24
         color: Colours.almostWhite
     }
+    //
+    //
+    //
     AfterTrauma.Slider {
         id: slider
+        value: 1
         anchors.top: display.bottom
         anchors.left: parent.left
         anchors.right: parent.right

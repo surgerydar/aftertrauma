@@ -47,9 +47,7 @@ int main(int argc, char *argv[])
     //
     //
     QGuiApplication app(argc, argv);
-#ifdef Q_OS_ANDROID
     app.installEventFilter(AndroidBackKeyFilter::shared());
-#endif
     //
     //
     //
@@ -71,9 +69,7 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("SystemUtils", SystemUtils::shared());
     engine.rootContext()->setContextProperty("ImageUtils", ImageUtils::shared());
     engine.rootContext()->setContextProperty("JSONFile", JSONFile::shared());
-#ifdef Q_OS_ANDROID
     engine.rootContext()->setContextProperty("BackKeyFilter", AndroidBackKeyFilter::shared());
-#endif
     //
     //
     //

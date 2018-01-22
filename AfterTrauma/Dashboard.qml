@@ -28,9 +28,9 @@ AfterTrauma.Page {
             anchors.rightMargin: 32
             onDateChanged: {
                 if ( flowerChart ) {
-                    //flowerChart.setCurrentDate(currentDate.getTime());
                     flowerChart.currentDate = currentDate.getTime();
                     flowerChart.values = dailyModel.valuesForDate( currentDate.getTime() );
+                    //dailyModel.startValues();
                 }
             }
         }
@@ -101,6 +101,7 @@ AfterTrauma.Page {
     //
     //
     //
+    /*
     Component.onCompleted:  {
         scrollTimer.start();
         var dateRange = dailyModel.getDateRange();
@@ -109,7 +110,7 @@ AfterTrauma.Page {
         dateSlider.endDate = new Date(dateRange.max);
         dateSlider.setDate(dateSlider.endDate);
     }
-
+    */
     //
     //
     //
@@ -120,14 +121,13 @@ AfterTrauma.Page {
         dateSlider.startDate = new Date(dateRange.min);
         dateSlider.endDate = new Date(dateRange.max);
         dateSlider.setDate(dateSlider.endDate);
-        /*
-        if ( flowerChart ) {
-            dateSlider.setDate(flowerChart.getCurrentDate());
-        }
-        */
+        flowerChart.enabled = true;
+        flowerChart.currentDate = dateSlider.currentDate.getTime();
+        flowerChart.values = dailyModel.valuesForDate( flowerChart.currentDate );
     }
     StackView.onDeactivated: {
         scrollTimer.stop();
+        flowerChart.enabled = false;
     }
     //
     //

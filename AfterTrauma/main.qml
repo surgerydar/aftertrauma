@@ -32,17 +32,6 @@ ApplicationWindow {
     Daily {
         id: dailyModel
     }
-    Timer {
-        id: notificationTimer
-        interval: 60 * 1000
-        repeat: true
-        onTriggered: {
-            notificationModel.update();
-        }
-    }
-    Notifications {
-        id: notificationModel
-    }
     Challenges {
         id: challengeModel
     }
@@ -54,6 +43,23 @@ ApplicationWindow {
     }
     Categories {
         id: categoryModel
+    }
+    Documents {
+        id: documentModel
+    }
+    //
+    // notifications
+    //
+    Timer {
+        id: notificationTimer
+        interval: 60 * 1000
+        repeat: true
+        onTriggered: {
+            notificationModel.update();
+        }
+    }
+    Notifications {
+        id: notificationModel
     }
     //
     //
@@ -78,6 +84,9 @@ ApplicationWindow {
         anchors.leftMargin: 8
         anchors.rightMargin: 8
         enabled: false
+        onEnabledChanged: {
+            update();
+        }
     }
     //
     //
@@ -189,6 +198,7 @@ ApplicationWindow {
             //
             stack.push("qrc:///Dashboard.qml");
             flowerChart.enabled = true;
+            //intro.open();
         }
     }
     //
@@ -222,11 +232,13 @@ ApplicationWindow {
     Connections {
         target: BackKeyFilter
         onBackKeyPressed : {
-            console.log( 'BackKeyPressed' );
-            if ( stack.depth <= 1 ) {
-                Qt.quit();
-            } else {
-                stack.pop();
+            if ( Qt.platform === 'android' ) {
+                console.log( 'BackKeyPressed' );
+                if ( stack.depth <= 1 ) {
+                    Qt.quit();
+                } else {
+                    stack.pop();
+                }
             }
         }
     }

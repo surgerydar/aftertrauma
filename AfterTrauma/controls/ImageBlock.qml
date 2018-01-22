@@ -45,6 +45,8 @@ Item {
                 var mediaPath = 'file://' + SystemUtils.documentDirectory() + '/media' + currentSource.substring(currentSource.lastIndexOf('/'));
                 console.log( 'redirecting image block from ' + currentSource + ' to : ' + mediaPath );
                 source = mediaPath;
+            } else {
+                container.height = Math.max(64,content.height + 16);
             }
         }
     }

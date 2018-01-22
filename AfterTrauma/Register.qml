@@ -357,7 +357,7 @@ Popup {
                 } else if ( command.command === 'documents' ) {
 
                     if ( command.response.length > 0 ) {
-                        console.log( 'documents : ' + JSON.stringify(command.response[0]) );
+                        //console.log( 'documents : ' + JSON.stringify(command.response[0]) );
                         installDocuments(command.response);
                     } else {
                         container.close();
@@ -450,7 +450,8 @@ Popup {
                 section:    category.section,
                 category:   category._id,
                 title:      category.title,
-                date:       category.date
+                date:       category.date,
+                index:      category.index
             };
             categoryModel.update({category: category._id},entry,true);
         });
@@ -462,6 +463,8 @@ Popup {
         // delete removed
         //
         var documentsAvailable = false;
+        var filter = documentModel.filter;
+        documentModel.filter = {};
         manifest.forEach( function( delta ) {
             if ( delta.operation === 'remove' ) {
                 //
@@ -471,6 +474,7 @@ Popup {
                 if ( category && category.section ) {
                     var path = category.section + '/' + delta.category + '.' + delta.document + '.json';
                     console.log( 'removing:' + path );
+                    documentModel.remove( {document: delta.document} );
                 } else {
                     console.log( 'remove : unable to find catgegory : ' + delta.category );
                 }
@@ -478,6 +482,8 @@ Popup {
                 documentsAvailable = true;
             }
         });
+        documentModel.save();
+        documentModel.filter = filter;
         //
         // request updated
         //
@@ -488,15 +494,32 @@ Popup {
         }
     }
     function installDocuments( documents ) {
+        var index = 0;
+        var filter = documentModel.filter;
+        documentModel.filter = {};
         documents.forEach( function( document ) {
             var category = categoryModel.findOne({category:document.category});
             if ( category && category.section ) {
-                var path = category.section + '/' + document.category + '.' + document._id + '.json';
+                var path = category.section + '/' + document.category + '.' + document._id;
                 console.log( 'installing:' + path );
+                var entry = {
+                    document: document._id,
+                    category: document.category,
+                    section: category.section,
+                    title: document.title,
+                    blocks: document.blocks,
+                    date: document.date,
+                    index: index
+                };
+                var result = documentModel.update( {document: document._id}, entry, true );
+                console.log( 'updated document : ' + JSON.stringify(result) );
+                index++;
             } else {
                 console.log( 'install : unable to find catgegory : ' + document.category );
             }
         });
+        documentModel.save();
+        documentModel.filter = filter;
         container.close();
     }
 }

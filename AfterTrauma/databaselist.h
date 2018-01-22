@@ -47,12 +47,6 @@ signals:
     //
     //
     //
-    void syncStart();
-    void syncProgress(double complete,double total);
-    void syncDone();
-    //
-    //
-    //
 public slots:
     //
     //
@@ -69,20 +63,16 @@ public slots:
     QVariant find(QVariant q);
     QVariant findOne(QVariant q);
     QVariant get(int i);
-    // TODO:
+    // TODO: perhaps just change sort order of current search
     //void sort(int column, Qt::SortOrder order = Qt::AscendingOrder) override { };
-    //void sort(QVariant s);
-    void filter(QVariant f);
+    void setSort(QVariant s);
+    void setFilter(QVariant f);
     //
     //
     //
     void beginBatch();
     QVariant batchAdd(QVariant o);
     void endBatch();
-    //
-    //
-    //
-    void sync( QString url );
     //
     //
     //
@@ -97,7 +87,6 @@ private:
     QVariantMap         m_filter;
     QList<QVariantMap>  m_objects;
     QList<QVariantMap>  m_filtered;
-    QList<QVariantMap>& m_activeList;
     //
     //
     //
@@ -106,6 +95,8 @@ private:
     bool _match( QVariantMap& object, QVariantMap& query );
     void _update( QVariantMap& object, QVariantMap& update );
     QString _path();
+    QList<QVariantMap>& _activeList() { return m_filter.isEmpty() ? m_objects : m_filtered; }
+    const QList<QVariantMap>& _activeList() const { return m_filter.isEmpty() ? m_objects : m_filtered; }
 };
 
 #endif // DATABASELIST_H

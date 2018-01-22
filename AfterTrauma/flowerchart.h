@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QQuickPaintedItem>
+#include <QPainter>
 #include <QMutex>
 
 class FlowerChart : public QQuickPaintedItem {
@@ -17,6 +18,7 @@ public:
     //
     //
     void paint(QPainter*painter) override;
+
     //
     //
     //
@@ -31,17 +33,21 @@ public:
 
 protected:
     void timerEvent(QTimerEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
 
 private:
     void drawBackground(QPainter*painter);
-    void drawPetal(QPainter* painter, QPointF& cp, qreal radius, qreal angle, qreal sweep, QColor& colour);
+    void drawPetal(QPainter* painter, QPointF& cp, int index, qreal angle, qreal sweep, QColor& colour);
+    void generatePetalPath( QPainterPath& path, QPointF& cp, qreal radius, qreal angle, qreal sweep, bool isMinMax );
     //
     //
     //
     int m_currentDate;
     QList< qreal > m_values;
-    QList< qreal > m_targetValues;
-    QList< qreal > m_startValues;
+    QList< qreal > m_maxValues;
+    QList< qreal > m_minValues;
     //
     // value animation
     //

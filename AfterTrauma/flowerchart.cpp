@@ -3,13 +3,14 @@
 #include <QRadialGradient>
 #include <QColor>
 #include <QBrush>
-#include <QPainter>
 #include <QFont>
 #include <QFontMetrics>
 #include <QMutexLocker>
 #include <qmath.h>
 
-
+//
+// TODO: move to global utility
+//
 const QString darkGreen = "#03BD5B";
 const QString lightGreen = "#9DBF1C";
 const QString blue = "#2191FB";
@@ -49,8 +50,8 @@ const QVector<QString> labels = {
 FlowerChart::FlowerChart( QQuickItem* parent ) : QQuickPaintedItem( parent ) {
     m_currentDate   = 0;
     m_values        = { 0., 0., 0., 0., 0. };
-    m_targetValues  = { 0., 0., 0., 0., 0. };
-    m_startValues   = { 0., 0., 0., 0., 0. };
+    m_maxValues  = { 0., 0., 0., 0., 0. };
+    m_minValues   = { 0., 0., 0., 0., 0. };
     m_valuesAnimationStart  = { 0., 0., 0., 0., 0. };
     m_valuesAnimationEnd    = { 0., 0., 0., 0., 0. };
 }
@@ -76,6 +77,11 @@ void FlowerChart::paint(QPainter*painter) {
     //
     //
     //
+    painter->save();
+    painter->setRenderHints(QPainter::TextAntialiasing|QPainter::Antialiasing);
+    //
+    //
+    //
     drawBackground(painter);
     //
     //
@@ -88,7 +94,7 @@ void FlowerChart::paint(QPainter*painter) {
         QMutexLocker locker(&m_valueGuard);
         for ( int i = 0; i < 5; ++i ) {
             QColor colour = categoryColour(i);
-            drawPetal(painter, cp, radius * m_values[ i ], angle, sweep, colour);
+            drawPetal(painter, cp, i, angle, sweep, colour);
             angle += sweep;
         }
     }
@@ -116,18 +122,13 @@ void FlowerChart::paint(QPainter*painter) {
             //
             QRect bounds = metrics.boundingRect(labels[ i ]);
             painter->drawText( p.x()-bounds.width()/2., p.y()+(bounds.height()/2.-metrics.descent()), labels[ i ] );
-            /*
-            painter->save();
-            painter->setPen(Qt::red);
-            painter->drawLine(0,p.y()+metrics.descent(),width(),p.y()+metrics.descent());
-            painter->setPen(Qt::green);
-            painter->drawLine(0,p.y(),width(),p.y());
-            painter->restore();
-            painter->drawLine(cp,p);
-            */
+            //
+            //
+            //
             angle += sweep;
         }
     }
+    painter->restore();
 }
 
 void FlowerChart::drawBackground( QPainter* painter ) {
@@ -152,7 +153,50 @@ void FlowerChart::drawBackground( QPainter* painter ) {
     painter->restore();
 }
 
-void FlowerChart::drawPetal( QPainter* painter, QPointF& cp, qreal radius, qreal angle, qreal sweep, QColor& colour ) {
+void FlowerChart::drawPetal( QPainter* painter, QPointF& cp, int index, qreal angle, qreal sweep, QColor& colour ) {
+    //
+    //
+    //
+    qreal radius = qMin( width(), height() ) * .5;
+    //
+    //
+    //
+    painter->save();
+    //
+    // build petal path
+    //
+    QPainterPath petalPath;
+    generatePetalPath( petalPath, cp, radius*m_values[ index ], angle, sweep, false);
+    //
+    // fill petal path
+    //
+    QBrush fill( colour );
+    painter->setBrush(fill);
+    painter->setPen(Qt::NoPen);
+    painter->drawPath( petalPath );
+    //
+    // build min/max paths
+    //
+    if ( isEnabled() ) {
+        QPainterPath maxPath;
+        generatePetalPath( maxPath, cp, radius, angle, sweep, true);
+        //
+        // draw min/max paths
+        //
+        QPen pen(QColor(255,255,255,128));
+        pen.setStyle(Qt::DashLine);
+        pen.setWidth(1);
+        painter->setBrush(Qt::NoBrush);
+        painter->setPen( pen );
+        painter->drawPath( maxPath );
+    }
+    //
+    // restore painter state
+    //
+    painter->restore();
+}
+
+void FlowerChart::generatePetalPath( QPainterPath& path, QPointF& cp, qreal radius, qreal angle, qreal sweep, bool isMinMax ) {
     //
     // calculate petal points
     //
@@ -194,29 +238,19 @@ void FlowerChart::drawPetal( QPainter* painter, QPointF& cp, qreal radius, qreal
                 p3.y()+(chord.y()/4.)
                 );
     //
-    //
-    //
-    painter->save();
-    //
     // build path
     //
-    QPainterPath path;
-    path.moveTo(cp);
-    path.lineTo(p0);
+    if ( isMinMax ) {
+        path.moveTo(p0);
+    } else {
+        path.moveTo(cp);
+        path.lineTo(p0);
+    }
     path.cubicTo(p1,p2,p3);
     path.cubicTo(p4,p5,p6);
-    path.closeSubpath();
-    //
-    // fill path
-    //
-    QBrush fill( colour );
-    painter->setBrush(fill);
-    painter->setPen(Qt::NoPen);
-    painter->drawPath( path );
-    //
-    // restore painter state
-    //
-    painter->restore();
+    if ( !isMinMax ) {
+        path.closeSubpath();
+    }
 }
 //
 //
@@ -248,29 +282,29 @@ void FlowerChart::setValues( const QVariantList values ) {
 }
 QVariantList FlowerChart::targetValues() const {
     QVariantList targetValues;
-    for ( auto& value : m_targetValues ) {
+    for ( auto& value : m_maxValues ) {
         targetValues.push_back( QVariant::fromValue(value) );
     }
     return targetValues;
 }
 void FlowerChart::setTargetValues( const QVariantList targetValues ) {
-    m_targetValues.clear();
+    m_maxValues.clear();
     for ( auto& value : targetValues ) {
-        m_targetValues.push_back( value.toReal() );
+        m_maxValues.push_back( value.toReal() );
     }
     update();
 }
 QVariantList FlowerChart::startValues() const {
     QVariantList startValues;
-    for ( auto& value : m_startValues ) {
+    for ( auto& value : m_minValues ) {
         startValues.push_back( QVariant::fromValue(value) );
     }
     return startValues;
 }
 void FlowerChart::setStartValues( const QVariantList startValues ) {
-    m_startValues.clear();
+    m_minValues.clear();
     for ( auto& value : startValues ) {
-        m_startValues.push_back( value.toReal() );
+        m_minValues.push_back( value.toReal() );
     }
     update();
 }
@@ -288,6 +322,18 @@ void FlowerChart::timerEvent(QTimerEvent *event) {
         m_animationU += .1;
     }
     update();
+}
+
+void FlowerChart::mouseMoveEvent(QMouseEvent *event) {
+
+}
+
+void FlowerChart::mousePressEvent(QMouseEvent *event) {
+
+}
+
+void FlowerChart::mouseReleaseEvent(QMouseEvent *event) {
+
 }
 
 

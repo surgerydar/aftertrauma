@@ -189,4 +189,10 @@ DatabaseList {
         }
         return [ 0., 0., 0., 0., 0.]
     }
+    function startValues() {
+        var first = get(0);
+        var last = get(count-1);
+        console.log( 'f : ' + first.date );
+        console.log( 'l : ' + last.date );
+    }
 }

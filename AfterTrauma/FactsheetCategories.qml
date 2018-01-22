@@ -31,7 +31,7 @@ AfterTrauma.Page {
         //
         //
         //
-        model: ListModel {}
+        model: categoryModel//ListModel {}
         //
         //
         //
@@ -44,7 +44,7 @@ AfterTrauma.Page {
             backgroundColour: Colours.categoryColour(model.index)
             radius: model.index === 0 ? [8,8,0,0] : model.index === categories.model.count - 1 ? [0,0,8,8] : [0]
             onClicked: {
-                stack.push( "qrc:///FactsheetCategory.qml", { title: model.title, colour: Colours.categoryColour(model.index), content: model.content });
+                stack.push( "qrc:///FactsheetCategory.qml", { title: model.title, colour: Colours.categoryColour(model.index), category: model.category });
             }
         }
         //
@@ -55,84 +55,10 @@ AfterTrauma.Page {
         }
     }
 
-    StackView.onActivated: {
-        /*
+    StackView.onActivating:  {
         //
-        // TODO: get this from database
+        // initialisation
         //
-        var data  = [
-                    { title: "EMOTIONS",
-                        contents: [
-                            { title: "Introduction", factsheet: "emotions.introduction" },
-                            { title: "Coming home from hospital: common feelings", factsheet: "emotions.cominghomefromhospital" },
-                            { title: "Stress after trauma", factsheet: "emotions.stressaftertrauma" },
-                            { title: "Depression", factsheet: "emotions.depression" },
-                            { title: "Managing difficult feelings", factsheet: "emotions.managingdifficultfeelings" },
-                            { title: "How to help a loved one", factsheet: "emotions.howtohelpalovedone" },
-                            { title: "When do I ask for help?", factsheet: "emotions.whendoiaskforhelp" },
-                            { title: "Treatment approaches", factsheet: "emotions.treatmentapproaches" },
-                            { title: "Helpful organisations", factsheet: "emotions.helpfulorganisations" },
-                        ]
-                    },
-                    { title: "BODY",
-                        contents: [
-                        ]
-                    },
-                    { title: "MIND",
-                        contents: [
-                        ]
-                    },
-                    { title: "LIFE",
-                        contents: [
-                        ]
-                    },
-                    { title: "RELATIONSHIPS",
-                        contents: [
-                        ]
-                    },
-                    { title: "FOR CARERS",
-                        contents: [
-                        ]
-                    },
-                    { title: "SERVICES",
-                        contents: [
-                        ]
-                    },
-                    { title: "TRAUMA SURVIVOR AND CARER STORIES",
-                        contents: [
-                        ]
-                    },
-                ];
-        categories.model.clear();
-        data.forEach(function(datum) {
-            categories.model.append(datum);
-        });
-        */
-        categories.model.clear();
-        JSONFile.read('/factsheets/categories.json');
+        categoryModel.setFilter( { section : "resources" } );
     }
-    //
-    //
-    //
-    Connections {
-        target: JSONFile
-
-        onArrayReadFrom: {
-            console.log( 'path:' + path );
-            console.log( 'array:' + JSON.stringify(array) );
-            categories.model.clear();
-            array.forEach(function(entry) {
-                categories.model.append(entry);
-            });
-        }
-        onObjectReadFrom: {
-            console.log( 'path:' + path );
-            console.log( 'object:' + JSON.stringify(object) );
-        }
-        onErrorReadingFrom: {
-            console.log( 'path:' + path );
-            console.log( 'error:' + error );
-        }
-    }
-
 }
