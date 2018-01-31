@@ -47,6 +47,9 @@ ApplicationWindow {
     Documents {
         id: documentModel
     }
+    Tags {
+        id: tagsModel
+    }
     //
     // notifications
     //
@@ -183,6 +186,17 @@ ApplicationWindow {
     //
     //
     //
+    /*
+    AfterTrauma.TokenisedTextField {
+        id: testInput
+        width: parent.width - 16
+        anchors.centerIn: parent
+
+    }
+    */
+    //
+    //
+    //
     Component.onCompleted: {
         //
         // TODO: check settings for first use
@@ -190,7 +204,7 @@ ApplicationWindow {
         if ( SystemUtils.isFirstRun() ) {
             console.log( 'installing' );
             //stack.push("qrc:///Install.qml")
-            SystemUtils.install();
+            //SystemUtils.install();
             intro.open();
         } else {
             //

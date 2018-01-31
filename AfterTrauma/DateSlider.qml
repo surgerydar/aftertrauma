@@ -41,37 +41,18 @@ Item {
     //
     //
     Component.onCompleted: {
-        updateDisplay(slider.value);
+        updateDisplay(value);
     }
     //
     //
     //
     function updateDisplay(value) {
-        var start = startDate.getTime();
-        var end = endDate.getTime();
-        var current = ((end -start)*value)+start;
+        var range = dailyModel.getDateRange();
+        var current = Math.round((range.max-range.min)*value+range.min);
         currentDate.setTime(current);
         display.text = currentDate.toDateString();
         control.dateChanged();
     }
-    function setDate(date) {
-        if ( currentDate !== date ) {
-            var start = startDate.getTime();
-            var end = endDate.getTime();
-            var current = date.getTime();
-            if ( current < start ) {
-                startDate = date;
-                start = current;
-            }
-            if ( current > end ) {
-                endDate = date;
-                end = current;
-            }
-            var value = ( current - start ) / ( end - start );
-            updateDisplay(value);
-        }
-    }
-
     //
     //
     //
@@ -79,7 +60,6 @@ Item {
     //
     //
     //
-    property var startDate: new Date(0)
-    property var endDate: new Date()
-    property var currentDate: new Date();
+    property var currentDate: new Date()
+    property alias value: slider.value
 }

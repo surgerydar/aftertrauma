@@ -71,7 +71,7 @@ void DatabaseList::load() {
             _sort();
             _filter();
             endResetModel();
-            //emit dataChanged(createIndex(0,0),createIndex(m_objects.size()-1,0));
+            emit dataChanged(createIndex(0,0),createIndex(m_objects.size()-1,0));
             //emit countChanged();
         } else {
             if ( parseError.error != QJsonParseError::NoError ) {
@@ -296,13 +296,6 @@ void DatabaseList::_filter() {
         m_filtered.clear();
         int count = m_objects.size();
         for ( int i = 0; i < count; i++ ) {
-            /*
-            if ( m_collection == "documents" ) {
-                if ( m_filter.contains("section") ) {
-                    qDebug() << "matching: " << m_objects[ i ][ "section" ];
-                }
-            }
-            */
             if ( _match(m_objects[i],m_filter) ) {
                 m_filtered.append(m_objects[i]);
             }
@@ -313,14 +306,74 @@ void DatabaseList::_filter() {
 }
 bool DatabaseList::_match( QVariantMap& object, QVariantMap& query ) {
     for ( QVariantMap::iterator it = query.begin(); it != query.end(); ++it ) {
-        if ( !object.contains(it.key()) || object[ it.key() ] != query[ it.key() ] ) return false;
+        if ( it.key().contains('.') ) { // nested document query
+            QStringList _keys = it.key().split('.');
+            QVariantMap _current = object;
+            for ( int i = 0; i < _keys.size() - 1; ++i ) {
+                auto& _key = _keys[ i ];
+                if ( _current.contains(_key) ) {
+                    if ( _current[_key].canConvert<QVariantMap>() ) {
+                        _current = _current[_key].value<QVariantMap>();
+                    }
+                } else {
+                    return false;
+                }
+            }
+            if ( !_current.contains(_keys.last()) || !_matchValue( _current[ _keys.last() ], query[ it.key() ] ) ) return false;
+        } else if ( !object.contains(it.key()) || !_matchValue( object[ it.key() ], query[ it.key() ] ) ) return false;
     }
     return true;
 }
+inline bool DatabaseList::_matchValue( QVariant& value, QVariant& condition ) {
+    if ( value.canConvert<QVariantList>() ) { // value is array
+        // TODO: array of documents
+        QVariantList _value = value.value<QVariantList>();
+        for ( auto& _current : _value ) {
+            if ( _matchValue( _current, condition ) ) {
+                return true;
+            }
+        }
+        return false;
+    } else if ( condition.canConvert<QVariantMap>() ) { // condition is complex
+        //
+        // complex comparison
+        //
+        QVariantMap _condition = condition.value<QVariantMap>();
+        if ( _condition.contains("$in") ) {
+            //qDebug() << "matching $in";
+            QVariantList _values = _condition.value( "$in" ).toList();
+            for ( auto& _value : _values ) {
+                //qDebug() << "matching : " << value << " : " << _value;
+                if ( value == _value ) return true;
+            }
+        } else if ( _condition.contains("$or") ) {
+            //qDebug() << "matching $or";
+            QVariantList _values = _condition.value( "$or" ).toList();
+            for ( auto& _value : _values ) {
+                //qDebug() << "matching : " << value << " : " << _value;
+                if ( value == _value ) return true;
+            }
+        } else if ( _condition.contains("$and") ) {
+            //qDebug() << "matching $and";
+            QVariantList _values = _condition.value( "$and" ).toList();
+            for ( auto& _value : _values ) {
+                //qDebug() << "matching : " << value << " : " << _value;
+                if ( value != _value ) return false;
+            }
+            return true;
+        }
+        return false;
+    }
+    //
+    // simple comparison
+    //
+    return value == condition;
+}
+
 void DatabaseList::_update( QVariantMap& object, QVariantMap& update ) {
     for ( QVariantMap::iterator it = update.begin(); it != update.end(); ++it ) {
         //
-        // TODO: handle nested array updates
+        // TODO: handle nested array / document updates
         //
         object[ it.key() ] = it.value();
     }

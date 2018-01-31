@@ -23,7 +23,22 @@ AfterTrauma.Page {
         //
         //
         //
-        model: chatModel //ListModel {}
+        model: chatModel
+        //
+        //
+        //
+        section.property: "status"
+        section.delegate: Text {
+            height: 48
+            anchors.left: parent.left
+            anchors.right: parent.right
+            font.weight: Font.Light
+            font.family: fonts.light
+            font.pixelSize: 32
+            font.capitalization: Font.Capitalize
+            color: Colours.almostWhite
+            text: section
+        }
         //
         //
         //

@@ -14,6 +14,7 @@
 #include "imageutils.h"
 #include "flowerchart.h"
 #include "androidbackkeyfilter.h"
+#include "cachedmediasource.h"
 //
 // TODO: find a better way of doing this
 //
@@ -59,6 +60,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<DatabaseList>("SodaControls", 1, 0, "DatabaseList");
     qmlRegisterType<WebSocketChannel>("SodaControls", 1, 0, "WebSocketChannel");
     qmlRegisterType<FlowerChart>("SodaControls", 1, 0, "FlowerChart");
+    qmlRegisterType<CachedMediaSource>("SodaControls", 1, 0, "CachedMediaSource");
     //
     //
     //

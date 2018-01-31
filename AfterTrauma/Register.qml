@@ -511,8 +511,21 @@ Popup {
                     date: document.date,
                     index: index
                 };
+                //
+                // TODO: extract tags
+                //
                 var result = documentModel.update( {document: document._id}, entry, true );
                 console.log( 'updated document : ' + JSON.stringify(result) );
+                if ( result ) {
+                    document.blocks.forEach( function( block ) {
+                        block.tags.forEach( function( tag ) {
+                            if ( tag.length > 0 ) {
+                                tagsModel.updateTag( tag.toLowerCase(), document._id || result._id );
+                            }
+                        });
+                    });
+                    tagsModel.save();
+                }
                 index++;
             } else {
                 console.log( 'install : unable to find catgegory : ' + document.category );

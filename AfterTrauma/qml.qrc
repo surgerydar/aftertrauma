@@ -109,5 +109,8 @@
         <file>controls/ConfirmDialog.qml</file>
         <file>Categories.qml</file>
         <file>Documents.qml</file>
+        <file>Tags.qml</file>
+        <file>DocumentViewer.qml</file>
+        <file>controls/TokenisedTextField.qml</file>
     </qresource>
 </RCC>

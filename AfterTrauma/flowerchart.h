@@ -8,10 +8,10 @@
 
 class FlowerChart : public QQuickPaintedItem {
     Q_OBJECT
-    Q_PROPERTY(int currentDate READ currentDate WRITE setCurrentDate)
+    //Q_PROPERTY(int currentDate READ currentDate WRITE setCurrentDate)
     Q_PROPERTY(QVariantList values READ values WRITE setValues)
-    Q_PROPERTY(QVariantList targetValues READ targetValues WRITE setTargetValues)
-    Q_PROPERTY(QVariantList startValues READ startValues WRITE setStartValues)
+    //Q_PROPERTY(QVariantList targetValues READ targetValues WRITE setTargetValues)
+    //Q_PROPERTY(QVariantList startValues READ startValues WRITE setStartValues)
 public:
     explicit FlowerChart( QQuickItem* parent = 0 );
     //

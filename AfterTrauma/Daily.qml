@@ -165,9 +165,9 @@ DatabaseList {
     function valuesForDate( date ) {
         var before = dayBefore( date );
         var after = dayAfter( date );
+        var values = [];
+        var i;
         if ( before && after ) {
-            var values = [];
-            var i;
             if ( before.date === date ) {
                 for ( i = 0; i < 5; i++ ) {
                     values.push(before.values[ i ].value);
@@ -184,6 +184,16 @@ DatabaseList {
                     var value = before.values[ i ].value + ( ( after.values[ i ].value - before.values[ i ].value ) * interpolation );
                     values.push(value);
                 }
+            }
+            return values;
+        } else if ( before ) {
+            for ( i = 0; i < 5; i++ ) {
+                values.push(before.values[ i ].value);
+            }
+            return values;
+        } else if ( after ) {
+            for ( i = 0; i < 5; i++ ) {
+                values.push(after.values[ i ].value);
             }
             return values;
         }

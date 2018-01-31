@@ -23,10 +23,6 @@ class DatabaseList : public QAbstractListModel
 public:
     explicit DatabaseList(QObject *parent = 0);
     //
-    //
-    //
-
-    //
     // QAbstractListModel overrides
     //
     QHash<int, QByteArray> roleNames() const override;
@@ -94,6 +90,7 @@ private:
     void _filter();
     bool _match( QVariantMap& object, QVariantMap& query );
     void _update( QVariantMap& object, QVariantMap& update );
+    inline bool _matchValue( QVariant& value, QVariant& condition );
     QString _path();
     QList<QVariantMap>& _activeList() { return m_filter.isEmpty() ? m_objects : m_filtered; }
     const QList<QVariantMap>& _activeList() const { return m_filter.isEmpty() ? m_objects : m_filtered; }

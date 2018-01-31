@@ -1,6 +1,7 @@
 import QtQuick 2.6
 import QtQuick.Controls 2.1
 import QtMultimedia 5.8
+import SodaControls 1.0
 
 import "../colours.js" as Colours
 
@@ -21,8 +22,19 @@ Item {
     //
     //
     //
+    CachedMediaSource {
+        id: mediaSource
+        player: content
+    }
+    //
+    //
+    //
     MediaPlayer {
         id: content
+        //source: "file:///Users/jons/Documents/media/emotions.depression.video1.m4v"
+        //
+        //
+        //
         onStatusChanged: {
             console.log('MediaPlayer status:' + status);
             switch( status ) {
@@ -55,16 +67,27 @@ Item {
                 break;
             }
         }
+        //
+        //
+        //
         onPlaybackStateChanged: {
 
         }
         onError: {
-            var currentSource = JSON.stringify(source);
+            /*
+            //var currentSource = JSON.stringify(source);
+            var currentSource = JSON.stringify(mediaSource.url);
             var mediaPath = 'file://' + SystemUtils.documentDirectory() + '/media' + currentSource.substring(currentSource.lastIndexOf('/'));
             console.log( 'redirecting video block from ' + currentSource + ' to : ' + mediaPath );
             source = mediaPath;
+            */
+            console.log( 'error playing media : ' + error + ' : ' + errorString );
+            console.log( source );
         }
     }
+    //
+    //
+    //
     VideoOutput {
         id: output
         //
@@ -84,10 +107,12 @@ Item {
 
                 if ( content.playbackState !== MediaPlayer.PlayingState ) {
                     console.log( 'play' );
-                    content.play();
+                    //content.play();
+                    mediaSource.play();
                 } else {
                     console.log( 'pause' );
-                    content.pause();
+                    //content.pause();
+                    mediaSource.pause();
                 }
             }
             /*
@@ -118,10 +143,10 @@ Item {
         running: content.status === MediaPlayer.Loading
     }
     //
-    // TODO: ErrorIndicator
+    // TODO: ErrorIndicator and controls
     //
     //
     //
     //
-    property alias media: content.source
+    property alias media: mediaSource.url
 }

@@ -28,9 +28,7 @@ AfterTrauma.Page {
             anchors.rightMargin: 32
             onDateChanged: {
                 if ( flowerChart ) {
-                    flowerChart.currentDate = currentDate.getTime();
                     flowerChart.values = dailyModel.valuesForDate( currentDate.getTime() );
-                    //dailyModel.startValues();
                 }
             }
         }
@@ -101,29 +99,12 @@ AfterTrauma.Page {
     //
     //
     //
-    /*
-    Component.onCompleted:  {
-        scrollTimer.start();
-        var dateRange = dailyModel.getDateRange();
-        console.log( 'dateRange : ' + JSON.stringify(dateRange) );
-        dateSlider.startDate = new Date(dateRange.min);
-        dateSlider.endDate = new Date(dateRange.max);
-        dateSlider.setDate(dateSlider.endDate);
-    }
-    */
-    //
-    //
-    //
     StackView.onActivated: {
         scrollTimer.start();
-        var dateRange = dailyModel.getDateRange();
-        console.log( 'dateRange : ' + JSON.stringify(dateRange) );
-        dateSlider.startDate = new Date(dateRange.min);
-        dateSlider.endDate = new Date(dateRange.max);
-        dateSlider.setDate(dateSlider.endDate);
+        dateSlider.value = 1;
+        //dateSlider.updateDisplay(dateSlider.value);
         flowerChart.enabled = true;
-        flowerChart.currentDate = dateSlider.currentDate.getTime();
-        flowerChart.values = dailyModel.valuesForDate( flowerChart.currentDate );
+        flowerChart.values = dailyModel.valuesForDate( dateSlider.currentDate.getTime() );
     }
     StackView.onDeactivated: {
         scrollTimer.stop();

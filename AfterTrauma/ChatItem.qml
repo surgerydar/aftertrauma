@@ -84,6 +84,7 @@ Item {
     //
     //
     //
+    /*
     Text {
         id: statusText
         anchors.top: parent.top
@@ -95,6 +96,7 @@ Item {
     onStatusChanged: {
         statusText.text = status;
     }
+    */
     //
     //
     //
