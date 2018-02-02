@@ -3,68 +3,69 @@ import QtQuick.Controls 2.1
 
 import "../colours.js" as Colours
 
-TextField {
+Rectangle {
     id: container
     height: 48
-    color: Colours.veryDarkSlate
-    font.pixelSize: 24
-    echoMode: TextInput.NoEcho
+    radius: 4
+    color: Colours.almostWhite
     //
     //
     //
-    cursorDelegate: Item {
-        width: Math.max(0,tagContainer.childrenRect.width - x)+2
-        height: container.height
-        anchors.verticalCenter: container.verticalCenter
-        Rectangle {
-            anchors.right: parent.right
-            width: 2
-            height: parent.height - 4
-            anchors.verticalCenter: parent.verticalCenter
-            color: Colours.darkSlate
-            visible: testInput.focus
-            PropertyAnimation on opacity {
-                duration: 500
-                loops: Animation.Infinite
-                from: 0.
-                to: 1.
-            }
-        }
-    }
-    //
-    //
-    //
-    background: Rectangle {
-        id: background
+    ListView {
+        id: tagList
         anchors.fill: parent
-        radius: 4
-        color: Colours.veryLightSlate
-        border.color: "transparent"
-        Row {
-            id: tagContainer
-            anchors.fill: parent
-            leftPadding: 8
-            rightPadding: 8
-            spacing: 4
-            Repeater {
-                model: container.tokenised.length
-                Rectangle {
-                    height: parent.height - 4
-                    width: childrenRect.width + 8
-                    anchors.verticalCenter: parent.verticalCenter
-                    radius: 4
-                    color: 'lightgray'
-                    Text {
-                        x: 4
-                        height: parent.height
-                        verticalAlignment: Text.AlignVCenter
-                        font: container.font
-                        text: container.tokenised[ index ]
+        orientation: ListView.Horizontal
+        spacing: 4
+        clip: true
+        //
+        //
+        //
+        delegate: Rectangle {
+            height: parent.height
+            width: childrenRect.width + 8
+            anchors.verticalCenter: parent.verticalCenter
+            //
+            //
+            //
+            TextInput {
+                id: input
+                height: parent.height - 4
+                anchors.verticalCenter: parent.verticalCenter
+                text: model.tag
+                onTextChanged: {
+                    suggest(text);
+                }
+                //
+                //
+                //
+                onAccepted: {
+                    if ( suggest() ) {
+                        commitTag(suggestions[ 0 ].tag);
+                    }
+                }
+            }
+            //
+            //
+            //
+            Image {
+                width: parent.height - 4
+                height: parent.height - 4
+                anchors.left: input.left
+                anchors.leftMargin: 2
+                source: "icons/close_circle.png"
+                //
+                //
+                //
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        tagList.model.remove(model.index)
                     }
                 }
             }
         }
     }
+    /*
     //
     //
     //
@@ -104,25 +105,6 @@ TextField {
     //
     //
     //
-    onFocusChanged: {
-        if ( focus ) {
-            cursorPosition = length;
-        } else {
-            suggestionList.model.clear();
-        }
-    }
-    onTextChanged: {
-        tokenise();
-        suggest();
-    }
-    onAccepted: {
-        if ( suggest() ) {
-            commitTag(suggestions[ 0 ].tag);
-        }
-    }
-    //
-    //
-    //
     function tokenise() {
         var tags = text.split(delimiter);
         var display = [];
@@ -142,12 +124,10 @@ TextField {
         }
         tokenised = display;
     }
-    function suggest() {
+    function suggest(tag) {
         suggestionList.model.clear();
-        if ( tokenised.length > 0 ) {
-            var tag = tokenised[ tokenised.length-1 ];
-            //suggestions = tagsModel.find({ tag: { "$startswith" : tag } } );
-            suggestions = tagsModel.find({ tag: new RegExp( '^' + tag + '[a-z,0-9]*' ) } );
+        if ( tag.length > 0 ) {
+            suggestions = tagsModel.find({ tag: { "$startswith" : tag } } );
             suggestions.sort( function( a, b) {
                 if ( a.tag.length > b.tag.length ) return 1;
                 if ( a.tag.length < b.tag.length ) return -1;
@@ -174,4 +154,5 @@ TextField {
     property var    tokenised: []
     property var    suggestions: []
     property alias  backgroundColour: background.color
+    */
 }

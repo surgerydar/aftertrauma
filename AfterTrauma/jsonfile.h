@@ -21,9 +21,8 @@ signals:
     void arrayWrittenTo(QString path);
     void errorReadingFrom(QString path, QString error);
 public slots:
-    void read(QString path);
-    void writeObject(QVariant& object, QString path);
-    void writeArray(QVariant& object, QString path);
+    QVariant read(QString path);
+    bool write(QString path,QVariant object);
 };
 
 #endif // JSONFILE_H

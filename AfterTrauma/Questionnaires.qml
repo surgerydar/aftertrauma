@@ -1,79 +1,103 @@
 import QtQuick 2.6
-
-ListModel {
+import SodaControls 1.0
+import "utils.js" as Utils
+//
+// TODO: sync questions with server
+//
+DatabaseList {
     id: model
+    collection: "questionnaires"
+    roles: [ "title", "category", "questions" ]
 
     Component.onCompleted: {
-        var data = [
-                    {
-                        title: "My body and previous routine",
-                        category: "body",
-                        questions: [
-                            { question: "My muscles are as strong as they used to be and I don’t feel weak at all" },
-                            { question: "My joints in my body are as flexible as they were before my accident" },
-                            { question: "I do not have any problems with pain" },
-                            { question: "I have no problem changing my body position between a variety of positions such as lying down, sitting, standing or kneeling" },
-                            { question: "I do not have any difficulty walking" },
-                            { question: "I do not have any difficulty carrying out my daily routine" },
-                            { question: "I have no problem using the toilet or any continence issues" }
-                        ]
-                    },
-                    {
-                        title: "My emotions and mood",
-                        category: "emotions",
-                        questions: [
-                            { question: "I am able to manage stress and can manage a busy schedule at work or at home" },
-                            { question: "I have difficulty managing my emotions and can feel a mix of emotions ranging from very sad to very angry" },
-                            { question: "I sometimes struggle to make decisions or plan things in advance" },
-                            { question: "I do not have any problems with my concentration or memory or solving complex problems" },
-                            { question: "I feel motivated and do not lack energy to do the things that I want to do" }
-                        ]
-                    },
-                    {
-                        title: "Relationships",
-                        category: "relationships",
-                        questions: [
-                            { question: "I have good relationships with my family which is similar to previous" },
-                            { question: "I struggle to interact and talk to people and sometimes feel out of place to deal with complex interactions" },
-                            { question: "My immediate family is very supportive in helping my recovery" },
-                        ]
-                    },
-                    {
-                        title: "Support and services",
-                        category: "life",
-                        questions: [
-                            { question: "I do not have any problems getting enough food and medication when I need it" },
-                            { question: "All the necessary health and rehabilitation services and systems are in place to help my rehabilitation and recovery" },
-                            { question: "I have easy access to products and technology to help me carry out my daily routine, even if I do this differently from before" },
-                            { question: "I have easy access to products and technology to help me move around indoors and outdoors, even if I do this differently from before" },
-                        ]
-                    },
-                    {
-                        title: "How Confident am I today?",
-                        category: "mind",
-                        questions: [
-                            { question: "I can always manage to solve difficult problems if I try hard enough" },
-                            { question: "If someone opposes me, I can find the means and ways to get what I want" },
-                            { question: "It is easy for me to stick to my aims and accomplish my goals" },
-                            { question: "I am confident that I could deal efficiently with unexpected events" },
-                            { question: "Thanks to my resourcefulness, I know how to handle unforeseen situations" },
-                            { question: "I can solve most problems if I invest the necessary effort" },
-                            { question: "I can remain calm when facing difficulties because I can rely on my coping abilities" },
-                            { question: "When I am confronted with a problem, I can usually find several solutions" },
-                            { question: "If I am in trouble, I can usually think of a solution" },
-                            { question: "I can usually handle whatever comes my way" }
-                        ]
-                    }
-               ];
-        model.clear();
-        data.forEach(function(datum) {
-            //console.log( 'adding questionnaire : ' + JSON.stringify(datum) );
-            model.append(datum);
-        });
         //
-        // TODO: reset this at midnight each night
+        // load daily questionnaire
+        // TODO: test for todays date
         //
-        scores = [];
+        var daily = JSONFile.read('questionnaire.json');
+        if ( daily ) {
+            scores = daily;
+        } else {
+            scores = [];
+        }
+        //
+        //
+        //
+        if ( count <= 0 ) {
+            console.log( 'generating questionnaire test data');
+            var data = [
+                        {
+                            title: "My body and previous routine",
+                            category: "body",
+                            questions: [
+                                { question: "My muscles are as strong as they used to be and I don’t feel weak at all" },
+                                { question: "My joints in my body are as flexible as they were before my accident" },
+                                { question: "I do not have any problems with pain" },
+                                { question: "I have no problem changing my body position between a variety of positions such as lying down, sitting, standing or kneeling" },
+                                { question: "I do not have any difficulty walking" },
+                                { question: "I do not have any difficulty carrying out my daily routine" },
+                                { question: "I have no problem using the toilet or any continence issues" }
+                            ]
+                        },
+                        {
+                            title: "My emotions and mood",
+                            category: "emotions",
+                            questions: [
+                                { question: "I am able to manage stress and can manage a busy schedule at work or at home" },
+                                { question: "I have difficulty managing my emotions and can feel a mix of emotions ranging from very sad to very angry" },
+                                { question: "I sometimes struggle to make decisions or plan things in advance" },
+                                { question: "I do not have any problems with my concentration or memory or solving complex problems" },
+                                { question: "I feel motivated and do not lack energy to do the things that I want to do" }
+                            ]
+                        },
+                        {
+                            title: "Relationships",
+                            category: "relationships",
+                            questions: [
+                                { question: "I have good relationships with my family which is similar to previous" },
+                                { question: "I struggle to interact and talk to people and sometimes feel out of place to deal with complex interactions" },
+                                { question: "My immediate family is very supportive in helping my recovery" },
+                            ]
+                        },
+                        {
+                            title: "Support and services",
+                            category: "life",
+                            questions: [
+                                { question: "I do not have any problems getting enough food and medication when I need it" },
+                                { question: "All the necessary health and rehabilitation services and systems are in place to help my rehabilitation and recovery" },
+                                { question: "I have easy access to products and technology to help me carry out my daily routine, even if I do this differently from before" },
+                                { question: "I have easy access to products and technology to help me move around indoors and outdoors, even if I do this differently from before" },
+                            ]
+                        },
+                        {
+                            title: "How Confident am I today?",
+                            category: "mind",
+                            questions: [
+                                { question: "I can always manage to solve difficult problems if I try hard enough" },
+                                { question: "If someone opposes me, I can find the means and ways to get what I want" },
+                                { question: "It is easy for me to stick to my aims and accomplish my goals" },
+                                { question: "I am confident that I could deal efficiently with unexpected events" },
+                                { question: "Thanks to my resourcefulness, I know how to handle unforeseen situations" },
+                                { question: "I can solve most problems if I invest the necessary effort" },
+                                { question: "I can remain calm when facing difficulties because I can rely on my coping abilities" },
+                                { question: "When I am confronted with a problem, I can usually find several solutions" },
+                                { question: "If I am in trouble, I can usually think of a solution" },
+                                { question: "I can usually handle whatever comes my way" }
+                            ]
+                        }
+                   ];
+            beginBatch();
+            data.forEach(function(datum) {
+                //console.log( 'adding questionnaire : ' + JSON.stringify(datum) );
+                add(datum);
+            });
+            endBatch();
+            save();
+        }
+    }
+
+    Component.onDestruction: {
+        saveScores();
     }
     //
     //
@@ -95,9 +119,9 @@ ListModel {
         //
         // average scores
         //
-        var questionnaire = model.get(quesionnaireIndex);
+        var questionnaire = get(quesionnaireIndex);
         var total = 0;
-        var nQuestions = questionnaire.questions.count;
+        var nQuestions = questionnaire.questions.length;
         for ( var i = 0; i < nQuestions; i++ ) {
             total += scores[ quesionnaireIndex ][ i ] || 0;
         }
@@ -108,8 +132,9 @@ ListModel {
         //var today = dailyModel.getTodayAsObject();
         var today = dailyModel.getToday();
         for ( i = 0; i < today.values.length; i++ ) {
-            console.log( 'putScore : updating daily : looking for ' + category + ' : found : ' + today.values[ i ].label );
+            //console.log( 'putScore : updating daily : looking for ' + category + ' : found : ' + today.values[ i ].label );
             if ( today.values[ i ].label === category ) {
+                console.log( 'putScore : updating daily : setting ' + category + ' : to : ' + average );
                 today.values[ i ].value = average;
                 dailyModel.update({ date: today.date }, { values: today.values });
                 break;
@@ -134,6 +159,31 @@ ListModel {
         }
         return true;
     }
-
+    //
+    //
+    //
+    function loadScores() {
+        var dailyScores = JSONFile.read('daily-questionnaire.json');
+        if ( dailyScores &&  dailyScores.date === Utils.shortDate(Date.now(),true) ) {
+            scores = dailyScores.scores;
+        } else {
+            scores = [];
+            for ( var i = 0; i < count; i++ ) {
+                scores.push([]);
+                var questionCount = get( i ).questions.length;
+                for ( var j = 0; j < questionCount; j++ ) {
+                    scores[ i ].push( 0. );
+                }
+            }
+        }
+    }
+    function saveScores() {
+        if ( scores.length > 0 ) {
+            JSONFile.write('daily-questionnaire.json', { date: Utils.shortDate(Date.now(),true), scores: scores });
+        }
+    }
+    //
+    //
+    //
     property var scores: []
 }

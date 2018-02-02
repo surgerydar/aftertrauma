@@ -66,7 +66,7 @@ void CachedMediaSource::setMediaSource() {
                     QNetworkReply* input = NetworkAccess::shared()->get(url);
                     if ( input ) {
                         //
-                        //
+                        // TODO: replace tee with downloader or get setMedia to accept tee as input
                         //
                         CachedTee* tee = new CachedTee; // TODO: where is this deleted
                         connect( tee, &CachedTee::aboutToClose,[tee]() {
@@ -94,7 +94,6 @@ void CachedMediaSource::setMediaSource() {
                         tee->setup(input,output);
                         tee->open(CachedTee::ReadOnly);
                         player->setMedia(content,tee);
-                        return;
                     } else {
                         output->close();
                         output->deleteLater();

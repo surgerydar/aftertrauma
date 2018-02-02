@@ -189,9 +189,16 @@ ApplicationWindow {
     /*
     AfterTrauma.TokenisedTextField {
         id: testInput
+        font.family: fonts.light.name
+        font.pointSize: 32
         width: parent.width - 16
         anchors.centerIn: parent
 
+    }
+    NewQuestion {
+        id: testQuestion
+        width: parent.width - 16
+        anchors.centerIn: parent
     }
     */
     //

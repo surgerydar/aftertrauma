@@ -51,6 +51,7 @@ Item {
         anchors.rightMargin: -4
         icon: "icons/add.png"
         onClicked: {
+            /*
             if( loggedIn ) {
                 var options = [
                             { title: "Questionnaire", destination: "Questionnaire.qml" },
@@ -63,6 +64,15 @@ Item {
             } else {
                 register.open();
             }
+            */
+            var options = [
+                        { title: "Questionnaire", destination: "Questionnaire.qml" },
+                        { title: "Challenge", destination: "ChallengeManager.qml" },
+                        { title: "Image", destination: "ImageManager.qml", options: { date: 0 } },
+                        { title: "Notes", destination: "NotesManager.qml", options: { date: 0 } }
+                    ];
+            shortcut.setOptions( options );
+            shortcut.open();
         }
     }
     NavigationButton {
@@ -73,6 +83,7 @@ Item {
         anchors.leftMargin: -4
         icon: "icons/chart.png"
         onClicked: {
+            /*
             if( loggedIn ) {
                 var options = [
                             { title: "Timeline", destination: "Timeline.qml" },
@@ -85,6 +96,15 @@ Item {
             } else {
                 register.open();
             }
+            */
+            var options = [
+                        { title: "Timeline", destination: "Timeline.qml" },
+                        { title: "Weekly", destination: "Progress.qml", options: { period: "week" } },
+                        { title: "Monthly", destination: "Progress.qml", options: { period: "month" } },
+                        { title: "Yearly", destination: "Progress.qml", options: { period: "year" } }
+                    ];
+            shortcut.setOptions( options );
+            shortcut.open();
         }
     }
 

@@ -5,6 +5,8 @@
 #include <QIODevice>
 #include <QByteArray>
 #include <QJsonParseError>
+#include <QJSValue>
+#include <QDebug>
 #include "systemutils.h"
 #include "jsonfile.h"
 
@@ -22,11 +24,11 @@ JSONFile* JSONFile::shared() {
     return s_shared;
 }
 
-void JSONFile::read(QString path) {
+QVariant JSONFile::read(QString path) {
     //
     // assume the path is relative to documents directory
     //
-    QString fullpath = SystemUtils::shared()->documentDirectory().append(path);
+    QString fullpath = SystemUtils::shared()->documentDirectory().append('/').append(path);
     //
     // open
     //
@@ -49,11 +51,13 @@ void JSONFile::read(QString path) {
             //VariantList list = array.toVariantList();
             QVariant array = document.toVariant();
             emit arrayReadFrom(path,array);
+            return array;
         } else if( document.isObject() ){
             //QJsonObject object = document.object();
             //QVariantMap map = object.toVariantMap();
             QVariant object = document.toVariant();
             emit objectReadFrom(path,object);
+            return object;
         } else {
             QString error = "error parsing : ";
             error.append( parseError.errorString() );
@@ -64,12 +68,37 @@ void JSONFile::read(QString path) {
         error.append(fullpath);
         emit errorReadingFrom(path,error);
     }
+    return QVariant();
 }
 
-void JSONFile::writeObject(QVariant& object, QString path) {
-
-}
-
-void JSONFile::writeArray(QVariant& object, QString path) {
-
+bool JSONFile::write(QString path, QVariant object) {
+    //
+    // assume the path is relative to documents directory
+    //
+    QString fullpath = SystemUtils::shared()->documentDirectory().append('/').append(path);
+    //
+    // open
+    //
+    QFile jsonFile(fullpath);
+    if (jsonFile.open(QIODevice::WriteOnly)) {
+        QJsonDocument document;
+        QVariant _object;
+        if ( object.canConvert<QJSValue>() ) { // catch the JSValue case
+            QJSValue value = object.value<QJSValue>();
+            _object = value.toVariant();
+        } else {
+            _object = object;
+        }
+        if ( _object.canConvert<QVariantMap>() ) {
+            QVariantMap map = object.value<QVariantMap>();
+            document.setObject(QJsonObject::fromVariantMap(map));
+        } else if ( _object.canConvert<QVariantList>() ) {
+            QVariantList list = object.value<QVariantList>();
+            document.setArray(QJsonArray::fromVariantList(list));
+        }
+        QByteArray json = document.toJson();
+        jsonFile.write(json);
+        return true;
+    }
+    return false;
 }

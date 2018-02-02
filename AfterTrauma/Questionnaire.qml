@@ -53,10 +53,10 @@ AfterTrauma.Page {
                     clip: true
                     spacing: 8
                     model: questionnaireModel.get(index).questions
-                    delegate: Question {
+                    delegate: NewQuestion {
                         anchors.left: parent.left
                         anchors.right: parent.right
-                        question: model.question
+                        question: formatQuestion(ListView.view.questionnaireIndex,index)
                         questionIndex: index
                         score: questionnaireModel.getScore(ListView.view.questionnaireIndex,index)
                         onScoreChanged: {
@@ -99,8 +99,16 @@ AfterTrauma.Page {
     //
     //
     StackView.onActivated: {
+        questionnaireModel.loadScores();
     }
     StackView.onDeactivated: {
+        questionnaireModel.saveScores();
         dailyModel.save();
+    }
+    //
+    //
+    //
+    function formatQuestion( questionnaireIndex, questionIndex ) {
+        return questionnaireModel.get( questionnaireIndex ).questions[ questionIndex ].question;
     }
 }

@@ -361,8 +361,20 @@ inline bool DatabaseList::_matchValue( QVariant& value, QVariant& condition ) {
                 if ( value != _value ) return false;
             }
             return true;
+        } else if ( _condition.contains("$startswith") ) {
+            QString _comparator = _condition.value("$startswith").toString();
+            QString _value = value.toString();
+            if ( _comparator.length() > 0 && _value.length() > 0 ) {
+                return _value.startsWith(_comparator);
+            }
+            return false;
         }
         return false;
+    } else if ( condition.canConvert<QRegExp>() ) {
+        qDebug() << "matching regexp : " << condition;
+        QRegExp _condition = condition.toRegExp();
+        QString _value = value.toString();
+        return _condition.exactMatch(_value);
     }
     //
     // simple comparison

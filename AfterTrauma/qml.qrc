@@ -112,5 +112,12 @@
         <file>Tags.qml</file>
         <file>DocumentViewer.qml</file>
         <file>controls/TokenisedTextField.qml</file>
+        <file>controls/TagTextField.qml</file>
+        <file>NewQuestion.qml</file>
+        <file>icons/face0.png</file>
+        <file>icons/face1.png</file>
+        <file>icons/face2.png</file>
+        <file>icons/face3.png</file>
+        <file>icons/face4.png</file>
     </qresource>
 </RCC>

@@ -46,7 +46,12 @@ void CachedTee::setup( QIODevice* input, QIODevice* output ) {
 //
 bool CachedTee::open(OpenMode mode) {
     if ( mode == ReadOnly ) {
-        return QIODevice::open(mode);
+        if ( QIODevice::open(mode) ) {
+            if ( m_buffer.size() > 0 ) {
+                emit readyRead();
+            }
+            return true;
+        }
     }
     return false;
 }

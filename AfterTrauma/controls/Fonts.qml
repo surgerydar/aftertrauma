@@ -7,7 +7,9 @@ Item {
         source: "../fonts/Roboto-Regular.ttf"
         onStatusChanged: {
             if (status == FontLoader.Ready) {
-                console.log('regularFont ready : name' + lightFont.name );
+                console.log('regularFont ready : name' + regularFont.name );
+            } else if (status == FontLoader.Error ) {
+                console.log('regularFont error' );
             }
         }
     }
@@ -17,6 +19,8 @@ Item {
         onStatusChanged: {
             if (status == FontLoader.Ready) {
                 console.log('lightFont ready : name' + lightFont.name );
+            } else if (status == FontLoader.Error ) {
+                console.log('regularFont error'  );
             }
         }
     }
@@ -25,7 +29,9 @@ Item {
         source: "../fonts/Roboto-Bold.ttf"
         onStatusChanged: {
             if (status == FontLoader.Ready) {
-                console.log('boldFont ready : name' + lightFont.name );
+                console.log('boldFont ready : name' + boldFont.name );
+            } else if (status == FontLoader.Error ) {
+                console.log('boldFont error' );
             }
         }
     }

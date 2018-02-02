@@ -336,6 +336,7 @@ Popup {
                     userProfile = command.response;
                     //container.close();
                     //
+                    // TODO: move all update logic to single module
                     // sync content
                     //
                     send({command:'categories',date:0});

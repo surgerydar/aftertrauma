@@ -2,9 +2,9 @@
 var shortMonths = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 var dayMs=1000*60*60*24;
 
-function shortDate(time) {
+function shortDate(time,withYear) {
     var date = new Date(time);
-    return shortMonths[ date.getMonth() ] + ', ' + date.getDate();
+    return shortMonths[ date.getMonth() ] + ', ' + date.getDate() + ( withYear ? ', ' + date.getFullYear() : '' );
 }
 
 function daysBetweenDates( date1, date2 ) {
