@@ -119,5 +119,6 @@
         <file>icons/face2.png</file>
         <file>icons/face3.png</file>
         <file>icons/face4.png</file>
+        <file>Recomendations.qml</file>
     </qresource>
 </RCC>

@@ -192,7 +192,7 @@ QVariant DatabaseList::find(QVariant q) {
     QVariantMap query = q.value<QVariantMap>();
     QVariantList matches;
     int count = _activeList().size();
-    qDebug() << "finding : " << query << " : from : " << count << " entries";
+    //qDebug() << "finding : " << query << " : from : " << count << " entries";
     for ( int i = 0; i < count; i++ ) {
         if ( _match(_activeList()[i],query) ) {
             matches.append(_activeList()[i]);
@@ -306,8 +306,9 @@ void DatabaseList::_filter() {
 }
 bool DatabaseList::_match( QVariantMap& object, QVariantMap& query ) {
     for ( QVariantMap::iterator it = query.begin(); it != query.end(); ++it ) {
-        if ( it.key().contains('.') ) { // nested document query
-            QStringList _keys = it.key().split('.');
+        QString key = it.key();
+        if ( key.contains('.') ) { // nested document query
+            QStringList _keys = key.split('.');
             QVariantMap _current = object;
             for ( int i = 0; i < _keys.size() - 1; ++i ) {
                 auto& _key = _keys[ i ];
@@ -319,8 +320,31 @@ bool DatabaseList::_match( QVariantMap& object, QVariantMap& query ) {
                     return false;
                 }
             }
-            if ( !_current.contains(_keys.last()) || !_matchValue( _current[ _keys.last() ], query[ it.key() ] ) ) return false;
-        } else if ( !object.contains(it.key()) || !_matchValue( object[ it.key() ], query[ it.key() ] ) ) return false;
+            if ( !_current.contains(_keys.last()) || !_matchValue( _current[ _keys.last() ], query[ key ] ) ) return false;
+        } else if ( key.startsWith('$') ) { // complex ( aggregate ) condition TODO: rethink this
+            if ( key == "$or" ) {
+                QVariantList _conditions = query[key].toList();
+                for ( auto& _condition : _conditions ) {
+                    QVariantMap _conditionMap = _condition.toMap();
+                    QString conditionKey = _conditionMap.firstKey();
+                    if ( object.contains(conditionKey) && _matchValue(object[conditionKey],_conditionMap[conditionKey])) return true;
+                }
+                return false;
+            } else if ( key == "$and" ) {
+                qDebug() << "matching $and " << query[key];
+                QVariantList _conditions = query[key].toList();
+                for ( auto& _condition : _conditions ) {
+                    QVariantMap _conditionMap = _condition.toMap();
+                    QString conditionKey = _conditionMap.firstKey();
+                    if ( !object.contains(conditionKey) || !_matchValue(object[conditionKey],_conditionMap[conditionKey]) ) return false;
+                }
+                return true;
+            }
+            qDebug() << "DatabaseList::_match : unsupported operation : " << key;
+            return false;
+        } else { // simple condiion
+            if ( !object.contains(key) || !_matchValue( object[ key ], query[ key ] ) ) return false;
+        }
     }
     return true;
 }
@@ -337,28 +361,33 @@ inline bool DatabaseList::_matchValue( QVariant& value, QVariant& condition ) {
     } else if ( condition.canConvert<QVariantMap>() ) { // condition is complex
         //
         // complex comparison
+        // TODO: possibly shift this to function table
+        // QMap<QString, std::function<??> m_operators;
         //
         QVariantMap _condition = condition.value<QVariantMap>();
-        if ( _condition.contains("$in") ) {
+        if ( _condition.contains("$in") ) { // TODO: combine $in and $or ????
             //qDebug() << "matching $in";
             QVariantList _values = _condition.value( "$in" ).toList();
             for ( auto& _value : _values ) {
                 //qDebug() << "matching : " << value << " : " << _value;
-                if ( value == _value ) return true;
+                //if ( value == _value ) return true;
+                if ( _matchValue(value, _value) ) return true; // allow complex conditions
             }
         } else if ( _condition.contains("$or") ) {
             //qDebug() << "matching $or";
             QVariantList _values = _condition.value( "$or" ).toList();
             for ( auto& _value : _values ) {
                 //qDebug() << "matching : " << value << " : " << _value;
-                if ( value == _value ) return true;
+                //if ( value == _value ) return true;
+                if ( _matchValue(value, _value) ) return true; // allow complex conditions
             }
         } else if ( _condition.contains("$and") ) {
-            //qDebug() << "matching $and";
+            qDebug() << "matching $and";
             QVariantList _values = _condition.value( "$and" ).toList();
             for ( auto& _value : _values ) {
-                //qDebug() << "matching : " << value << " : " << _value;
-                if ( value != _value ) return false;
+                qDebug() << "matching : " << value << " : " << _value;
+                //if ( value != _value ) return false;
+                if ( !_matchValue(value, _value) ) return false; // allow complex conditions
             }
             return true;
         } else if ( _condition.contains("$startswith") ) {
@@ -368,6 +397,15 @@ inline bool DatabaseList::_matchValue( QVariant& value, QVariant& condition ) {
                 return _value.startsWith(_comparator);
             }
             return false;
+        } else if ( _condition.contains("$lt") ) {
+            return value < _condition.value("$lt");
+        } else if ( _condition.contains("$lte") ) {
+            qDebug() << "matching : $lte : " << value << " <= " << _condition.value("$lte");
+            return value <= _condition.value("$lte");
+        } else if ( _condition.contains("$gt") ) {
+            return value > _condition.value("$gt");
+        } else if ( _condition.contains("$gte") ) {
+            return value >= _condition.value("$gte");
         }
         return false;
     } else if ( condition.canConvert<QRegExp>() ) {

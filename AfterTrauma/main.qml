@@ -50,6 +50,9 @@ ApplicationWindow {
     Tags {
         id: tagsModel
     }
+    Recomendations {
+        id: recomendationModel
+    }
     //
     // notifications
     //

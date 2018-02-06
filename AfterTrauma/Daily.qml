@@ -56,8 +56,8 @@ DatabaseList {
             min: Number.MAX_VALUE,
             max: Number.MIN_VALUE
         };
-        for ( var i = 0; i < model.count; i++ ) {
-            var date = model.get(i).date;
+        for ( var i = 0; i < count; i++ ) {
+            var date = get(i).date;
             if ( date < range.min ) range.min = date;
             if ( date > range.max ) range.max = date;
         }
@@ -71,9 +71,9 @@ DatabaseList {
         var month = date.getMonth();
         var year = date.getFullYear();
 
-        var n = model.count;
+        var n = count;
         for ( var i = 0; i < n; i++ ) {
-            var item = model.get(i);
+            var item = get(i);
             //console.log( 'year:' + item.year + ' month:' + item.month + ' day:' + item.day );
             if ( item.year === year && item.month === month && item.day === day ) {
                 //console.log( 'found year:' + item.year + ' month:' + item.month + ' day:' + item.day );
@@ -89,8 +89,11 @@ DatabaseList {
             month: date.getMonth(),
             year: date.getFullYear()
         }
-        var finds = model.find(query);
+        return findOne(query);
+        /*
+        var finds = find(query);
         return finds.length > 0 ? finds[ 0 ] : undefined
+        */
     }
     function getToday() {
         var today = new Date();
@@ -115,7 +118,9 @@ DatabaseList {
             notes: [],
             images: []
         }
-        return model.add(daily);
+        add(daily);
+        save();
+        return daily;
     }
     //
     //

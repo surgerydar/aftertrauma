@@ -14,12 +14,7 @@ DatabaseList {
         // load daily questionnaire
         // TODO: test for todays date
         //
-        var daily = JSONFile.read('questionnaire.json');
-        if ( daily ) {
-            scores = daily;
-        } else {
-            scores = [];
-        }
+        loadScores();
         //
         //
         //
@@ -89,7 +84,7 @@ DatabaseList {
             beginBatch();
             data.forEach(function(datum) {
                 //console.log( 'adding questionnaire : ' + JSON.stringify(datum) );
-                add(datum);
+                batchAdd(datum);
             });
             endBatch();
             save();

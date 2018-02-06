@@ -39,7 +39,6 @@ AfterTrauma.Page {
                 anchors.margins: 16
                 fillMode: Image.PreserveAspectFit
                 source: profile && profile.avatar ? profile.avatar : "icons/add.png"
-                //source: "icons/add.png"
                 onStatusChanged: {
                     if( status === Image.Error ) {
                         source = "icons/add.png";
@@ -154,6 +153,7 @@ AfterTrauma.Page {
     Connections {
         target: ImagePicker
         onImagePicked: {
+            console.log( 'ProfileManager : setting profile avatar');
             var encoded = ImageUtils.urlEncode(url, 256, 256);
             avatar.source = encoded;
             if( profile ) {
