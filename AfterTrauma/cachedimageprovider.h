@@ -2,16 +2,18 @@
 #define CACHEDIMAGEPROVIDER_H
 
 #include <QQuickImageProvider>
+#include <QThreadPool>
 
-class CachedImageProvider : public QQuickImageProvider
+class CachedImageProvider : public QQuickAsyncImageProvider
 {
 public:
     CachedImageProvider();
     //
     //
     //
-    QImage requestImage(const QString &id, QSize *size, const QSize &requestedSize) override;
-
+    QQuickImageResponse *requestImageResponse(const QString &id, const QSize &requestedSize);
+private:
+    QThreadPool m_pool;
 };
 
 #endif // CACHEDIMAGEPROVIDER_H

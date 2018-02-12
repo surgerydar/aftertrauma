@@ -16,16 +16,16 @@ html
                     if block
                         - var tags = block.tags.join();
                         if block.type == "text"
-                            .block( data-type= block.type data-document= document._id data-index= index data-title= block.title data-content= block.content data-tags= tags ) !{block.content}
+                            .block( style='padding: 24px 8px;' data-type= block.type data-document= document._id data-index= index data-title= block.title data-content= block.content data-tags= tags ) !{block.content}
                                 .delete
                                 .reorder
                         else if block.type == "image"
-                            .block( data-type= block.type data-document= document._id data-index= index data-title= block.title data-content= block.content data-tags= tags )
+                            .block( style='padding: 24px 8px;' data-type= block.type data-document= document._id data-index= index data-title= block.title data-content= block.content data-tags= tags )
                                 img.block( src= block.content )
                                 .delete
                                 .reorder
                         else
-                            .block( data-type= block.type data-document= document._id data-index= index data-title= block.title data-content= block.content data-tags= tags )
+                            .block( style='padding: 24px 8px;' data-type= block.type data-document= document._id data-index= index data-title= block.title data-content= block.content data-tags= tags )
                                 video.block( src= block.content controls )
                                 .delete
                                 .reorder

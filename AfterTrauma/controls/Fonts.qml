@@ -82,6 +82,9 @@ Item {
         text: bold + ' Bold'
     }
     */
+    property alias regularFont: regularFont
+    property alias lightFont: lightFont
+    property alias boldFont: boldFont
     property alias regular: regularFont.name
     property alias light: lightFont.name
     property alias bold: boldFont.name

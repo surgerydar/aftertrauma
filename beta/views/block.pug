@@ -13,7 +13,7 @@ html
                 input#title(type='text' value= block.title placeholder='title') 
                 if block.type == "text"
                     textarea#content  !{block.content}
-                    .block#preview !{block.content}
+                    .block#preview( style='height: auto;' ) !{block.content}
                 else if block.type == "image"
                     .drop-area
                         .progress

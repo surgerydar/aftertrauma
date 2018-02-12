@@ -28,7 +28,10 @@ public slots:
     QString applicationDirectory();
     QString documentDirectory();
     QString temporaryDirectory();
-
+    //
+    //
+    //
+    void moveFile( QString from, QString to, bool force = false );
 private slots:
     //
     //

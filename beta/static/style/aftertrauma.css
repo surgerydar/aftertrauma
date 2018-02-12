@@ -68,7 +68,7 @@ h3 {
 
 .block {
     position: relative;
-    min-height: 64px;
+    /*min-height: 64px;*/
     margin: 1em;
     padding: 8px;
     border-radius: 8px;

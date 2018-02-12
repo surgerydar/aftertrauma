@@ -53,7 +53,18 @@ QString SystemUtils::documentDirectory() {
 }
 
 QString SystemUtils::temporaryDirectory() {
-    return "";
+    return QDir::tempPath();
+}
+//
+//
+//
+void SystemUtils::moveFile( QString from, QString to, bool force ) {
+    if ( force ) {
+        if ( QFile::exists(to) ) {
+            QFile::remove(to);
+        }
+    }
+    QFile::rename( from, to );
 }
 //
 //

@@ -59,7 +59,6 @@
         <file>controls/ImageBlock.qml</file>
         <file>controls/VideoBlock.qml</file>
         <file>controls/BusyIndicator.qml</file>
-        <file>jsonloader.js</file>
         <file>Progress.qml</file>
         <file>ShortcutPopup.qml</file>
         <file>Questionnaire.qml</file>

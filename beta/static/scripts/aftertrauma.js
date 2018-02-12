@@ -229,7 +229,7 @@ var rest = {
             }
         } else if( category ) {
             //
-            // new document
+            // new category
             //
             add.onclick = function() {
                 rest.post('/admin/' + section + '/' + category, { title: 'New document' }, {
@@ -247,7 +247,7 @@ var rest = {
             };
        } else if( section ) {
             //
-            // new document
+            // new section
             //
             add.onclick = function() {
                 rest.post('/admin/' + section, { title: 'New category' }, {
@@ -274,11 +274,15 @@ var rest = {
             var index       = save.getAttribute('data-index'); 
             if ( index ) {
                 var endpoint    = '/admin/' + section + '/' + category + '/' + document + '/' + index;
+                var tags = d.querySelector('#tags').value.split(',');
+                for ( var t = 0; t < tags.length; t++ ) {
+                    tags[ t ] = tags[ t ].trim();
+                }
                 var block = {
                     type: save.getAttribute('data-type'),
                     title: d.querySelector('#title').value,
                     content: d.querySelector('#content').src || d.querySelector('#content').value,
-                    tags: d.querySelector('#tags').value.split()
+                    tags: tags
                 };
                 rest.put( endpoint, block, {
                     onloadend: function(evt) {
@@ -299,11 +303,15 @@ var rest = {
                     var blockList = blockContainer.querySelectorAll('div.block');
                     for ( var i = 0; i < blockList.length; ++i ) {
                         (function(block){
+                            var tags = block.getAttribute('data-tags') ? block.getAttribute('data-tags').split(',') : [];
+                            for ( var t = 0; t < tags.length; t++ ) {
+                                tags[ t ] = tags[ t ].trim();
+                            }
                             blocks.push({
                                 type: block.getAttribute('data-type'),
                                 title: block.getAttribute('data-title'),
                                 content: block.getAttribute('data-content'),
-                                tags: block.getAttribute('data-tags') ? block.getAttribute('data-tags').split() : []
+                                tags: tags
                             });
                         })( blockList[i]);
                     }
@@ -329,6 +337,9 @@ var rest = {
     }
     var list = d.querySelector('.list');
     if ( list ) {
+        //
+        // check for sortable
+        //
         if ( list.getAttribute('data-sortable') ) {
             var sortable = Sortable.create(list,{handle:".reorder"});
         }

@@ -1,4 +1,4 @@
-QT += qml quick multimedia websockets
+QT += qml quick multimedia websockets gui
 
 CONFIG += c++11
 
@@ -20,7 +20,10 @@ SOURCES += main.cpp \
     daily.cpp \
     cachedmediasource.cpp \
     cachedtee.cpp \
-    networkaccess.cpp
+    networkaccess.cpp \
+    sharedialog.cpp \
+    pdfgenerator.cpp \
+    linechartdata.cpp
 
 HEADERS += \
     imagepicker.h \
@@ -40,7 +43,11 @@ HEADERS += \
     daily.h \
     cachedmediasource.h \
     cachedtee.h \
-    networkaccess.h
+    networkaccess.h \
+    sharedialog.h \
+    pdfgenerator.h \
+    linechartdata.h \
+    paintable.h
 
 
 RESOURCES += qml.qrc
@@ -97,6 +104,7 @@ DISTFILES += \
 
 ios {
     OBJECTIVE_SOURCES += ios/ImagePicker.mm
+    OBJECTIVE_SOURCES += ios/ShareDialog.mm
 
     QMAKE_INFO_PLIST = ios/Info.plist
 

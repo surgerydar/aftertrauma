@@ -39,12 +39,15 @@ Item {
         //
         //
         onStatusChanged: {
-            if ( status === Image.Error && !redirected ) {
+            if ( status === Image.Error ) { // && !redirected ) {
+                /*
                 redirected = true;
                 var currentSource = JSON.stringify(source);
                 var mediaPath = 'file://' + SystemUtils.documentDirectory() + '/media' + currentSource.substring(currentSource.lastIndexOf('/'));
                 console.log( 'redirecting image block from ' + currentSource + ' to : ' + mediaPath );
                 source = mediaPath;
+                */
+                console.log('ImageBlock : error loading image : ' + source );
             } else {
                 container.height = Math.max(64,content.height + 16);
             }
@@ -53,6 +56,12 @@ Item {
     //
     //
     //
+    onMediaChanged: {
+        content.source = "image://cached/" + media;
+    }
+    //
+    //
+    //
     property bool redirected: false
-    property alias media: content.source
+    property string media: ""
 }

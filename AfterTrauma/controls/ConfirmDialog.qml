@@ -72,7 +72,7 @@ Popup {
     }
 
     onClosed: {
-        _buttons = [{label:"Ok", action: function() {} }];
+        _buttons = [{label:"Ok", action: function() { container.close(); } }];
     }
 
     function show( text, buttons ) {
@@ -82,5 +82,5 @@ Popup {
         }
         open();
     }
-    property var _buttons: [{label:"Ok", action: function() {} }]
+    property var _buttons: [{label:"Ok", action: function() { container.close(); } }]
 }

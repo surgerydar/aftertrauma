@@ -153,6 +153,7 @@ AfterTrauma.Page {
     Connections {
         target: ImagePicker
         onImagePicked: {
+            // TODO: ensure this isn't called from addImage
             console.log( 'ProfileManager : setting profile avatar');
             var encoded = ImageUtils.urlEncode(url, 256, 256);
             avatar.source = encoded;
@@ -197,7 +198,6 @@ AfterTrauma.Page {
         }
 
     }
-
     //
     //
     //
