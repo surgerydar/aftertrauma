@@ -1,5 +1,6 @@
 #include "linechartdata.h"
 #include <QUuid>
+#include <QDate>
 #include "pdfgenerator.h"
 
 LineChartData::LineChartData(QObject *parent) : QObject(parent) {
@@ -79,6 +80,7 @@ void LineChartData::setAxisAlignment( QString id, AxisAlignment alignment ) {
 }
 
 void LineChartData::setAxisRange( QString id, QVariant min, QVariant max ) {
+    qDebug() << "setting axis range : min=" << min << " max=" << max;
     m_axis[ id ].m_min = min;
     m_axis[ id ].m_max = max;
 }
@@ -100,18 +102,26 @@ void LineChartData::paint( QPainter* painter, const QRect& r ) {
     //
     QFontMetrics fontMetrics = painter->fontMetrics();
     int dpiX = painter->device()->logicalDpiX();
-    int dpiY = painter->device()->logicalDpiY();
+    //int dpiY = painter->device()->logicalDpiY();
     //
     //
+    //
+    //QBrush green( Qt::green );
+    //painter->fillRect(r,green);
+    //
+    // adjust bounds to allow for line width
     //
     QRect adjusted( r.x(), r.y(), r.width() - 4, r.height() - 4);
-    QRect safe = safeRect(adjusted,dpiX);
-    qDebug() << "bounds: " << r << " safe: " << safe;
+    //
+    // calculate safe rect
+    //
+    int axisMargin = dpiX / 2;
+    QRect safe = safeRect(adjusted,axisMargin);
     //
     // background
     //
     QBrush white( Qt::white );
-    painter->fillRect(r,white);
+    painter->fillRect(safe,white);
     //
     // axis
     //
@@ -138,7 +148,8 @@ void LineChartData::paint( QPainter* painter, const QRect& r ) {
     // legend
     //
     if ( m_showLegend ) {
-        drawLegend(painter,safe);
+        QRect legendRect( safe.left(), safe.bottom() + axisMargin, safe.width(), axisMargin );
+        drawLegend(painter,legendRect);
     }
     //
     //
@@ -168,18 +179,6 @@ QRect LineChartData::safeRect( const QRect& r, int axisMargin ) {
         case XAxis :
             switch ( m_axis[ key ].m_alignment ) {
             case AlignStart :
-                safe.setLeft( r.left() + axisMargin );
-                break;
-            case AlignEnd :
-                safe.setRight( r.right() - axisMargin );
-                break;
-            default:
-                break;
-            }
-            break;
-        case YAxis :
-            switch ( m_axis[ key ].m_alignment ) {
-            case AlignStart :
                 safe.setTop( r.top() + axisMargin );
                 break;
             case AlignEnd :
@@ -189,7 +188,25 @@ QRect LineChartData::safeRect( const QRect& r, int axisMargin ) {
                 break;
             }
             break;
+        case YAxis :
+            switch ( m_axis[ key ].m_alignment ) {
+            case AlignStart :
+                safe.setLeft( r.left() + axisMargin );
+                break;
+            case AlignEnd :
+                safe.setRight( r.right() - axisMargin );
+                break;
+            default:
+                break;
+            }
+            break;
         }
+    }
+    //
+    //
+    //
+    if ( m_showLegend ) {
+        safe.setBottom( safe.bottom() - axisMargin );
     }
     return safe;
 }
@@ -211,44 +228,105 @@ void LineChartData::drawAxis( QPainter* painter, const AxisData& axis, const QRe
     painter->setPen(darkGray);
     painter->setBrush(Qt::NoBrush);
     QPoint p0, p1;
+    QFont labelFont = m_font;
+    labelFont.setPointSize(18);
+    painter->setFont(labelFont);
+    int labelHeight = painter->fontMetrics().height();
+    QRect labelRect( 0, 0, 0, labelHeight);
+    double axisOrientation = 0.;
     switch ( axis.m_orientation ) {
     case XAxis :
+        labelRect.setX(r.x());
+        labelRect.setWidth(r.width());
         switch ( axis.m_alignment ) {
         case AlignStart :
             qDebug() << "axis : x : start";
             painter->drawLine(r.topLeft(),r.topRight());
+            labelRect.moveBottom(r.top());
             break;
         case AlignMiddle :
             qDebug() << "axis : x : middle";
             p0.setX(r.left()); p0.setY(r.center().y());
             p1.setX(r.right()); p1.setY(r.center().y());
             painter->drawLine(p0,p1);
+            labelRect.moveTop(r.center().y());
             break;
         case AlignEnd :
             qDebug() << "axis : x : end";
             painter->drawLine(r.bottomLeft(),r.bottomRight());
+            labelRect.moveTop(r.bottom());
             break;
         }
         break;
     case YAxis :
+        labelRect.moveTop( r.y() + ( r.height()/2 - labelHeight/2 ) );
+        labelRect.setWidth(r.height());
+        axisOrientation = -90.;
         switch ( axis.m_alignment ) {
         case AlignStart :
             qDebug() << "axis : y : start";
             painter->drawLine(r.topLeft(),r.bottomLeft());
+            labelRect.moveLeft( r.x() -( labelHeight/2 + r.height()/2 ) );
             break;
         case AlignMiddle :
             qDebug() << "axis : y : middle";
             p0.setX(r.center().x()); p0.setY(r.top());
             p1.setX(r.center().x()); p1.setY(r.bottom());
             painter->drawLine(p0,p1);
+            labelRect.moveLeft( r.center().x() -( labelHeight/2 + r.height()/2 ) );
             break;
         case AlignEnd :
             qDebug() << "axis : y : end";
             painter->drawLine(r.topRight(),r.bottomRight());
+            labelRect.moveRight( r.right() + ( labelHeight/2 + r.height()/2 ) );
             break;
         }
         break;
     }
+    //
+    // label
+    //
+    if ( axisOrientation != 0. ) {
+        QPoint center = labelRect.center();
+        painter->translate(center.x(),center.y());
+        painter->rotate(axisOrientation);
+        painter->translate(-center.x(),-center.y());
+    }
+    if ( axis.m_label.length() > 0 ) {
+        painter->drawText( labelRect, Qt::AlignHCenter|Qt::AlignVCenter, axis.m_label );
+    }
+    //
+    // min / max
+    //
+    QFont rangeFont = m_font;
+    rangeFont.setPointSize(12);
+    painter->setFont(rangeFont);
+    const QString dateFormat = "ddd MMM d yyyy"; // TODO: make this a property
+    if ( !axis.m_min.isNull() ) {
+        QString text;
+        if ( axis.m_min.canConvert<QDate>() ) {
+            QDate date = axis.m_min.toDate();
+            text = date.toString(dateFormat);
+        } else {
+            text = axis.m_min.toString();
+        }
+        painter->drawLine( labelRect.topLeft(), labelRect.bottomLeft() );
+        painter->drawText( labelRect, Qt::AlignLeft|Qt::AlignVCenter, text );
+    }
+    if ( !axis.m_max.isNull() ) {
+        QString text;
+        if ( axis.m_max.canConvert<QDate>() ) {
+            QDate date = axis.m_max.toDate();
+            text = date.toString(dateFormat);
+        } else {
+            text = axis.m_max.toString();
+        }
+        painter->drawLine( labelRect.topRight(), labelRect.bottomRight() );
+        painter->drawText( labelRect, Qt::AlignRight|Qt::AlignVCenter, text );
+    }
+    //
+    //
+    //
     painter->restore();
 }
 
@@ -258,6 +336,10 @@ void LineChartData::drawData( QPainter* painter, const DataSet& data, const QRec
         //
         //
         painter->save();
+        //
+        //
+        //
+        painter->setClipRect(r);
         //
         //
         //
@@ -332,24 +414,56 @@ void LineChartData::drawTitle( QPainter* painter, const QRect& r ) {
     painter->save();
     QPen darkGray( Qt::darkGray );
     painter->setPen(darkGray);
-    int offset = 0;
+    double offset = 0.;
     if ( m_title.length() > 0 ) {
         QFont titleFont = m_font;
         titleFont.setPointSize(24);
         painter->setFont(titleFont);
-        offset += painter->fontMetrics().height();
-        painter->drawText( r.x(), r.y() + offset, m_title );
+        offset += ( double ) painter->fontMetrics().height() * 1.5;
+        painter->drawText( r.x() + 40, r.y() + offset, m_title ); // TODO: calculate offset
     }
     if ( m_subtitle.length() > 0 ) {
         QFont titleFont = m_font;
         titleFont.setPointSize(18);
         painter->setFont(titleFont);
-        offset += painter->fontMetrics().height();
-        painter->drawText( r.x(), r.y()+ offset, m_subtitle );
+        offset += ( double ) painter->fontMetrics().height() * 1.5;
+        painter->drawText( r.x() + 40, r.y()+ offset, m_subtitle );
     }
     painter->restore();
 }
 
 void LineChartData::drawLegend( QPainter* painter, const QRect& r ) {
-
+    //
+    //
+    //
+    painter->save();
+    //
+    //
+    //
+    QList< QString > keys = m_dataset.keys();
+    QFont font = m_font;
+    font.setPointSize(12);
+    QFontMetrics metrics = painter->fontMetrics();
+    int height = metrics.height();
+    QRect indicatorRect( r.x(), r.y(), height, height );
+    painter->setPen(Qt::darkGray);
+    for ( auto& key : keys ) {
+        QBrush brush(m_dataset[key].m_colour);
+        painter->setBrush(brush);
+        painter->drawEllipse(indicatorRect);
+        //
+        //
+        //
+        QRect textBounds = metrics.boundingRect(m_dataset[key].m_label);
+        textBounds.moveTo( indicatorRect.right() + height / 4, indicatorRect.top() );
+        painter->drawText(textBounds,m_dataset[key].m_label);
+        //
+        //
+        //
+        indicatorRect.moveLeft( textBounds.right() + height / 2 );
+    }
+    //
+    //
+    //
+    painter->restore();
 }

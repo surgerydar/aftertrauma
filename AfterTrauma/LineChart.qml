@@ -19,6 +19,8 @@ Rectangle {
     property real gridStep: gridSize ? (width - canvas.tickMargin) / gridSize : canvas.xGridStep
     property var legend: []
 
+    property var values: ({})
+
     function setup() {
         var today = new Date();
         switch( period ) {
@@ -174,42 +176,29 @@ Rectangle {
             LineChartData {
                 id: data
                 font: fonts.light;
-                title: chart.period + 'ly';
+                title: chart.period.charAt(0).toUpperCase() + chart.period.slice(1) + 'ly Progess';
                 subtitle: startDate.toDateString() + ' to ' + endDate.toDateString();
+                showLegend: true
             }
 
             onClicked: {
-                /*
-                var documentId = PDFGenerator.openDocument();
-                if ( documentId ) {
-                    PDFGenerator.closeDocument(documentId);
-                    var documentPath = PDFGenerator.documentPath( documentId );
-                    console.log( 'PDF file @ ' + documentPath );
-                    var pdfPath = SystemUtils.documentDirectory() + '/' + chart.period + 'ly.pdf';
-                    SystemUtils.moveFile(documentPath,pdfPath);
-                    ShareDialog.shareFile('test pdf',pdfPath);
-                    PDFGenerator.removeDocument(documentId);
-                    confirmDialog.show('char saved to : ' + pdfPath );
-                } else {
-                    console.log( 'failed to open document' );
-                }
-                */
                 var pdfPath = SystemUtils.documentDirectory() + '/' + chart.period + 'ly.pdf';
 
                 data.clearDataSets();
-                var fakeData = [
-                            [ Qt.point(0.,.25), Qt.point(.25,.45), Qt.point(.5,.5), Qt.point(.75,.25), Qt.point( 1.,.75)],
-                            [ Qt.point(0.,.1), Qt.point(.25,.2), Qt.point(.5,.75), Qt.point(.75,.25), Qt.point( 1.,.75)]
-                        ];
-                data.addDataSet('mind',Colours.red,fakeData[ 0 ]);
-                data.addDataSet('body',Colours.green,fakeData[ 1 ]);
+                var categoryIndex = 0;
+                for ( var category in values ) {
+                    data.addDataSet(category,Colours.categoryColour(categoryIndex),values[ category ]);
+                    categoryIndex++;
+                }
+
                 data.clearAxis();
-                var xAxis = data.addAxis('days',LineChartData.XAxis,LineChartData.AlignEnd)
+                var xAxis = data.addAxis('days',LineChartData.XAxis,LineChartData.AlignEnd);
                 data.setAxisSteps(xAxis, chart.period === "year" ? 12 : chart.period === "month" ? 4 : 7);
-                var yAxis = data.addAxis('value',LineChartData.YAxis,LineChartData.AlignStart)
+                data.setAxisRange( xAxis, startDate, endDate);
+                var yAxis = data.addAxis('value',LineChartData.YAxis,LineChartData.AlignStart);
                 data.setAxisSteps( yAxis, 5 );
                 data.save( pdfPath );
-                ShareDialog.shareFile('test pdf', pdfPath);
+                ShareDialog.shareFile('Shared from AfterTrauma', pdfPath);
                 //confirmDialog.show('char saved to : ' + pdfPath );
             }
         }
@@ -381,9 +370,13 @@ Rectangle {
 
             drawBackground(ctx);
 
+            values = {};
             var points = {};
             var x = 0;
             var h = 9 * yGridStep;
+            var minTime = chart.startDate.getTime();
+            var maxTime = chart.endDate.getTime();
+            var dTime = maxTime - minTime;
             for (var i = startIndex; i >= endIndex; i-- ) {
                 //
                 // get daily
@@ -396,6 +389,7 @@ Rectangle {
                 //
                 // calculate points for each value
                 //
+                var t = ( day.date - minTime ) / dTime;
                 for ( var j = 0; j < day.values.length; j++ ) {
                     var value = day.values[j];
                     if ( points[value.label] === undefined ) {
@@ -406,6 +400,13 @@ Rectangle {
                         y: h - ( h * value.value )
                     };
                     points[value.label].push(point);
+                    //
+                    //
+                    //
+                    if ( values[value.label] === undefined ) {
+                        values[value.label] = [];
+                    }
+                    values[value.label].push( Qt.point(t,value.value) );
                 }
             }
             //
