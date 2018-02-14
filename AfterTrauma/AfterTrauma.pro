@@ -141,6 +141,7 @@ android {
     QT += androidextras
 
     SOURCES += ./android/androidimagepicker.cpp
+    SOURCES += ./android/androidsharedialog.cpp
 
     ANDROID_EXTRA_LIBS += $$PWD/android/OpenSSL/armeabi-v7a/libcrypto.so
     ANDROID_EXTRA_LIBS += $$PWD/android/OpenSSL/armeabi-v7a/libssl.so

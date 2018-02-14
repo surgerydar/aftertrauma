@@ -183,7 +183,7 @@ Rectangle {
 
             onClicked: {
                 var pdfPath = SystemUtils.documentDirectory() + '/' + chart.period + 'ly.pdf';
-
+                console.log( 'pdf mimetype : ' + SystemUtils.mimeTypeForFile('ly.pdf') );
                 data.clearDataSets();
                 var categoryIndex = 0;
                 for ( var category in values ) {

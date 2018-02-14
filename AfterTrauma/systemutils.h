@@ -32,6 +32,10 @@ public slots:
     //
     //
     void moveFile( QString from, QString to, bool force = false );
+    //
+    //
+    //
+    QString mimeTypeForFile( QString filename );
 private slots:
     //
     //

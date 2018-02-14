@@ -12,7 +12,7 @@ public:
     void sync( QString& url, DatabaseList& database );
 private:
     QString         m_url;
-    DatabaseList&   m_database;
+    //DatabaseList&   m_database;
     bool            m_done;
 signals:
     void syncStart();

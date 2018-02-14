@@ -3,6 +3,8 @@
 #include <QDir>
 #include <QCoreApplication>
 #include <QDebug>
+#include <QMimeDatabase>
+#include <QMimeType>
 
 #include "installer.h"
 #include "systemutils.h"
@@ -66,6 +68,15 @@ void SystemUtils::moveFile( QString from, QString to, bool force ) {
     }
     QFile::rename( from, to );
 }
+//
+//
+//
+QString SystemUtils::mimeTypeForFile( QString filename ) {
+    QMimeDatabase mimeDb;
+    QMimeType mimeType = mimeDb.mimeTypeForFile(filename);
+    return mimeType.name();
+}
+
 //
 //
 //

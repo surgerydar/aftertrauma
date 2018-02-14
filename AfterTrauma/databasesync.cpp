@@ -122,7 +122,7 @@ void DatabaseSync::run() {
     */
 }
 
-void DatabaseSync::sync( QString& url, DatabaseList& database ) {
+void DatabaseSync::sync( QString& url, DatabaseList& /*database*/ ) {
     m_url = url;
     //m_database = database;
 }
