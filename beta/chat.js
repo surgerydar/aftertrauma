@@ -127,6 +127,24 @@ Chat.prototype.acceptinvite = function( wss, ws, command ) {
     }); 
 }
 
+Chat.prototype.removechat = function( wss, ws, command ) {
+    console.log( 'Chat.removechat : from id:' + command.from + 'from username:' + command.fromUsername + ' to id:' + command.to + ' to username:' + command.toUsername );
+    //
+    // remove chat
+    //
+    process.nextTick(function(){   
+        _db.remove('chats', { id: command.id }).then(function( response ) {
+            command.status = 'OK';
+            command.response = response;
+            ws.send(JSON.stringify(command));
+        }).catch( function( error ) {
+            command.status = 'ERROR';
+            command.error = error;
+            ws.send(JSON.stringify(command));
+        });
+    }); 
+}
+
 Chat.prototype.sendmessage = function( wss, ws, command ) {
     console.log( 'Chat.sendmessage : chat id:' + command.id + 'from id:' + command.from + ' message:' + command.message );
     //

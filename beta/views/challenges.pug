@@ -8,15 +8,11 @@ html
             nav.titlebar
                 button#back back
                 h1= title
-                button#add( data-section= section data-category= category._id ) +
-                button#save( data-section= section data-category= category._id ) save
-            input#title(type='text' value= category.title placeholder='category name')
+                button#add( data-type='challenge') +
             .list( data-sortable=true )
-                each document in documents
-                    .list-item( data-type='document' data-category= category._id data-id= document._id )
-                        h2= document.title
-                        .delete
-                        .reorder
+                each challenge in challenges
+                    .list-item( data-type='challenge' data-id= challenge._id )
+                        h2= challenge.name
                 else 
                     .list-item
                         h2 no data

@@ -38,6 +38,7 @@ function upload( file ) {
     var ws = new WebSocket('ws://aftertrauma.uk:4000');
     ws.binaryType = 'arraybuffer';
     ws.pendingCommands = [];
+	ws.waiting = false;
     //
     //
     //
@@ -52,6 +53,7 @@ function upload( file ) {
                 if ( ws.pendingCommands.length > 0 ) {
                     ws.send(ws.pendingCommands.shift());
                 } else {
+					ws.waiting = true;
                     console.log( 'upload worker : ran out of blocks before upload end' );
                     self.postMessage({ command: "uploaderror", guid: guid, error: "ran out of blocks before upload end" });
                 }
@@ -117,6 +119,13 @@ function upload( file ) {
                     if ( sent >= filesize ) {
                         console.log('done');
                     }
+					//
+					// wake up transaction
+					//
+					if ( ws.waiting ) {
+						ws.waiting = false;
+						ws.send(ws.pendingCommands.shift());
+					}
                }
             }; 
             reader.readAsArrayBuffer(file.slice(fileOffset,fileOffset+chunkSize));

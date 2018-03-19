@@ -1,0 +1,26 @@
+html
+    head
+        title= title
+        link(rel='stylesheet', href='/style/aftertrauma.css')
+        meta( name='viewport' content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0' )
+    body
+        .container#container
+            nav.titlebar
+                button#back back
+                h1= challenge.name
+                button#save( data-type='challenge' data-challenge= challenge._id ) save
+            input#name(type='text' value= challenge.name placeholder='challenge name')
+            textarea#activity #{ challenge.activity }
+            .inputwithlabel
+                label( for='frequency' ) frequency
+                select#frequency( name='frequency' value= challenge.frequency placeholder='challenge activity')
+                    option( value='hourly' selected= (challenge.frequency=='hourly') ) hourly
+                    option( value='fourtimesdaily' selected= (challenge.frequency=='fourtimesdaily') ) four times daily 
+                    option( value='morningandevening' selected= (challenge.frequency=='morningandevening') ) morning and evening
+                    option( value='daily' selected= (challenge.frequency=='daily') ) daily
+                    option( value='weekly' selected= (challenge.frequency=='weekly') ) weekly
+            .inputwithlabel
+                label( for='repeats' ) repeats
+                input#repeats( name='repeats' type='number' value= challenge.repeats min='1' )
+
+        script(src='/scripts/aftertrauma.js')

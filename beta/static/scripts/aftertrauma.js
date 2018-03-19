@@ -198,142 +198,234 @@ var rest = {
             w.location = location.substring(0,location.lastIndexOf('/'));
         }
     }
+	//
+	// hook add button
+	//
     var add = d.querySelector('#add');
     if ( add ) {
-        var section     = add.getAttribute('data-section');
-        var category    = add.getAttribute('data-category');
-        var document    = add.getAttribute('data-document');
-        if ( document ) {
-            //
-            // new block menu
-            //
+		var type = add.getAttribute('data-type'); 
+		if ( type === 'user' ) {
             add.onclick = function() {
-                d.querySelector('.menu').classList.toggle('active');
-            }
-            w.addEventListener('click',function(){
-                var menu = d.querySelector('.menu');
-                if( menu.classList.contains('active') ) {
-                    menu.classList.remove('active');
-                }
-            },true);
-            var menuItems = d.querySelectorAll('.menu-item');
-            for ( var i = 0; i < menuItems.length; ++i ) {
-                 (function(item){
-                    var type = item.getAttribute('data-type');
-                    if ( type ) {
-                        item.onclick = function() {
-                            w.location = '/admin/' + section + '/' + category + '/' + document + '/-1?type=' + type;
-                        }
-                    }
-                })(menuItems[i]);
-            }
-        } else if( category ) {
-            //
-            // new category
-            //
-            add.onclick = function() {
-                rest.post('/admin/' + section + '/' + category, { title: 'New document' }, {
+                var user = {
+                    username: "",
+                    password: "",
+                    email: "",
+                    role: 0
+                };
+                rest.post('/admin/users', user, {
                     onloadend: function(evt) {
                         //
-                        // load new document
+                        // load new user
                         //
                         var response = rest.parseresponse(evt);
-                        w.location = '/admin/' + section + '/' + category + '/' + response.document._id;
+                        w.location = '/admin/users/' + response.user._id;
                     },
                     onerror: function(error) {
                         alert( error );
                     }
                 } );
-            };
-       } else if( section ) {
-            //
-            // new section
-            //
+            }	
+        } else if ( type === 'challenge' ) {
             add.onclick = function() {
-                rest.post('/admin/' + section, { title: 'New category' }, {
+                var challenge = {
+                    activity: "",
+                    frequency: "daily",
+                    name: "New Challenge",
+                    repeats: 1
+                };
+                rest.post('/admin/challenges', challenge, {
                     onloadend: function(evt) {
                         //
-                        // load new document
+                        // load new challenge
                         //
                         var response = rest.parseresponse(evt);
-                        w.location = '/admin/' + section + '/' + response.category._id;
+                        w.location = '/admin/challenges/' + response.challenge._id;
                     },
                     onerror: function(error) {
                         alert( error );
                     }
                 } );
-            };
-        }
+            };	
+		} else {
+			//
+			// standard block content
+			//
+			var section     = add.getAttribute('data-section');
+			var category    = add.getAttribute('data-category');
+			var document    = add.getAttribute('data-document');
+			if ( document ) {
+				//
+				// new block menu
+				//
+				add.onclick = function() {
+					d.querySelector('.menu').classList.toggle('active');
+				}
+				w.addEventListener('click',function(){
+					var menu = d.querySelector('.menu');
+					if( menu.classList.contains('active') ) {
+						menu.classList.remove('active');
+					}
+				},true);
+				var menuItems = d.querySelectorAll('.menu-item');
+				for ( var i = 0; i < menuItems.length; ++i ) {
+					 (function(item){
+						var type = item.getAttribute('data-type');
+						if ( type ) {
+							item.onclick = function() {
+								w.location = '/admin/' + section + '/' + category + '/' + document + '/-1?type=' + type;
+							}
+						}
+					})(menuItems[i]);
+				}
+			} else if( category ) {
+				//
+				// new category
+				//
+				add.onclick = function() {
+					rest.post('/admin/' + section + '/' + category, { title: 'New document' }, {
+						onloadend: function(evt) {
+							//
+							// load new document
+							//
+							var response = rest.parseresponse(evt);
+							w.location = '/admin/' + section + '/' + category + '/' + response.document._id;
+						},
+						onerror: function(error) {
+							alert( error );
+						}
+					} );
+				};
+		   } else if( section ) {
+				//
+				// new section
+				//
+				add.onclick = function() {
+					rest.post('/admin/' + section, { title: 'New category' }, {
+						onloadend: function(evt) {
+							//
+							// load new document
+							//
+							var response = rest.parseresponse(evt);
+							w.location = '/admin/' + section + '/' + response.category._id;
+						},
+						onerror: function(error) {
+							alert( error );
+						}
+					} );
+				};
+			}
+		}
     }
+	//
+	// hook save
+	//
     var save = d.querySelector('#save');
     if ( save ) {
-        save.onclick = function() {
-            var section     = save.getAttribute('data-section');
-            var category    = save.getAttribute('data-category');
-            var document    = save.getAttribute('data-document');
-            var index       = save.getAttribute('data-index'); 
-            if ( index ) {
-                var endpoint    = '/admin/' + section + '/' + category + '/' + document + '/' + index;
-                var tags = d.querySelector('#tags').value.split(',');
-                for ( var t = 0; t < tags.length; t++ ) {
-                    tags[ t ] = tags[ t ].trim();
-                }
-                var block = {
-                    type: save.getAttribute('data-type'),
-                    title: d.querySelector('#title').value,
-                    content: d.querySelector('#content').src || d.querySelector('#content').value,
-                    tags: tags
+		var type = save.getAttribute('data-type'); 
+		if ( type === 'user' ) {
+            // TODO: save user
+        } else if( type === 'challenge' ) {
+            save.onclick = function() {
+                var challenge = {
+                    activity: d.querySelector('#activity').value,
+                    frequency: d.querySelector('#frequency').value,
+                    name: d.querySelector('#name').value,
+                    repeats: d.querySelector('#repeats').value
                 };
-                rest.put( endpoint, block, {
+                rest.put('/admin/challenges/' + save.getAttribute('data-challenge'), challenge, {
                     onloadend: function(evt) {
-                        //
-                        // return to document
-                        //
-                        w.location = '/admin/' + section + '/' + category + '/' + document;
-                    },
-                    onerror: function(error) {
-                        alert( error );
-                    }
-                });
-            } else if( document ) {
-                var endpoint = '/admin/' + section + '/'  + category + '/' + document;
-                var blocks = [];
-                var blockContainer = d.querySelector('#blocks');
-                if ( blockContainer ) {
-                    var blockList = blockContainer.querySelectorAll('div.block');
-                    for ( var i = 0; i < blockList.length; ++i ) {
-                        (function(block){
-                            var tags = block.getAttribute('data-tags') ? block.getAttribute('data-tags').split(',') : [];
-                            for ( var t = 0; t < tags.length; t++ ) {
-                                tags[ t ] = tags[ t ].trim();
-                            }
-                            blocks.push({
-                                type: block.getAttribute('data-type'),
-                                title: block.getAttribute('data-title'),
-                                content: block.getAttribute('data-content'),
-                                tags: tags
-                            });
-                        })( blockList[i]);
-                    }
-                }
-                var document = {
-                    title: d.querySelector('#title').value,
-                    category: category,
-                    blocks: blocks
-                };
-                rest.put( endpoint, document, {
-                    onloadend: function(evt) {
-                        //
-                        // return to document
-                        //
                         w.location.reload();
                     },
                     onerror: function(error) {
                         alert( error );
                     }
-                });
-            }
-        };
+                } );
+            };	
+		} else {
+			save.onclick = function() {
+				var section     = save.getAttribute('data-section');
+				var category    = save.getAttribute('data-category');
+				var document    = save.getAttribute('data-document');
+				var index       = save.getAttribute('data-index'); 
+				if ( index ) {
+					var endpoint    = '/admin/' + section + '/' + category + '/' + document + '/' + index;
+					var tags = d.querySelector('#tags').value.split(',');
+					for ( var t = 0; t < tags.length; t++ ) {
+						tags[ t ] = tags[ t ].trim();
+					}
+					var block = {
+						type: save.getAttribute('data-type'),
+						title: d.querySelector('#title').value,
+						content: d.querySelector('#content').src || d.querySelector('#content').value,
+						tags: tags
+					};
+					rest.put( endpoint, block, {
+						onloadend: function(evt) {
+							//
+							// return to document
+							//
+							w.location = '/admin/' + section + '/' + category + '/' + document;
+						},
+						onerror: function(error) {
+							alert( error );
+						}
+					});
+				} else if( document ) {
+					var endpoint = '/admin/' + section + '/'  + category + '/' + document;
+					var blocks = [];
+					var blockContainer = d.querySelector('#blocks');
+					if ( blockContainer ) {
+						var blockList = blockContainer.querySelectorAll('div.block');
+						for ( var i = 0; i < blockList.length; ++i ) {
+							(function(block){
+								var tags = block.getAttribute('data-tags') ? block.getAttribute('data-tags').split(',') : [];
+								for ( var t = 0; t < tags.length; t++ ) {
+									tags[ t ] = tags[ t ].trim();
+								}
+								blocks.push({
+									type: block.getAttribute('data-type'),
+									title: block.getAttribute('data-title'),
+									content: block.getAttribute('data-content'),
+									tags: tags
+								});
+							})( blockList[i]);
+						}
+					}
+					var data = {
+						title: d.querySelector('#title').value,
+						category: category,
+						blocks: blocks
+					};
+					rest.put( endpoint, data, {
+						onloadend: function(evt) {
+							//
+							// return to document
+							//
+							w.location.reload();
+						},
+						onerror: function(error) {
+							alert( error );
+						}
+					});
+				} else if ( category ) {
+                    var endpoint = '/admin/' + section + '/'  + category;
+                    var data = {
+                        title: d.querySelector('#title').value
+                    }
+					rest.put( endpoint, data, {
+						onloadend: function(evt) {
+							//
+							// return to document
+							//
+							w.location.reload();
+						},
+						onerror: function(error) {
+							alert( error );
+						}
+					});
+                }
+			};
+		}
     }
     var list = d.querySelector('.list');
     if ( list ) {
@@ -359,7 +451,7 @@ var rest = {
                     var del = item.querySelector('.delete');
                     if ( del ) {
                         del.onclick = function(evt) {
-                            if ( confirm('Are you sure you want to delete this document?') ) {
+                            if ( confirm('Are you sure you want to delete this item?') ) {
                                 var endpoint = w.location + '/' + id;
                                 rest.delete(endpoint,{
                                     onloadend: function(evt) {

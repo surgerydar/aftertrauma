@@ -59,10 +59,14 @@ h3 {
 }
 
 .list-item {
+    display: flex;
     position: relative;
     height: 64px;
     padding: 1em;
     flex-grow: 0;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
     border-bottom: 1px solid lightgray;
 }
 
@@ -149,7 +153,19 @@ h3 {
     overflow-y: auto;
 }
 
-input[type='text'], input[type='password'], input[type='email']  {
+.inputwithlabel {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin: 8px;
+}
+
+label {
+    margin: 8px;
+    font: 1.25em "RobotoBold", sans-serif; 
+}
+
+input[type='text'], input[type='password'], input[type='email'], input[type='number'], select  {
     display: block;
     appearance: none;
     height: 48;

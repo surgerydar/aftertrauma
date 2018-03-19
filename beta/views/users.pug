@@ -8,12 +8,19 @@ html
             nav.titlebar
                 button#back back
                 h1= title
-                button#add +
-            .list
+                button#add( data-type='user') +
+            .list( data-sortable=true )
                 each user in users
-                    .list-item( data-id= user._id )
-                        h2= user.username
+                    .list-item( data-type='user' data-id= user._id )
+                        h2( style='min-width: 25%;' )= user.username
+                        .inputwithlabel
+                            label( for='admin' ) admin
+                            input( type='checkbox' name='admin' checked= user.admin data-id= user._id )
+                        .inputwithlabel
+                            label( for='blocked' ) blocked
+                            input( type='checkbox' name='blocked' checked= user.blocked data-id= user._id )
                 else 
                     .list-item
                         h2 no data
+        script(src='/scripts/Sortable.js')
         script(src='/scripts/aftertrauma.js')

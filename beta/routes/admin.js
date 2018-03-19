@@ -1,6 +1,6 @@
 var express = require('express')
 var router = express.Router()
-
+var fs = require('fs')
 
 module.exports = function( authentication, db ) {
     console.log('loading delta');
@@ -21,6 +21,22 @@ module.exports = function( authentication, db ) {
     //
     // routes
     //
+    /*
+    console.log( 'setting media routes' );
+    const mediaDirectory = './media';
+    router.get('/media/:type', function (req, res) { // return all media of type
+        fs.readdir(mediaDirectory, (err, files) => {
+            let media  = [];
+            files.forEach(file => {
+                console.log(file);
+            });
+        });
+        res.render('media', {media:media}); 
+    });
+    */
+    //
+    //
+    //
     console.log( 'setting content routes' );
     router.get('/contents', function (req, res) { // return all documents
          db.find('document', {} ).then( function( documents ) {
@@ -29,6 +45,7 @@ module.exports = function( authentication, db ) {
              res.json({ status: 'ERROR', error: error});
         });
     });
+
     router.get('/documents/:date/:format', function (req, res) {
         let date = req.params.date > 0 ? req.params.date : Date.now();
         let format = req.params.format;
@@ -55,17 +72,129 @@ module.exports = function( authentication, db ) {
         });
     });
     //
-    //
+    // 
     //
     console.log( 'setting admin routes' );
     router.get('/', authentication, function (req, res) {
         res.render('admin', {title:'AfterTrauma Admin'});
     });
+	//
+	// users specialisation
+	//
     router.get('/users', authentication, function (req, res) {
-        db.find( 'users', {}, { username: 1 } ).then( function( response ) {
-            res.render( 'users', { users: response } );
+        db.find( 'users', {}, { password: 0 }, { username: 1 } ).then( function( response ) {
+            res.render( 'users', { title:'AfterTrauma > Users', users: response } );
         }).catch( function( error ) {
             res.render('error', {title:'AfterTrauma Admin', error: error});
+        });
+    });
+    router.get('/users/:user', authentication, function (req, res) {
+       var _id         = db.ObjectId(req.params.user);
+       db.findOne( 'users', { _id: _id } ).then( function( user ) {
+            res.render( 'user', { title:'AfterTrauma > Users > ' + user.username, user: user } );
+        }).catch( function( error ) {
+            res.render('error', {title:'AfterTrauma Admin', error: error});
+        });
+    });
+    router.post('/users', authentication, function (req, res) { // new category
+        var user        = req.body;
+        user.joined     = Date.now();
+        user.date       = user.joined;
+        db.insert( 'users',  user ).then( function( response ) {
+            res.json({ status: 'OK', response: response, user: user });
+        }).catch( function( error ) {
+            res.json({ status: 'ERROR', error: error});
+        });
+    });
+    router.put('/users/:user', authentication, function (req, res) { // update category
+        var user	= req.body;
+        user.date	= Date.now();
+        var _id     = db.ObjectId(req.params.user);
+        db.updateOne( 'users',  { _id: _id }, { $set: user } ).then( function( response ) {
+            res.json({ status: 'OK', response: response});
+        }).catch( function( error ) {
+            res.json({ status: 'ERROR', error: error});
+        });
+    });
+    router.delete('/users/:user', authentication, function (req, res) { // delete document
+        var _id = db.ObjectId(req.params.user);
+        db.remove( 'users',  { _id:_id } ).then( function( response ) {
+            //
+            //
+            //
+            res.json({ status: 'OK', response: response });
+        }).catch( function( error ) {
+            console.log( 'delete user : error : ' + error );
+            res.json({ status: 'ERROR', error: error});
+        });
+    });
+	//
+	// challenge specialisation
+	//
+    router.get('/challenges', authentication, function (req, res) {
+        db.find( 'challenge', {}, { name: 1 } ).then( function( response ) {
+            res.render( 'challenges', { title:'AfterTrauma > Challenges', challenges: response } );
+        }).catch( function( error ) {
+            res.render('error', {title:'AfterTrauma Admin', error: error});
+        });
+    });
+    router.get('/challenges/:challenge', authentication, function (req, res) {
+		var _id = db.ObjectId(req.params.challenge);
+        db.findOne( 'challenge', { _id:_id } ).then( function( challenge ) {
+            res.render( 'challenge', { title:'AfterTrauma > Challenges > ' + challenge.name, challenge: challenge } );
+        }).catch( function( error ) {
+            res.render('error', {title:'AfterTrauma Admin', error: error});
+        });
+    });
+    router.post('/challenges', authentication, function (req, res) { // new challenge
+        var challenge        = req.body;
+        challenge.date       = Date.now();
+        db.insert( 'challenge',  challenge ).then( function( response ) {
+            console.log( 'add challenge : ' + JSON.stringify(challenge) );
+            delta.addChallenge( challenge._id ).then( function( response ) {
+            }).catch( function( error ) {
+                console.log( 'delta.addChallenge : error : ' + error );
+            });
+            res.json({ status: 'OK', response: response, challenge: challenge });
+        }).catch( function( error ) {
+            res.json({ status: 'ERROR', error: error});
+        });
+    });
+    router.put('/challenges/:challenge', authentication, function (req, res) { // update challenge
+        var challenge	= req.body;
+        challenge.date	= Date.now();
+        var _id         = db.ObjectId(req.params.challenge);
+        db.updateOne( 'challenge',  { _id: _id }, { $set: challenge } ).then( function( response ) {
+            res.json({ status: 'OK', response: response});
+        }).catch( function( error ) {
+            console.log( 'update challenge : ' + req.params.challenge );
+            delta.updateChallenge( req.params.challenge ).then( function( response ) {
+            }).catch( function( error ) {
+                console.log( 'delta.updateChallenge : error : ' + error );
+            });
+            res.json({ status: 'ERROR', error: error});
+        });
+    });
+    router.delete('/challenges/:challenge', authentication, function (req, res) { // delete document
+        var _id = db.ObjectId(req.params.challenge);
+        db.remove( 'challenge',  { _id:_id } ).then( function( response ) {
+            //
+            // TODO: record delta
+            //
+			
+            console.log( 'delted challenge : ' + req.params.challenge );
+            delta.removeChallenge( req.params.challenge ).then( function( response ) {
+            }).catch( function( error ) {
+                console.log( 'delta.removeChallenge : error : ' + error );
+            });
+			
+            //
+            //
+            //
+            res.json({ status: 'OK', response: response });
+        }).catch( function( error ) {
+            console.log( 'delete challenge : error : ' + error );
+            res.json({ status: 'ERROR', error: error});
         });
     });
     //
@@ -96,9 +225,9 @@ module.exports = function( authentication, db ) {
     });
     router.put('/:section/:category', authentication, function (req, res) { // update category
         var category    = req.body;
-        item.date       = Date.now();
+        category.date	= Date.now();
         var _id         = db.ObjectId(req.params.category);
-        db.updateOne( 'category',  { _id: _id }, category ).then( function( response ) {
+        db.updateOne( 'category',  { _id: _id }, { $set: category } ).then( function( response ) {
             res.json({ status: 'OK', response: response});
         }).catch( function( error ) {
             res.json({ status: 'ERROR', error: error});
@@ -121,7 +250,7 @@ module.exports = function( authentication, db ) {
         var _id = db.ObjectId(req.params.category);
         db.findOne( 'category', { _id: _id } ).then( function( category ) {
             db.find( 'document', { category: req.params.category } ).then( function( documents ) {
-                res.render('category', {title:'AfterTrauma > ' + capitalise( section ) + ' > ' + category.title, section: category.section, category: category._id, documents: documents });
+                res.render('category', {title:'AfterTrauma > ' + capitalise( section ) + ' > ' + category.title, section: category.section, category: category, documents: documents });
             }).catch( function( error ) {
                 //
                 // TODO: error
@@ -167,7 +296,7 @@ module.exports = function( authentication, db ) {
         var _id = db.ObjectId(req.params.document);
         var document        = req.body;
         document.date       = Date.now();
-        db.updateOne( 'document',  { _id:_id }, document ).then( function( response ) {
+        db.updateOne( 'document',  { _id:_id }, { $set: document } ).then( function( response ) {
             //
             // record delta
             //
