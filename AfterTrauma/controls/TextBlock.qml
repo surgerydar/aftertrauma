@@ -48,5 +48,16 @@ Item {
     //
     //
     //
+    signal mediaReady();
+    signal mediaError( string error );
+    //
+    //
+    //
+    Component.onCompleted: {
+        mediaReady();
+    }
+    //
+    //
+    //
     property alias media: content.text
 }

@@ -36,6 +36,11 @@ public slots:
     //
     //
     QString mimeTypeForFile( QString filename );
+    //
+    //
+    //
+    qreal pointToPixel( qreal point );
+    qreal pixelToPoint( qreal pixel );
 private slots:
     //
     //

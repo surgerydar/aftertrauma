@@ -46,6 +46,7 @@ Item {
                 break;
             case MediaPlayer.Loaded :
                 console.log( "the media has been loaded");
+                mediaReady();
                 break;
             case MediaPlayer.Buffering :
                 console.log( "the media is buffering data");
@@ -74,15 +75,9 @@ Item {
 
         }
         onError: {
-            /*
-            //var currentSource = JSON.stringify(source);
-            var currentSource = JSON.stringify(mediaSource.url);
-            var mediaPath = 'file://' + SystemUtils.documentDirectory() + '/media' + currentSource.substring(currentSource.lastIndexOf('/'));
-            console.log( 'redirecting video block from ' + currentSource + ' to : ' + mediaPath );
-            source = mediaPath;
-            */
             console.log( 'error playing media : ' + error + ' : ' + errorString );
             console.log( source );
+            mediaError(error);
         }
     }
     //
@@ -145,6 +140,12 @@ Item {
     //
     // TODO: ErrorIndicator and controls
     //
+
+    //
+    //
+    //
+    signal mediaReady();
+    signal mediaError( string error );
     //
     //
     //

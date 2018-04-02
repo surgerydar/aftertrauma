@@ -43,8 +43,9 @@ AfterTrauma.Page {
         //
         //
         delegate: ChatItem {
-            anchors.left: parent.left
-            anchors.right: parent.right
+            //anchors.left: chats.left
+            //anchors.right: chats.right
+            width: parent.width
             to: model.to
             from: model.from
             withUsername: model.to === userProfile.id ? model.fromUsername : model.toUsername
@@ -63,6 +64,18 @@ AfterTrauma.Page {
                 console.log( 'accepting invite : ' + JSON.stringify(command) );
                 chatChannel.send(command);
             }
+            onReject: {
+                var command = {
+                    command: 'removechat',
+                    id: model.id,
+                    from: model.from,
+                    to: model.to,
+                    fromUsername: model.fromUsername,
+                    toUsername: model.toUsername
+                };
+                console.log( 'remove chat : ' + JSON.stringify(command) );
+                chatChannel.send(command);
+            }
             onChat: {
                 var properties = {
                     chatId:model.id,
@@ -78,7 +91,7 @@ AfterTrauma.Page {
     //
     //
     footer: Item {
-        height: 128
+        height: 64
         anchors.left: parent.left
         anchors.right: parent.right
         //
@@ -162,9 +175,15 @@ AfterTrauma.Page {
                 }
             } else if ( command.command === 'acceptinvite' ) {
                 //
-                // FIXME: possible error here
+                // FIXME: possible error here ????
                 //
                 chatModel.update({id: command.id},{status:"active"});
+                chatModel.save();
+            } else if ( command.command === 'removechat' ) {
+                //
+                //
+                //
+                chatModel.remove({id: command.id});
                 chatModel.save();
             } else if ( command.command === 'sendmessage' ) {
                 if ( command.to === userProfile.id ) {

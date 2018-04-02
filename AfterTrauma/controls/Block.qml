@@ -52,7 +52,14 @@ Item {
     Component.onCompleted: {
         blockLoader.sourceComponent = type === "video" ? video : type === "image" ? image : text;
     }
-
+    //
+    //
+    //
+    signal mediaReady();
+    signal mediaError( string error );
+    //
+    //
+    //
     property string type: "text" // "text" | "image" | "video"
     property string media: ""
 }

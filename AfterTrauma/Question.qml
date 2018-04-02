@@ -9,14 +9,14 @@ Item {
     //
     //
     //
-    height: questionText.height + stars.height + 24// 86
+    height: questionText.height + ticks.height + 24
     //
     //
     //
     AfterTrauma.Background {
         id: background
         anchors.fill: parent
-        fill: container.score > 0. ? Colours.darkGreen : Colours.blue
+        fill: container.score > 0. ? Colours.blue : Colours.darkBlue
     }
     //
     //
@@ -45,7 +45,7 @@ Item {
     //
     //
     Row {
-        id: stars
+        id: ticks
         //
         //
         //
@@ -59,21 +59,37 @@ Item {
         //
         //
         Repeater {
-            model: 10
+            model: 5
             Image {
-                anchors.verticalCenter: stars.verticalCenter
-                height: stars.height
-                width: stars.width / 10.
+                anchors.verticalCenter: ticks.verticalCenter
+                height: ticks.height
+                width: ticks.width / 5.
                 fillMode: Image.PreserveAspectFit
-                source: ( container.score * container.width ) >= ( ( index + 1 ) * width ) - ( width / 2 ) ? "icons/star_full.png" : "icons/star_empty.png"
+                source: "icons/face" + index + ".png"
             }
         }
     }
     //
     //
     //
+    Rectangle {
+        id: indicator
+        width: ticks.height
+        x: indicatorPosition( container.score )
+        height: 4
+        anchors.bottom: parent.bottom
+        color: Colours.red
+        visible: container.score > 0
+
+        Behavior on x {
+            PropertyAnimation {}
+        }
+    }
+    //
+    //
+    //
     MouseArea {
-        anchors.top: stars.top
+        anchors.top: ticks.top
         anchors.left: parent.left
         anchors.bottom: parent.bottom
         anchors.right: parent.right
@@ -90,9 +106,26 @@ Item {
         onPositionChanged: {
             updateScore();
         }
+        //
+        //
+        //
         function updateScore() {
+            //
+            //
+            //
             container.score = mouseX / width
         }
+    }
+    //
+    //
+    //
+    function indicatorPosition( score ) {
+        var offset = score * container.width;
+        var starWidth = ticks.width / 5.;
+        var index = Math.max( 0, Math.min( 4., Math.floor( offset / starWidth ) ) );
+        var indicatorPosn = ( index * starWidth ) + ( starWidth / 2. );
+        //indicator.x = ticks.x + ( indicatorPosn - ( indicator.width / 2. ) );
+        return ticks.x + ( indicatorPosn - ( indicator.width / 2. ) );
     }
     //
     //

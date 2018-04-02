@@ -3,6 +3,7 @@
 var darkGreen = "#03BD5B";
 var lightGreen = "#9DBF1C";
 var blue = "#2191FB";
+var darkBlue = "#305575";
 var darkPurple = "#A939B9";
 var lightPurple = "#FF48B8";
 var red = "#BA274A";

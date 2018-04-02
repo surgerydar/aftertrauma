@@ -18,7 +18,7 @@ AfterTrauma.Page {
         //
         //
         anchors.fill: parent
-        anchors.bottomMargin: 36
+        //anchors.bottomMargin: 36
         //
         //
         //
@@ -54,11 +54,11 @@ AfterTrauma.Page {
                 ListView {
                     id: questionnaire
                     anchors.fill: parent
-                    anchors.bottomMargin: 36
+                    //anchors.bottomMargin: 36
                     clip: true
-                    spacing: 8
+                    spacing: 4
                     model: questionnaireModel.get(index).questions
-                    delegate: NewQuestion {
+                    delegate: Question {
                         anchors.left: parent.left
                         anchors.right: parent.right
                         question: formatQuestion(ListView.view.questionnaireIndex,index)
@@ -177,20 +177,44 @@ AfterTrauma.Page {
     //
     //
     //
-    AfterTrauma.PageIndicator {
-        anchors.horizontalCenter: questionnaires.horizontalCenter
-        anchors.bottom: questionnaires.bottom
-        anchors.bottomMargin: 8
-        currentIndex: questionnaires.currentIndex
-        count: questionnaires.count
-        colour: Colours.lightSlate
+    AfterTrauma.Button {
+        anchors.left: parent.left
+        anchors.verticalCenter: parent.verticalCenter
+        image: "icons/left_arrow.png"
+        visible: questionnaires.currentIndex > 0
+        onClicked: {
+            questionnaires.decrementCurrentIndex();
+        }
     }
+
+    AfterTrauma.Button {
+        anchors.right: parent.right
+        anchors.verticalCenter: parent.verticalCenter
+        image: "icons/right_arrow.png"
+        visible: questionnaires.currentIndex < questionnaires.count - 1
+        onClicked: {
+            questionnaires.incrementCurrentIndex();
+        }
+    }
+
     //
     //
     //
     footer: Item {
         height: 28
+        width: parent.width
+        AfterTrauma.PageIndicator {
+
+                anchors.horizontalCenter: parent.horizontalCenter
+                //anchors.bottom: questionnaires.bottom
+                //anchors.bottomMargin: 8
+
+                currentIndex: questionnaires.currentIndex
+                count: questionnaires.count
+                colour: Colours.lightSlate
+            }
     }
+
     //
     //
     //

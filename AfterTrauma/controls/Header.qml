@@ -8,7 +8,7 @@ Item {
     //
     //
     //
-    height: ( titleText.visible ? titleText.height + 8 : 0 ) + ( subTitleText.visible ? subTitleText.height + 8 : 0 )
+    height: ( titleText.visible ? titleText.height + 4 : 0 ) + ( subTitleText.visible ? subTitleText.height + 4 : 0 )
     anchors.left: parent.left
     anchors.right: parent.right
     //
@@ -84,7 +84,7 @@ Item {
         anchors.top: titleText.bottom
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.topMargin: 8
+        anchors.topMargin: 4
         //
         //
         //

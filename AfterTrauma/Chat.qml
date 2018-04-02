@@ -53,7 +53,7 @@ AfterTrauma.Page {
     //
     //
     footer: Item {
-        height: Math.max( addMessage.height, messageText.contentHeight ) + 64
+        height: Math.max( addMessage.height, messageText.contentHeight ) + 16
         anchors.left: parent.left
         anchors.right: parent.right
         //

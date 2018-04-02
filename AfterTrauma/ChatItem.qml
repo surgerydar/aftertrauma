@@ -44,7 +44,7 @@ Item {
         anchors.top: parent.top
         anchors.left: avatarImage.right
         anchors.bottom: parent.bottom
-        anchors.right: acceptButton.visible ? acceptButton.left : parent.right
+        anchors.right: rejectButton.left
         anchors.margins: 8
         //
         //
@@ -71,6 +71,17 @@ Item {
     //
     //
     AfterTrauma.Button {
+        id: rejectButton
+        anchors.top: parent.top
+        anchors.right: acceptButton.visible ? acceptButton.left : parent.right
+        anchors.margins: 8
+        text: acceptButton.visible ? "Reject" : "Remove"
+        backgroundColour: "transparent"
+        onClicked: {
+            reject();
+        }
+    }
+    AfterTrauma.Button {
         id: acceptButton
         anchors.top: parent.top
         anchors.right: parent.right
@@ -84,22 +95,7 @@ Item {
     //
     //
     //
-    /*
-    Text {
-        id: statusText
-        anchors.top: parent.top
-        anchors.right: parent.right
-        anchors.margins: 2
-        color: Colours.almostWhite
-        text: status
-    }
-    onStatusChanged: {
-        statusText.text = status;
-    }
-    */
-    //
-    //
-    //
+    signal reject()
     signal accept()
     signal chat()
     //

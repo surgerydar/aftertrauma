@@ -105,13 +105,13 @@ void CachedMediaSource::setMediaSource() {
 }
 
 QMediaPlayer* CachedMediaSource::getPlayer() {
-        QMediaPlayer* player = nullptr;
-        if ( !m_player.isNull() ) {
-            QObject* playerObject = m_player.value<QObject*>();
-            if ( playerObject ) {
-                player =  qvariant_cast<QMediaPlayer *>(playerObject->property("mediaObject"));
-            }
+    QMediaPlayer* player = nullptr;
+    if ( !m_player.isNull() ) {
+        QObject* playerObject = m_player.value<QObject*>();
+        if ( playerObject ) {
+            player =  qvariant_cast<QMediaPlayer *>(playerObject->property("mediaObject"));
         }
-        return player;
     }
+    return player;
+}
 

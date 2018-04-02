@@ -5,6 +5,8 @@
 #include <QDebug>
 #include <QMimeDatabase>
 #include <QMimeType>
+#include <QGuiApplication>
+#include <QScreen>
 
 #include "installer.h"
 #include "systemutils.h"
@@ -47,11 +49,17 @@ QString SystemUtils::applicationDirectory() {
 }
 
 QString SystemUtils::documentDirectory() {
+    QString documentPath;
 #ifdef Q_OS_ANDROID
-    return QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+    documentPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
 #else
-    return QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+    documentPath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
 #endif
+    QDir dir(documentPath);
+    if ( dir.mkpath("aftertrauma") ) { // ensure directory exists
+        dir.cd("aftertrauma");
+    }
+    return dir.canonicalPath();
 }
 
 QString SystemUtils::temporaryDirectory() {
@@ -76,7 +84,21 @@ QString SystemUtils::mimeTypeForFile( QString filename ) {
     QMimeType mimeType = mimeDb.mimeTypeForFile(filename);
     return mimeType.name();
 }
+//
+//
+//
+//
+//
+//
+qreal SystemUtils::pointToPixel( qreal point ) {
+    qreal dpi = QGuiApplication::primaryScreen()->physicalDotsPerInch();
+    return point/72*dpi;
+}
 
+qreal SystemUtils::pixelToPoint( qreal pixel ) {
+    qreal dpi = QGuiApplication::primaryScreen()->physicalDotsPerInch();
+    return pixel*72/dpi;
+}
 //
 //
 //

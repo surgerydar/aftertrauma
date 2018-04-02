@@ -48,8 +48,12 @@ Item {
                 source = mediaPath;
                 */
                 console.log('ImageBlock : error loading image : ' + source );
-            } else {
-                container.height = Math.max(64,content.height + 16);
+                mediaError( 'unable to load : ' + source );
+            } else if ( status === Image.Ready ){
+                //container.height = Math.max(64,content.paintedHeight + 16);
+                container.height = Math.max(64, Math.min(width * ( sourceSize.height / sourceSize.width ),sourceSize.height) + 16);
+                console.log( 'resizing ImageBlock to ' + container.height );
+                mediaReady();
             }
         }
     }
@@ -59,6 +63,11 @@ Item {
     onMediaChanged: {
         content.source = "image://cached/" + media;
     }
+    //
+    //
+    //
+    signal mediaReady();
+    signal mediaError( string error );
     //
     //
     //

@@ -19,7 +19,7 @@ AfterTrauma.Page {
     SwipeView {
         id: imagesView
         anchors.fill: parent
-        anchors.bottomMargin: 36
+        //anchors.bottomMargin: 36
         //
         //
         //
@@ -42,25 +42,26 @@ AfterTrauma.Page {
         count: imagesView.count
         colour: Colours.lightSlate
     }
-    AfterTrauma.Button {
-        id: addButton
-        anchors.top: parent.top
-        anchors.right: parent.right
-        anchors.margins: 8
-        image: "icons/add.png"
-        backgroundColour: "transparent"
-        //visible: images.length > 1 && images[ images.length -  1 ].image !== ""
-        onClicked: {
-            images.push({title:"", image:""});
-            imagesRepeater.model = images;
-            imagesView.currentIndex = images.length - 1;
-        }
-    }
     //
     //
     //
     footer: Item {
-        height: 28
+        height: 64
+        AfterTrauma.Button {
+            id: addButton
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.right: parent.right
+            anchors.margins: 8
+            image: "icons/add.png"
+            backgroundColour: "transparent"
+            //visible: images.length > 1 && images[ images.length -  1 ].image !== ""
+            onClicked: {
+                images.push({title:"", image:""});
+                imagesRepeater.model = images;
+                imagesView.currentIndex = images.length - 1;
+            }
+        }
+
     }
     //
     //

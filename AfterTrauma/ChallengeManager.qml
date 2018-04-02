@@ -25,43 +25,6 @@ AfterTrauma.Page {
         //
         //
         //
-        footer: Component {
-            Item {
-                height: 64
-                anchors.left: parent.left
-                anchors.right: parent.right
-                /*
-                //
-                //
-                //
-                AfterTrauma.Background {
-                    anchors.fill: parent
-                    anchors.margins: 4
-                    fill: Colours.lightGreen
-                }
-                */
-                //
-                //
-                //
-                AfterTrauma.Button {
-                    id: addButton
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.right: parent.right
-                    anchors.rightMargin: 8
-                    image: "icons/add.png"
-                    backgroundColour: "transparent"
-                    //
-                    //
-                    //
-                    onClicked: {
-                        stack.push( "qrc:///ChallengeBuilder.qml")
-                    }
-                }
-             }
-        }
-        //
-        //
-        //
         model: challengeModel
         //
         //
@@ -84,6 +47,41 @@ AfterTrauma.Page {
         }
         add: Transition {
             NumberAnimation { properties: "y"; from: challenges.height; duration: 250 }
+        }
+    }
+    //
+    //
+    //
+    footer: Item {
+        height: 64
+        anchors.left: parent.left
+        anchors.right: parent.right
+        /*
+        //
+        //
+        //
+        AfterTrauma.Background {
+            anchors.fill: parent
+            anchors.margins: 4
+            fill: Colours.lightGreen
+        }
+        */
+        //
+        //
+        //
+        AfterTrauma.Button {
+            id: addButton
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.right: parent.right
+            anchors.rightMargin: 8
+            image: "icons/add.png"
+            backgroundColour: "transparent"
+            //
+            //
+            //
+            onClicked: {
+                stack.push( "qrc:///ChallengeBuilder.qml")
+            }
         }
     }
     //

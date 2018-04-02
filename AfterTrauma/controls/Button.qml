@@ -6,8 +6,10 @@ import "../colours.js" as Colours
 Button {
     id: control
     height: 48
-    implicitWidth: ( icon.status === Image.Ready ? (( 48. / icon.implicitHeight ) * icon.implicitWidth ) : 0 ) + label.contentWidth + ( 4 * ( icon.status === Image.Ready && label.text.length > 0 ? 3 : 2 ) )
+    //implicitWidth: ( icon.status === Image.Ready ? (( 48. / icon.implicitHeight ) * icon.implicitWidth ) : 0 ) + label.contentWidth + ( 4 * ( icon.status === Image.Ready && label.text.length > 0 ? 3 : 2 ) )
+    implicitWidth: icon.width + label.contentWidth + ( spacing * ( icon.source.length > 0 && label.text.length > 0 ? 3 : 2 ) )
     opacity: enabled ? 1. : .5
+    spacing: 4
     //
     //
     //
@@ -23,7 +25,7 @@ Button {
             anchors.bottom: content.bottom
             anchors.left: control.direction === "Left" ? content.left : undefined
             anchors.right: control.direction === "Right" ? content.right : undefined
-            anchors.margins: 4
+            anchors.margins: spacing
             fillMode: Image.PreserveAspectFit
         }
         //
@@ -35,13 +37,13 @@ Button {
             anchors.bottom: content.bottom
             anchors.left: control.direction === "Left" && icon.status === Image.Ready ? icon.right : content.left
             anchors.right: control.direction === "Right" && icon.status === Image.Ready ? icon.left : content.right
-            anchors.margins: 4
+            anchors.margins: spacing
             color: Colours.almostWhite
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter //control.direction === "Left" ? Text.AlignLeft : Text.AlignRight
             font.weight: Font.Light
             font.family: fonts.light
-            font.pixelSize: 24
+            font.pointSize: 24
             text: control.text
         }
     }
@@ -52,7 +54,7 @@ Button {
         id: background
         anchors.fill: control
         radius: [8]
-        fill: Colours.darkOrange
+        fill: Qt.rgba(0,0,0,0)
     }
     //
     //
@@ -62,7 +64,8 @@ Button {
     property alias borderWidth: background.lineWidth
     property alias image: icon.source
     property alias backgroundColour: background.fill
-    property alias textSize: label.font.pixelSize
+    //property alias textSize: label.font.pixelSize
+    property alias textSize: label.font.pointSize
     property alias textColour: label.color
     property alias textVerticalAlignment: label.verticalAlignment
     property alias textHorizontalAlignment: label.horizontalAlignment

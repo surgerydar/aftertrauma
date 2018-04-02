@@ -2,6 +2,7 @@ import QtQuick 2.7
 import QtQuick.Controls 2.1
 import QtQuick.Layouts 1.0
 import SodaControls 1.0
+import QtQuick.Dialogs 1.0
 
 import "controls" as AfterTrauma
 import "colours.js" as Colours
@@ -74,7 +75,7 @@ ApplicationWindow {
         anchors.fill: parent
         gradient: Gradient {
             GradientStop { position: 0.0; color: Colours.blue }
-            GradientStop { position: 1.0; color: Colours.lightGreen }
+            GradientStop { position: 1.0; color: Colours.darkBlue }
         }
     }
     //
@@ -97,11 +98,20 @@ ApplicationWindow {
     //
     //
     //
+    TitleBar {
+        id: titleBar
+    }
+    //
+    //
+    //
     StackView {
         id: stack
         anchors.fill: parent
-        anchors.topMargin: titleBar.height
-        //anchors.bottomMargin: 28
+        //visible: depth > 1
+        anchors.topMargin: depth > 1 ? 0 : titleBar.height
+        transitions: Transition {
+            AnchorAnimation { duration: 100 }
+        }
         //
         //
         //
@@ -122,15 +132,14 @@ ApplicationWindow {
 
         }
     }
-    //
-    //
-    //
-    TitleBar {
-        id: titleBar
+    MainMenu {
+        id: mainMenu
     }
+    /*
     NavigationBar {
         id: navigationBar
     }
+    */
     ShortcutPopup {
         id: shortcut
     }

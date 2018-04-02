@@ -10,8 +10,10 @@ PageIndicator {
         implicitHeight: 16
 
         radius: width / 2
-        color: control.colour
-
+        color: index === control.currentIndex ? Colours.slate : "transparent"
+        border.color: Colours.veryDarkSlate
+        border.width: 2
+        /*
         opacity: index === control.currentIndex ? 0.95 : 0.45
 
         Behavior on opacity {
@@ -19,6 +21,7 @@ PageIndicator {
                 duration: 100
             }
         }
+        */
     }
     property var colour: Colours.darkOrange
 }

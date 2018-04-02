@@ -21,12 +21,24 @@ Item {
     //
     //
     AfterTrauma.Button {
-        id: home
+        id: menuButton
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
+        anchors.margins: 8
+        image: "icons/burger.png"
+        onClicked: {
+            mainMenu.open();
+        }
+    }
+    //
+    //
+    //
+    AfterTrauma.Button {
+        id: home
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.left: menuButton.right
         anchors.leftMargin: 4
         image: "icons/title_logo.png"
-        backgroundColour: "transparent"
         //
         //
         //

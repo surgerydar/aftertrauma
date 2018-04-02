@@ -1,6 +1,6 @@
 import QtQuick 2.6
 import QtQuick.Controls 2.1
-
+import QtGraphicalEffects 1.0
 import "../colours.js" as Colours
 
 Slider {
@@ -25,42 +25,34 @@ Slider {
         */
     }
 
-    handle: Rectangle {
-        x: control.leftPadding + control.visualPosition * (control.availableWidth - width)
-        y: control.topPadding + control.availableHeight / 2 - height / 2
-        implicitWidth: 24
+    handle: Item {
+        id: handleContainer
+        x: control.leftPadding + control.visualPosition * (control.availableWidth - handle.width)
+        y: control.topPadding + control.availableHeight / 2 - handle.height / 2
+        implicitWidth: 48
         implicitHeight: 48
         height: control.availableHeight
-        width: height / 2
-        radius: width / 2
-        color: Colours.almostWhite
+        width: height
         Rectangle {
+            id: handle
+            width: handleContainer.width / 2
+            height: handleContainer.height / 2
             anchors.centerIn: parent
-            anchors.horizontalCenterOffset: -6
-            width: 2
-            height: parent.width - 6
-            color: Colours.red
+            radius: width / 2
+            color: Colours.almostWhite
+            border.color: Colours.veryDarkSlate
+            border.width: 4
+            visible: false
         }
-        Rectangle {
-            anchors.centerIn: parent
-            anchors.horizontalCenterOffset: -2
-            width: 2
-            height: parent.width - 2
-            color: Colours.red
-        }
-        Rectangle {
-            anchors.centerIn: parent
-            anchors.horizontalCenterOffset: 2
-            width: 2
-            height: parent.width - 2
-            color: Colours.red
-        }
-        Rectangle {
-            anchors.centerIn: parent
-            anchors.horizontalCenterOffset: 6
-            width: 2
-            height: parent.width - 6
-            color: Colours.red
+        DropShadow {
+            id: shadow
+            anchors.fill: parent
+            //horizontalOffset: 3
+            //verticalOffset: 3
+            radius: handle.radius
+            samples: 17
+            color: Colours.veryDarkSlate
+            source: handle
         }
     }
     property bool showTicks: false

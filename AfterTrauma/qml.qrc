@@ -62,7 +62,6 @@
         <file>Progress.qml</file>
         <file>ShortcutPopup.qml</file>
         <file>Questionnaire.qml</file>
-        <file>Question.qml</file>
         <file>icons/star_empty.png</file>
         <file>icons/star_full.png</file>
         <file>Timeline.qml</file>
@@ -112,12 +111,38 @@
         <file>DocumentViewer.qml</file>
         <file>controls/TokenisedTextField.qml</file>
         <file>controls/TagTextField.qml</file>
-        <file>NewQuestion.qml</file>
+        <file>Question.qml</file>
         <file>icons/face0.png</file>
         <file>icons/face1.png</file>
         <file>icons/face2.png</file>
         <file>icons/face3.png</file>
         <file>icons/face4.png</file>
         <file>Recomendations.qml</file>
+        <file>MainMenu.qml</file>
+        <file>icons/burger.png</file>
+        <file>icons/timeline.png</file>
+        <file>icons/resources.png</file>
+        <file>icons/close.png</file>
+        <file>icons/down_arrow.png</file>
+        <file>icons/up_arrow.png</file>
+        <file>icons/arm_off.png</file>
+        <file>icons/arm_on.png</file>
+        <file>icons/back_off.png</file>
+        <file>icons/back_on.png</file>
+        <file>icons/chest_ribs_off.png</file>
+        <file>icons/chest_ribs_on.png</file>
+        <file>icons/head_off.png</file>
+        <file>icons/head_on.png</file>
+        <file>icons/leg_hip_off.png</file>
+        <file>icons/leg_hip_on.png</file>
+        <file>icons/neck_off.png</file>
+        <file>icons/neck_on.png</file>
+        <file>icons/other_off.png</file>
+        <file>icons/other_on.png</file>
+        <file>icons/pelvis_off.png</file>
+        <file>icons/pelvis_on.png</file>
+        <file>icons/stomach_off.png</file>
+        <file>icons/stomach_on.png</file>
+        <file>BodyPart.qml</file>
     </qresource>
 </RCC>
