@@ -165,6 +165,7 @@ TextField {
         text = tokenised.join(delimiter) + delimiter;
         tokenise();
         suggestionList.model.clear();
+        console.log('tokenised : ' + JSON.stringify(tokenised) );
     }
 
     //

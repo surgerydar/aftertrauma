@@ -58,6 +58,9 @@ QString SystemUtils::documentDirectory() {
     QDir dir(documentPath);
     if ( dir.mkpath("aftertrauma") ) { // ensure directory exists
         dir.cd("aftertrauma");
+        if ( !dir.exists("media") ) { // TODO: move this somewhere more sensible
+            dir.mkdir("media");
+        }
     }
     return dir.canonicalPath();
 }

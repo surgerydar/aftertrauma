@@ -6,7 +6,7 @@ import "../colours.js" as Colours
 TextField {
     height: 48
     color: Colours.veryDarkSlate
-    font.pixelSize: 24
+    font.pointSize: 24
     background: Rectangle {
         id: background
         anchors.fill: parent

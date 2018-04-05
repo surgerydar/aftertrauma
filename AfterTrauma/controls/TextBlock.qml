@@ -44,6 +44,12 @@ Item {
         font.weight: Font.Light
         font.family: fonts.light
         font.pointSize: 18
+        //
+        //
+        //
+        onLinkActivated: {
+            Qt.openUrlExternally(link);
+        }
     }
     //
     //

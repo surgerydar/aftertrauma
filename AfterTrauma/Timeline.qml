@@ -22,6 +22,7 @@ AfterTrauma.Page {
         //
         clip: true
         spacing: 8
+        cacheBuffer: 0
         //
         //
         //

@@ -15,10 +15,10 @@ Item {
     //
     //
     Background {
-        anchors.top: titleText.top
-        anchors.left: titleText.left
-        anchors.bottom: titleText.bottom
-        anchors.right: titleText.right
+        height: 64
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
         fill: container.backgroundColour
         visible: title.length > 0
     }
@@ -30,10 +30,12 @@ Item {
         //
         //
         //
-        height: 48
+        height: 64
         anchors.top: parent.top
         anchors.left: parent.left
+        anchors.leftMargin: ( showNavigation ? backButton.width : 0 )
         anchors.right: parent.right
+        anchors.rightMargin: ( showNavigation ? backButton.width : 0 )
         //
         //
         //
@@ -41,7 +43,7 @@ Item {
         verticalAlignment: Text.AlignVCenter
         fontSizeMode: Text.Fit
         color: container.textColour
-        font.pixelSize: 36
+        font.pointSize: 36
         font.weight: Font.Light
         font.family: fonts.light
         visible: title.length > 0
@@ -52,9 +54,9 @@ Item {
     Button {
         id: backButton
         anchors.verticalCenter: titleText.verticalCenter
-        anchors.left: titleText.left
+        anchors.left: parent.left
         image: "../icons/left_arrow.png"
-        backgroundColour: "transparent"
+        backgroundColour: Qt.colorEqual(container.backgroundColour,Colours.almostWhite) ? Colours.veryLightSlate : "transparent"
         visible: showNavigation && stack && stack.depth > 1
         onClicked: {
             if ( validate ) {
@@ -69,9 +71,9 @@ Item {
     //
     Background {
         anchors.top: subTitleText.top
-        anchors.left: subTitleText.left
+        anchors.left: parent.left
         anchors.bottom: subTitleText.bottom
-        anchors.right: subTitleText.right
+        anchors.right: parent.right
         fill: container.backgroundColour
         visible: subtitle.length > 0
     }
@@ -83,7 +85,9 @@ Item {
         height: 48
         anchors.top: titleText.bottom
         anchors.left: parent.left
+        anchors.leftMargin: 4
         anchors.right: parent.right
+        anchors.rightMargin: 4
         anchors.topMargin: 4
         //
         //
@@ -92,7 +96,7 @@ Item {
         verticalAlignment: Text.AlignVCenter
         fontSizeMode: Text.Fit
         color: container.textColour
-        font.pixelSize: 36
+        font.pointSize: 36
         font.weight: Font.Light
         font.family: fonts.light
         visible: subtitle.length > 0

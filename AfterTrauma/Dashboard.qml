@@ -11,11 +11,11 @@ AfterTrauma.Page {
     //
     Item {
         id: content
-        anchors.top: parent.verticalCenter
+        anchors.top: parent.top
         anchors.left: parent.left
         anchors.bottom: parent.bottom
         anchors.right: parent.right
-        anchors.topMargin: parent.height / 6
+        anchors.topMargin: flowerChart ? flowerChart.y + ( flowerChart.height - ( dateSlider.height / 2 ) ) : parent.height / 2
         //
         //
         //

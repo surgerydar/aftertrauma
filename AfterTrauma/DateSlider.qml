@@ -18,7 +18,8 @@ Item {
         anchors.right: parent.right
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
-        font.pixelSize: 24
+        font.family: fonts.bold
+        font.pointSize: 24
         color: Colours.almostWhite
     }
     //

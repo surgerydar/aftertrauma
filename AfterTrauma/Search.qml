@@ -46,12 +46,13 @@ AfterTrauma.Page {
         }
     }
     footer: Item {
-        height: 128
+        height: 64
         anchors.left: parent.left
         anchors.right: parent.right
         //
         //
         //
+        /*
         AfterTrauma.TextField {
             id: searchField
             anchors.top: parent.top
@@ -61,6 +62,16 @@ AfterTrauma.Page {
             onAccepted: {
                 search();
             }
+        }
+        */
+        AfterTrauma.TokenisedTextField {
+            id: searchField
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: searchButton.left
+            anchors.margins: 8
+            font.family: fonts.light.name
+            font.pointSize: 32
         }
         //
         //
@@ -94,8 +105,11 @@ AfterTrauma.Page {
         //
         //
         results.model.clear();
+        /*
         var searchText = searchField.text;
         var tags = searchText.split(',');
+        */
+        var tags = searchField.tokenised;
         if ( tags.length > 0 ) {
             for ( var t = 0; t < tags.length; t++ ) {
                 tags[ t ] = tags[ t ].trim().toLowerCase();

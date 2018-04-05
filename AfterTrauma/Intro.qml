@@ -6,27 +6,80 @@ import "colours.js" as Colours
 
 Popup {
     id: container
-    //width: parent.width
-    //height: parent.height
-    //padding: 32
     modal: true
     focus: true
+    x: 0
+    y: 0
+    width: appWindow.width
+    height: appWindow.height
     //
     //
     //
-    background: Rectangle {
-        id: background
-        anchors.fill: parent
-        radius: 16
-        color: Colours.almostWhite
+    background: Item {
+        Rectangle {
+            height: 64
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+            color: Colours.almostWhite
+        }
+        Rectangle {
+            anchors.fill: parent
+            anchors.topMargin: 68
+            color: Colours.almostWhite
+        }
     }
+    //
+    //
+    //
+    Item {
+        id: header
+        height: 64
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        //
+        //
+        //
+        Label {
+            id: title
+            anchors.fill: parent
+            anchors.leftMargin: closeButton.width + 24
+            anchors.rightMargin: closeButton.width + 24
+            horizontalAlignment: Label.AlignHCenter
+            verticalAlignment: Label.AlignVCenter
+            fontSizeMode: Label.Fit
+            color: Colours.veryDarkSlate
+            font.pixelSize: 36
+            font.weight: Font.Light
+            font.family: fonts.light
+            text: "INTRODUCTION"
+        }
+        //
+        //
+        //
+        AfterTrauma.Button {
+            id: closeButton
+            anchors.top: parent.top
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+            anchors.margins: 16
+            image: "icons/close.png"
+            onClicked: {
+                container.close();
+            }
+        }
+    }
+    //
+    //
+    //
     SwipeView {
         id: contentContainer
-        anchors.fill: parent
-        anchors.topMargin: 8
-        anchors.leftMargin: 8
-        anchors.bottomMargin: 84
-        anchors.rightMargin: 8
+        anchors.top: header.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        anchors.topMargin: 4
         clip: true
         //
         //
@@ -52,18 +105,14 @@ Popup {
             }
         }
     }
-    PageIndicator {
+    //
+    //
+    //
+    AfterTrauma.PageIndicator {
         id: pageIndicator
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: contentContainer.bottom
-        delegate: Rectangle {
-            implicitWidth: 16
-            implicitHeight: 16
-
-            radius: width / 2
-            color: index === pageIndicator.currentIndex ? Colours.lightSlate : "transparent"
-            border.color: Colours.lightSlate
-        }
+        anchors.bottom: contentContainer.bottom
+        anchors.bottomMargin: 8
         //
         //
         //
@@ -75,40 +124,30 @@ Popup {
         }
     }
     AfterTrauma.Button {
+        id: prevButton
+        anchors.verticalCenter: pageIndicator.verticalCenter
         anchors.left: parent.left
-        anchors.bottom: parent.bottom
-        anchors.margins: 8
-        text: "PREV"
         image: "icons/left_arrow.png"
-        direction: "Left"
-        enabled: contentContainer.currentIndex > 0
-        onClicked : {
-            if( contentContainer.currentIndex > 0 ) contentContainer.currentIndex--;
-        }
-    }
-    AfterTrauma.Button {
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottom: parent.bottom
-        anchors.margins: 8
-        text: "SKIP INTRO"
-        image: "icons/close_circle.png"
-        direction: "Left"
-        onClicked : {
-            container.close();
-        }
-    }
-    AfterTrauma.Button {
-        anchors.bottom: parent.bottom
-        anchors.right: parent.right
-        anchors.margins: 8
-        text: "NEXT"
-        image: "icons/right_arrow.png"
-        direction: "Right"
-        enabled: contentContainer.currentIndex < contentContainer.count - 1
+        radius: 0
+        backgroundColour: Colours.veryLightSlate
+        visible: contentContainer.currentIndex > 0
         onClicked: {
-            if( contentContainer.currentIndex < contentContainer.count - 1 ) contentContainer.currentIndex++;
+            contentContainer.decrementCurrentIndex();
         }
     }
+    AfterTrauma.Button {
+        id: nextButton
+        anchors.verticalCenter: pageIndicator.verticalCenter
+        anchors.right: parent.right
+        image: "icons/right_arrow.png"
+        radius: 0
+        backgroundColour: Colours.veryLightSlate
+        visible: contentContainer.currentIndex < contentContainer.count - 1
+        onClicked: {
+            contentContainer.incrementCurrentIndex();
+        }
+    }
+
     //
     //
     //

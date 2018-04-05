@@ -18,7 +18,6 @@ AfterTrauma.Page {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
-        anchors.margins: 16
         //
         //
         //
@@ -28,19 +27,16 @@ AfterTrauma.Page {
         //
         //
         //
-        model: documentModel //ListModel {}
+        model: documentModel
         //
         //
         //
         delegate: FactsheetItem {
             anchors.left: parent.left
             anchors.right: parent.right
-            anchors.margins: 16
             textSize: 24
-            //textFit: Text.Fit
             text: model.title || ""
             backgroundColour: container.colour
-            radius: model.index === 0 ? [8,8,0,0] : model.index === contents.model.count - 1 ? [0,0,8,8] : [0]
             onClicked: {
                 stack.push( "qrc:///Factsheet.qml", { title: container.title, subtitle: model.title, colour: container.colour, document: model.document });
             }
@@ -52,7 +48,15 @@ AfterTrauma.Page {
             NumberAnimation { properties: "y"; from: contents.height; duration: 250 }
         }
     }
-
+    //
+    //
+    //
+    footer: Item {
+        height: 16
+    }
+    //
+    //
+    //
     StackView.onActivating: {
         documentModel.setFilter({ category: category });
     }

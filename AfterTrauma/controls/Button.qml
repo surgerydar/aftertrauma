@@ -7,7 +7,8 @@ Button {
     id: control
     height: 48
     //implicitWidth: ( icon.status === Image.Ready ? (( 48. / icon.implicitHeight ) * icon.implicitWidth ) : 0 ) + label.contentWidth + ( 4 * ( icon.status === Image.Ready && label.text.length > 0 ? 3 : 2 ) )
-    implicitWidth: icon.width + label.contentWidth + ( spacing * ( icon.source.length > 0 && label.text.length > 0 ? 3 : 2 ) )
+    //implicitWidth: icon.width + label.contentWidth + ( spacing * ( icon.status === Image.Ready > 0 && label.text.length > 0 ? 3 : 2 ) )
+    width: calculateWidth()
     opacity: enabled ? 1. : .5
     spacing: 4
     //
@@ -27,6 +28,9 @@ Button {
             anchors.right: control.direction === "Right" ? content.right : undefined
             anchors.margins: spacing
             fillMode: Image.PreserveAspectFit
+            onStatusChanged: {
+                control.width = calculateWidth();
+            }
         }
         //
         //
@@ -55,6 +59,12 @@ Button {
         anchors.fill: control
         radius: [8]
         fill: Qt.rgba(0,0,0,0)
+    }
+    //
+    //
+    //
+    function calculateWidth() {
+        return icon.width + label.contentWidth + 4 + ( spacing * ( icon.status === Image.Ready > 0 && label.text.length > 0 ? 3 : 2 ) );
     }
     //
     //

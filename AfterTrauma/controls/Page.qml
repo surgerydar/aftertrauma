@@ -13,7 +13,9 @@ Page {
         title: container.title
         visible: container.title.length > 0
         backgroundColour: container.colour
+        textColour: ( Qt.colorEqual(container.colour,Colours.almostWhite) || Qt.colorEqual(container.colour,Colours.veryLightSlate) ) ? Colours.veryDarkSlate : Colours.almostWhite
     }
+
     //
     //
     //

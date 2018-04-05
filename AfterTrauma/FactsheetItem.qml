@@ -28,7 +28,7 @@ Item {
         wrapMode: Text.Wrap
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
-        font.pixelSize: 48
+        font.pointSize: 48
         color: Colours.almostWhite
     }
     //
@@ -50,6 +50,6 @@ Item {
     property alias radius: background.radius
     property alias backgroundColour: background.fill
     property alias text: textView.text
-    property alias textSize: textView.font.pixelSize
+    property alias textSize: textView.font.pointSize
 
 }

@@ -17,10 +17,12 @@ AfterTrauma.Page {
     SwipeView {
         id: contentContainer
         anchors.fill: parent
+        /*
         anchors.topMargin: 8
         anchors.leftMargin: 8
         anchors.bottomMargin: 84
         anchors.rightMargin: 8
+        */
         clip: true
         //
         //
@@ -50,26 +52,23 @@ AfterTrauma.Page {
     //
     //
     //
-    PageIndicator {
-        id: pageIndicator
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: contentContainer.bottom
-        delegate: Rectangle {
-            implicitWidth: 16
-            implicitHeight: 16
-
-            radius: width / 2
-            color: index === pageIndicator.currentIndex ? Colours.lightSlate : "transparent"
-            border.color: Colours.lightSlate
-        }
-        //
-        //
-        //
-        interactive: true
-        currentIndex: contentContainer.currentIndex
-        count: contentContainer.count
-        onCurrentIndexChanged: {
-            if ( currentIndex != contentContainer.currentIndex ) contentContainer.currentIndex = currentIndex;
+    footer: Item {
+        height: 64
+        anchors.left: parent.left
+        anchors.right: parent.right
+        AfterTrauma.PageIndicator {
+            id: pageIndicator
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            //
+            //
+            //
+            interactive: true
+            currentIndex: contentContainer.currentIndex
+            count: contentContainer.count
+            onCurrentIndexChanged: {
+                if ( currentIndex != contentContainer.currentIndex ) contentContainer.currentIndex = currentIndex;
+            }
         }
     }
     //

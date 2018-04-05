@@ -50,6 +50,9 @@ void CachedMediaSource::setMediaSource() {
             //
             qDebug() << "CachedMediaSource::setMediaSource : got player";
             QUrl url( m_url );
+            if( url.scheme() == "http" ) {
+                url.setScheme("https");
+            }
             QString fileName = url.fileName();
             QString localPath = SystemUtils::shared()->documentDirectory().append("/media/").append(fileName);
             if ( QFile::exists(localPath) ) {
@@ -63,11 +66,13 @@ void CachedMediaSource::setMediaSource() {
                 QMediaContent content( url );
                 QFile* output = new QFile( localPath );
                 if ( output->open(QFile::WriteOnly) ) {
+                    qDebug() << "CachedMediaSource::setMediaSource : downloading media from server : " << url;
                     QNetworkReply* input = NetworkAccess::shared()->get(url);
                     if ( input ) {
                         //
                         // TODO: replace tee with downloader or get setMedia to accept tee as input
                         //
+                        qDebug() << "CachedMediaSource::setMediaSource : creating tee from url : " << url;
                         CachedTee* tee = new CachedTee; // TODO: where is this deleted
                         connect( tee, &CachedTee::aboutToClose,[tee]() {
                             qDebug() << "CachedTee::aboutToClose";
@@ -95,9 +100,12 @@ void CachedMediaSource::setMediaSource() {
                         tee->open(CachedTee::ReadOnly);
                         player->setMedia(content,tee);
                     } else {
+                        qDebug() << "CachedMediaSource::setMediaSource : unable to connect to : " << url;
                         output->close();
                         output->deleteLater();
                     }
+                } else {
+                    qDebug() << "CachedMediaSource::setMediaSource : unable to open local file for writing : " << localPath;
                 }
             }
         }

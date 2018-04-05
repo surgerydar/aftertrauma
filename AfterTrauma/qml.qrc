@@ -119,7 +119,6 @@
         <file>icons/face4.png</file>
         <file>Recomendations.qml</file>
         <file>MainMenu.qml</file>
-        <file>icons/burger.png</file>
         <file>icons/timeline.png</file>
         <file>icons/resources.png</file>
         <file>icons/close.png</file>
@@ -144,5 +143,8 @@
         <file>icons/stomach_off.png</file>
         <file>icons/stomach_on.png</file>
         <file>BodyPart.qml</file>
+        <file>BodyParts.qml</file>
+        <file>BodyPartList.qml</file>
+        <file>icons/burger.png</file>
     </qresource>
 </RCC>

@@ -41,6 +41,7 @@ void Installer::installDirectory( QString directory ) {
     if ( !documentDirectory.exists(directory) ) {
         documentDirectory.mkdir(directory);
     }
+    /* TODO: reinstate
     QDir destinationDirectory( documentPath.append("/").append(directory) );
     QFileInfoList fileList = sourceDirectory.entryInfoList();
     for (int i = 0; i < fileList.size(); ++i) {
@@ -52,4 +53,5 @@ void Installer::installDirectory( QString directory ) {
         }
         QThread::yieldCurrentThread();
     }
+    */
 }

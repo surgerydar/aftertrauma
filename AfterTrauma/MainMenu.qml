@@ -49,8 +49,10 @@ Rectangle {
     //
     //
     Rectangle {
-        anchors.fill: parent
-        anchors.rightMargin: parent.width * .25
+        width: parent.width <= 320 ? parent.width : parent.width * .75
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.bottom: parent.bottom
         color: Colours.darkOrange
         //
         //
@@ -86,17 +88,17 @@ Rectangle {
     VisualItemModel {
         id: menuItemsModel
         AfterTrauma.Button {
-            width: parent.width
+            anchors.left: parent.left
             textHorizontalAlignment: Text.AlignLeft
             textVerticalAlignment: Text.AlignVCenter
-            textSize: 36
+            textSize: 32
             text: "ADD"
         }
         AfterTrauma.Button {
-            width: parent.width
+            anchors.right: parent.right
             textHorizontalAlignment: Text.AlignRight
             textVerticalAlignment: Text.AlignVCenter
-            textSize: 36
+            textSize: 32
             text: "My Recovery"
             image: "icons/add.png"
             direction: "Right"
@@ -107,10 +109,10 @@ Rectangle {
             }
         }
         AfterTrauma.Button {
-            width: parent.width
+            anchors.right: parent.right
             textHorizontalAlignment: Text.AlignRight
             textVerticalAlignment: Text.AlignVCenter
-            textSize: 36
+            textSize: 32
             text: "Challenge"
             image: "icons/add.png"
             direction: "Right"
@@ -121,10 +123,10 @@ Rectangle {
             }
         }
         AfterTrauma.Button {
-            width: parent.width
+            anchors.right: parent.right
             textHorizontalAlignment: Text.AlignRight
             textVerticalAlignment: Text.AlignVCenter
-            textSize: 36
+            textSize: 32
             text: "Image"
             image: "icons/add.png"
             direction: "Right"
@@ -135,10 +137,10 @@ Rectangle {
             }
         }
         AfterTrauma.Button {
-            width: parent.width
+            anchors.right: parent.right
             textHorizontalAlignment: Text.AlignRight
             textVerticalAlignment: Text.AlignVCenter
-            textSize: 36
+            textSize: 32
             text: "Notes"
             image: "icons/add.png"
             direction: "Right"
@@ -149,17 +151,17 @@ Rectangle {
             }
         }
         AfterTrauma.Button {
-            width: parent.width
+            anchors.left: parent.left
             textHorizontalAlignment: Text.AlignLeft
             textVerticalAlignment: Text.AlignVCenter
-            textSize: 36
+            textSize: 32
             text: "PROGRESS"
         }
         AfterTrauma.Button {
-            width: parent.width
+            anchors.right: parent.right
             textHorizontalAlignment: Text.AlignRight
             textVerticalAlignment: Text.AlignVCenter
-            textSize: 36
+            textSize: 32
             text: "Timeline"
             image: "icons/timeline.png"
             direction: "Right"
@@ -170,10 +172,10 @@ Rectangle {
             }
         }
         AfterTrauma.Button {
-            width: parent.width
+            anchors.right: parent.right
             textHorizontalAlignment: Text.AlignRight
             textVerticalAlignment: Text.AlignVCenter
-            textSize: 36
+            textSize: 32
             text: "Graphs"
             image: "icons/chart.png"
             direction: "Right"
@@ -184,10 +186,10 @@ Rectangle {
             }
         }
         AfterTrauma.Button {
-            width: parent.width
+            anchors.right: parent.right
             textHorizontalAlignment: Text.AlignRight
             textVerticalAlignment: Text.AlignVCenter
-            textSize: 36
+            textSize: 32
             text: "RESOURCES"
             image: "icons/resources.png"
             direction: "Right"
@@ -198,10 +200,10 @@ Rectangle {
             }
         }
         AfterTrauma.Button {
-            width: parent.width
+            anchors.right: parent.right
             textHorizontalAlignment: Text.AlignRight
             textVerticalAlignment: Text.AlignVCenter
-            textSize: 36
+            textSize: 32
             text: "SEARCH"
             image: "icons/search.png"
             direction: "Right"
@@ -212,10 +214,10 @@ Rectangle {
             }
         }
         AfterTrauma.Button {
-            width: parent.width
+            anchors.right: parent.right
             textHorizontalAlignment: Text.AlignRight
             textVerticalAlignment: Text.AlignVCenter
-            textSize: 36
+            textSize: 32
             text: "CHAT"
             image: "icons/chat.png"
             direction: "Right"
@@ -226,10 +228,10 @@ Rectangle {
             }
         }
         AfterTrauma.Button {
-            width: parent.width
+            anchors.right: parent.right
             textHorizontalAlignment: Text.AlignRight
             textVerticalAlignment: Text.AlignVCenter
-            textSize: 36
+            textSize: 32
             text: "HELP"
             image: "icons/help.png"
             direction: "Right"

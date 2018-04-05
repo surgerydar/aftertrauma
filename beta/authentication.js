@@ -32,20 +32,32 @@ Authentication.prototype.register = function( wss, ws, command ) {
     };
     process.nextTick(function(){   
         console.log('registering user : ' + JSON.stringify(user));
-        _db.insert('users', user ).then(function( response ) {
-            console.log( 'inserted: ' + JSON.stringify(user) + ' : response:' + JSON.stringify(response) );
-            command.status = 'OK';
-            command.response = { 
-                id: command.id,
-                username: user.username,
-                email: user.email,
-                password: user.password,
-                avatar: user.avatar,
-                profile: user.profile,
-                tags: user.tags
-            };
-            ws.send(JSON.stringify(command));
-        }).catch(function(error){
+        _db.findOne('users', { $or: [{username: user.username},{email:user.email}] } ).then( function( response ) {
+            if ( response === null ) {
+                _db.insert('users', user ).then(function( response ) {
+                    console.log( 'inserted: ' + JSON.stringify(user) + ' : response:' + JSON.stringify(response) );
+                    command.status = 'OK';
+                    command.response = { 
+                        id: command.id,
+                        username: user.username,
+                        email: user.email,
+                        password: user.password,
+                        avatar: user.avatar,
+                        profile: user.profile,
+                        tags: user.tags
+                    };
+                    ws.send(JSON.stringify(command));
+                }).catch(function(error){
+                    command.status = 'ERROR';
+                    command.error = error;
+                    ws.send(JSON.stringify(command));
+                });
+            } else {
+                command.status = 'ERROR';
+                command.error  = 'A user with that name or email already exists';
+                ws.send(JSON.stringify(command));
+            }
+        }).catch( function( error ) {
             command.status = 'ERROR';
             command.error = error;
             ws.send(JSON.stringify(command));

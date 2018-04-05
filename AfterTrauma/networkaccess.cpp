@@ -7,6 +7,9 @@ NetworkAccess* NetworkAccess::s_shared = nullptr;
 NetworkAccess::NetworkAccess(QObject *parent) : QObject(parent) {
     m_manager = new QNetworkAccessManager(this);
     connect(m_manager, &QNetworkAccessManager::finished, this, &NetworkAccess::replyFinished);
+    connect(m_manager, &QNetworkAccessManager::sslErrors,[=](QNetworkReply *reply, const QList<QSslError> &errors) {
+
+    });
 }
 //
 //

@@ -54,6 +54,9 @@ ApplicationWindow {
     Recomendations {
         id: recomendationModel
     }
+    BodyPartList {
+        id: bodyPartModel
+    }
     //
     // notifications
     //
@@ -87,7 +90,7 @@ ApplicationWindow {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.topMargin: 16
+        anchors.topMargin: titleBar.height
         anchors.leftMargin: 8
         anchors.rightMargin: 8
         enabled: false
@@ -135,11 +138,6 @@ ApplicationWindow {
     MainMenu {
         id: mainMenu
     }
-    /*
-    NavigationBar {
-        id: navigationBar
-    }
-    */
     ShortcutPopup {
         id: shortcut
     }
@@ -148,19 +146,10 @@ ApplicationWindow {
     //
     Intro {
         id: intro
-        modal: true
-        x: 16
-        y: 16
-        width: appWindow.width - 32
-        height: appWindow.height - 32
+        x: 0; y: 0; width: appWindow.width; height: appWindow.height;
     }
     Register {
         id: register
-        modal: true
-        x: 16
-        y: 16
-        width: appWindow.width - 32
-        height: appWindow.height - 32
     }
     AfterTrauma.ConfirmDialog {
         id: confirmDialog
@@ -223,7 +212,7 @@ ApplicationWindow {
         if ( SystemUtils.isFirstRun() ) {
             console.log( 'installing' );
             //stack.push("qrc:///Install.qml")
-            //SystemUtils.install();
+            SystemUtils.install();
             intro.open();
         } else {
             //
@@ -231,7 +220,7 @@ ApplicationWindow {
             //
             stack.push("qrc:///Dashboard.qml");
             flowerChart.enabled = true;
-            //intro.open();
+            intro.open();
         }
     }
     //

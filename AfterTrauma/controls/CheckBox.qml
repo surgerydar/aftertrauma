@@ -39,7 +39,7 @@ CheckBox {
         anchors.leftMargin: control.direction === "Left" ? 4 : 0
         anchors.rightMargin: control.direction === "Right" ? 4 : 0
         color: Colours.veryDarkSlate
-        font.pixelSize: 24
+        font.pointSize: 18
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: control.direction === "Left" ? Text.AlignLeft : Text.AlignRight
         text: control.text
@@ -47,5 +47,6 @@ CheckBox {
     //
     //
     //
+    property alias textSize: label.font.pointSize
     property string direction: "Left"
 }

@@ -164,7 +164,7 @@ AfterTrauma.Page {
             if ( currentIndex === count - 1 ) {
                 [
                     { category: "emotions" },
-                    { category: "mind" },
+                    { category: "confidence" },
                     { category: "body" },
                     { category: "life" },
                     { category: "relationships" }
@@ -177,44 +177,37 @@ AfterTrauma.Page {
     //
     //
     //
-    AfterTrauma.Button {
-        anchors.left: parent.left
-        anchors.verticalCenter: parent.verticalCenter
-        image: "icons/left_arrow.png"
-        visible: questionnaires.currentIndex > 0
-        onClicked: {
-            questionnaires.decrementCurrentIndex();
-        }
-    }
-
-    AfterTrauma.Button {
-        anchors.right: parent.right
-        anchors.verticalCenter: parent.verticalCenter
-        image: "icons/right_arrow.png"
-        visible: questionnaires.currentIndex < questionnaires.count - 1
-        onClicked: {
-            questionnaires.incrementCurrentIndex();
-        }
-    }
-
-    //
-    //
-    //
     footer: Item {
-        height: 28
+        height: 64
         width: parent.width
-        AfterTrauma.PageIndicator {
-
-                anchors.horizontalCenter: parent.horizontalCenter
-                //anchors.bottom: questionnaires.bottom
-                //anchors.bottomMargin: 8
-
-                currentIndex: questionnaires.currentIndex
-                count: questionnaires.count
-                colour: Colours.lightSlate
+        AfterTrauma.Button {
+            anchors.left: parent.left
+            anchors.leftMargin: 4
+            anchors.verticalCenter: parent.verticalCenter
+            image: "icons/left_arrow.png"
+            visible: questionnaires.currentIndex > 0
+            onClicked: {
+                questionnaires.decrementCurrentIndex();
             }
+        }
+        AfterTrauma.PageIndicator {
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.horizontalCenter: parent.horizontalCenter
+            currentIndex: questionnaires.currentIndex
+            count: questionnaires.count
+            colour: Colours.lightSlate
+        }
+        AfterTrauma.Button {
+            anchors.right: parent.right
+            anchors.rightMargin: 4
+            anchors.verticalCenter: parent.verticalCenter
+            image: "icons/right_arrow.png"
+            visible: questionnaires.currentIndex < questionnaires.count - 1
+            onClicked: {
+                questionnaires.incrementCurrentIndex();
+            }
+        }
     }
-
     //
     //
     //

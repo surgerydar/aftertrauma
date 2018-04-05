@@ -46,6 +46,7 @@ Item {
                 break;
             case MediaPlayer.Loaded :
                 console.log( "the media has been loaded");
+                seek(0);
                 mediaReady();
                 break;
             case MediaPlayer.Buffering :

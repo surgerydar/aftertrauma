@@ -40,6 +40,12 @@ AfterTrauma.Page {
     //
     //
     //
+    footer: Item {
+        height: 4
+    }
+    //
+    //
+    //
     StackView.onActivating: {
         contents.model.clear();
         var doc = documentModel.findOne( { document: document } );

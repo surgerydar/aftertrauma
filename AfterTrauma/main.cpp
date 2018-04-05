@@ -22,8 +22,7 @@
 //
 // TODO: find a better way of doing this
 //
-void setHiDPIScaleFactor(int argc, char *argv[]) {
-    QGuiApplication app(argc, argv);
+void setHiDPIScaleFactor(QGuiApplication& app) {
     double pixelRatio = app.devicePixelRatio();
     double scale = 1. / pixelRatio;
     qDebug() << "pixel ratio : " << pixelRatio << " scale : " << scale;
@@ -43,16 +42,16 @@ int main(int argc, char *argv[])
     //
     //
     //
-    //QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    QCoreApplication::setAttribute(Qt::AA_DisableHighDpiScaling);
+    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    //QCoreApplication::setAttribute(Qt::AA_DisableHighDpiScaling);
     //
     //
     //
-    //setHiDPIScaleFactor(argc, argv);
     //
     //
     //
     QGuiApplication app(argc, argv);
+    setHiDPIScaleFactor(app);
     app.installEventFilter(AndroidBackKeyFilter::shared());
     //
     //

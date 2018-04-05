@@ -27,7 +27,7 @@ DatabaseList {
                     day: day.getDate(), // 1 - 31
                     values: [
                         { label: 'emotions', value: Math.random() * multiplier },
-                        { label: 'mind', value: Math.random() * multiplier },
+                        { label: 'confidence', value: Math.random() * multiplier },
                         { label: 'body', value: Math.random() * multiplier },
                         { label: 'life', value: Math.random() * multiplier },
                         { label: 'relationships', value: Math.random() * multiplier },

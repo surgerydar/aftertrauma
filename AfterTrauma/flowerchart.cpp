@@ -44,7 +44,7 @@ QString categoryColour( int index ) {
 }
 
 const QVector<QString> labels = {
-    "emotions", "mind", "body", "life", "relationships"
+    "emotions", "confidence", "body", "life", "relationships"
 };
 
 FlowerChart::FlowerChart( QQuickItem* parent ) : QQuickPaintedItem( parent ) {
@@ -54,6 +54,10 @@ FlowerChart::FlowerChart( QQuickItem* parent ) : QQuickPaintedItem( parent ) {
     m_minValues   = { 0., 0., 0., 0., 0. };
     m_valuesAnimationStart  = { 0., 0., 0., 0., 0. };
     m_valuesAnimationEnd    = { 0., 0., 0., 0., 0. };
+    //
+    //
+    //
+    setAcceptedMouseButtons(Qt::AllButtons);
 }
 //
 //

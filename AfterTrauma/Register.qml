@@ -9,14 +9,26 @@ Popup {
     id: container
     modal: true
     focus: true
+    x: 0
+    y: 0
+    width: appWindow.width
+    height: appWindow.height
     //
     //
     //
-    background: Rectangle {
-        id: background
-        anchors.fill: parent
-        radius: 16
-        color: "transparent"
+    background: Item {
+        Rectangle {
+            height: 64
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+            color: Colours.almostWhite
+        }
+        Rectangle {
+            anchors.fill: parent
+            anchors.topMargin: 68
+            color: Colours.almostWhite
+        }
     }
     //
     //
@@ -27,20 +39,36 @@ Popup {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        AfterTrauma.Background {
+        //
+        //
+        //
+        Label {
+            id: title
             anchors.fill: parent
-            fill: Colours.almostWhite
-            radius: [ 16, 16, 0, 0 ]
-        }
-        Text {
-            anchors.fill: parent
-            anchors.margins: 16
+            anchors.leftMargin: closeButton.width + 24
+            anchors.rightMargin: closeButton.width + 24
+            horizontalAlignment: Label.AlignHCenter
+            verticalAlignment: Label.AlignVCenter
+            fontSizeMode: Label.Fit
             color: Colours.veryDarkSlate
+            font.pixelSize: 36
             font.weight: Font.Light
             font.family: fonts.light
-            font.pixelSize: 32
-            verticalAlignment: Text.AlignVCenter
-            text: content.currentItem.title || "REGISTER"
+            text: "REGISTER"
+        }
+        //
+        //
+        //
+        AfterTrauma.Button {
+            id: closeButton
+            anchors.top: parent.top
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+            anchors.margins: 16
+            image: "icons/close.png"
+            onClicked: {
+                container.close();
+            }
         }
     }
     //
@@ -53,7 +81,7 @@ Popup {
         //
         anchors.fill: parent
         anchors.topMargin: 68
-        anchors.bottomMargin: 68
+        //anchors.bottomMargin: 68
         //
         //
         //
@@ -62,12 +90,13 @@ Popup {
         //
         //
         //
-        background: Rectangle {
-            anchors.fill: parent
-            color: Colours.almostWhite
-        }
         Page {
             id: register
+            padding: 0
+            background: Rectangle {
+                anchors.fill: parent
+                color: Colours.almostWhite
+            }
             //
             //
             //
@@ -170,6 +199,7 @@ Popup {
                 anchors.right: parent.right
                 anchors.margins: 8
                 direction: "Right"
+                textSize: 18
                 text: "Accept terms & conditions"
             }
             AfterTrauma.CheckBox {
@@ -179,6 +209,7 @@ Popup {
                 anchors.right: parent.right
                 anchors.margins: 8
                 direction: "Right"
+                textSize: 18
                 text: "Stay logged in"
             }
             //
@@ -191,6 +222,7 @@ Popup {
                 anchors.margins: 8
                 backgroundColour: Colours.veryLightSlate
                 textColour: Colours.veryDarkSlate
+                textSize: 18
                 text: "already registered"
                 onClicked: {
                     content.setCurrentIndex(1);
@@ -202,6 +234,7 @@ Popup {
                 anchors.bottom: parent.bottom
                 anchors.margins: 8
                 backgroundColour: Colours.darkGreen
+                textSize: 18
                 text: "REGISTER"
                 onClicked: {
                     validate(register);
@@ -213,6 +246,11 @@ Popup {
         //
         Page {
             id: login
+            padding: 0
+            background: Rectangle {
+                anchors.fill: parent
+                color: Colours.almostWhite
+            }
             //
             //
             //
@@ -283,6 +321,7 @@ Popup {
                 anchors.margins: 8
                 backgroundColour: Colours.veryLightSlate
                 textColour: Colours.veryDarkSlate
+                textSize: 18
                 text: "register"
                 onClicked: {
                     content.setCurrentIndex(0);
@@ -294,6 +333,7 @@ Popup {
                 anchors.bottom: parent.bottom
                 anchors.margins: 8
                 backgroundColour: Colours.darkGreen
+                textSize: 18
                 text: "LOGIN"
                 onClicked: {
                     if ( validate(login) ) {
@@ -302,20 +342,8 @@ Popup {
                 }
             }
         }
-    }
-    //
-    //
-    //
-    Item {
-        id: footer
-        height: 64
-        anchors.bottom: parent.bottom
-        anchors.left: parent.left
-        anchors.right: parent.right
-        AfterTrauma.Background {
-            anchors.fill: parent
-            fill: Colours.almostWhite
-            radius: [ 0, 0, 16, 16 ]
+        onCurrentItemChanged: {
+            title.text = currentItem.title;
         }
     }
     //
@@ -406,15 +434,15 @@ Popup {
         loginPassword.text = "";
         loginStayLoggedIn.checked = false;
     }
-
     //
     //
     //
     function validate( target ) {
         var user;
+        var message = "";
         if ( target === register ) {
             console.log( 'validating registration' );
-            if ( username.acceptableInput && email.acceptableInput && password.acceptableInput && confirmPassword.text === password.text ) {
+            if ( username.acceptableInput && email.acceptableInput && password.acceptableInput && confirmPassword.text === password.text && acceptTerms.checked ) {
                 busyIndicator.running = true;
                 user = {
                     command: 'register',
@@ -426,6 +454,19 @@ Popup {
                 authenticationChannel.send(user);
             } else {
                 // show error
+                message = "<h1>Error</h1>";
+                if ( !username.acceptableInput ) {
+                    message += "Please enter a username containing 6 or more letters and/or numbers";
+                } else if ( !email.acceptableInput ) {
+                    message += "Please enter valid email";
+                } else if ( !password.acceptableInput ) {
+                    message += "Please enter a password containing 6 or more letters and/or numbers";
+                } else if ( confirmPassword.text !== password.text ){
+                    message += "Passwords must match";
+                } else {
+                    message += "You must accept our terms and conditions";
+                }
+
             }
         } else {
             console.log( 'validating login' );
@@ -438,7 +479,11 @@ Popup {
                 authenticationChannel.send(user);
             } else {
                 // show error
+                message = "<h1>Error</h1>Please enter username and password";
             }
+        }
+        if ( message.length > 0 ) {
+            errorDialog.show(message);
         }
     }
     function testUsername( name ) {
@@ -457,7 +502,6 @@ Popup {
             categoryModel.update({category: category._id},entry,true);
         });
         categoryModel.save();
-
     }
     function processUpdate( manifest ) {
         //
@@ -519,6 +563,7 @@ Popup {
                 console.log( 'updated document : ' + JSON.stringify(result) );
                 if ( result ) {
                     document.blocks.forEach( function( block ) {
+                        console.log( 'extracting tags : ' + JSON.stringify(block.tags) );
                         block.tags.forEach( function( tag ) {
                             if ( tag.length > 0 ) {
                                 tagsModel.updateTag( tag.toLowerCase(), document._id || result._id );

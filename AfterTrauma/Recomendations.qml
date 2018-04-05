@@ -144,34 +144,34 @@ DatabaseList {
                             ]
                         },
                         {
-                            category: "mind",
+                            category: "confidence",
                             minimum: 0.0,
                             maximum: 0.25,
-                            recomendation: "Mind, not good",
+                            recomendation: "Confidence, not good",
                             links: [
                             ]
                         },
                         {
-                            category: "mind",
+                            category: "confidence",
                             minimum: 0.25,
                             maximum: 0.5,
-                            recomendation: "Mind, not so bad",
+                            recomendation: "Confidence, not so bad",
                             links: [
                             ]
                         },
                         {
-                            category: "mind",
+                            category: "confidence",
                             minimum: 0.5,
                             maximum: 0.75,
-                            recomendation: "Mind, good",
+                            recomendation: "Confidence, good",
                             links: [
                             ]
                         },
                         {
-                            category: "mind",
+                            category: "confidence",
                             minimum: 0.75,
                             maximum: 1.0,
-                            recomendation: "Mind, great!",
+                            recomendation: "Confidence, great!",
                             links: [
                             ]
                         }

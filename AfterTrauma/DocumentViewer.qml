@@ -3,7 +3,6 @@ import QtQuick.Controls 2.1
 
 import "controls" as AfterTrauma
 import "colours.js" as Colours
-import "jsonloader.js" as JSONLoader
 
 AfterTrauma.Page {
     id: container
@@ -34,6 +33,12 @@ AfterTrauma.Page {
         add: Transition {
             NumberAnimation { properties: "y"; from: contents.height; duration: 250 }
         }
+    }
+    //
+    //
+    //
+    footer: Item {
+        height: 4
     }
     //
     //

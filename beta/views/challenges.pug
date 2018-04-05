@@ -13,6 +13,7 @@ html
                 each challenge in challenges
                     .list-item( data-type='challenge' data-id= challenge._id )
                         h2= challenge.name
+                        .delete
                 else 
                     .list-item
                         h2 no data
