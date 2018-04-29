@@ -5,7 +5,7 @@ import "controls" as AfterTrauma
 import "colours.js" as Colours
 
 AfterTrauma.Page {
-    title: "QUESTIONNAIRE"
+    title: "MY RECOVERY"
     subtitle: questionnaires.currentItem.title || ""
     colour: Colours.blue
     //

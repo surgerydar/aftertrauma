@@ -351,7 +351,7 @@ Popup {
     //
     WebSocketChannel {
         id: authenticationChannel
-        url: "wss://aftertrauma.uk:4000"
+        url: baseWS
         //
         //
         //
@@ -384,13 +384,16 @@ Popup {
                         container.close();
                     }
                 } else if ( command.command === 'documents' ) {
-
                     if ( command.response.length > 0 ) {
                         //console.log( 'documents : ' + JSON.stringify(command.response[0]) );
                         installDocuments(command.response);
-                    } else {
-                        container.close();
                     }
+                    authenticationChannel.send({command:'challenges',date:0});
+                } else if ( command.command === 'challenges' ) {
+                    if ( command.response.length > 0 ) {
+                        installChallenges(command.response);
+                    }
+                    container.close();
                 }
             } else if ( command.error ) {
                 errorDialog.show( '<h1>Server says</h1><br/>' + ( typeof command.error === 'string' ? command.error : command.error.error ), [
@@ -507,7 +510,6 @@ Popup {
         //
         // delete removed
         //
-        var documentsAvailable = false;
         var filter = documentModel.filter;
         documentModel.filter = {};
         manifest.forEach( function( delta ) {
@@ -515,16 +517,18 @@ Popup {
                 //
                 // TODO: delete file, possibly delete associated media
                 //
-                var category = categoryModel.findOne({category:delta.category});
-                if ( category && category.section ) {
-                    var path = category.section + '/' + delta.category + '.' + delta.document + '.json';
-                    console.log( 'removing:' + path );
-                    documentModel.remove( {document: delta.document} );
-                } else {
-                    console.log( 'remove : unable to find catgegory : ' + delta.category );
+                if ( delta.category ) {
+                    var category = categoryModel.findOne({category:delta.category});
+                    if ( category && category.section ) {
+                        var path = category.section + '/' + delta.category + '.' + delta.document + '.json';
+                        console.log( 'removing:' + path );
+                        documentModel.remove( {document: delta.document} );
+                    } else {
+                        console.log( 'remove : unable to find catgegory : ' + delta.category );
+                    }
+                } else if ( delta.challenge ) {
+                    challengeModel.remove({_id: delta.challenge});
                 }
-            } else {
-                documentsAvailable = true;
             }
         });
         documentModel.save();
@@ -532,21 +536,16 @@ Popup {
         //
         // request updated
         //
-        if ( documentsAvailable ) {
-            authenticationChannel.send({command:'documents',date:0});
-        } else {
-            container.close();
-        }
+        authenticationChannel.send({command:'documents',date:0});
     }
     function installDocuments( documents ) {
-        var index = 0;
         var filter = documentModel.filter;
         documentModel.filter = {};
         documents.forEach( function( document ) {
             var category = categoryModel.findOne({category:document.category});
             if ( category && category.section ) {
                 var path = category.section + '/' + document.category + '.' + document._id;
-                console.log( 'installing:' + path );
+                console.log( 'installing:' + path + ' : ' + document.title + ' : ' + document.index );
                 var entry = {
                     document: document._id,
                     category: document.category,
@@ -554,7 +553,7 @@ Popup {
                     title: document.title,
                     blocks: document.blocks,
                     date: document.date,
-                    index: index
+                    index: document.index
                 };
                 //
                 // TODO: extract tags
@@ -572,13 +571,18 @@ Popup {
                     });
                     tagsModel.save();
                 }
-                index++;
             } else {
                 console.log( 'install : unable to find catgegory : ' + document.category );
             }
         });
         documentModel.save();
         documentModel.filter = filter;
-        container.close();
+    }
+    function installChallenges( challenges ) {
+        challenges.forEach( function( challenge ) {
+            var result = challengeModel.update( {_id: challenge._id}, challenge, true );
+            console.log( 'updated challenges : ' + JSON.stringify(result) );
+        });
+        challengeModel.save();
     }
 }

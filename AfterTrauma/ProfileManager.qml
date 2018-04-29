@@ -32,7 +32,7 @@ AfterTrauma.Page {
             //
             //
             Flickable {
-                id: profile
+                id: profileContainer
                 anchors.fill: parent
                 clip: true
                 contentHeight: profileItems.childrenRect.height + 16
@@ -48,7 +48,7 @@ AfterTrauma.Page {
                     //
                     //
                     Rectangle {
-                        width: profile.width
+                        width: profileContainer.width
                         height: childrenRect.height + 16
                         color: Colours.almostWhite
                         //
@@ -73,7 +73,9 @@ AfterTrauma.Page {
                             anchors.margins: 8
                             direction: "Right"
                             text: "I have the injury"
+                            checked: profile ? profile.role === "patient" : true
                             onCheckedChanged: {
+                                dirty = true;
                                 carer.checked = !checked;
                             }
                         }
@@ -84,7 +86,9 @@ AfterTrauma.Page {
                             anchors.margins: 8
                             direction: "Right"
                             text: "I am the carer"
+                            checked: profile ? profile.role === "carer" : false
                             onCheckedChanged: {
+                                dirty = true;
                                 patient.checked = !checked;
                             }
                         }
@@ -114,10 +118,14 @@ AfterTrauma.Page {
                                 top: 150
                                 bottom: 0
                             }
+                            text: profile && profile.age ? profile.age : ""
+                            onTextChanged: {
+                                dirty = true;
+                            }
                         }
                     }
                     Rectangle {
-                        width: profile.width
+                        width: profileContainer.width
                         height: childrenRect.height + 16
                         color: Colours.almostWhite
                         //
@@ -141,7 +149,9 @@ AfterTrauma.Page {
                             anchors.margins: 8
                             direction: "Right"
                             text: "Female"
+                            checked: profile ? profile.gender === "female" : false
                             onCheckedChanged: {
+                                dirty = true;
                                 if ( checked ) {
                                     male.checked = false;
                                     nogender.checked = false;
@@ -155,7 +165,9 @@ AfterTrauma.Page {
                             anchors.margins: 8
                             direction: "Right"
                             text: "Male"
+                            checked: profile ? profile.gender === "male" : false
                             onCheckedChanged: {
+                                dirty = true;
                                 if ( checked ) {
                                     female.checked = false;
                                     nogender.checked = false;
@@ -169,8 +181,9 @@ AfterTrauma.Page {
                             anchors.margins: 8
                             direction: "Right"
                             text: "Rather not say"
-                            checked: true
+                            checked: profile ? profile.gender === "notspecified" : true
                             onCheckedChanged: {
+                                dirty = true;
                                 if ( checked ) {
                                     female.checked = false;
                                     male.checked = false;
@@ -179,7 +192,7 @@ AfterTrauma.Page {
                         }
                     }
                     Rectangle {
-                        width: profile.width
+                        width: profileContainer.width
                         height: 128
                         color: Colours.almostWhite
                         //
@@ -189,6 +202,7 @@ AfterTrauma.Page {
                             id: avatar
                             anchors.top: parent.top
                             anchors.left: parent.left
+                            anchors.bottom: parent.bottom
                             anchors.right: parent.right
                             anchors.margins: 16
                             fillMode: Image.PreserveAspectFit
@@ -206,24 +220,26 @@ AfterTrauma.Page {
                                 anchors.fill: parent
                                 onClicked: {
                                     ImagePicker.openCamera();
-                                 }
+                                }
                             }
                         }
                     }
                     Rectangle {
                         height: childrenRect.height + 16
-                        width: profile.width
+                        width: profileContainer.width
                         color: Colours.almostWhite
                         //
                         //
                         //
                         AfterTrauma.TextArea {
+                            id: profileText
                             height: 128
                             anchors.top: parent.top
                             anchors.left: parent.left
                             anchors.right: parent.right
                             anchors.margins: 8
                             placeholderText: "Tell us a little about you and your trauma experience"
+                            text: profile && profile.profile ? profile.profile : ""
                         }
                     }
                 }
@@ -278,14 +294,20 @@ AfterTrauma.Page {
     //
     //
     StackView.onActivated: {
+        dirty = false;
         if ( profile ) {
+            console.log( 'profile:' + profile.username );
         } else {
             console.log( 'no profile!' );
         }
         profileChannel.open();
     }
+
+    StackView.onDeactivating: {
+
+    }
+
     StackView.onDeactivated: {
-        profileChannel.close();
     }
     //
     //
@@ -323,6 +345,7 @@ AfterTrauma.Page {
             var encoded = ImageUtils.urlEncode(url, 256, 256);
             avatar.source = encoded;
             if( profile ) {
+                dirty = true;
                 profile.avatar = encoded;
                 //profile.avatar = url.substring(url.lastIndexOf('/')+1,url.length);
             }
@@ -331,5 +354,48 @@ AfterTrauma.Page {
     //
     //
     //
+    function saveProfile() {
+        if ( patient.checked ) {
+            profile.role = "patient";
+        } else if ( carer.checked ) {
+            profile.role = "carer";
+        }
+        if ( female.checked ) {
+            profile.gender = "female";
+        } else if ( male.checked ) {
+            profile.gender = "male";
+        } else {
+            profile.gender = "notspecified";
+        }
+        if ( age.text.length > 0 && age.acceptableInput ) {
+            profile.age = Qt.atob(age.text);
+        }
+        profile.profile = profileText.text;
+        profileChannel.send({command:'updateprofile',profile:profile});
+    }
+    //
+    //
+    //
+    validate: function() {
+        if ( profile ) {
+            if ( dirty ) {
+                //
+                // serialise profile
+                //
+                confirmDialog.show('<h1>Save Changes?</h1>Do you want to save the changes you have made?', [
+                                       { label: 'yes', action: function() { saveProfile() } },
+                                       { label: 'no', action: function() { profileChannel.close() } }
+                                   ] );
+                return false;
+            }
+            return true;
+        } else {
+            return true;
+        }
+    }
+    //
+    //
+    //
+    property bool dirty: false
     property var profile: null
 }

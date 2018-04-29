@@ -8,9 +8,6 @@ import "utils.js" as Utils
 
 Rectangle {
     id: chart
-    width: 320
-    height: 200
-
     property var startDate: new Date()
     property var endDate: new Date()
     property string period: "year"
@@ -18,215 +15,10 @@ Rectangle {
     property int gridSize: 4
     property real gridStep: gridSize ? (width - canvas.tickMargin) / gridSize : canvas.xGridStep
     property var legend: []
-
     property var values: ({})
-
-    function setup() {
-        var today = new Date();
-        switch( period ) {
-        case "year" :
-            startDate = new Date( today.getFullYear(),0,1);
-            endDate = new Date( today.getFullYear(),11,31);
-            break;
-        case "month" :
-            startDate = new Date( today.getFullYear(),today.getMonth(),1);
-            endDate = new Date( today.getFullYear(),today.getMonth(),Utils.getLastDate(today));
-            break;
-        case "week" :
-            startDate = Utils.getStartOfWeek( today );
-            endDate = Utils.getEndOfWeek( today );
-            break;
-
-        }
-        console.log( 'LineChart.setup : ' + period + ' : start : ' + chart.startDate.toDateString() + ' : end : ' + chart.endDate.toDateString() );
-        canvas.requestPaint();
-    }
-
-    Row {
-        id: periodRow
-        anchors.left: chart.left
-        anchors.right: chart.right
-        anchors.top: chart.top
-        anchors.topMargin: 4
-        spacing: 8
-        /*
-        onWidthChanged: {
-            var buttonsLen = previousButton.width + nextButton.width + yearButton.width + monthButton.width + weekButton.width;
-            var space = (width - buttonsLen) / 3;
-            spacing = Math.max(space, 10);
-        }
-        */
-        AfterTrauma.Button {
-            id: previousButton
-            image: "icons/left_arrow.png"
-            backgroundColour: Colours.red
-            radius: [0]
-            direction: "Right"
-            onClicked: {
-                var year    = chart.startDate.getFullYear();
-                var month   = chart.startDate.getMonth();
-                var day     = chart.startDate.getDate();
-                switch(chart.period) {
-                case "year" :
-                    year--;
-                    startDate = new Date( year,0,1);
-                    endDate = new Date( year,11,31);
-                    chart.gridSize = 12;
-                    break;
-                case "month" :
-                    month--;
-                    if ( month < 0) {
-                        month = 11;
-                        year--;
-                    }
-                    startDate = new Date( year, month, 1 );
-                    endDate = new Date( year, month,Utils.getLastDate(startDate));
-                    gridSize = 0;
-                    break;
-                case "week" :
-                    var newStart = chart.startDate;
-                    newStart.setDate(day-7)
-                    chart.startDate = newStart;
-                    chart.endDate = Utils.getEndOfWeek( startDate );
-                    gridSize = 0;
-                    break;
-                }
-                canvas.requestPaint();
-            }
-        }
-        AfterTrauma.Button {
-            id: nextButton
-            image: "icons/right_arrow.png"
-            backgroundColour: Colours.red
-            radius: [0]
-            direction: "Left"
-            onClicked: {
-                var year    = chart.startDate.getFullYear();
-                var month   = chart.startDate.getMonth();
-                var day     = chart.startDate.getDate();
-                switch(chart.period) {
-                case "year" :
-                    year++;
-                    startDate = new Date( year,0,1);
-                    endDate = new Date( year,11,31);
-                    chart.gridSize = 12;
-                    break;
-                case "month" :
-                    month++;
-                    if ( month > 11 ) {
-                        month = 0;
-                        year++;
-                    }
-                    startDate = new Date( year, month, 1 );
-                    endDate = new Date( year, month,Utils.getLastDate(startDate));
-                    gridSize = 0;
-                    break;
-                case "week" :
-                    var newStart = chart.startDate;
-                    newStart.setDate(day+7)
-                    chart.startDate = newStart;
-                    chart.endDate = Utils.getEndOfWeek( startDate );
-                    gridSize = 0;
-                    break;
-                }
-                canvas.requestPaint();
-            }
-        }
-        AfterTrauma.Button {
-            id: yearButton
-            text: "Year"
-            backgroundColour: "transparent"
-            enabled: chart.period !== "year"
-            textColour: Colours.darkSlate
-            onClicked: {
-                chart.period = "year";
-                chart.setup();
-            }
-        }
-        AfterTrauma.Button {
-            id: monthButton
-            text: "Month"
-            backgroundColour: "transparent"
-            enabled: chart.period !== "month"
-            textColour: Colours.darkSlate
-            onClicked: {
-                chart.period = "month";
-                chart.setup();
-            }
-        }
-        AfterTrauma.Button {
-            id: weekButton
-            text: "Week"
-            backgroundColour: "transparent"
-            enabled: chart.period !== "week"
-            textColour: Colours.darkSlate
-            onClicked: {
-                chart.period = "week";
-                chart.setup();
-            }
-        }
-        //
-        //
-        //
-
-        AfterTrauma.Button {
-            text: "Share"
-            backgroundColour: Colours.veryLightSlate
-            textColour: Colours.almostWhite
-            LineChartData {
-                id: data
-                font: fonts.light;
-                title: chart.period.charAt(0).toUpperCase() + chart.period.slice(1) + 'ly Progess';
-                subtitle: startDate.toDateString() + ' to ' + endDate.toDateString();
-                showLegend: true
-            }
-
-            onClicked: {
-                var pdfPath = SystemUtils.documentDirectory() + '/' + chart.period + 'ly.pdf';
-                console.log( 'pdf mimetype : ' + SystemUtils.mimeTypeForFile('ly.pdf') );
-                data.clearDataSets();
-                var categoryIndex = 0;
-                for ( var category in values ) {
-                    data.addDataSet(category,Colours.categoryColour(categoryIndex),values[ category ]);
-                    categoryIndex++;
-                }
-
-                data.clearAxis();
-                var xAxis = data.addAxis('days',LineChartData.XAxis,LineChartData.AlignEnd);
-                data.setAxisSteps(xAxis, chart.period === "year" ? 12 : chart.period === "month" ? 4 : 7);
-                data.setAxisRange( xAxis, startDate, endDate);
-                var yAxis = data.addAxis('value',LineChartData.YAxis,LineChartData.AlignStart);
-                data.setAxisSteps( yAxis, 5 );
-                data.save( pdfPath );
-                ShareDialog.shareFile('Shared from AfterTrauma', pdfPath);
-                //confirmDialog.show('char saved to : ' + pdfPath );
-            }
-        }
-    }
-
-    Text {
-        id: fromDate
-        color: Colours.veryDarkSlate
-        font.weight: Font.Light
-        font.family: fonts.light
-        font.pointSize: 8
-        anchors.left: parent.left
-        anchors.bottom: parent.bottom
-        text: "| " + startDate.toDateString()
-    }
-
-    Text {
-        id: toDate
-        color: Colours.veryDarkSlate
-        font.weight: Font.Light
-        font.family: fonts.light
-        font.pointSize: 8
-        anchors.right: parent.right
-        anchors.rightMargin: canvas.tickMargin
-        anchors.bottom: parent.bottom
-        text: endDate.toDateString() + " |"
-    }
-
+    //
+    //
+    //
     Canvas {
         id: canvas
 
@@ -234,21 +26,24 @@ Rectangle {
         // See Canvas documentation for available options.
         // renderTarget: Canvas.FramebufferObject
         // renderStrategy: Canvas.Threaded
-
-        anchors.top: periodRow.bottom
+        anchors.fill: parent
+        /*
+        anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.bottom: fromDate.top
-
+        anchors.bottom: parent.verticalCenter
+        */
         property int pixelSkip: 1
         property int numDays: 1
-        property int tickMargin: 34
+        //property int tickMargin: 34
+        property int tickMargin: 0
 
         property real xGridStep: (width - tickMargin) / numDays
         property real yGridOffset: height / 26
         property real yGridStep: height / 12
 
         function drawBackground(ctx) {
+            /*
             ctx.save();
             ctx.fillStyle = Colours.almostWhite;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -286,6 +81,7 @@ Rectangle {
             ctx.stroke();
 
             ctx.restore();
+            */
         }
 
         function drawScales(ctx, high, low, vol)
@@ -294,16 +90,18 @@ Rectangle {
             ctx.strokeStyle = "#888888";
             ctx.font = "10px Open Sans"
             ctx.beginPath();
-
-            // prices on y-axis
+            //
+            // value on y-axis
+            //
             var x = canvas.width - tickMargin + 3;
-            var priceStep = (high - low) / 9.0;
+            var valueStep = (high - low) / 9.0;
             for (var i = 0; i < 10; i += 2) {
-                var price = parseFloat(high - i * priceStep).toFixed(1);
-                ctx.text(price, x, canvas.yGridOffset + i * yGridStep - 2);
+                var value = parseFloat(high - i * valueStep).toFixed(1);
+                ctx.text(value, x, canvas.yGridOffset + i * yGridStep - 2);
             }
-
-            // volume scale
+            //
+            // date scale
+            //
             for (i = 0; i < 3; i++) {
                 var volume = volumeToString(vol - (i * (vol/3)));
                 ctx.text(volume, x, canvas.yGridOffset + (i + 9) * yGridStep + 10);
@@ -313,7 +111,9 @@ Rectangle {
             ctx.stroke();
             ctx.restore();
         }
-
+        //
+        //
+        //
         function drawValues(ctx, points, colour) {
             ctx.save();
             ctx.globalAlpha = 0.7;
@@ -343,14 +143,15 @@ Rectangle {
             ctx.shadowColor = "#aaaaaa";
             ctx.beginPath();
 
-            ctx.fillText(msg, (canvas.width - tickMargin) / 2,
-                              (canvas.height - yGridOffset - yGridStep) / 2);
+            ctx.fillText(msg, (canvas.width - tickMargin) / 2, (canvas.height - yGridOffset - yGridStep) / 2);
 
             ctx.closePath();
             ctx.stroke();
             ctx.restore();
         }
-
+        //
+        //
+        //
         onPaint: {
             //
             //
@@ -427,23 +228,68 @@ Rectangle {
             //drawScales(ctx, highestPrice, lowestPrice, highestVolume);
         }
     }
+    Text {
+        id: fromDate
+        color: Colours.veryDarkSlate
+        font.weight: Font.Light
+        font.family: fonts.light
+        font.pointSize: 8
+        anchors.left: parent.left
+        anchors.bottom: parent.bottom
+        text: "| " + startDate.toDateString()
+    }
+
+    Text {
+        id: toDate
+        color: Colours.veryDarkSlate
+        font.weight: Font.Light
+        font.family: fonts.light
+        font.pointSize: 8
+        anchors.right: parent.right
+        anchors.rightMargin: canvas.tickMargin
+        anchors.bottom: parent.bottom
+        text: endDate.toDateString() + " |"
+    }
     //
     //
     //
     onStartDateChanged: {
         var index = dailyModel.indexOfFirstDayBefore(startDate);
-        previousButton.enabled = index < dailyModel.count - 1;
         fromDate.text = '| ' + startDate.toDateString();
     }
     onEndDateChanged: {
         var index = dailyModel.indexOfFirstDayAfter(endDate);
-        nextButton.enabled = index > 0;
         toDate.text = endDate.toDateString() + ' |';
     }
-
     /*
     Component.onCompleted: {
         setup();
     }
     */
+    //
+    //
+    //
+    function setup() {
+        var today = new Date();
+        switch( period ) {
+        case "year" :
+            startDate = new Date( today.getFullYear(),0,1);
+            endDate = new Date( today.getFullYear(),11,31);
+            break;
+        case "month" :
+            startDate = new Date( today.getFullYear(),today.getMonth(),1);
+            endDate = new Date( today.getFullYear(),today.getMonth(),Utils.getLastDate(today));
+            break;
+        case "week" :
+            startDate = Utils.getStartOfWeek( today );
+            endDate = Utils.getEndOfWeek( today );
+            break;
+
+        }
+        console.log( 'LineChart.setup : ' + period + ' : start : ' + chart.startDate.toDateString() + ' : end : ' + chart.endDate.toDateString() );
+        canvas.requestPaint();
+    }
+    function forceRepaint() {
+        canvas.requestPaint();
+    }
 }

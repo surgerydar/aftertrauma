@@ -212,7 +212,7 @@ ApplicationWindow {
         if ( SystemUtils.isFirstRun() ) {
             console.log( 'installing' );
             //stack.push("qrc:///Install.qml")
-            SystemUtils.install();
+            //SystemUtils.install();
             intro.open();
         } else {
             //

@@ -30,8 +30,9 @@ AfterTrauma.Page {
         //
         //
         delegate: ChallengeManagerItem {
-            anchors.left: parent.left
-            anchors.right: parent.right
+            //anchors.left: parent.left
+            //anchors.right: parent.right
+            width: challenges.width
             name: model.name
             activity: model.activity
             count: model.count || 0

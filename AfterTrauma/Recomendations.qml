@@ -193,7 +193,7 @@ DatabaseList {
         var daily = dailyModel.getToday();
         if ( !daily || !daily.values ) {
             console.log( 'getRecomendation : unable to find valid daily : ' + daily ? "undefined" : JSON.stringify(daily));
-            return 'unable to find daily';
+            return 'unable to find daily results';
         }
         console.log( 'getRecomendation : daily : ' + JSON.stringify( daily ) );
         //
@@ -215,6 +215,6 @@ DatabaseList {
         //
         //
         //
-        return recomendation ? recomendation.recomendation : 'Not sure what to say : ' + c;
+        return recomendation ? recomendation.recomendation : 'Insufficient information to assess : ' + c;
     }
 }

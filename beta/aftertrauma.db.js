@@ -78,7 +78,7 @@ Db.prototype.updateUser = function( id, user ) {
     return new Promise( function( resolve, reject ) {
          try {
              if ( user._id ) user._id = undefined; // avoid conflicts
-             db.collection('users').findOneAndUpdate( { id: id }, user, function( err, result ) {
+             db.collection('users').findOneAndUpdate( { id: id }, { $set: {user} }, function( err, result ) {
                 if ( err ) {
                     console.log( err );
                     reject( err );

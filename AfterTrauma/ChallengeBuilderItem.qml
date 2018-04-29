@@ -40,10 +40,11 @@ Item {
         anchors.left: parent.left
         anchors.right: decorationItem.left
         anchors.margins: 16
+        clip: true
         color: Colours.almostWhite
         fontSizeMode: Text.Fit
         wrapMode: Text.WordWrap
-        minimumPixelSize: 12
+        minimumPixelSize: 14
         font.weight: Font.Light
         font.family: fonts.light
         font.pixelSize: 32

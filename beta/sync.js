@@ -79,5 +79,26 @@ Sync.prototype.documents = function( wss, ws, command ) {
     }); 
 }
 
+Sync.prototype.challenges = function( wss, ws, command ) {
+    console.log( 'Sync.challenges : date:' + command.date );
+    //
+    // update user
+    //
+    process.nextTick(function(){   
+        let query = {
+            date: { $gt: command.date || 0 }
+        };
+        _db.find( 'challenge', query ).then( function( response ) {
+            command.status = 'OK';
+            command.response = response;
+            ws.send(JSON.stringify(command));
+        }).catch( function( error ) {
+            command.status = 'ERROR';
+            command.error = error;
+            ws.send(JSON.stringify(command));
+        });
+    }); 
+}
+
 module.exports = new Sync();
 

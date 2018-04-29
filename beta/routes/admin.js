@@ -202,7 +202,7 @@ module.exports = function( authentication, db ) {
     //
     router.get('/:section', authentication, function (req, res) { // get section categories
         var section = req.params.section;
-        db.find( 'category', { section: section }, { title: 1 } ).then( function( response ) {
+        db.find( 'category', { section: section }, { title: 1 }, { index: 1 } ).then( function( response ) {
             res.render('section', {title:'AfterTrauma > ' + capitalise( section ), section: section, categories: response });
         }).catch( function( error ) {
             //
@@ -225,22 +225,63 @@ module.exports = function( authentication, db ) {
     });
     router.put('/:section/:category', authentication, function (req, res) { // update category
         var category    = req.body;
-        category.date	= Date.now();
         var _id         = db.ObjectId(req.params.category);
-        db.updateOne( 'category',  { _id: _id }, { $set: category } ).then( function( response ) {
-            res.json({ status: 'OK', response: response});
+        var update = {
+            title: category.title,
+            date: Date.now()
+        };
+        //
+        // update category
+        //
+        db.updateOne( 'category',  { _id: _id }, { $set: update } ).then( function( response ) {
+            //
+            // update document order
+            //
+            // TODO: restructure this to handle errors correctly
+            //
+            if ( category.order ) {
+                category.order.forEach(function(order){
+                    var documentId = db.ObjectId(order.id);
+                    db.updateOne( 'document', { _id: documentId }, { $set: { index: order.index } } ).then( function( response ) {
+                        
+                    }).catch(function( error ) {
+                        res.json({ status: 'ERROR', error: error});
+                    });    
+                }); 
+                res.json({ status: 'OK', response: response});
+            } else {
+                res.json({ status: 'OK', response: response});
+            }
         }).catch( function( error ) {
             res.json({ status: 'ERROR', error: error});
         });
     });
     router.delete('/:section/:category', authentication, function (req, res) {
         var _id = db.ObjectId(req.params.category);
-        db.remove( 'category', { _id: _id } ).then( function( response ) {
+        db.remove( 'category', { _id: _id } ).then( function( response ) { // TODO: should remove documents attached to category
             res.json({ status: 'OK', response: response});
         }).catch( function( error ) {
             res.json({ status: 'ERROR', error: error});
         });
 
+    });
+    router.put('/:section', authentication, function (req, res) { // update category order
+        var section = req.params.section;
+        var update  = req.body;
+        if ( update.order ) {
+            //
+            // TODO: restructure this to handle errors correctly
+            //
+            update.order.forEach( function( order ) {
+                var categoryId = db.ObjectId(order.id);
+                db.updateOne( 'category', { _id: categoryId }, { $set: { index: order.index } } ).then( function( response ) {
+
+                }).catch(function( error ) {
+                    res.json({ status: 'ERROR', error: error});
+                });
+            });
+        }
+        res.json({ status: 'OK', response: ''});
     });
     //
     // category documents
@@ -249,7 +290,7 @@ module.exports = function( authentication, db ) {
         var section = req.params.section;
         var _id = db.ObjectId(req.params.category);
         db.findOne( 'category', { _id: _id } ).then( function( category ) {
-            db.find( 'document', { category: req.params.category } ).then( function( documents ) {
+            db.find( 'document', { category: req.params.category }, {}, { index: 1 } ).then( function( documents ) {
                 res.render('category', {title:'AfterTrauma > ' + capitalise( section ) + ' > ' + category.title, section: category.section, category: category, documents: documents });
             }).catch( function( error ) {
                 //

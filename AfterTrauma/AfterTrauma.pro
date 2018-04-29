@@ -74,33 +74,7 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-DISTFILES += \
-    factsheets/emotions.introduction.json \
-    factsheets/body.introduction.json \
-    factsheets/body.json \
-    factsheets/categories.json \
-    factsheets/emotions.cominghomefromhospital.json \
-    factsheets/emotions.depression.json \
-    factsheets/emotions.helpfulorganisations.json \
-    factsheets/emotions.howtohelpalovedone.json \
-    factsheets/emotions.json \
-    factsheets/emotions.managingdifficultfeelings.json \
-    factsheets/emotions.stressaftertrauma.json \
-    factsheets/emotions.treatmentapproaches.json \
-    factsheets/emotions.whendoiaskforhelp.json \
-    factsheets/forcarers.introduction.json \
-    factsheets/forcarers.json \
-    factsheets/life.introduction.json \
-    factsheets/life.json \
-    factsheets/mind.introduction.json \
-    factsheets/mind.json \
-    factsheets/relationships.introduction.json \
-    factsheets/relationships.json \
-    factsheets/services.introduction.json \
-    factsheets/services.json \
-    factsheets/traumasurvivorandcarerstories.introduction.json \
-    factsheets/traumasurvivorandcarerstories.json \
-    media/emotions.introduction.image1.png
+DISTFILES +=
 
 ios {
     OBJECTIVE_SOURCES += ios/ImagePicker.mm
@@ -108,13 +82,13 @@ ios {
 
     QMAKE_INFO_PLIST = ios/Info.plist
 
-    factsheet.files = ./factsheets
-    factsheet.path =
-    QMAKE_BUNDLE_DATA += factsheet
+    # factsheet.files = ./factsheets
+    # factsheet.path =
+    # QMAKE_BUNDLE_DATA += factsheet
 
-    factsheetmedia.files = ./media
-    factsheetmedia.path =
-    QMAKE_BUNDLE_DATA += factsheetmedia
+    # factsheetmedia.files = ./media
+    # factsheetmedia.path =
+    # QMAKE_BUNDLE_DATA += factsheetmedia
 
     launch_images.files = $$files($$PWD/ios/launchimages/LaunchImage*.png)
     QMAKE_BUNDLE_DATA += launch_images
@@ -128,13 +102,13 @@ ios {
 }
 
 osx {
-    factsheet.files = ./factsheets
-    factsheet.path = Contents/MacOS/
-    QMAKE_BUNDLE_DATA += factsheet
+    # factsheet.files = ./factsheets
+    # factsheet.path = Contents/MacOS/
+    # QMAKE_BUNDLE_DATA += factsheet
 
-    factsheetmedia.files = ./media
-    factsheetmedia.path = Contents/MacOS/
-    QMAKE_BUNDLE_DATA += factsheetmedia
+    # factsheetmedia.files = ./media
+    # factsheetmedia.path = Contents/MacOS/
+    # QMAKE_BUNDLE_DATA += factsheetmedia
 }
 
 android {
@@ -147,13 +121,13 @@ android {
     ANDROID_EXTRA_LIBS += $$PWD/android/OpenSSL/armeabi-v7a/libssl.so
     ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
 
-    factsheet.files = ./factsheets
-    factsheet.path = /assets
-    INSTALLS += factsheet
+    # factsheet.files = ./factsheets
+    # factsheet.path = /assets
+    # INSTALLS += factsheet
 
-    factsheetmedia.files = ./media
-    factsheetmedia.path = /assets
-    INSTALLS += factsheetmedia
+    # factsheetmedia.files = ./media
+    # factsheetmedia.path = /assets
+    # INSTALLS += factsheetmedia
 
     OTHER_FILES += ./android/AndroidManifest.xml
 }

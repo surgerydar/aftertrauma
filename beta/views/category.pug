@@ -11,7 +11,7 @@ html
                 button#add( data-section= section data-category= category._id ) +
                 button#save( data-section= section data-category= category._id ) save
             input#title(type='text' value= category.title placeholder='category name')
-            .list( data-sortable=true )
+            .list#documents( data-sortable=true )
                 each document in documents
                     .list-item( data-type='document' data-category= category._id data-id= document._id )
                         h2= document.title

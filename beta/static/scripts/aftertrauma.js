@@ -410,12 +410,58 @@ var rest = {
 				} else if ( category ) {
                     var endpoint = '/admin/' + section + '/'  + category;
                     var data = {
-                        title: d.querySelector('#title').value
+                        title: d.querySelector('#title').value,
+                        order: []
                     }
+                    //
+                    // get document order
+                    //
+                    var documents = d.querySelector('#documents');
+                    if ( documents ) {
+                        var documentList = documents.querySelectorAll('div.list-item');
+                        for ( var i = 0; i < documentList.length; i++ ) {
+                            data.order.push({
+                                id: documentList[ i ].getAttribute('data-id'),
+                                index: i
+                            });
+                        }
+                    }
+                    //
+                    //
+                    //
 					rest.put( endpoint, data, {
 						onloadend: function(evt) {
 							//
 							// return to document
+							//
+							w.location.reload();
+						},
+						onerror: function(error) {
+							alert( error );
+						}
+					});
+                } else if ( section ) {
+                    var endpoint = '/admin/' + section;
+                    var data = {
+                        order: []
+                    };
+                    var categories = d.querySelector('#categories');
+                    if ( categories ) {
+                        var categoryList = categories.querySelectorAll('div.list-item');
+                        for ( var i = 0; i < categoryList.length; i++ ) {
+                            data.order.push({
+                                id: categoryList[ i ].getAttribute('data-id'),
+                                index: i
+                            });
+                        }
+                    }
+                    //
+                    //
+                    //
+					rest.put( endpoint, data, {
+						onloadend: function(evt) {
+							//
+							// return to section
 							//
 							w.location.reload();
 						},
@@ -502,7 +548,6 @@ var rest = {
                     }
                 })(blocks[ i ]);
             }
-            
         }
     }
     //

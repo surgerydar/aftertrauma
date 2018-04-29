@@ -62,13 +62,13 @@ AfterTrauma.Page {
         AfterTrauma.TextArea {
             id: messageText
             height: contentHeight + 16
-            anchors.top: parent.top
+            //anchors.top: parent.top
             anchors.left: parent.left
-            //anchors.bottom: parent.bottom
+            anchors.bottom: parent.bottom
             anchors.right: addMessage.left
             anchors.leftMargin: 8
             anchors.rightMargin: 4
-            //anchors.bottomMargin: 28
+            anchors.bottomMargin: 16
             wrapMode: TextArea.WordWrap
         }
         AfterTrauma.Button {

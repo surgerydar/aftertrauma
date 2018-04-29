@@ -80,12 +80,18 @@ AfterTrauma.Page {
     //
     //
     //
+    footer: Item {
+        height: 0
+    }
+    //
+    //
+    //
     StackView.onActivated: {
         var data = [
                     { label: "Challenge name", type: "name", field: "name" },
                     { label: "Challenge activity", type: "description", field: "activity" },
                     { label: "Repeats", type: "number", field: "repeats" },
-                    { label: "How often", type: "options", options: [ { label: "Every hour" }, { label: "Morning and evening" }, { label: "Daily" }, { label: "Weekly" } ], field: "frequency"  },
+                    { label: "How often", type: "options", options: [ { label: "Every hour" }, { label: "Four times daily" }, { label: "Morning and evening" }, { label: "Daily" }, { label: "Weekly" } ], field: "frequency"  },
                     { label: "Active", type: "switch", field: "active" },
                     { label: "Notifications", type: "switch", field: "notifications"  }
                 ];

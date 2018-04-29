@@ -176,7 +176,7 @@ Rectangle {
             textHorizontalAlignment: Text.AlignRight
             textVerticalAlignment: Text.AlignVCenter
             textSize: 32
-            text: "Graphs"
+            text: "My Progress"
             image: "icons/chart.png"
             direction: "Right"
             spacing: 8
@@ -190,7 +190,7 @@ Rectangle {
             textHorizontalAlignment: Text.AlignRight
             textVerticalAlignment: Text.AlignVCenter
             textSize: 32
-            text: "RESOURCES"
+            text: "Information"
             image: "icons/resources.png"
             direction: "Right"
             spacing: 8
@@ -204,7 +204,7 @@ Rectangle {
             textHorizontalAlignment: Text.AlignRight
             textVerticalAlignment: Text.AlignVCenter
             textSize: 32
-            text: "SEARCH"
+            text: "Search"
             image: "icons/search.png"
             direction: "Right"
             spacing: 8
@@ -218,7 +218,7 @@ Rectangle {
             textHorizontalAlignment: Text.AlignRight
             textVerticalAlignment: Text.AlignVCenter
             textSize: 32
-            text: "CHAT"
+            text: "Chat"
             image: "icons/chat.png"
             direction: "Right"
             spacing: 8
@@ -232,7 +232,7 @@ Rectangle {
             textHorizontalAlignment: Text.AlignRight
             textVerticalAlignment: Text.AlignVCenter
             textSize: 32
-            text: "HELP"
+            text: "Help"
             image: "icons/help.png"
             direction: "Right"
             spacing: 8

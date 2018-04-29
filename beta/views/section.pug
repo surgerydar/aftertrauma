@@ -9,7 +9,8 @@ html
                 button#back back
                 h1= title
                 button#add( data-section= section ) +
-            .list( data-sortable=true )
+                button#save( data-section= section ) save
+            .list#categories( data-sortable=true )
                 each category in categories
                     .list-item( data-type='item' data-section= category.section data-id= category._id )
                         h2= category.title

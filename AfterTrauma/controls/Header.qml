@@ -33,9 +33,9 @@ Item {
         height: 64
         anchors.top: parent.top
         anchors.left: parent.left
-        anchors.leftMargin: ( showNavigation ? backButton.width : 0 )
+        anchors.leftMargin: ( showNavigation ? backButton.width + 4: 0 )
         anchors.right: parent.right
-        anchors.rightMargin: ( showNavigation ? backButton.width : 0 )
+        anchors.rightMargin: ( showNavigation ? backButton.width + 4 : 0 )
         //
         //
         //
@@ -55,8 +55,10 @@ Item {
         id: backButton
         anchors.verticalCenter: titleText.verticalCenter
         anchors.left: parent.left
+        anchors.leftMargin: 4
         image: "../icons/left_arrow.png"
         backgroundColour: Qt.colorEqual(container.backgroundColour,Colours.almostWhite) ? Colours.veryLightSlate : "transparent"
+        radius: 0
         visible: showNavigation && stack && stack.depth > 1
         onClicked: {
             if ( validate ) {

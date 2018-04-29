@@ -70,7 +70,7 @@ void CachedMediaSource::setMediaSource() {
                     QNetworkReply* input = NetworkAccess::shared()->get(url);
                     if ( input ) {
                         //
-                        // TODO: replace tee with downloader or get setMedia to accept tee as input
+                        //
                         //
                         qDebug() << "CachedMediaSource::setMediaSource : creating tee from url : " << url;
                         CachedTee* tee = new CachedTee; // TODO: where is this deleted
