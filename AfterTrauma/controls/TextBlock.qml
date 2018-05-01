@@ -34,6 +34,7 @@ Item {
         //
         //
         wrapMode: Text.WordWrap
+        textFormat: Text.RichText
         //
         //
         //

@@ -65,6 +65,12 @@ AfterTrauma.Page {
     //
     //
     //
+    footer: Item {
+        height: 0
+    }
+    //
+    //
+    //
     StackView.onActivated: {
         //dailyList.forceLayout();
     }

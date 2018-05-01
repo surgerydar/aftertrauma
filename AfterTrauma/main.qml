@@ -235,7 +235,6 @@ ApplicationWindow {
             stack.push("qrc:///Dashboard.qml");
             flowerChart.enabled = true;
         }
-
     }
     function testUser() {
         return { id:"{5f9ba729-6a16-48c6-81a2-2de6d3db69ca}", username: "justTestin" };

@@ -261,32 +261,40 @@ void DatabaseList::endBatch() {
 //
 //
 //
+inline bool compare( const QVariantMap& a, const QVariantMap& b, const QString& field, const int direction ) {
+    bool aHasIt = a.contains(field);
+    bool bHasIt = b.contains(field);
+    if ( direction > 0 ) {
+        if ( aHasIt && bHasIt ) {
+            return a[field] < b[field];
+        } else if ( aHasIt && !bHasIt ) {
+            return false;
+        } if( !aHasIt && bHasIt ) {
+            return true;
+        }
+    } else {
+        if ( aHasIt && bHasIt ) {
+            return a[field] > b[field];
+        } else if ( !aHasIt && bHasIt ) {
+            return false;
+        } if( aHasIt && !bHasIt ) {
+            return true;
+        }
+    }
+    return false;
+}
+//
+//
+//
 void DatabaseList::_sort() {
     if ( !m_sort.empty() ) {
-        QString field = m_sort.firstKey();
-        int direction = m_sort.first().value<int>();
-        //qDebug() << "sorting " << m_objects.size() << " items by : " << field << " direction : " << direction;
-        std::sort(m_objects.begin(),m_objects.end(),[&field,&direction](const QVariantMap& a, const QVariantMap& b) -> bool {
-            bool aHasIt = a.contains(field);
-            bool bHasIt = b.contains(field);
-            if ( direction > 0 ) {
-                if ( aHasIt && bHasIt ) {
-                    return a[field] < b[field];
-                } else if ( aHasIt && !bHasIt ) {
-                    return false;
-                } if( !aHasIt && bHasIt ) {
-                    return true;
-                }
-            } else {
-                if ( aHasIt && bHasIt ) {
-                    return a[field] > b[field];
-                } else if ( !aHasIt && bHasIt ) {
-                    return false;
-                } if( aHasIt && !bHasIt ) {
-                    return true;
-                }
+        std::sort(m_objects.begin(),m_objects.end(),[this](const QVariantMap& a, const QVariantMap& b) -> bool {
+            QVariantMap::const_iterator it = this->m_sort.constBegin();
+            while (it != this->m_sort.constEnd()) {
+                if ( !compare(a,b,it.key(),it.value().toInt() ) ) return false;
+                ++it;
             }
-            return false;
+            return true;
         });
     }
 }
