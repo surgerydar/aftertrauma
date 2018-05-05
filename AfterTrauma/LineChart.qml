@@ -8,6 +8,7 @@ import "utils.js" as Utils
 
 Rectangle {
     id: chart
+    color: Colours.almostWhite
     property var startDate: new Date()
     property var endDate: new Date()
     property string period: "year"
@@ -19,6 +20,27 @@ Rectangle {
     //
     //
     //
+    Column {
+        id: yScale
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.bottom: fromDate.top
+        anchors.margins: 4
+        width: 64
+        Repeater {
+            model: 5
+            Image {
+                width: yScale.width
+                height: yScale.height / 5
+                fillMode: Image.PreserveAspectFit
+                opacity: .75
+                source: "icons/face" + index + ".png"
+            }
+        }
+    }
+    //
+    //
+    //
     Canvas {
         id: canvas
 
@@ -26,13 +48,18 @@ Rectangle {
         // See Canvas documentation for available options.
         // renderTarget: Canvas.FramebufferObject
         // renderStrategy: Canvas.Threaded
-        anchors.fill: parent
         /*
+        anchors.fill: parent
+        anchors.topMargin: 4
+        anchors.bottomMargin: 4
+        */
         anchors.top: parent.top
         anchors.left: parent.left
+        anchors.bottom: fromDate.top
         anchors.right: parent.right
-        anchors.bottom: parent.verticalCenter
-        */
+        //
+        //
+        //
         property int pixelSkip: 1
         property int numDays: 1
         //property int tickMargin: 34
@@ -43,10 +70,12 @@ Rectangle {
         property real yGridStep: height / 12
 
         function drawBackground(ctx) {
+            ctx.clearRect(0,0,canvas.width, canvas.height);
             /*
             ctx.save();
             ctx.fillStyle = Colours.almostWhite;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
+
             ctx.strokeStyle = Colours.veryLightSlate;
             ctx.beginPath();
             // Horizontal grid lines
@@ -82,10 +111,12 @@ Rectangle {
 
             ctx.restore();
             */
-        }
 
-        function drawScales(ctx, high, low, vol)
-        {
+        }
+        //
+        //
+        //
+        function drawScales(ctx, high, low, vol) {
             ctx.save();
             ctx.strokeStyle = "#888888";
             ctx.font = "10px Open Sans"
@@ -233,10 +264,10 @@ Rectangle {
         color: Colours.veryDarkSlate
         font.weight: Font.Light
         font.family: fonts.light
-        font.pointSize: 8
+        font.pointSize: 18
         anchors.left: parent.left
         anchors.bottom: parent.bottom
-        text: "| " + startDate.toDateString()
+        text: "< " + startDate.toDateString()
     }
 
     Text {
@@ -244,22 +275,22 @@ Rectangle {
         color: Colours.veryDarkSlate
         font.weight: Font.Light
         font.family: fonts.light
-        font.pointSize: 8
+        font.pointSize: 18
         anchors.right: parent.right
         anchors.rightMargin: canvas.tickMargin
         anchors.bottom: parent.bottom
-        text: endDate.toDateString() + " |"
+        text: endDate.toDateString() + " >"
     }
     //
     //
     //
     onStartDateChanged: {
         var index = dailyModel.indexOfFirstDayBefore(startDate);
-        fromDate.text = '| ' + startDate.toDateString();
+        fromDate.text = '< ' + startDate.toDateString();
     }
     onEndDateChanged: {
         var index = dailyModel.indexOfFirstDayAfter(endDate);
-        toDate.text = endDate.toDateString() + ' |';
+        toDate.text = endDate.toDateString() + ' >';
     }
     /*
     Component.onCompleted: {

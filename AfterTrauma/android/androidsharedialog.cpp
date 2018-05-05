@@ -15,6 +15,7 @@ void _shareFile( QString text, QString path) {
     auto content = text;
     auto ACTION_SEND = QAndroidJniObject::getStaticObjectField("android/content/Intent", "ACTION_SEND", "Ljava/lang/String;");
     auto EXTRA_TEXT = QAndroidJniObject::getStaticObjectField("android/content/Intent", "EXTRA_TEXT", "Ljava/lang/String;");
+    auto EXTRA_SUBJECT = QAndroidJniObject::getStaticObjectField("android/content/Intent", "EXTRA_SUBJECT", "Ljava/lang/String;");
     auto EXTRA_STREAM = QAndroidJniObject::getStaticObjectField("android/content/Intent", "EXTRA_STREAM", "Ljava/lang/String;");
     //auto FLAG_GRANT_WRITE_URI_PERMISSION = QAndroidJniObject::getStaticObjectField("android/content/Intent", "FLAG_GRANT_WRITE_URI_PERMISSION", "Ljava/lang/String;");
     //auto FLAG_GRANT_READ_URI_PERMISSION = QAndroidJniObject::getStaticObjectField("android/content/Intent", "FLAG_GRANT_READ_URI_PERMISSION", "Ljava/lang/String;");
@@ -23,16 +24,17 @@ void _shareFile( QString text, QString path) {
     auto intent = QAndroidJniObject("android/content/Intent", "(Ljava/lang/String;)V", ACTION_SEND.object());
 
     // Intent  Intent.putExtra(String name, String value)
-    intent.callObjectMethod("putExtra", "(Ljava/lang/String;Ljava/lang/String;)Landroid/content/Intent;", EXTRA_TEXT.object(), QAndroidJniObject::fromString(content).object());
+    intent.callObjectMethod("putExtra", "(Ljava/lang/String;Ljava/lang/String;)Landroid/content/Intent;", EXTRA_TEXT.object<jstring>(), QAndroidJniObject::fromString(text).object<jstring>());
+    intent.callObjectMethod("putExtra", "(Ljava/lang/String;Ljava/lang/String;)Landroid/content/Intent;", EXTRA_SUBJECT.object<jstring>(), QAndroidJniObject::fromString(text).object<jstring>());
 
     QAndroidJniObject uri =  QAndroidJniObject::callStaticObjectMethod(
-                "android/net/Uri", "parse", "(Ljava/lang/String;)Landroid/net/Uri;", QAndroidJniObject::fromString(url.toString()).object());
-    qDebug() << "Sharing : " << uri.toString();
+                "android/net/Uri", "parse", "(Ljava/lang/String;)Landroid/net/Uri;", QAndroidJniObject::fromString(url.toString()).object<jstring>());
+    qDebug() << "Sharing : " << uri.toString() << " mimeType:" << mime;
     // shareIntent.putExtra(Intent.EXTRA_STREAM, Uri);
-    intent.callObjectMethod("putExtra", "(Ljava/lang/String;Landroid/net/Uri;)Landroid/content/Intent;", EXTRA_STREAM.object(), uri.object<jobject>());
+    intent.callObjectMethod("putExtra", "(Ljava/lang/String;Landroid/net/Uri;)Landroid/content/Intent;", EXTRA_STREAM.object<jstring>(), uri.object<jobject>());
 
     // Intent  Intent.setType(String type)
-    intent.callObjectMethod("setType", "(Ljava/lang/String;)Landroid/content/Intent;", QAndroidJniObject::fromString(mime).object());
+    intent.callObjectMethod("setType", "(Ljava/lang/String;)Landroid/content/Intent;", QAndroidJniObject::fromString(mime).object<jstring>());
     //intent.callObjectMethod("setType", "(Ljava/lang/String;)Landroid/content/Intent;", QAndroidJniObject::fromString("plain/text").object());
     qDebug() << intent.toString();
     /*
@@ -43,7 +45,7 @@ void _shareFile( QString text, QString path) {
     qDebug() << intent.toString();
     */
     // static Intent Intent.createChooser(Intent target, CharSequence title)
-    auto chooserIntent = QAndroidJniObject::callStaticObjectMethod("android/content/Intent", "createChooser", "(Landroid/content/Intent;Ljava/lang/CharSequence;)Landroid/content/Intent;", intent.object(), QAndroidJniObject::fromString(QString("Choose destination...")).object());
+    auto chooserIntent = QAndroidJniObject::callStaticObjectMethod("android/content/Intent", "createChooser", "(Landroid/content/Intent;Ljava/lang/CharSequence;)Landroid/content/Intent;", intent.object(), QAndroidJniObject::fromString(QString("Choose destination...")).object<jstring>());
     qDebug() << chooserIntent.toString();
 
     QtAndroid::startActivity(chooserIntent, 0, nullptr);

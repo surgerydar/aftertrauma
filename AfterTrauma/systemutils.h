@@ -31,7 +31,8 @@ public slots:
     //
     //
     //
-    void moveFile( QString from, QString to, bool force = false );
+    bool copyFile( QString from, QString to, bool force = false );
+    bool moveFile( QString from, QString to, bool force = false );
     //
     //
     //

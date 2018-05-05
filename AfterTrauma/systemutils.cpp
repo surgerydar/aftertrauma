@@ -71,13 +71,21 @@ QString SystemUtils::temporaryDirectory() {
 //
 //
 //
-void SystemUtils::moveFile( QString from, QString to, bool force ) {
+bool SystemUtils::copyFile( QString from, QString to, bool force ) {
     if ( force ) {
         if ( QFile::exists(to) ) {
             QFile::remove(to);
         }
     }
-    QFile::rename( from, to );
+    return QFile::copy( from, to );
+}
+bool SystemUtils::moveFile( QString from, QString to, bool force ) {
+    if ( force ) {
+        if ( QFile::exists(to) ) {
+            QFile::remove(to);
+        }
+    }
+    return QFile::rename( from, to );
 }
 //
 //

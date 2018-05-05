@@ -4,6 +4,7 @@ import QtQuick.Controls 2.1
 import "controls" as AfterTrauma
 import "colours.js" as Colours
 import "utils.js" as Utils
+import SodaControls 1.0
 
 AfterTrauma.Page {
     id: container
@@ -64,54 +65,58 @@ AfterTrauma.Page {
             //
             //
             //
+            AfterTrauma.Button {
+                id: previousButton
+                anchors.top: parent.verticalCenter
+                anchors.topMargin: 4
+                anchors.left: parent.left
+
+                image: "icons/left_arrow.png"
+                backgroundColour: Colours.veryLightSlate
+                radius: [0]
+                direction: "Right"
+                enabled: dailyModel.indexOfFirstDayBefore(lineChart.startDate) < dailyModel.count -1;
+                onClicked: {
+                    var year    = lineChart.startDate.getFullYear();
+                    var month   = lineChart.startDate.getMonth();
+                    var day     = lineChart.startDate.getDate();
+                    switch(lineChart.period) {
+                    case "year" :
+                        year--;
+                        lineChart.startDate = new Date( year,0,1);
+                        lineChart.endDate = new Date( year,11,31);
+                        lineChart.gridSize = 12;
+                        break;
+                    case "month" :
+                        month--;
+                        if ( month < 0) {
+                            month = 11;
+                            year--;
+                        }
+                        lineChart.startDate = new Date( year, month, 1 );
+                        lineChart.endDate = new Date( year, month, Utils.getLastDate(lineChart.startDate));
+                        lineChart.gridSize = 0;
+                        break;
+                    case "week" :
+                        var newStart = lineChart.startDate;
+                        newStart.setDate(day-7)
+                        lineChart.startDate = newStart;
+                        lineChart.endDate = Utils.getEndOfWeek( lineChart.startDate );
+                        lineChart.gridSize = 0;
+                        break;
+                    }
+                    lineChart.forceRepaint();
+                }
+            }
             Row {
                 id: periodButtons
-                anchors.left: parent.left
                 anchors.top: parent.verticalCenter
-                anchors.right: parent.right
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.topMargin: 4
                 spacing: 8
                 //
                 //
                 //
-                AfterTrauma.Button {
-                    id: previousButton
-                    image: "icons/left_arrow.png"
-                    backgroundColour: Colours.veryLightSlate
-                    radius: [0]
-                    direction: "Right"
-                    enabled: dailyModel.indexOfFirstDayBefore(lineChart.startDate) < dailyModel.count -1;
-                    onClicked: {
-                        var year    = lineChart.startDate.getFullYear();
-                        var month   = lineChart.startDate.getMonth();
-                        var day     = lineChart.startDate.getDate();
-                        switch(lineChart.period) {
-                        case "year" :
-                            year--;
-                            startDate = new Date( year,0,1);
-                            endDate = new Date( year,11,31);
-                            lineChart.gridSize = 12;
-                            break;
-                        case "month" :
-                            month--;
-                            if ( month < 0) {
-                                month = 11;
-                                year--;
-                            }
-                            lineChart.startDate = new Date( year, month, 1 );
-                            lineChart.endDate = new Date( year, month, Utils.getLastDate(lineChart.startDate));
-                            lineChart.gridSize = 0;
-                            break;
-                        case "week" :
-                            var newStart = lineChart.startDate;
-                            newStart.setDate(day-7)
-                            lineChart.startDate = newStart;
-                            lineChart.endDate = Utils.getEndOfWeek( lineChart.startDate );
-                            lineChart.gridSize = 0;
-                            break;
-                        }
-                        lineChart.forceRepaint();
-                    }
-                }
                 AfterTrauma.Button {
                     id: yearButton
                     text: "Year"
@@ -145,83 +150,51 @@ AfterTrauma.Page {
                         lineChart.setup();
                     }
                 }
-                AfterTrauma.Button {
-                    id: nextButton
-                    image: "icons/right_arrow.png"
-                    backgroundColour: Colours.veryLightSlate
-                    radius: [0]
-                    direction: "Left"
-                    enabled: dailyModel.indexOfFirstDayAfter(lineChart.endDate) > 0;
-                    onClicked: {
-                        var year    = lineChart.startDate.getFullYear();
-                        var month   = lineChart.startDate.getMonth();
-                        var day     = lineChart.startDate.getDate();
-                        switch(lineChart.period) {
-                        case "year" :
+            }
+            //
+            //
+            //
+            AfterTrauma.Button {
+                id: nextButton
+                anchors.top: parent.verticalCenter
+                anchors.topMargin: 4
+                anchors.right: parent.right
+                image: "icons/right_arrow.png"
+                backgroundColour: Colours.veryLightSlate
+                radius: [0]
+                direction: "Left"
+                enabled: dailyModel.indexOfFirstDayAfter(lineChart.endDate) > 0;
+                onClicked: {
+                    var year    = lineChart.startDate.getFullYear();
+                    var month   = lineChart.startDate.getMonth();
+                    var day     = lineChart.startDate.getDate();
+                    switch(lineChart.period) {
+                    case "year" :
+                        year++;
+                        lineChart.startDate = new Date( year,0,1);
+                        lineChart.endDate = new Date( year,11,31);
+                        lineChart.gridSize = 12;
+                        break;
+                    case "month" :
+                        month++;
+                        if ( month > 11 ) {
+                            month = 0;
                             year++;
-                            lineChart.startDate = new Date( year,0,1);
-                            lineChart.endDate = new Date( year,11,31);
-                            lineChart.gridSize = 12;
-                            break;
-                        case "month" :
-                            month++;
-                            if ( month > 11 ) {
-                                month = 0;
-                                year++;
-                            }
-                            lineChart.startDate = new Date( year, month, 1 );
-                            lineChart.endDate = new Date( year, month,Utils.getLastDate(lineChart.startDate));
-                            lineChart.gridSize = 0;
-                            break;
-                        case "week" :
-                            var newStart = lineChart.startDate;
-                            newStart.setDate(day+7)
-                            lineChart.startDate = newStart;
-                            lineChart.endDate = Utils.getEndOfWeek( lineChart.startDate );
-                            lineChart.gridSize = 0;
-                            break;
                         }
-                        lineChart.forceRepaint();
+                        lineChart.startDate = new Date( year, month, 1 );
+                        lineChart.endDate = new Date( year, month,Utils.getLastDate(lineChart.startDate));
+                        lineChart.gridSize = 0;
+                        break;
+                    case "week" :
+                        var newStart = lineChart.startDate;
+                        newStart.setDate(day+7)
+                        lineChart.startDate = newStart;
+                        lineChart.endDate = Utils.getEndOfWeek( lineChart.startDate );
+                        lineChart.gridSize = 0;
+                        break;
                     }
+                    lineChart.forceRepaint();
                 }
-                //
-                //
-                //
-                /*
-                AfterTrauma.Button {
-                    text: "Share"
-                    backgroundColour: Colours.veryLightSlate
-                    textColour: Colours.almostWhite
-                    LineChartData {
-                        id: data
-                        font: fonts.light;
-                        title: chart.period.charAt(0).toUpperCase() + chart.period.slice(1) + 'ly Progess';
-                        subtitle: startDate.toDateString() + ' to ' + endDate.toDateString();
-                        showLegend: true
-                    }
-
-                    onClicked: {
-                        var pdfPath = SystemUtils.documentDirectory() + '/' + chart.period + 'ly.pdf';
-                        console.log( 'pdf mimetype : ' + SystemUtils.mimeTypeForFile('ly.pdf') );
-                        data.clearDataSets();
-                        var categoryIndex = 0;
-                        for ( var category in values ) {
-                            data.addDataSet(category,Colours.categoryColour(categoryIndex),values[ category ]);
-                            categoryIndex++;
-                        }
-
-                        data.clearAxis();
-                        var xAxis = data.addAxis('days',LineChartData.XAxis,LineChartData.AlignEnd);
-                        data.setAxisSteps(xAxis, chart.period === "year" ? 12 : chart.period === "month" ? 4 : 7);
-                        data.setAxisRange( xAxis, startDate, endDate);
-                        var yAxis = data.addAxis('value',LineChartData.YAxis,LineChartData.AlignStart);
-                        data.setAxisSteps( yAxis, 5 );
-                        data.save( pdfPath );
-                        ShareDialog.shareFile('Shared from AfterTrauma', pdfPath);
-                        //confirmDialog.show('char saved to : ' + pdfPath );
-                    }
-                }
-                */
             }
             //
             //
@@ -249,11 +222,10 @@ AfterTrauma.Page {
                         width: swatch.width + label.contentWidth + 12
                         Rectangle {
                             id: swatch
-                            height: 32
-                            width: 32
-                            anchors.top: parent.top
+                            height: 2
+                            width: 64
+                            anchors.verticalCenter: parent.verticalCenter
                             anchors.left: parent.left
-                            radius:  height / 2
                             color: lineChart.legend[index].colour
                         }
                         Text {
@@ -267,8 +239,8 @@ AfterTrauma.Page {
                             verticalAlignment: Text.AlignVCenter
                             font.weight: Font.Light
                             font.family: fonts.light
-                            font.pixelSize: 18
-                            color: Colours.veryDarkSlate
+                            font.pointSize: 24
+                            color: lineChart.legend[index].colour
                             text: lineChart.legend[index].label
                         }
                     }
@@ -277,9 +249,52 @@ AfterTrauma.Page {
         }
     }
     footer: Item {
-        height: 0
-    }
+        height: 64
+        AfterTrauma.Button {
+            text: "Share"
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.right: parent.right
+            anchors.rightMargin: 8
+            backgroundColour: Colours.veryLightSlate
+            textColour: Colours.almostWhite
+            //
+            //
+            //
+            LineChartData {
+                id: data
+                font: fonts.light;
+                title: lineChart.period.charAt(0).toUpperCase() + lineChart.period.slice(1) + 'ly Progess';
+                subtitle: lineChart.startDate.toDateString() + ' to ' + lineChart.endDate.toDateString();
+                showLegend: true
+            }
+            //
+            //
+            //
+            onClicked: {
+                var pdfPath = SystemUtils.documentDirectory() + '/' + lineChart.period + 'ly.pdf';
+                console.log( 'pdf mimetype : ' + SystemUtils.mimeTypeForFile('ly.pdf') );
+                data.clearDataSets();
+                var categoryIndex = 0;
+                for ( var category in lineChart.values ) {
+                    data.addDataSet(category,Colours.categoryColour(categoryIndex),lineChart.values[ category ]);
+                    categoryIndex++;
+                }
 
+                data.clearAxis();
+                var xAxis = data.addAxis('days',LineChartData.XAxis,LineChartData.AlignEnd);
+                data.setAxisSteps(xAxis, lineChart.period === "year" ? 12 : lineChart.period === "month" ? 4 : 7);
+                data.setAxisRange( xAxis, lineChart.startDate, lineChart.endDate);
+                var yAxis = data.addAxis('value',LineChartData.YAxis,LineChartData.AlignStart);
+                data.setAxisSteps( yAxis, 5 );
+                data.save( pdfPath );
+                ShareDialog.shareFile('Shared from AfterTrauma', pdfPath);
+                //confirmDialog.show('char saved to : ' + pdfPath );
+            }
+        }
+    }
+    //
+    //
+    //
     StackView.onActivated: {
         console.log('period: ' + period );
         lineChart.period = container.period;

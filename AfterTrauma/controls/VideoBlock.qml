@@ -31,6 +31,7 @@ Item {
     //
     MediaPlayer {
         id: content
+        //audioRole: MediaPlayer.VideoRole
         //source: "file:///Users/jons/Documents/media/emotions.depression.video1.m4v"
         //
         //
@@ -45,7 +46,7 @@ Item {
                 console.log( "the media is currently being loaded");
                 break;
             case MediaPlayer.Loaded :
-                console.log( "the media has been loaded");
+                console.log( "the media has been loaded : role=" + audioRole );
                 seek(0);
                 mediaReady();
                 break;
