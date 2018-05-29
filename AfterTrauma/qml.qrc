@@ -146,5 +146,7 @@
         <file>BodyParts.qml</file>
         <file>BodyPartList.qml</file>
         <file>icons/burger.png</file>
+        <file>controls/DatePicker.qml</file>
+        <file>AddPopup.qml</file>
     </qresource>
 </RCC>

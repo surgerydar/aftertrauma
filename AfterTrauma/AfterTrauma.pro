@@ -102,6 +102,9 @@ ios {
 }
 
 osx {
+    QMAKE_MAC_SDK.macosx.version = 10.13
+    INCLUDEPATH += /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include
+    # QMAKE_MAC_SDK = macosx10.13
     # factsheet.files = ./factsheets
     # factsheet.path = Contents/MacOS/
     # QMAKE_BUNDLE_DATA += factsheet

@@ -141,6 +141,9 @@ ApplicationWindow {
     ShortcutPopup {
         id: shortcut
     }
+    AddPopup {
+        id: addDialog
+    }
     //
     // dialogs
     //
@@ -184,22 +187,12 @@ ApplicationWindow {
         anchors.margins: 2
         text: "(" + parent.width + "," + parent.height + ")"
     }
-    //
-    //
-    //
     /*
-    AfterTrauma.TokenisedTextField {
-        id: testInput
-        font.family: fonts.light.name
-        font.pointSize: 32
-        width: parent.width - 16
-        anchors.centerIn: parent
-
-    }
-    NewQuestion {
-        id: testQuestion
-        width: parent.width - 16
-        anchors.centerIn: parent
+    AfterTrauma.DatePicker {
+        height: 256
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
     }
     */
     //

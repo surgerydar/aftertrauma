@@ -4,6 +4,7 @@ ListModel {
     id: model
 
     Component.onCompleted: {
+        console.log( 'Notifications : starting update timer' );
         notificationTimer.start();
     }
     //
@@ -14,8 +15,10 @@ ListModel {
     //
     //
     function update() {
+        console.log( 'Notifications : update' );
         if(!questionnaireModel.dailyCompleted()) {
             if ( !findNotification("questionnaire") ) {
+                console.log( 'Notifications : adding questionnaire prompt' );
                 model.append({subject:"questionnaire", text:"don't forget to complete your daily questionnaire"});
                 updated();
             }

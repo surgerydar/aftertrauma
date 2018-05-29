@@ -55,9 +55,10 @@ AfterTrauma.Page {
             height: 48
             anchors.left: parent.left
             anchors.right: parent.right
+            anchors.margins: 4
             font.weight: Font.Light
             font.family: fonts.light
-            font.pixelSize: 32
+            font.pointSize: 32
             color: Colours.almostWhite
             text: section
         }
@@ -66,7 +67,23 @@ AfterTrauma.Page {
     //
     //
     footer: Item {
-        height: 0
+        height: 64
+        anchors.left: parent.left
+        anchors.right: parent.right
+        //
+        //
+        //
+        AfterTrauma.Button {
+            id: addEntry
+            anchors.top: parent.top
+            anchors.right: parent.right
+            anchors.rightMargin: 8
+            backgroundColour: "transparent"
+            image: "icons/add.png"
+            onClicked: {
+                addDialog.open();
+            }
+        }
     }
     //
     //

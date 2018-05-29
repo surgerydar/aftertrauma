@@ -83,17 +83,41 @@ DatabaseList {
         //console.log( 'unable to find year:' + year + ' month:' + month + ' day:' + day );
         return -1;
     }
-    function getDay( date ) {
+    function getDay( date, create ) {
         var query = {
             day: date.getDate(),
             month: date.getMonth(),
             year: date.getFullYear()
         }
-        return findOne(query);
-        /*
-        var finds = find(query);
-        return finds.length > 0 ? finds[ 0 ] : undefined
-        */
+
+        var day = findOne(query);
+        if ( !day && create ) {
+            day = createDate(date);
+            //
+            // interpolate values
+            //
+            var before = dayBefore(date.getTime());
+            var after = dayAfter(date.getTime());
+            if ( before || after ) {
+                var values = day.values;
+                if ( before && after ) {
+                    console.log( 'Daily.getDay : interpolating between : ' + JSON.stringify(before) + ' and ' + JSON.stringify(after) );
+                    for ( var i = 0; i < values.length; i++ ) {
+                        values[ i ].value = ( before.values[ i ].value + after.values[ i ].value ) / 2.;
+                    }
+                } else if ( before ) {
+                    console.log( 'Daily.getDay : setting values to previous : ' + JSON.stringify(before) );
+                    values = before.values;
+                } else if ( after ) {
+                    console.log( 'Daily.getDay : setting values to next : ' + JSON.stringify(after) );
+                    values = after.values;
+                }
+                update({date: day.date},{values: values});
+                save();
+            }
+        }
+
+        return day;
     }
     function getToday() {
         var today = new Date();
@@ -103,11 +127,14 @@ DatabaseList {
     function createToday() {
         console.log( 'Daily.createToday')
         var today = new Date();
+        return createDate(today);
+    }
+    function createDate(date) {
         var daily = {
-            date: today.getTime(),
-            year: today.getFullYear(),
-            month: today.getMonth(), // 0 - 11
-            day: today.getDate(), // 1 - 31
+            date: date.getTime(),
+            year: date.getFullYear(),
+            month: date.getMonth(), // 0 - 11
+            day: date.getDate(), // 1 - 31
             values: [
                 { label: 'emotions', value: 0. },
                 { label: 'mind', value: 0. },
@@ -154,16 +181,16 @@ DatabaseList {
     function dayBefore( date ) {
         for ( var i = 0; i < count; i++ ) {
             var day = get(i);
-            if ( day.date <= date ) return day;
+            //if ( day.date <= date ) return day;
+            if ( day.date < date ) return day;
         }
         return undefined;
     }
     function dayAfter( date ) {
         for ( var i = count - 1; i >= 0; i-- ) {
             var day = get(i);
-            if ( day.date >= date ) {
-                return day;
-            }
+            //if ( day.date >= date ) return day;
+            if ( day.date > date ) return day;
         }
         return undefined;
     }

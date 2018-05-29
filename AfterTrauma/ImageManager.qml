@@ -74,7 +74,7 @@ AfterTrauma.Page {
             day = dailyModel.getToday();
             date = day.date;
         } else {
-            day = dailyModel.getDay(new Date(date));
+            day = dailyModel.getDay(new Date(date),true);
         }
         images = day.images;
         if ( images === undefined || images.length === 0 ) {

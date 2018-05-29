@@ -66,6 +66,12 @@ AfterTrauma.Page {
                         text: notificationModel.get( index ).text
                     }
                 }
+                Connections {
+                    target: notificationModel
+                    onUpdated: {
+                        model = notificationModel.count
+                    }
+                }
             }
         }
         //
