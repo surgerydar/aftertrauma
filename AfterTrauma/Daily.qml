@@ -19,6 +19,7 @@ DatabaseList {
             beginBatch();
             for ( var i = 0; i < 52; i++ ) {
                 var day = new Date(Date.now()-(week*i));
+                day.setHours(0,0,0);
                 var multiplier = ( ( 51 - i ) + 1 ) / 52.;
                 var daily = {
                     date: day.getTime(),
@@ -42,7 +43,7 @@ DatabaseList {
                     }
                     var nNotes = Math.random() * 4;
                     for ( j = 0; j < nNotes; j++ ) {
-                        daily.notes.push( {title:"",note:""} );
+                        daily.notes.push( {title:"test note " + i + "." + j, note:"test note " + i + "." + j } );
                     }
                 }
                 batchAdd(daily);
@@ -130,6 +131,7 @@ DatabaseList {
         return createDate(today);
     }
     function createDate(date) {
+        date.setHours(0,0,0);
         var daily = {
             date: date.getTime(),
             year: date.getFullYear(),

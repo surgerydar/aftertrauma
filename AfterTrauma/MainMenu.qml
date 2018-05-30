@@ -162,12 +162,12 @@ Rectangle {
             textHorizontalAlignment: Text.AlignRight
             textVerticalAlignment: Text.AlignVCenter
             textSize: 32
-            text: "Timeline"
+            text: "Diary"
             image: "icons/timeline.png"
             direction: "Right"
             spacing: 8
             onClicked: {
-                stack.navigateTo("qrc:///Timeline.qml");
+                stack.navigateTo("qrc:///Diary.qml");
                 container.close();
             }
         }

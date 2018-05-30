@@ -6,6 +6,11 @@ function shortDate(time,withYear) {
     var date = new Date(time);
     return shortMonths[ date.getMonth() ] + ', ' + date.getDate() + ( withYear ? ', ' + date.getFullYear() : '' );
 }
+function shortDateVertical(time,withYear) {
+    var date = new Date(time);
+    return date.getDate() + '<br/>' + shortMonths[ date.getMonth() ] + ( withYear ? '<br/>' + date.getFullYear() : '' );
+}
+
 
 function daysBetweenDates( date1, date2 ) {
     var ms1 = date1.getTime();

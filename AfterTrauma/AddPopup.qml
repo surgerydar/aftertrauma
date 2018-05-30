@@ -12,7 +12,7 @@ Popup {
     background: AfterTrauma.Background {
         anchors.fill: parent
         fill: Colours.veryDarkSlate
-        opacity: .5
+        //opacity: .5
     }
     //
     //
@@ -57,6 +57,7 @@ Popup {
                 text: "image"
                 onClicked: {
                     // add images
+                    date.currentDate.setHours(0,0,0);
                     stack.push( "qrc:///ImageManager.qml", { date: date.currentDate.getTime() } );
                     container.close();
                 }
@@ -65,6 +66,7 @@ Popup {
                 text: "note"
                 onClicked: {
                     // add notes
+                    date.currentDate.setHours(0,0,0);
                     stack.push( "qrc:///NotesManager.qml", { date: date.currentDate.getTime() } );
                     container.close();
                 }
