@@ -4,7 +4,7 @@ import SodaControls 1.0
 DatabaseList {
     id: model
     collection: "daily"
-    roles: [ "date", "year", "month", "day", "values", "notes", "images" ]
+    roles: [ "date", "year", "month", "day", "values", "blocks" ] //"notes", "images" ]
     sort: { "date": -1 }
     //
     //
@@ -33,10 +33,14 @@ DatabaseList {
                         { label: 'life', value: Math.random() * multiplier },
                         { label: 'relationships', value: Math.random() * multiplier },
                     ],
+                    /*
                     notes: [],
                     images: []
+                    */
+                    blocks: []
                 }
                 if ( i > 0 ) {
+                    /*
                     var nImages = Math.random() * 4;
                     for ( var j = 0; j < nImages; j++ ) {
                         daily.images.push( { image: "icons/image.png" });
@@ -44,6 +48,27 @@ DatabaseList {
                     var nNotes = Math.random() * 4;
                     for ( j = 0; j < nNotes; j++ ) {
                         daily.notes.push( {title:"test note " + i + "." + j, note:"test note " + i + "." + j } );
+                    }
+                    */
+                    var nBlocks = Math.random() * 8;
+                    for ( var j  = 0; j < nBlocks; j++ ) {
+                        if ( j % 2 ) {
+                            daily.blocks.push(
+                                        {
+                                            type: "text",
+                                            title: "test note " + i + "." + j,
+                                            content: "test note " + i + "." + j,
+                                            tags: []
+                                        } );
+                        } else {
+                            daily.blocks.push(
+                                        {
+                                            type: "image",
+                                            title: "test image " + i + "." + j,
+                                            content: "qrc:///icons/image.png",
+                                            tags: []
+                                        } );
+                        }
                     }
                 }
                 batchAdd(daily);

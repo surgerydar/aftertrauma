@@ -44,39 +44,18 @@ Item {
         text: container.date?Utils.shortDateVertical(container.date,true):""
     }
     //
+    //
+    //
+    MouseArea {
+        anchors.fill: parent
+        onClicked: {
+            var d = new Date( date );
+            stack.push( "qrc:///DiaryEntry.qml", { date: d } );
+        }
+    }
+    //
     // Indicators
     //
-    /*
-    AfterTrauma.Button {
-        id: imageIndicator
-        width: height
-        anchors.top: parent.top
-        anchors.left: dateText.right
-        anchors.bottom: parent.bottom
-        anchors.margins: 4
-        visible: (images&&images.length > 0)
-        image: "icons/image.png"
-        backgroundColour: "transparent"
-        onClicked: {
-            stack.push( "qrc:///ImageManager.qml", { date: date } );
-        }
-    }
-
-    AfterTrauma.Button {
-        id: notesIndicator
-        width: height
-        anchors.top: parent.top
-        anchors.left: imageIndicator.right
-        anchors.bottom: parent.bottom
-        anchors.margins: 4
-        visible: (notes&&notes.length > 0)
-        image: "icons/notes.png"
-        backgroundColour: "transparent"
-        onClicked: {
-            stack.push( "qrc:///NotesManager.qml", { date: date } );
-        }
-    }
-    */
     Image {
         id: imageIndicator
         width: height
@@ -85,9 +64,11 @@ Item {
         anchors.bottom: parent.bottom
         anchors.margins: 4
         fillMode: Image.PreserveAspectCrop
+        /*
         visible: (images&&images.length > 0)
         source: (images&&images.length > 0) ? images[0].image : "icons/image.png"
-
+        */
+        visible: false
         MouseArea {
             anchors.fill: parent
             onClicked: {
@@ -104,7 +85,6 @@ Item {
         anchors.left: imageIndicator.right
         anchors.bottom: parent.bottom
         anchors.margins: 4
-        visible: (notes&&notes.length > 0)
         fontSizeMode: Label.Fit
         minimumPointSize: 12
         font.weight: Font.Light
@@ -117,8 +97,11 @@ Item {
         leftPadding: 4
         rightPadding: 4
         color: Colours.darkSlate
+        /*
+        visible: (notes&&notes.length > 0)
         text: (notes&&notes.length > 0) ? notes[ 0 ].note : ""
-
+        */
+        visible: false
         background: Canvas { // 'document' icon background
             anchors.fill: parent
             onPaint: {

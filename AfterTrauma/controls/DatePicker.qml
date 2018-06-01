@@ -1,7 +1,7 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.1
 import "../colours.js" as Colours
-
+import "../utils.js" as Utils
 Item {
     id: container
     //
@@ -76,7 +76,7 @@ Item {
                 color: Colours.almostWhite
                 font.family: fonts.light
                 font.pointSize: 18
-                text: index + 1
+                text: textMonth ? Utils.longMonth(index) : index + 1
             }
             //
             //
@@ -127,6 +127,7 @@ Item {
             }
         }
     }
+    /*
     Text {
         id: output
         anchors.left: parent.left
@@ -134,7 +135,7 @@ Item {
         anchors.right: parent.right
         text: currentDate.toDateString()
     }
-
+    */
     Component.onCompleted: {
         console.log('DatePicker.Component.onCompleted() : currentDate=' + currentDate.toDateString() );
         blockUpdate         = true;
@@ -174,5 +175,6 @@ Item {
     }
 
     property bool blockUpdate: false
+    property bool textMonth: false
     property date currentDate: new Date()
 }

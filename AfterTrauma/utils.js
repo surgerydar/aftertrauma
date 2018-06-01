@@ -1,11 +1,21 @@
 
+var longMonths = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 var shortMonths = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 var dayMs=1000*60*60*24;
 
+function longMonth(month) {
+    return longMonths[ month ];
+}
+
+function shortMonth(month) {
+    return shortMonths[ month ];
+}
+
 function shortDate(time,withYear) {
     var date = new Date(time);
-    return shortMonths[ date.getMonth() ] + ', ' + date.getDate() + ( withYear ? ', ' + date.getFullYear() : '' );
+    return date.getDate() + ', ' + shortMonths[ date.getMonth() ] + ( withYear ? ', ' + date.getFullYear() : '' );
 }
+
 function shortDateVertical(time,withYear) {
     var date = new Date(time);
     return date.getDate() + '<br/>' + shortMonths[ date.getMonth() ] + ( withYear ? '<br/>' + date.getFullYear() : '' );

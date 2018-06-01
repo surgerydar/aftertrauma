@@ -81,7 +81,7 @@ AfterTrauma.Page {
             backgroundColour: "transparent"
             image: "icons/add.png"
             onClicked: {
-                addDialog.open();
+                blockEditor.show( true );
             }
         }
     }

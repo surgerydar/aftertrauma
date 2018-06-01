@@ -141,8 +141,8 @@ ApplicationWindow {
     ShortcutPopup {
         id: shortcut
     }
-    AddPopup {
-        id: addDialog
+    BlockEditor {
+        id: blockEditor
     }
     //
     // dialogs

@@ -38,7 +38,7 @@ AfterTrauma.Page {
         delegate: FactsheetItem {
             anchors.left: parent.left
             anchors.right: parent.right
-            textSize: 48
+            textSize: 24
             text: model.title || ""
             backgroundColour: Colours.categoryColour(model.index)
             onClicked: {

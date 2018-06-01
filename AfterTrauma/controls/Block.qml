@@ -8,7 +8,8 @@ Item {
     //
     //
     //
-    height: Math.max(64,childrenRect.height)
+    //height: Math.max(64,childrenRect.height)
+    height: blockLoader.item ? Math.max(64,blockLoader.item.height) : 64
     //
     //
     //
@@ -33,13 +34,6 @@ Item {
             anchors.right: parent.right
         }
     }
-    /*
-    Text {
-        z: 2
-        anchors.fill: parent
-        text: type + ':' + media
-    }
-    */
     Loader {
         id: blockLoader
         //anchors.fill: parent
@@ -49,6 +43,9 @@ Item {
             item.media = container.media;
         }
     }
+    //
+    //
+    //
     Component.onCompleted: {
         blockLoader.sourceComponent = type === "video" ? video : type === "image" ? image : text;
     }
@@ -62,4 +59,5 @@ Item {
     //
     property string type: "text" // "text" | "image" | "video"
     property string media: ""
+    property alias content: blockLoader.item
 }

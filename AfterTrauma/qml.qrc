@@ -151,5 +151,6 @@
         <file>Diary.qml</file>
         <file>DiaryListItem.qml</file>
         <file>DiaryEntry.qml</file>
+        <file>BlockEditor.qml</file>
     </qresource>
 </RCC>
