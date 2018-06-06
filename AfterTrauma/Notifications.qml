@@ -15,11 +15,10 @@ ListModel {
     //
     //
     function update() {
-        console.log( 'Notifications : update' );
         if(!questionnaireModel.dailyCompleted()) {
             if ( !findNotification("questionnaire") ) {
                 console.log( 'Notifications : adding questionnaire prompt' );
-                model.append({subject:"questionnaire", text:"don't forget to complete your daily questionnaire"});
+                append({subject:"questionnaire", text:"don't forget to complete your daily questionnaire"});
                 updated();
             }
         } else {
@@ -30,8 +29,8 @@ ListModel {
     function findNotification( subject ) {
         var nNotifications = model.count;
         for ( var i = 0; i < nNotifications; i++ ) {
-            var notification = model.get(i);
-            if ( notification.subject === 'questionnaire' ) {
+            var notification = get(i);
+            if ( notification.subject === subject ) {
                 return notification;
             }
         }
@@ -40,8 +39,8 @@ ListModel {
     function removeNotification( subject ) {
         var nNotifications = model.count;
         for ( var i = 0; i < nNotifications; i++ ) {
-            var notification = model.get(i);
-            if ( notification.subject === 'questionnaire' ) {
+            var notification = get(i);
+            if ( notification.subject === subject ) {
                 model.remove(i);
                 return;
             }

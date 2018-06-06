@@ -12,6 +12,7 @@ class FlowerChart : public QQuickPaintedItem {
     Q_PROPERTY(QVariantList values READ values WRITE setValues)
     //Q_PROPERTY(QVariantList targetValues READ targetValues WRITE setTargetValues)
     //Q_PROPERTY(QVariantList startValues READ startValues WRITE setStartValues)
+    Q_PROPERTY(int fontSize MEMBER m_fontSize)
 public:
     explicit FlowerChart( QQuickItem* parent = 0 );
     //
@@ -54,7 +55,10 @@ private:
     qreal           m_animationU;
     QList< qreal >  m_valuesAnimationStart;
     QList< qreal >  m_valuesAnimationEnd;
-
+    //
+    //
+    //
+    int m_fontSize;
     //
     //
     //

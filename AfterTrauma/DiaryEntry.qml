@@ -2,6 +2,8 @@ import QtQuick 2.7
 import QtQuick.Controls 2.1
 import QtQml.Models 2.2
 
+import SodaControls 1.0
+
 import "controls" as AfterTrauma
 import "colours.js" as Colours
 import "utils.js" as Utils
@@ -17,68 +19,148 @@ AfterTrauma.Page {
     DelegateModel {
         id: blocksModel
         model: ListModel {}
-        delegate: MouseArea {
-            id: dragArea
+        delegate: AfterTrauma.EditableListItem {
+            id: editableItem
+            height: block.implicitHeight
+            anchors.left: parent.left
+            anchors.right: parent.right
+            topPadding: 0
+            bottomPadding: 0
+            leftPadding: editable ? 4 : 0
+            rightPadding: editable ? 4 : 0
             enabled: editable
-            anchors { left: parent.left; right: parent.right }
-            height: block.height
-            onPressAndHold: held = true
-            onReleased: {
-                if ( held ) {
-                    held = false;
-                    block.y = 0;
+            opacity: dragArea.held ? 0. : 1.
+            //
+            //
+            //
+            contentItem: Item {
+                id: dragContainer
+                height: block.implicitHeight
+                width: parent.width
+                anchors.verticalCenter: parent.verticalCenter
+                AfterTrauma.Block {
+                    id: block
+                    width: parent.width
+                    anchors.verticalCenter: parent.verticalCenter
+                    type: model.type
+                    media: model.content
+                    onMediaReady: {
+                        contents.forceLayout();
+                    }
+                    //
+                    //
+                    //
+                    Drag.active: dragArea.held
+                    Drag.source: editableItem
+                    //Drag.hotSpot.x: width / 2
+                    //Drag.hotSpot.y: height / 2
+                    //
+                    //
+                    //
+                    states: State {
+                        when: dragArea.held
+                        ParentChange { target: block; parent: container }
+                        AnchorChanges {
+                            target: block
+                            anchors { verticalCenter: undefined; }
+                        }
+                        PropertyChanges {
+                            target: block
+                            z: 10
+                        }
+                    }
                 }
-            }
-            property bool held: false
-            drag.target: held ? block : undefined
-            drag.axis: Drag.YAxis
-
-            AfterTrauma.Block {
-                id: block
-                anchors.left: parent.left
-                anchors.right: parent.right
-                type: model.type
-                media: model.content
-                onMediaReady: {
-                    contents.forceLayout();
+                Image {
+                    id: reorder
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.right: parent.right
+                    anchors.rightMargin: 8
+                    width: 48
+                    height: 48
+                    fillMode: Image.PreserveAspectFit
+                    visible: editable
+                    source: "icons/reorder.png"
+                    //
+                    //
+                    //
+                    MouseArea {
+                        id: dragArea
+                        anchors.fill: parent
+                        enabled: editable
+                        onPressAndHold: held = true
+                        onReleased: {
+                            if ( held ) {
+                                held = false;
+                                block.y = 0;
+                            }
+                        }
+                        drag.target: held ? block : undefined
+                        drag.axis: Drag.YAxis
+                        property bool held: false
+                    }
                 }
-
-                Drag.active: dragArea.held
-                Drag.source: dragArea
-                Drag.hotSpot.x: width / 2
-                Drag.hotSpot.y: height / 2
-
-                states: State {
-                    when: dragArea.held
-
-                    ParentChange { target: block; parent: container }
-                    AnchorChanges {
-                        target: block
-                        anchors { horizontalCenter: undefined; verticalCenter: undefined }
+                //
+                //
+                //
+                DropArea {
+                    anchors.fill: parent
+                    onEntered: {
+                        var from = drag.source.DelegateModel.itemsIndex;
+                        var to = editableItem.DelegateModel.itemsIndex;
+                        console.log( 'dragging from ' + from + ' to ' + to );
+                        if ( from !== to ) {
+                            blocksModel.items.move( from, to );
+                        }
+                    }
+                    onDropped: {
+                        console.log('dropped');
+                        contents.forceLayout();
                     }
                 }
             }
-
-            DropArea {
-                anchors.fill: parent
-                onEntered: {
-                    console.log( 'dragging from ' + drag.source.DelegateModel.itemsIndex + ' to ' + dragArea.DelegateModel.itemsIndex );
-                    if ( drag.source.DelegateModel.itemsIndex !== dragArea.DelegateModel.itemsIndex ) {
-                        blocksModel.items.move(
-                                    drag.source.DelegateModel.itemsIndex,
-                                    dragArea.DelegateModel.itemsIndex);
-                    }
-                }
-                onDropped: {
-                    console.log('dropped');
+            //
+            //
+            //
+            onEdit: {
+                swipe.close();
+                var blockIndex = model.index;
+                console.log( 'editing block : ' + blockIndex );
+                blockEditor.show( false, function( type, content ) {
+                    var block = {
+                        type: type,
+                        content: content
+                    };
+                    blocksModel.model.set(blockIndex,block);
                     contents.forceLayout();
-                }
+                }, model.type, model.content );
+            }
+            onRemove: {
+                swipe.close();
+                console.log( 'removing block : ' + model.index );
+                blocksModel.model.remove(model.index);
+            }
+
+            onClicked: {
+                console.log( 'block clicked : ' + model.index );
+                swipe.close();
+            }
+            onEnabledChanged: {
+                swipe.close();
             }
         }
     }
     //
     //
     //
+    /*
+    DropArea {
+        anchors.fill: parent
+        onPositionChanged: {
+            console.log( 'x:' + drag.x + ' y:' + drag.y );
+            drag.accepted = false;
+        }
+    }
+    */
     ListView {
         id: contents
         anchors.fill: parent
@@ -90,23 +172,34 @@ AfterTrauma.Page {
         //
         //
         //
-        /*
-        model: ListModel {}
+        model: blocksModel
         //
         //
         //
-        delegate: AfterTrauma.Block {
+        header: Rectangle {
             anchors.left: parent.left
             anchors.right: parent.right
-            type: model.type
-            media: model.content
-            editable: true // TODO: toggle this with edit tool
-            onMediaReady: {
-                contents.update();
+            height: 256
+            radius: 4
+            color: Colours.slate
+            //
+            //
+            //
+            FlowerChart {
+                id: flowerChart
+                anchors.top: parent.top
+                anchors.left: parent.left
+                anchors.bottom: parent.bottom
+                anchors.right: parent.right
+                anchors.margins: 4
+                enabled: true
+                fontSize: 12
+                values: dailyModel.valuesForDate(date)
             }
         }
-        */
-        model: blocksModel
+        //
+        //
+        //
         add: Transition {
             NumberAnimation { properties: "y"; from: contents.height; duration: 250 }
         }
@@ -125,15 +218,39 @@ AfterTrauma.Page {
         //
         //
         AfterTrauma.Button {
+            anchors.left: parent.left
+            anchors.leftMargin: 8
+            anchors.verticalCenter: parent.verticalCenter
+            text: editable ? "done" : "edit"
+            onClicked: {
+                editable = !editable;
+            }
+        }
+        //
+        //
+        //
+        AfterTrauma.Button {
             id: addEntry
-            anchors.top: parent.top
             anchors.right: parent.right
             anchors.rightMargin: 8
+            anchors.verticalCenter: parent.verticalCenter
             backgroundColour: "transparent"
             image: "icons/add.png"
             onClicked: {
                 //addDialog.open();
-                blockEditor.show( false );
+                blockEditor.show( false, function( type, content ) {
+                    //
+                    // append block
+                    //
+                    var block = {
+                        type: type,
+                        title: Date(),
+                        content: content,
+                        tags: JSON.stringify([])
+                    };
+                    blocksModel.model.append(block);
+                    contents.positionViewAtIndex(blocksModel.model.count-1,ListView.Visible);
+                });
             }
         }
     }
@@ -179,17 +296,14 @@ AfterTrauma.Page {
                             tags: tags
                         });
         }
-
-        var query = {
-            day: date.getDate(),
-            month: date.getMonth(),
-            year: date.getFullYear()
-        };
-        var result = dailyModel.update( query, { blocks: blocks } );
+        //
+        //
+        //
+        dailyModel.updateDay( date, { blocks: blocks } );
     }
     //
     //
     //
-    property bool editable: true
+    property bool editable: false
     property date date: new Date()
 }

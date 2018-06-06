@@ -109,12 +109,22 @@ DatabaseList {
         //console.log( 'unable to find year:' + year + ' month:' + month + ' day:' + day );
         return -1;
     }
+
+    function updateDay( date, data ) {
+        var query = {
+            day: date.getDate(),
+            month: date.getMonth(),
+            year: date.getFullYear()
+        };
+        update( query, data );
+    }
+
     function getDay( date, create ) {
         var query = {
             day: date.getDate(),
             month: date.getMonth(),
             year: date.getFullYear()
-        }
+        };
 
         var day = findOne(query);
         if ( !day && create ) {
@@ -216,8 +226,8 @@ DatabaseList {
     function dayAfter( date ) {
         for ( var i = count - 1; i >= 0; i-- ) {
             var day = get(i);
-            //if ( day.date >= date ) return day;
-            if ( day.date > date ) return day;
+            if ( day.date >= date ) return day;
+            //if ( day.date > date ) return day;
         }
         return undefined;
     }
@@ -255,7 +265,10 @@ DatabaseList {
                 values.push(after.values[ i ].value);
             }
             return values;
+        } else {
+            console.log( 'Daily.valuesForDate(' + date + ') not found')
         }
+
         return [ 0., 0., 0., 0., 0.]
     }
     function startValues() {

@@ -54,6 +54,7 @@ FlowerChart::FlowerChart( QQuickItem* parent ) : QQuickPaintedItem( parent ) {
     m_minValues   = { 0., 0., 0., 0., 0. };
     m_valuesAnimationStart  = { 0., 0., 0., 0., 0. };
     m_valuesAnimationEnd    = { 0., 0., 0., 0., 0. };
+    m_fontSize = 24;
     //
     //
     //
@@ -113,7 +114,7 @@ void FlowerChart::paint(QPainter*painter) {
         radius *= .6;
         QColor textColour(almostWhite);
         painter->setPen(textColour);
-        QFont font("Roboto", 24 );
+        QFont font("Roboto", m_fontSize );
         QFontMetrics metrics(font, painter->device());
         painter->setFont(font);
         for ( int i = 0; i < 5; ++i ) {
@@ -144,13 +145,14 @@ void FlowerChart::drawBackground( QPainter* painter ) {
     //
     //
     QPointF cp( width() / 2., height() / 2.);
+    qreal radius = qMin( width(), height() ) * .5;
     QRadialGradient gradient(cp, 100);
     gradient.setColorAt(0.,QColor(255,255,255,128));
     gradient.setColorAt(1.,QColor(255,255,255,38));
     QBrush brush(gradient);
     painter->setPen(Qt::NoPen);
     painter->setBrush(brush);
-    painter->drawEllipse(0.,0., width(), height());
+    painter->drawEllipse(cp.x()-radius,cp.y()-radius, radius*2., radius*2.);
     //
     //
     //

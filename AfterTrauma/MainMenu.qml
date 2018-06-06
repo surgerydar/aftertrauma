@@ -122,6 +122,7 @@ Rectangle {
                 container.close();
             }
         }
+        /*
         AfterTrauma.Button {
             anchors.right: parent.right
             textHorizontalAlignment: Text.AlignRight
@@ -150,6 +151,7 @@ Rectangle {
                 container.close();
             }
         }
+        */
         AfterTrauma.Button {
             anchors.left: parent.left
             textHorizontalAlignment: Text.AlignLeft
@@ -222,6 +224,7 @@ Rectangle {
             image: "icons/chat.png"
             direction: "Right"
             spacing: 8
+            enabled: userProfile
             onClicked: {
                 stack.navigateTo("qrc:///ChatManager.qml");
                 container.close();

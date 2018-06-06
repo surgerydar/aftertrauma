@@ -67,7 +67,11 @@ Rectangle {
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
             text: "save"
+            enabled: ( type === "text" && textMedia.text.length > 0 ) || ( type === "image" && imageMedia.status === Image.Ready )
             onClicked: {
+                if ( callback ) {
+                    callback( type, type === "text" ? textMedia.text : imageSource, date.currentDate );
+                }
                 container.close();
             }
         }
@@ -88,7 +92,7 @@ Rectangle {
     //
     //
     TabBar {
-        id: mediaType
+        id: mediaTypeSelector
         //
         //
         //
@@ -118,11 +122,11 @@ Rectangle {
         id: media
         width: container.width - 8
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: mediaType.bottom
+        anchors.top: mediaTypeSelector.bottom
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 8
         clip: true
-        currentIndex: mediaType.currentIndex
+        currentIndex: mediaTypeSelector.currentIndex
         Page {
             AfterTrauma.TextArea {
                 id: textMedia
@@ -165,6 +169,11 @@ Rectangle {
                 }
             }
         }
+
+        onCurrentIndexChanged: {
+            type = currentIndex === 0 ? "text" : "image";
+        }
+
     }
     //
     //
@@ -172,9 +181,9 @@ Rectangle {
     Connections {
         target: ImagePicker
         onImagePicked: {
-            var source = 'file://' + url;
-            console.log( 'image picked : ' + source );
-            imageMedia.source = source;
+            imageSource = 'file://' + url;
+            console.log( 'image picked : ' + imageSource );
+            imageMedia.source = imageSource;
             //images[imagesView.currentIndex].image = source;
             //imagesView.currentItem.image = images[imagesView.currentIndex].image;
             //setImageTimer.source = source;
@@ -184,24 +193,37 @@ Rectangle {
     //
     //
     //
-    function show( withDate, mediaType, content ) {
+    function show( withDate, callbackFunction, mediaType, content ) {
         showDate = withDate;
         if ( mediaType ) {
-            media.currentIndex = mediaType === "image" ? 1 : 0
+            type = mediaType;
+            mediaTypeSelector.currentIndex = mediaType === "image" ? 1 : 0
+        } else {
+            type = "text";
+            mediaTypeSelector.currentIndex = 0;
         }
+
         if ( content ) {
             textMedia.text = mediaType === "text" ? content : ""
-            imageMedia.source = mediaType === "image" ? content : ""
+            imageSource = mediaType === "image" ? content : ""
+            imageMedia.source = imageSource;
         } else {
             textMedia.text = "";
-            imageMedia.source = "";
+            imageSource = "";
+            imageMedia.source = imageSource;
         }
+        //
+        //
+        //
+        callback = callbackFunction;
         //
         //
         //
         open();
     }
 
+    property var callback: undefined
     property bool showDate: false
     property string type: "text"
+    property string imageSource: ""
 }

@@ -22,7 +22,7 @@ TextField {
             height: parent.height - 4
             anchors.verticalCenter: parent.verticalCenter
             color: Colours.darkSlate
-            visible: testInput.focus
+            visible: container.focus
             PropertyAnimation on opacity {
                 duration: 500
                 loops: Animation.Infinite

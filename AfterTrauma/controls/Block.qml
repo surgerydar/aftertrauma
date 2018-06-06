@@ -10,6 +10,7 @@ Item {
     //
     //height: Math.max(64,childrenRect.height)
     height: blockLoader.item ? Math.max(64,blockLoader.item.height) : 64
+    implicitHeight: blockLoader.item ? Math.max(64,blockLoader.item.height) : 64
     //
     //
     //
@@ -48,6 +49,17 @@ Item {
     //
     Component.onCompleted: {
         blockLoader.sourceComponent = type === "video" ? video : type === "image" ? image : text;
+    }
+    //
+    //
+    //
+    onTypeChanged: {
+        blockLoader.sourceComponent = type === "video" ? video : type === "image" ? image : text;
+    }
+    onMediaChanged: {
+        if ( blockLoader.status === Loader.Ready ) {
+            blockLoader.item.media = media;
+        }
     }
     //
     //

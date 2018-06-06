@@ -255,7 +255,7 @@ AfterTrauma.Page {
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
             anchors.rightMargin: 8
-            backgroundColour: Colours.veryLightSlate
+            //backgroundColour: Colours.veryLightSlate
             textColour: Colours.almostWhite
             //
             //

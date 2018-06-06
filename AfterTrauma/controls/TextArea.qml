@@ -6,7 +6,8 @@ import "../colours.js" as Colours
 TextArea {
     height: 48
     color: Colours.veryDarkSlate
-    font.pixelSize: 24
+    padding: 8
+    font.pointSize: 24
     background: Rectangle {
             anchors.fill: parent
             radius: 4

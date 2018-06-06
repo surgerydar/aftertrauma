@@ -15,7 +15,7 @@ Item {
     Background {
         anchors.fill: parent
         fill: Colours.almostWhite
-        radius: [ 4 ]
+        radius: [ 0 ]
     }
     //
     //

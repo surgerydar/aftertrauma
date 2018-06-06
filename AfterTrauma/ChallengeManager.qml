@@ -39,7 +39,7 @@ AfterTrauma.Page {
             onCountChanged: {
                 challengeModel.updateCount( model.index, count );
             }
-            onClicked: {
+            onEdit: {
                 stack.push( "qrc:///ChallengeBuilder.qml", {source: challengeModel.get(index)});
             }
             onRemove: {

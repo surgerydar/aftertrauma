@@ -70,7 +70,7 @@ AfterTrauma.Page {
             anchors.left: parent.left
             anchors.right: searchButton.left
             anchors.margins: 8
-            font.family: fonts.light.name
+            font.family: fonts.light
             font.pointSize: 32
         }
         //

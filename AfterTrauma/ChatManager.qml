@@ -99,7 +99,7 @@ AfterTrauma.Page {
         //
         AfterTrauma.Button {
             id: addChat
-            anchors.top: parent.top
+            anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
             anchors.rightMargin: 8
             backgroundColour: "transparent"

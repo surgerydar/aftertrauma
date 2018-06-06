@@ -125,13 +125,14 @@ DatabaseList {
         // update daily
         //
         //var today = dailyModel.getTodayAsObject();
+        console.log( 'putScore : updating daily' );
         var today = dailyModel.getToday();
         for ( i = 0; i < today.values.length; i++ ) {
-            //console.log( 'putScore : updating daily : looking for ' + category + ' : found : ' + today.values[ i ].label );
+            console.log( 'putScore : updating daily : looking for ' + category + ' : found : ' + today.values[ i ].label );
             if ( today.values[ i ].label === category ) {
                 console.log( 'putScore : updating daily : setting ' + category + ' : to : ' + average );
                 today.values[ i ].value = average;
-                dailyModel.update({ date: today.date }, { values: today.values });
+                dailyModel.update({ day: today.day, month: today.month, year: today.year }, { values: today.values });
                 break;
             }
         }
@@ -142,13 +143,11 @@ DatabaseList {
     //
     function dailyCompleted() {
         //
-        // average scores
+        // check for incomplete quesionnaires
         //
-        var nQuesionnaires = model.count;
-        for ( var i = 0; i < nQuesionnaires; i++ ) {
-            var questionnaire = model.get(i);
-            var nQuestions = questionnaire.questions.count;
-            for ( var j = 0; j < nQuestions; j++ ) {
+        for ( var i = 0; i < count; i++ ) {
+            var questionCount = get( i ).questions.length;
+            for ( var j = 0; j < questionCount; j++ ) {
                 if ( getScore(i, j) <= 0 ) return false;
             }
         }
@@ -170,6 +169,7 @@ DatabaseList {
                     scores[ i ].push( 0. );
                 }
             }
+            saveScores();
         }
     }
     function saveScores() {

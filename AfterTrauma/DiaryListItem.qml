@@ -68,14 +68,8 @@ Item {
         visible: (images&&images.length > 0)
         source: (images&&images.length > 0) ? images[0].image : "icons/image.png"
         */
-        visible: false
-        MouseArea {
-            anchors.fill: parent
-            onClicked: {
-                stack.push( "qrc:///ImageManager.qml", { date: date } );
-            }
-        }
-
+        visible: status === Image.Ready
+        source: firstBlockContent("image")
     }
 
     Label {
@@ -101,7 +95,9 @@ Item {
         visible: (notes&&notes.length > 0)
         text: (notes&&notes.length > 0) ? notes[ 0 ].note : ""
         */
-        visible: false
+        visible: text.length > 0
+        text: firstBlockContent("text")
+
         background: Canvas { // 'document' icon background
             anchors.fill: parent
             onPaint: {
@@ -118,13 +114,6 @@ Item {
                 ctx.lineTo( foldOffset, 0. );
                 ctx.fill();
                 ctx.stroke();
-            }
-        }
-
-        MouseArea {
-            anchors.fill: parent
-            onClicked: {
-                stack.push( "qrc:///NotesManager.qml", { date: date } );
             }
         }
     }
@@ -144,8 +133,18 @@ Item {
     //
     //
     //
+    function firstBlockContent(type) {
+        for ( var i = 0; i < blocks.length; i++ ) {
+            if ( blocks[ i ].type === type ) return blocks[ i ].content;
+        }
+        return "";
+    }
+    //
+    //
+    //
     property var date: 0
     property var images: []
     property var notes: []
     property var values: []
+    property var blocks: []
 }

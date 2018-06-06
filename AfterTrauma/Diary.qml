@@ -46,6 +46,7 @@ AfterTrauma.Page {
             images: model.images
             notes: model.notes
             values: model.values
+            blocks: model.blocks || []
         }
         //
         //
@@ -75,13 +76,30 @@ AfterTrauma.Page {
         //
         AfterTrauma.Button {
             id: addEntry
-            anchors.top: parent.top
             anchors.right: parent.right
             anchors.rightMargin: 8
+            anchors.verticalCenter: parent.verticalCenter
             backgroundColour: "transparent"
             image: "icons/add.png"
             onClicked: {
-                blockEditor.show( true );
+                blockEditor.show( true, function( type, content, date ) {
+                    var day = dailyModel.getDay( date, true );
+                    if ( day ) {
+                        var blocks = day.blocks || [];
+                        blocks.push({
+                                        type: type,
+                                        title: Date(),
+                                        content: content,
+                                        tags: []
+                                    });
+                        dailyModel.updateDay( date, { blocks: blocks } );
+                        dailyModel.save();
+                        var dayIndex = dailyModel.getDayIndex(date);
+                        if ( dayIndex >= 0 ) {
+                            dailyList.positionViewAtIndex(dayIndex, ListView.Visible);
+                        }
+                    }
+                });
             }
         }
     }

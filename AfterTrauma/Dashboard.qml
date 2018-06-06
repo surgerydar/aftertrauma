@@ -53,30 +53,23 @@ AfterTrauma.Page {
                 //
                 //
                 //
-                delegate: Page {
-                    background: Rectangle {
-                        anchors.fill: parent
-                        color: "transparent"
-                    }
+                delegate: Item {
                     Text {
                         anchors.fill: parent
                         color: Colours.almostWhite
                         horizontalAlignment: Text.AlignHCenter
                         verticalAlignment: Text.AlignVCenter
+                        wrapMode: Text.WordWrap
+                        elide: Text.ElideRight
+                        font.family: fonts.light
+                        fontSizeMode: Text.Fit
+                        minimumPointSize: 12
                         text: notificationModel.get( index ).text
-                    }
-                }
-                Connections {
-                    target: notificationModel
-                    onUpdated: {
-                        model = notificationModel.count
                     }
                 }
             }
         }
-        //
-        //
-        //
+        /*
         AfterTrauma.PageIndicator {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
@@ -84,6 +77,7 @@ AfterTrauma.Page {
             count: notifications.count
             colour: Colours.almostWhite
         }
+        */
     }
     //
     //
@@ -95,9 +89,9 @@ AfterTrauma.Page {
         onTriggered: {
             if ( notifications.count ) {
                 if ( notifications.currentIndex < notifications.count - 1 ) {
-                    notifications.currentIndex = 0;
-                } else {
                     notifications.currentIndex++;
+                } else {
+                    notifications.currentIndex = 0;
                 }
             }
         }
@@ -108,7 +102,6 @@ AfterTrauma.Page {
     StackView.onActivated: {
         scrollTimer.start();
         dateSlider.value = 1;
-        //dateSlider.updateDisplay(dateSlider.value);
         flowerChart.enabled = true;
         flowerChart.values = dailyModel.valuesForDate( dateSlider.currentDate.getTime() );
     }
@@ -122,6 +115,7 @@ AfterTrauma.Page {
     Connections {
         target: notificationModel
         onUpdated: {
+            console.log( 'Dashboard : notificationModel updated');
             notificationsRepeater.model = notificationModel.count
         }
     }

@@ -36,6 +36,8 @@ Item {
     //
     //
     function updateDisplay() {
+        startDate.setHours(0,0,0);
+        endDate.setHours(0,0,0);
         var start = startDate.getTime();
         var end = endDate.getTime();
         var current = ((end -start)*slider.value)+start;

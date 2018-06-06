@@ -152,5 +152,6 @@
         <file>DiaryListItem.qml</file>
         <file>DiaryEntry.qml</file>
         <file>BlockEditor.qml</file>
+        <file>icons/reorder.png</file>
     </qresource>
 </RCC>
