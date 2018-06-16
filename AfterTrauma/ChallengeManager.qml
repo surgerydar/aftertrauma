@@ -36,6 +36,7 @@ AfterTrauma.Page {
             name: model.name
             activity: model.activity
             count: model.count || 0
+            swipeEnabled: editable
             onCountChanged: {
                 challengeModel.updateCount( model.index, count );
             }
@@ -57,16 +58,18 @@ AfterTrauma.Page {
         height: 64
         anchors.left: parent.left
         anchors.right: parent.right
-        /*
         //
         //
         //
-        AfterTrauma.Background {
-            anchors.fill: parent
-            anchors.margins: 4
-            fill: Colours.lightGreen
+        AfterTrauma.Button {
+            anchors.left: parent.left
+            anchors.leftMargin: 8
+            anchors.verticalCenter: parent.verticalCenter
+            text: editable ? "done" : "edit"
+            onClicked: {
+                editable = !editable;
+            }
         }
-        */
         //
         //
         //
@@ -112,6 +115,7 @@ AfterTrauma.Page {
     //
     StackView.onActivated: {
         //challenges.update();
+        editable = false;
     }
     //
     //
@@ -123,4 +127,8 @@ AfterTrauma.Page {
             challenges.forceLayout();
         }
     }
+    //
+    //
+    //
+    property bool editable: false
 }

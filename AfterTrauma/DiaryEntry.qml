@@ -26,9 +26,7 @@ AfterTrauma.Page {
             anchors.right: parent.right
             topPadding: 0
             bottomPadding: 0
-            leftPadding: editable ? 4 : 0
-            rightPadding: editable ? 4 : 0
-            enabled: editable
+            swipeEnabled: editable
             opacity: dragArea.held ? 0. : 1.
             //
             //
@@ -139,7 +137,6 @@ AfterTrauma.Page {
                 console.log( 'removing block : ' + model.index );
                 blocksModel.model.remove(model.index);
             }
-
             onClicked: {
                 console.log( 'block clicked : ' + model.index );
                 swipe.close();
@@ -191,7 +188,7 @@ AfterTrauma.Page {
                 anchors.left: parent.left
                 anchors.bottom: parent.bottom
                 anchors.right: parent.right
-                anchors.margins: 4
+                anchors.margins: 8
                 enabled: true
                 fontSize: 12
                 values: dailyModel.valuesForDate(date)

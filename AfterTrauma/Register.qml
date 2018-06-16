@@ -580,6 +580,7 @@ Popup {
     }
     function installChallenges( challenges ) {
         challenges.forEach( function( challenge ) {
+            console.log( 'updating challenge : ' + challenge._id );
             var result = challengeModel.update( {_id: challenge._id}, challenge, true );
             console.log( 'updated challenges : ' + JSON.stringify(result) );
         });

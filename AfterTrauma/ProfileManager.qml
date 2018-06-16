@@ -193,7 +193,7 @@ AfterTrauma.Page {
                     }
                     Rectangle {
                         width: profileContainer.width
-                        height: 128
+                        height: width
                         color: Colours.almostWhite
                         //
                         //
@@ -202,7 +202,7 @@ AfterTrauma.Page {
                             id: avatar
                             anchors.top: parent.top
                             anchors.left: parent.left
-                            anchors.bottom: parent.bottom
+                            anchors.bottom: galleryButton.top
                             anchors.right: parent.right
                             anchors.margins: 16
                             fillMode: Image.PreserveAspectFit
@@ -215,17 +215,34 @@ AfterTrauma.Page {
                             //
                             //
                             //
-                            MouseArea {
-                                id: selectAvatar
-                                anchors.fill: parent
-                                onClicked: {
-                                    ImagePicker.openCamera();
-                                }
+                        }
+                        AfterTrauma.Button {
+                            id: galleryButton
+                            anchors.bottom: parent.bottom
+                            anchors.left: parent.horizontalCenter
+                            anchors.leftMargin: 1
+                            text: "gallery"
+                            backgroundColour: Colours.darkSlate
+                            radius: [0]
+                            onClicked: {
+                                ImagePicker.openGallery();
+                            }
+                        }
+                        AfterTrauma.Button {
+                            id: cameraButton
+                            anchors.bottom: parent.bottom
+                            anchors.right: parent.horizontalCenter
+                            anchors.rightMargin: 1
+                            text: "camera"
+                            backgroundColour: Colours.darkSlate
+                            radius: [0]
+                            onClicked: {
+                                ImagePicker.openCamera();
                             }
                         }
                     }
                     Rectangle {
-                        height: childrenRect.height + 16
+                        height: profileText.height + 16
                         width: profileContainer.width
                         color: Colours.almostWhite
                         //
@@ -233,13 +250,17 @@ AfterTrauma.Page {
                         //
                         AfterTrauma.TextArea {
                             id: profileText
-                            height: 128
-                            anchors.top: parent.top
+                            height: Math.max(contentHeight,128)
                             anchors.left: parent.left
+                            anchors.bottom: parent.bottom
                             anchors.right: parent.right
                             anchors.margins: 8
+                            wrapMode: TextArea.WordWrap
                             placeholderText: "Tell us a little about you and your trauma experience"
                             text: profile && profile.profile ? profile.profile : ""
+                            onTextChanged: {
+                                dirty = true;
+                            }
                         }
                     }
                 }

@@ -121,7 +121,9 @@ void DatabaseList::clear() {
 
 QVariant DatabaseList::add(QVariant o) {
     QVariantMap object = o.value<QVariantMap>();
-    object["_id"] = QUuid::createUuid().toString();
+    if ( !object.contains("_id") ) {
+        object["_id"] = QUuid::createUuid().toString();
+    }
     beginResetModel();
     m_objects.append(object);
     _sort();

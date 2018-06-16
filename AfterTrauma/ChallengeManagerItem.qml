@@ -9,7 +9,8 @@ AfterTrauma.EditableListItem {
     //
     //
     //
-    height: 86
+    //height: 86
+    height: width / 4.
     //
     //
     //
@@ -33,7 +34,7 @@ AfterTrauma.EditableListItem {
             anchors.top: parent.top
             anchors.left: parent.left
             anchors.bottom: parent.verticalCenter
-            anchors.right: countSpinner.left
+            anchors.right: parent.right
             anchors.margins: 8
             //
             //
@@ -50,7 +51,7 @@ AfterTrauma.EditableListItem {
         }
         Text {
             id: activityText
-            anchors.top: parent.verticalCenter
+            anchors.top: nameText.bottom
             anchors.left: parent.left
             anchors.bottom: parent.bottom
             anchors.right: countSpinner.left
@@ -74,7 +75,7 @@ AfterTrauma.EditableListItem {
         //
         AfterTrauma.SpinBox {
             id: countSpinner
-            anchors.verticalCenter: parent.verticalCenter
+            anchors.bottom: parent.bottom
             anchors.right: parent.right
             anchors.margins: 8
         }

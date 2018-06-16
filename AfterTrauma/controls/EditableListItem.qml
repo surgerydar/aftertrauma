@@ -12,8 +12,57 @@ SwipeDelegate {
     //
     //
     //
-    leftPadding: 4
-    rightPadding: 4
+    leftPadding: swipeEnabled ? 4 : 0
+    rightPadding: swipeEnabled ? 4 : 0
+    //
+    //
+    //
+    Component {
+        id: editComponent
+        Label {
+            id: editLabel
+            text: "Edit"
+            color: Colours.almostWhite
+            verticalAlignment: Label.AlignVCenter
+            padding: 12
+            height: parent.height
+            anchors.left: parent.left
+            background: Rectangle {
+                color: Colours.darkGreen
+            }
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                    container.edit();
+                }
+            }
+        }
+    }
+    //
+    //
+    //
+    Component {
+        id: deleteComponent
+        Label {
+            id: deleteLabel
+            text: "Delete"
+            color: Colours.almostWhite
+            verticalAlignment: Label.AlignVCenter
+            padding: 12
+            height: parent.height
+            anchors.right: parent.right
+            background: Rectangle {
+                color: Colours.red
+            }
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                    swipe.close();
+                    container.remove();
+                }
+            }
+        }
+    }
     //
     //
     //
@@ -39,57 +88,49 @@ SwipeDelegate {
     //
     //
     //
-    swipe.left: Label {
-        id: editLabel
-        text: "Edit"
-        color: Colours.almostWhite
-        verticalAlignment: Label.AlignVCenter
-        padding: 12
-        height: parent.height
-        anchors.left: parent.left
-        background: Rectangle {
-            color: Colours.darkGreen
-        }
-        SwipeDelegate.onClicked: {
-            swipe.close();
-            container.edit();
-        }
-        MouseArea {
-            anchors.fill: parent
-            onClicked: {
-                container.edit();
-            }
-        }
-    }
-    //
-    //
-    //
-    swipe.right: Label {
-        id: deleteLabel
-        text: "Delete"
-        color: Colours.almostWhite
-        verticalAlignment: Label.AlignVCenter
-        padding: 12
-        height: parent.height
-        anchors.right: parent.right
-        background: Rectangle {
-            color: Colours.red
-        }
-        SwipeDelegate.onClicked: {
-            swipe.close();
-            container.remove();
-        }
-        MouseArea {
-            anchors.fill: parent
-            onClicked: {
-                swipe.close();
-                container.remove();
-            }
-        }
-    }
-    //
-    //
-    //
     signal edit()
     signal remove()
+    //
+    //
+    //
+    function updateControls() {
+        if ( swipe.position === 0 ) {
+            //swipe.left = swipeEnabled ? editComponent : emptyComponent;
+            //swipe.right = swipeEnabled ? deleteComponent : emptyComponent;
+            swipe.left = swipeEnabled ? editComponent : null;
+            swipe.right = swipeEnabled ? deleteComponent : null;
+        } else {
+            console.log( 'EditableListItem : defering control update' );
+            Qt.callLater( updateControls );
+        }
+    }
+    //
+    //
+    //
+    onSwipeEnabledChanged: {
+        if ( swipe.position !== 0 ) {
+            console.log( 'EditableListItem.onSwipeEnabledChanged : closing swipe' );
+            swipe.close();
+        } else {
+            updateControls();
+        }
+    }
+    //
+    //
+    //
+    swipe.onPositionChanged: {
+        if ( swipe.position === 0 ) {
+            Qt.callLater( updateControls );
+        }
+    }
+    //
+    //
+    //
+    Component.onCompleted: {
+        updateControls();
+    }
+    //
+    //
+    //
+    property bool swipeEnabled: true
 }

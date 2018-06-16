@@ -48,6 +48,15 @@ Rectangle {
     //
     //
     //
+    MouseArea {
+        anchors.fill: parent
+        onClicked: {
+            close();
+        }
+    }
+    //
+    //
+    //
     Rectangle {
         width: parent.width <= 320 ? parent.width : parent.width * .75
         anchors.top: parent.top
