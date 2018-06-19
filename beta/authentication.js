@@ -35,6 +35,9 @@ Authentication.prototype.register = function( wss, ws, command ) {
         _db.findOne('users', { $or: [{username: user.username},{email:user.email}] } ).then( function( response ) {
             if ( response === null ) {
                 _db.insert('users', user ).then(function( response ) {
+                    //
+                    // TODO: generate json web token
+                    //
                     console.log( 'inserted: ' + JSON.stringify(user) + ' : response:' + JSON.stringify(response) );
                     command.status = 'OK';
                     command.response = { 
@@ -76,7 +79,7 @@ Authentication.prototype.login = function( wss, ws, command ) {
                 command.error = 'username or password incorrect';
             } else {
                 //
-                // filter response
+                // TODO: generate json web token
                 //
                 command.status = 'OK';
                 command.response = response;

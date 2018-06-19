@@ -121,12 +121,19 @@ Item {
             }
             */
         }
-        Image {
-            id: playButton
-            anchors.centerIn: parent
-            source: "../icons/right_arrow.png"
-            visible: content.status === MediaPlayer.Loaded && content.playbackState !== MediaPlayer.PlayingState
+        Rectangle {
+            anchors.fill: parent
+            opacity: .5
+            color: Colours.darkSlate
+            visible: content.playbackState !== MediaPlayer.PlayingState
+            Image {
+                id: playButton
+                anchors.centerIn: parent
+                source: "../icons/right_arrow.png"
+                visible: content.status === MediaPlayer.Loaded && content.playbackState !== MediaPlayer.PlayingState
+            }
         }
+
     }
     onImplicitHeightChanged: {
         console.log( 'implicitHeight:' + implicitHeight + ' width:' + width + ' height:' + height )

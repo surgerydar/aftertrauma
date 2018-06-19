@@ -39,6 +39,18 @@ AfterTrauma.Page {
                 //
                 //
                 //
+                MouseArea {
+                    anchors.top: profileItems.top
+                    anchors.left: profileItems.left
+                    anchors.bottom: profileItems.bottom
+                    anchors.right: profileItems.right
+                    onClicked: {
+                        Qt.inputMethod.hide();
+                    }
+                }
+                //
+                //
+                //
                 Column {
                     id: profileItems
                     anchors.left: parent.left
@@ -48,6 +60,7 @@ AfterTrauma.Page {
                     //
                     //
                     Rectangle {
+                        id: profileBlock0
                         width: profileContainer.width
                         height: childrenRect.height + 16
                         color: Colours.almostWhite
@@ -125,6 +138,7 @@ AfterTrauma.Page {
                         }
                     }
                     Rectangle {
+                        id: profileBlock1
                         width: profileContainer.width
                         height: childrenRect.height + 16
                         color: Colours.almostWhite
@@ -192,6 +206,7 @@ AfterTrauma.Page {
                         }
                     }
                     Rectangle {
+                        id: avatarBlock
                         width: profileContainer.width
                         height: width
                         color: Colours.almostWhite
@@ -242,6 +257,7 @@ AfterTrauma.Page {
                         }
                     }
                     Rectangle {
+                        id: profileTextBlock
                         height: profileText.height + 16
                         width: profileContainer.width
                         color: Colours.almostWhite
@@ -376,6 +392,7 @@ AfterTrauma.Page {
     //
     //
     function saveProfile() {
+        var newProfile = { id: profile.id };
         if ( patient.checked ) {
             profile.role = "patient";
         } else if ( carer.checked ) {
@@ -389,7 +406,9 @@ AfterTrauma.Page {
             profile.gender = "notspecified";
         }
         if ( age.text.length > 0 && age.acceptableInput ) {
-            profile.age = Qt.atob(age.text);
+            profile.age = parseInt(age.text);
+        } else {
+            profile.age = undefined;
         }
         profile.profile = profileText.text;
         profileChannel.send({command:'updateprofile',profile:profile});

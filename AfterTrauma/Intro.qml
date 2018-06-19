@@ -153,10 +153,14 @@ Popup {
     //
     Component.onCompleted: {
         pages.model.clear();
-        documentModel.setFilter({section: 'introduction'});
+        var filter = {section: 'introduction'};
+        console.log( 'Introduction : filtering by : ' + JSON.stringify( filter ) );
+        documentModel.setFilter(filter);
         var count = documentModel.count;
-        for ( var i = 0; i < count; ++i ) {
+        console.log( 'Introduction : appending : ' + count + ' documents' );
+        for ( var i = 0; i < count; i++ ) {
             var document = documentModel.get(i);
+            console.log( 'Introduction : appending document : ' + JSON.stringify(document));
             pages.model.append(document);
         }
     }
