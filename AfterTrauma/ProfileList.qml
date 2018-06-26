@@ -30,7 +30,7 @@ AfterTrauma.Page {
         delegate: ProfileListItem {
             anchors.left: parent.left
             anchors.right: parent.right
-            avatar: model.avatar
+            avatar: model.avatar || "icons/profile_icon.png"
             username: model.username
             profile: model.profile
             userId: model.id

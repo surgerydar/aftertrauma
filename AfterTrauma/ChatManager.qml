@@ -105,7 +105,15 @@ AfterTrauma.Page {
             backgroundColour: "transparent"
             image: "icons/add.png"
             onClicked: {
-                stack.push("qrc:///ProfileList.qml");
+                //stack.push("qrc:///ProfileList.qml");
+                var chat = {
+                    owner: userProfile.id,
+                    subject: "",
+                    isPublic: false
+                }
+                chatEditor.show(chat, function(edited) {
+
+                });
             }
         }
     }

@@ -19,6 +19,7 @@
 #include "cachedimageprovider.h"
 #include "pdfgenerator.h"
 #include "linechartdata.h"
+#include "websocketlist.h"
 //
 // TODO: find a better way of doing this
 //
@@ -63,6 +64,7 @@ int main(int argc, char *argv[])
     qDebug() << "Registering controls";
     qmlRegisterType<DatabaseList>("SodaControls", 1, 0, "DatabaseList");
     qmlRegisterType<WebSocketChannel>("SodaControls", 1, 0, "WebSocketChannel");
+    qmlRegisterType<WebSocketList>("SodaControls", 1, 0, "WebSocketList");
     qmlRegisterType<FlowerChart>("SodaControls", 1, 0, "FlowerChart");
     qmlRegisterType<CachedMediaSource>("SodaControls", 1, 0, "CachedMediaSource");
     qmlRegisterType<LineChartData>("SodaControls", 1, 0, "LineChartData");

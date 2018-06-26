@@ -6,6 +6,7 @@ import "../colours.js" as Colours
 CheckBox {
     id: control
     height: 48
+    implicitWidth: control.height + ( control.text.length > 0 ? label.implicitWidth : 0 )
     baselineOffset: 0 //label.baselineOffset
     //
     //
@@ -47,6 +48,7 @@ CheckBox {
     //
     //
     //
+    property alias textColour: label.color
     property alias textSize: label.font.pointSize
     property string direction: "Left"
 }

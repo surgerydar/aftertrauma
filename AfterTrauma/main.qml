@@ -135,14 +135,17 @@ ApplicationWindow {
 
         }
     }
-    MainMenu {
-        id: mainMenu
-    }
     ShortcutPopup {
         id: shortcut
     }
     BlockEditor {
         id: blockEditor
+    }
+    ChatEditor {
+        id: chatEditor
+    }
+    MainMenu {
+        id: mainMenu
     }
     //
     // dialogs

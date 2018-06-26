@@ -46,7 +46,6 @@ AfterTrauma.Page {
                 from: messageList.height
                 duration: 250
             }
-
         }
     }
     //

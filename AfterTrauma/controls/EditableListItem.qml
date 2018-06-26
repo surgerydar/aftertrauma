@@ -12,7 +12,7 @@ SwipeDelegate {
     //
     //
     //
-    leftPadding: swipeEnabled ? 4 : 0
+    leftPadding: swipeEnabled && contentEditable ? 4 : 0
     rightPadding: swipeEnabled ? 4 : 0
     //
     //
@@ -97,7 +97,7 @@ SwipeDelegate {
         if ( swipe.position === 0 ) {
             //swipe.left = swipeEnabled ? editComponent : emptyComponent;
             //swipe.right = swipeEnabled ? deleteComponent : emptyComponent;
-            swipe.left = swipeEnabled ? editComponent : null;
+            swipe.left = swipeEnabled && contentEditable ? editComponent : null;
             swipe.right = swipeEnabled ? deleteComponent : null;
         } else {
             console.log( 'EditableListItem : defering control update' );
@@ -133,4 +133,5 @@ SwipeDelegate {
     //
     //
     property bool swipeEnabled: true
+    property bool contentEditable: true
 }

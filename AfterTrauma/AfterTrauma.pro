@@ -23,7 +23,8 @@ SOURCES += main.cpp \
     networkaccess.cpp \
     sharedialog.cpp \
     pdfgenerator.cpp \
-    linechartdata.cpp
+    linechartdata.cpp \
+    websocketlist.cpp
 
 HEADERS += \
     imagepicker.h \
@@ -47,7 +48,8 @@ HEADERS += \
     sharedialog.h \
     pdfgenerator.h \
     linechartdata.h \
-    paintable.h
+    paintable.h \
+    websocketlist.h
 
 
 RESOURCES += qml.qrc

@@ -153,5 +153,9 @@
         <file>DiaryEntry.qml</file>
         <file>BlockEditor.qml</file>
         <file>icons/reorder.png</file>
+        <file>ChatEditor.qml</file>
+        <file>ProfileSearch.qml</file>
+        <file>ProfileSearchItem.qml</file>
+        <file>ProfileModel.qml</file>
     </qresource>
 </RCC>
