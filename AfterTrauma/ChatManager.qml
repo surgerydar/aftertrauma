@@ -19,7 +19,7 @@ AfterTrauma.Page {
         //
         //
         clip: true
-        spacing: 8
+        spacing: 4
         //
         //
         //
@@ -32,6 +32,7 @@ AfterTrauma.Page {
             height: 48
             anchors.left: parent.left
             anchors.right: parent.right
+            anchors.margins: 8
             font.weight: Font.Light
             font.family: fonts.light
             font.pixelSize: 32
@@ -105,7 +106,16 @@ AfterTrauma.Page {
             backgroundColour: "transparent"
             image: "icons/add.png"
             onClicked: {
-                //stack.push("qrc:///ProfileList.qml");
+                var exclude = [userProfile.id];
+                var count = chatModel.count;
+                for ( var i = 0; i < count; i++ ) {
+                    var chat = chatModel.get(i);
+                    if ( exclude.indexOf(chat.from) < 0 ) exclude.push( chat.from );
+                    if ( exclude.indexOf(chat.to) < 0 ) exclude.push( chat.to );
+                }
+                console.log( JSON.stringify(exclude));
+                stack.push("qrc:///ProfileList.qml",{exclude:exclude});
+                /*
                 var chat = {
                     owner: userProfile.id,
                     subject: "",
@@ -114,19 +124,22 @@ AfterTrauma.Page {
                 chatEditor.show(chat, function(edited) {
 
                 });
+                */
             }
         }
     }
 
     StackView.onActivated: {
-        chatChannel.open();
+        //chatChannel.open();
+        chatModel.load();
     }
     StackView.onDeactivated: {
-        chatChannel.close();
+        //chatChannel.close();
     }
     //
     //
     //
+    /*
     WebSocketChannel {
         id: chatChannel
         url: "wss://aftertrauma.uk:4000"
@@ -203,6 +216,55 @@ AfterTrauma.Page {
                     }
                 }
             }
+        }
+    }
+    */
+    Connections {
+        target: chatChannel
+        onGetuserchats:{
+            chatModel.clear();
+            chatModel.beginBatch();
+            command.response.forEach(function(chat) {
+                chatModel.batchAdd(chat);
+            });
+            chatModel.endBatch();
+            chatModel.save();
+        }
+        onSendinvite:{
+            console.log( 'ChatManager : invite received')
+            if ( command.to === userProfile.id ) {
+                var chat = command;
+                chat.status = 'invite';
+                chat.response = undefined;
+                chat.messages = [];
+                chatModel.add( chat );
+                chatModel.save();
+            }
+        }
+        onAcceptinvite:{
+            //
+            // FIXME: possible error here ????
+            //
+            console.log( 'ChatManager : invite accepted')
+            chatModel.update({id: command.id},{status:"active"});
+            chatModel.save();
+        }
+        onSendmessage:{
+            console.log( 'ChatManager : message recieved');
+            if ( command.to === userProfile.id ) {
+                var chat = chatModel.findOne({id:command.id});
+                if ( chat ) {
+                    var newMessage = { from: command.from, message: command.message };
+                    chat.messages.push( newMessage );
+                    chatModel.update({id:command.id},{messages:chat.messages});
+                    chatModel.save();
+                }
+            }
+        }
+        onRemovechat:{
+            console.log( 'ChatManager : chat removed');
+            chatModel.remove({id: command.id});
+            chatModel.save();
         }
     }
 }

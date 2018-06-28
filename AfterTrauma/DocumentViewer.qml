@@ -30,9 +30,6 @@ AfterTrauma.Page {
             type: model.type
             media: model.content
         }
-        add: Transition {
-            NumberAnimation { properties: "y"; from: contents.height; duration: 250 }
-        }
     }
     //
     //

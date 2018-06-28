@@ -6,7 +6,7 @@ DatabaseList {
     collection: "chats"
     roles: [ "id", "date", "title", "from", "to", "fromUsername", "toUsername", "messages", "status" ]
     //sort: { "date": -1 }
-    sort: { "status": 1, "date": -1 } // TODO: nested sort
+    sort: { "status": 1, "date": -1 }
     //
     //
     //
@@ -111,6 +111,7 @@ DatabaseList {
                             chat.messages[ i ] = cached.model.get(i);
                         }
                         update( {id: chatId},{messages: chat.messages});
+                        save();
                     }
                 });
                 //

@@ -339,7 +339,52 @@ void FlowerChart::mousePressEvent(QMouseEvent *event) {
 }
 
 void FlowerChart::mouseReleaseEvent(QMouseEvent *event) {
+    selectCategoryAt(event->x(),event->y());
+}
+//
+//
+//
+void FlowerChart::selectCategoryAt( qreal x, qreal y ) {
+    QPointF mp( x, y );
+    qDebug() << "FlowerChart::mouseReleaseEvent " << mp;
+    //
+    //
+    //
+    qreal sweep = (2*M_PI) / 5.;
+    qreal angle  = 0.;
+    qreal radius = qMin( width(), height()) / 2.;
+    QPointF cp( width()/2., height()/2.);
+    //
+    // draw labels
+    //
+    angle = sweep / 2;
+    radius *= .6;
+    qreal minDistance = std::numeric_limits<qreal>::max();
+    int minIndex = -1;
+    for ( int i = 0; i < 5; ++i ) {
+        QPointF p(
+                    cp.x()+(qCos(angle)*radius-qSin(angle)),
+                    cp.y()+(qSin(angle)*radius-qCos(angle))
+                    );
+        //
+        //
+        //
+        QPointF d = p - mp;
+        qreal distance = d.manhattanLength();
+        if ( distance < minDistance ) {
+            minDistance = distance;
+            minIndex = i;
+        }
+        //
+        //
+        //
+        angle += sweep;
+    }
+    if ( minIndex >= 0 ) {
+        emit categorySelected( labels[ minIndex ] );
+    }
 
 }
+
 
 

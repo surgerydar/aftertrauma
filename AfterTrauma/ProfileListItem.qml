@@ -84,7 +84,6 @@ AfterTrauma.EditableListItem {
             font.pointSize: 12
             color: Colours.almostWhite
         }
-        /*
         //
         //
         //
@@ -94,7 +93,7 @@ AfterTrauma.EditableListItem {
             anchors.right: parent.right
             anchors.margins: 8
             backgroundColour: "transparent"
-            text: "Invite"
+            text: "Connect"
             onClicked: {
                 //
                 // send chat invite
@@ -102,7 +101,7 @@ AfterTrauma.EditableListItem {
                 sendChatInvite( userId );
             }
         }
-        */
+
     }
     //
     //

@@ -41,10 +41,12 @@ Rectangle {
     function open() {
         container.state = "open";
         //profileChannel.open();
+        membersList.model.open();
     }
     function close() {
         container.state = "closed";
         //profileChannel.close();
+        membersList.model.close();
     }
     //
     // titlebar
@@ -139,7 +141,6 @@ Rectangle {
         model: WebSocketList {
             url: "wss://aftertrauma.uk:4000"
             roles: ["_id","id","username","profile","avatar"]
-
         }
         delegate: ProfileListItem {
             width: membersList.width

@@ -135,7 +135,7 @@ AfterTrauma.Page {
                     }
                 }
                 var documents = documentModel.find( { document: { $in: ids } } );
-                console.log( 'find documents : ' + JSON.stringify(documents) );
+                console.log( 'find documents : ' + documents.length );
                 documents.forEach( function( document ) {
                     //
                     // find first text block

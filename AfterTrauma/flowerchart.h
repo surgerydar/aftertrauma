@@ -32,6 +32,12 @@ public:
     QVariantList startValues() const;
     void setStartValues( const QVariantList startValues );
 
+public slots:
+    void selectCategoryAt( qreal x, qreal y );
+
+signals:
+    void categorySelected( QString category );
+
 protected:
     void timerEvent(QTimerEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;

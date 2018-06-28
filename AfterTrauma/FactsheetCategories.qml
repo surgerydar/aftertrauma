@@ -7,7 +7,7 @@ import "colours.js" as Colours
 AfterTrauma.Page {
     id: container
 
-    title: "RESOURCES"
+    title: "INFORMATION"
     colour: Colours.darkOrange
     //
     //

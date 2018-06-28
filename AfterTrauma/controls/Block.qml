@@ -41,7 +41,9 @@ Item {
         anchors.left: parent.left
         anchors.right: parent.right
         onLoaded: {
+            item.mediaReady.connect(mediaReady);
             item.media = container.media;
+
         }
     }
     //

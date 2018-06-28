@@ -65,7 +65,10 @@ Rectangle {
         anchors.margins: 8
         clip: true
         spacing: 4
-        model: ListModel {}
+        model: WebSocketList {
+            url: "wss://aftertrauma.uk:4000"
+            roles: ["_id","id","username","profile","avatar"]
+        }
         delegate: ProfileSearchItem {
             width: profiles.width
             avatar: model.avatar || "icons/profile_icon.png"
@@ -106,12 +109,12 @@ Rectangle {
         placeholderText: "username"
         onTextChanged: {
             if ( text.length > 0 ) {
-                var command = {
+                console.log( 'seraching for text : ' + text );
+                profiles.model.command = {
                     command: 'filterpublicprofiles',
                     filter: {$and:[{id:{$not:{$eq:userProfile.id}}},{username: { $regex: '^' + text, $options:'i'} }]}
                 };
-                busyIndicator.running = true;
-                profileChannel.send(command);
+                profiles.model.refresh();
             } else {
                 profiles.model.clear();
             }
@@ -150,14 +153,17 @@ Rectangle {
     function open() {
         container.state = "open";
         console.log('ProfileSearch.open');
-        profileChannel.open();
+        //profileChannel.open();
+        profiles.model.open();
     }
     function close() {
         container.state = "closed";
         console.log('ProfileSearch.close');
-        profileChannel.close();
+        //profileChannel.close();
+        profiles.model.close();
         container.closed();
     }
+    /*
     //
     //
     //
@@ -190,4 +196,5 @@ Rectangle {
             console.log('profileChannel closed');
         }
     }
+    */
 }

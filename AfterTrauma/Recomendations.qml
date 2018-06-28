@@ -195,7 +195,7 @@ DatabaseList {
             console.log( 'getRecomendation : unable to find valid daily : ' + daily ? "undefined" : JSON.stringify(daily));
             return 'unable to find daily results';
         }
-        console.log( 'getRecomendation : daily : ' + JSON.stringify( daily ) );
+        console.log( 'getRecomendation : daily : ' + JSON.stringify( daily.values ) );
         //
         // get category value
         //
@@ -209,7 +209,7 @@ DatabaseList {
         //
         // get category value recomendation
         //
-        var query = { $and: [ { category: c }, { minimum: { $lte: value } }, { maximum: { $gt: value } } ]};
+        var query = { $and: [ { category: c }, { minimum: { $lte: value } }, { maximum: { $gte: value } } ]};
         console.log( 'getRecomendation : looking for : ' + JSON.stringify( query ) );
         var recomendation = findOne( query );
         //

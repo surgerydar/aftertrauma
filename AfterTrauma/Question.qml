@@ -59,11 +59,11 @@ Item {
         //
         //
         Repeater {
-            model: 5
+            model: 4
             Image {
                 anchors.verticalCenter: ticks.verticalCenter
                 height: ticks.height
-                width: ticks.width / 5.
+                width: ticks.width / 4.
                 fillMode: Image.PreserveAspectFit
                 source: "icons/face" + index + ".png"
             }
@@ -121,7 +121,7 @@ Item {
     //
     function indicatorPosition( score ) {
         var offset = score * container.width;
-        var starWidth = ticks.width / 5.;
+        var starWidth = ticks.width / 4.;
         var index = Math.max( 0, Math.min( 4., Math.floor( offset / starWidth ) ) );
         var indicatorPosn = ( index * starWidth ) + ( starWidth / 2. );
         //indicator.x = ticks.x + ( indicatorPosn - ( indicator.width / 2. ) );

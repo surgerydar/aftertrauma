@@ -60,6 +60,28 @@ AfterTrauma.Page {
                     //
                     //
                     Rectangle {
+                        id: stayLoggedInBlock
+                        width: profileContainer.width
+                        height: childrenRect.height + 16
+                        color: Colours.almostWhite
+                        AfterTrauma.CheckBox {
+                            id: stayLoggedIn
+                            anchors.top: parent.top
+                            anchors.right: parent.right
+                            anchors.margins: 8
+                            text: "stay logged in"
+                            checked: profile && profile.stayLoggedIn
+                            direction: "Right"
+                            onCheckedChanged: {
+                                profile.stayLoggedIn = checked;
+                                dirty = true;
+                            }
+                        }
+                    }
+                    //
+                    //
+                    //
+                    Rectangle {
                         id: profileBlock0
                         width: profileContainer.width
                         height: childrenRect.height + 16
@@ -154,7 +176,7 @@ AfterTrauma.Page {
                             wrapMode: Label.WordWrap
                             font.family: fonts.light
                             font.pointSize: 24
-                            text: "Sex"
+                            text: "Gender"
                         }
                         AfterTrauma.CheckBox {
                             id: female
@@ -287,6 +309,25 @@ AfterTrauma.Page {
             title: "Where are your injuries?"
             BodyParts {
                 anchors.fill: parent
+                onPartSelected: {
+                    dirty = true;
+                    if ( selected ) {
+                        if ( !profile.tags ) {
+                            profile.tags = [ name ];
+                        } else {
+                            if ( profile.tags.indexOf(name) < 0 ) {
+                                profile.tags.push(name);
+                            }
+                        }
+                    } else {
+                        if ( profile.tags ) {
+                            var i = profile.tags.indexOf(name);
+                            if ( i >= 0 ) {
+                                profile.tags.splice(i,1);
+                            }
+                        }
+                    }
+                }
             }
         }
         onCurrentItemChanged: {
@@ -411,6 +452,10 @@ AfterTrauma.Page {
             profile.age = undefined;
         }
         profile.profile = profileText.text;
+        if ( profile.tags ) {
+            console.log( 'profile tags: ' + JSON.stringify(profile.tags));
+        }
+        JSONFile.write('user.json',profile);
         profileChannel.send({command:'updateprofile',profile:profile});
     }
     //

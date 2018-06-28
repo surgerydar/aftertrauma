@@ -23,7 +23,13 @@ AfterTrauma.Page {
         //
         //
         //
-        model: ListModel {}
+        model: WebSocketList {
+            url: "wss://aftertrauma.uk:4000"
+            roles: ["_id","id","username","profile","avatar"]
+            onOpened: {
+                refresh();
+            }
+        }
         //
         //
         //
@@ -32,8 +38,9 @@ AfterTrauma.Page {
             anchors.right: parent.right
             avatar: model.avatar || "icons/profile_icon.png"
             username: model.username
-            profile: model.profile
+            profile: model.profile || ''
             userId: model.id
+            swipeEnabled: false
             onSendChatInvite: {
                 var command = {
                     command: "sendinvite",
@@ -43,55 +50,115 @@ AfterTrauma.Page {
                     to: model.id,
                     toUsername: model.username
                 }
-                profileChannel.send(command);
+                console.log( 'sending chat invite' );
+                chatChannel.send(command);
             }
         }
     }
+
+    footer: Item {
+        height: 64
+        anchors.left: parent.left
+        anchors.right: parent.right
+        //
+        //
+        //
+        AfterTrauma.TextField {
+            id: searchField
+            anchors.left: parent.left
+            anchors.right: searchButton.left
+            anchors.bottom: parent.bottom
+            anchors.margins: 8
+            placeholderText: "username or tag"
+        }
+        //
+        //
+        //
+        AfterTrauma.Button {
+            id: searchButton
+            anchors.verticalCenter: searchField.verticalCenter
+            anchors.right: parent.right
+            anchors.rightMargin: 8
+            image: "icons/search.png"
+            backgroundColour: "transparent"
+            //
+            //
+            //
+            onClicked: {
+                search();
+            }
+        }
+
+    }
+
     StackView.onActivated: {
         //
         //
         //
         console.log('opening profileChannel');
-        profileChannel.open();
-
+        profiles.model.clear();
+        profiles.model.open();
     }
     StackView.onDeactivated: {
         //
         //
         //
         console.log('closing profileChannel');
-        profileChannel.close();
+        //profileChannel.close();
+        profiles.model.close();
     }
     //
     //
     //
-    WebSocketChannel {
-        id: profileChannel
-        url: "wss://aftertrauma.uk:4000"
-        onReceived: {
-            busyIndicator.running = false;
-            var command = JSON.parse(message); // TODO: channel should probably emit object
-            if ( command.command === 'getpublicprofiles' ) {
-                if( command.status === "OK" ) {
-                    profiles.model.clear();
-                    command.response.forEach(function( profile ) {
-                        profiles.model.append( profile );
-                    });
-                } else {
-                    errorDialog.show( '<h1>Server says</h1><br/>' + ( typeof command.error === 'string' ? command.error : command.error.error ), [
-                                         { label: 'try again', action: function() {} },
-                                         { label: 'forget about it', action: function() { stack.pop(); } },
-                                     ] );
+    function search() {
+        var text = searchField.text
+        if ( text.length > 0 ) {
+            profiles.model.command = {
+                command: 'filterpublicprofiles',
+                filter: {
+                    $and:[
+                        {
+                            id:{
+                                $not:{
+                                    $in:exclude
+                                }
+                            }
+                        },
+                        {
+                            $or:[
+                                {
+                                    username: {
+                                        $regex: '^' + text,
+                                        $options:'i'
+                                    }
+                                },
+                                {
+                                    tags: {
+                                        $elemMatch: {
+                                            $regex: '^' + text,
+                                            $options:'i'
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
                 }
-            }
+            };
+        } else {
+            profiles.model.command = {
+                command: 'filterpublicprofiles',
+                filter: {
+                    id:{
+                        $not:{
+                            $in:exclude
+                        }
+                    }
+                }
+            };
         }
-        onOpened: {
-            console.log('profileChannel open');
-            busyIndicator.running = true;
-            send({command: 'getpublicprofiles', exclude: userProfile.id });
-        }
-        onClosed: {
-            console.log('profileChannel closed');
-        }
+        profiles.model.refresh();
     }
+
+    property var exclude: ([])
 }

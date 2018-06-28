@@ -67,6 +67,7 @@ QVariant JSONFile::read(QString path) {
         QString error = "Unable to open file : ";
         error.append(fullpath);
         emit errorReadingFrom(path,error);
+        qDebug() << "JSONFile::read : " << error;
     }
     return QVariant();
 }
@@ -99,6 +100,10 @@ bool JSONFile::write(QString path, QVariant object) {
         QByteArray json = document.toJson();
         jsonFile.write(json);
         return true;
+    } else {
+        QString error = "Unable to open file : ";
+        error.append(fullpath);
+        qDebug() << "JSONFile::write : " << error;
     }
     return false;
 }

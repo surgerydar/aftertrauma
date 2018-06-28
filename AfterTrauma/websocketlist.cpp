@@ -13,12 +13,6 @@ WebSocketList::WebSocketList(QObject *parent) : QAbstractListModel(parent) {
 
 void WebSocketList::connected() {
     qDebug() << "WebSocketChannel:connected";
-    //
-    // send command
-    //
-    QJsonDocument doc(QJsonObject::fromVariantMap(m_command));
-    QString message = doc.toJson();
-    m_webSocket.sendTextMessage(message);
     emit opened();
 }
 
@@ -39,10 +33,10 @@ void WebSocketList::textMessageReceived(const QString& message) {
     if ( doc.isObject() ) {
         QVariantMap command = doc.object().toVariantMap();
         if ( command.contains("command") && command["command"] == m_command["command"] ) {
+            qDebug() << "WebSocketList : received response";
             if ( command.contains("status") && command["status"].toString() == "OK" ) {
                 QVariantList response = command[ "response" ].value<QVariantList>();
                 populateList( response );
-                m_webSocket.close();
             } else {
                 QString err( "WebSocketList : server error : " );
                 if ( command.contains("error") ) {
@@ -179,6 +173,14 @@ void WebSocketList::setCommand( const QVariant command ) {
 //
 //
 //
+void WebSocketList::open() {
+    m_webSocket.open(m_url);
+}
+
+void WebSocketList::close() {
+    m_webSocket.close();
+}
+
 QVariant WebSocketList::get(int i) {
     if ( i >= 0 && i < m_objects.size() ) {
         return QVariant(m_objects[i]);
@@ -188,7 +190,18 @@ QVariant WebSocketList::get(int i) {
 
 void WebSocketList::refresh() {
     qDebug() << "WebSocketList::refresh";
-    m_webSocket.open(m_url);
+    if ( m_webSocket.state() == QAbstractSocket::UnconnectedState ) {
+        qDebug() << "WebSocketList:send : error : not connected to : " << m_url;
+        emit error("not connected");
+    } else {
+        //
+        // send command
+        //
+        QJsonDocument doc(QJsonObject::fromVariantMap(m_command));
+        QString message = doc.toJson();
+        qDebug() << "WebSocketList::connected : sending message";
+        m_webSocket.sendTextMessage(message);
+    }
 }
 
 void WebSocketList::clear() {
@@ -202,6 +215,7 @@ void WebSocketList::clear() {
 //
 //
 void WebSocketList::populateList(const QVariantList& data ) {
+    qDebug() << "WebSocketList::populateList : " << data.size() << " objects";
     beginResetModel();
     m_objects.clear();
     for ( auto& object : data ) {

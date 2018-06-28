@@ -64,7 +64,7 @@ AfterTrauma.Page {
             }
             onOnChanged: {
                 if ( model.type === "switch" ) {
-                    challenge[ model.field ] = value;
+                    challenge[ model.field ] = on;
                 }
             }
             onValueChanged: {

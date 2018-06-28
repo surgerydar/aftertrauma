@@ -9,6 +9,16 @@ AfterTrauma.Page {
     //
     //
     //
+    MouseArea {
+        anchors.fill: parent
+        onClicked: {
+            var mp = mapToItem(flowerChart,mouseX,mouseY);
+            flowerChart.selectCategoryAt( mp.x, mp.y );
+        }
+    }
+    //
+    //
+    //
     Item {
         id: content
         anchors.top: parent.top

@@ -174,7 +174,7 @@ DatabaseList {
             day: date.getDate(), // 1 - 31
             values: [
                 { label: 'emotions', value: 0. },
-                { label: 'mind', value: 0. },
+                { label: 'confidence', value: 0. },
                 { label: 'body', value: 0. },
                 { label: 'life', value: 0. },
                 { label: 'relationships', value: 0. },

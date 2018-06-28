@@ -84,7 +84,7 @@ Item {
         anchors.top: parent.top
         anchors.right: acceptButton.visible ? acceptButton.left : parent.right
         anchors.margins: 8
-        text: acceptButton.visible ? "Reject" : "Remove"
+        text: acceptButton.visible ? "Reject" : "Disconnect"
         backgroundColour: "transparent"
         onClicked: {
             reject();

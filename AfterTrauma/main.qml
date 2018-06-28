@@ -58,6 +58,12 @@ ApplicationWindow {
         id: bodyPartModel
     }
     //
+    //
+    //
+    ChatChannel {
+        id: chatChannel
+    }
+    //
     // notifications
     //
     Timer {
@@ -94,8 +100,16 @@ ApplicationWindow {
         anchors.leftMargin: 8
         anchors.rightMargin: 8
         enabled: false
+        opacity: enabled ? 1. : 0.
         onEnabledChanged: {
             update();
+        }
+        onCategorySelected: {
+            console.log( 'FlowerChart : searching for : ' + category );
+            linkPopup.find([category]);
+        }
+        Behavior on opacity {
+            NumberAnimation { duration: 500 }
         }
     }
     //
@@ -157,6 +171,9 @@ ApplicationWindow {
     Register {
         id: register
     }
+    LinkPopup {
+        id: linkPopup
+    }
     AfterTrauma.ConfirmDialog {
         id: confirmDialog
         x: 0
@@ -205,18 +222,28 @@ ApplicationWindow {
         //
         // TODO: check settings for first use
         //
-        if ( SystemUtils.isFirstRun() ) {
+        userProfile = JSONFile.read('user.json') || null;
+        if ( !userProfile ) {//SystemUtils.isFirstRun() ) {
             console.log( 'installing' );
             //stack.push("qrc:///Install.qml")
             //SystemUtils.install();
             intro.open();
         } else {
             //
+            // TODO: review the way this works
             //
-            //
+            if ( userProfile.stayLoggedIn ) {
+                loggedIn    = true;
+                chatChannel.open();
+            } else {
+                //
+                // force login
+                //
+                register.open();
+                chatChannel.open();
+            }
             stack.push("qrc:///Dashboard.qml");
             flowerChart.enabled = true;
-            intro.open();
         }
     }
     //

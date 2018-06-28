@@ -25,16 +25,17 @@ AfterTrauma.Page {
         //
         //
         delegate: AfterTrauma.Block {
+            /*
             anchors.left: parent.left
             anchors.right: parent.right
+            */
+            width: parent.width
+            anchors.horizontalCenter: parent.horizontalCenter
             type: model.type
             media: model.content
             onMediaReady: {
-                contents.update();
+                contents.forceLayout();
             }
-        }
-        add: Transition {
-            NumberAnimation { properties: "y"; from: contents.height; duration: 250 }
         }
     }
     //
@@ -58,6 +59,7 @@ AfterTrauma.Page {
     //
     //
     //
+    property bool firstTime: true
     property string document: ""
 
 }

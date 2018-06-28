@@ -110,61 +110,46 @@ AfterTrauma.Page {
     //
     //
     StackView.onActivated: {
-        chatChannel.open();
         messageList.positionViewAtEnd();
 
     }
     StackView.onDeactivated: {
-        chatChannel.close();
         chatModel.releaseMessageModel(chatId);
     }
     //
     //
     //
-    WebSocketChannel {
-        id: chatChannel
-        url: "wss://aftertrauma.uk:4000"
-        autoreconnect: true
+    Connections {
+        target: chatChannel
         //
         //
         //
-        onOpened: {
-            //
-            // go live
-            //
-            console.log( 'Chat : chatChannel open going live' );
-            var command = {
-                command: 'golive',
-                id: userProfile.id,
-                username: userProfile.username
-            }
-            send( command );
+        onConnectedChanged: {
             //
             // send pending messages
             //
             // TODO: this may fail half way through so need to requeue those which are not sent
             //
-            pendingMessages.forEach(function(message){
-                send(message);
-            });
-            pendingMessages = [];
+            if ( chatChannel.connected ) {
+                pendingMessages.forEach(function(message){
+                    send(message);
+                });
+                pendingMessages = [];
+            }
         }
-        onReceived: {
-            var command = JSON.parse(message);
-            //console.log( 'Chat received message : ' + message );
-            if ( command.command === 'sendmessage' ) {
-                console.log( 'chatId:' + chatId + 'incomming chat id:' + command.id + 'from:' + command.from + ' to:' + command.to + ' userProfile.id:' + userProfile.id );
-                if ( command.id === chatId && command.to === userProfile.id /*command.status === 'OK' */) {
-                    console.log( 'appending message ' );
-                    //
-                    // TODO: sort by date
-                    //
-                    messageList.model.append( { from: command.from, message: command.message } );
-                    messageList.positionViewAtEnd();
-                }
+        onSendmessage: {
+            console.log( 'chatId:' + chatId + 'incomming chat id:' + command.id + 'from:' + command.from + ' to:' + command.to + ' userProfile.id:' + userProfile.id );
+            if ( command.id === chatId && command.to === userProfile.id ) {
+                console.log( 'appending message ' );
+                //
+                // TODO: sort by date
+                //
+                messageList.model.append( { from: command.from, message: command.message } );
+                messageList.positionViewAtEnd();
             }
         }
     }
+
     //
     //
     //

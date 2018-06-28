@@ -5,7 +5,7 @@ DatabaseList {
     id: model
     collection: "challenges"
     roles: [ "name", "activity", "repeats", "frequency", "values", "notes", "images", "notifications", "active", "date", "count" ]
-    sort: { "name": 1 }
+    sort: { "active": -1 }//, "name": 1 }
     //
     //
     //
@@ -59,6 +59,7 @@ DatabaseList {
     function addChallenge(challenge) {
         challenge.count = 0;
         challenge.date = Date.now();
+        challenge.active = challenge.active | false;
         add(challenge);
         save();
     }

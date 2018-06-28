@@ -29,6 +29,22 @@ AfterTrauma.Page {
         //
         //
         //
+        section.property: "active"
+        section.delegate: Text {
+            height: 48
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.margins: 4
+            font.weight: Font.Light
+            font.family: fonts.light
+            font.pointSize: 32
+            font.capitalization: Font.Capitalize
+            color: Colours.almostWhite
+            text:  ( section === "true" ? "Active" : "Inactive" )
+        }
+        //
+        //
+        //
         delegate: ChallengeManagerItem {
             //anchors.left: parent.left
             //anchors.right: parent.right
@@ -114,12 +130,13 @@ AfterTrauma.Page {
     //
     //
     StackView.onActivated: {
-        //challenges.update();
-        editable = false;
+        challengeModel.load();
+        //editable = false;
     }
     //
     //
     //
+    /*
     Connections {
         target: challengeModel
         onDataChanged: {
@@ -127,6 +144,7 @@ AfterTrauma.Page {
             challenges.forceLayout();
         }
     }
+    */
     //
     //
     //

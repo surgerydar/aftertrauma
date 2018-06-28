@@ -3,6 +3,8 @@
 #include <QQmlContext>
 #include <QDebug>
 #include <QStandardPaths>
+#include <QNetworkAccessManager>
+#include <QNetworkConfigurationManager>
 
 #include "imagepicker.h"
 #include "sharedialog.h"

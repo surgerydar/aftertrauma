@@ -155,7 +155,8 @@ QVariant DatabaseList::update(QVariant q,QVariant u, bool upsert) {
         }
     }
     //endResetModel();
-
+    _sort();
+    _filter();
     if ( matches.size() > 0 ) {
         qDebug() << "updated from : " << minIndex << " : to : " << maxIndex;
         emit dataChanged(createIndex(minIndex,0),createIndex(maxIndex,0));
@@ -341,7 +342,7 @@ bool DatabaseList::_match( QVariantMap& object, QVariantMap& query ) {
                 }
                 return false;
             } else if ( key == "$and" ) {
-                qDebug() << "matching $and " << query[key];
+                //qDebug() << "matching $and " << query[key];
                 QVariantList _conditions = query[key].toList();
                 for ( auto& _condition : _conditions ) {
                     QVariantMap _conditionMap = _condition.toMap();
@@ -392,10 +393,10 @@ inline bool DatabaseList::_matchValue( QVariant& value, QVariant& condition ) {
                 if ( _matchValue(value, _value) ) return true; // allow complex conditions
             }
         } else if ( _condition.contains("$and") ) {
-            qDebug() << "matching $and";
+            //qDebug() << "matching $and";
             QVariantList _values = _condition.value( "$and" ).toList();
             for ( auto& _value : _values ) {
-                qDebug() << "matching : " << value << " : " << _value;
+                //qDebug() << "matching : " << value << " : " << _value;
                 //if ( value != _value ) return false;
                 if ( !_matchValue(value, _value) ) return false; // allow complex conditions
             }
@@ -410,7 +411,7 @@ inline bool DatabaseList::_matchValue( QVariant& value, QVariant& condition ) {
         } else if ( _condition.contains("$lt") ) {
             return value < _condition.value("$lt");
         } else if ( _condition.contains("$lte") ) {
-            qDebug() << "matching : $lte : " << value << " <= " << _condition.value("$lte");
+            //qDebug() << "matching : $lte : " << value << " <= " << _condition.value("$lte");
             return value <= _condition.value("$lte");
         } else if ( _condition.contains("$gt") ) {
             return value > _condition.value("$gt");

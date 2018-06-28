@@ -35,6 +35,8 @@ signals:
     void closed();
 
 public slots:
+    void open();
+    void close();
     QVariant get(int i);
     void refresh();
     void clear();

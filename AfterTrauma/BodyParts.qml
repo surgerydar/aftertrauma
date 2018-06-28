@@ -39,8 +39,13 @@ Item {
                 onClicked: {
                     checked = !checked;
                     parts.model.setSelected(partName,checked);
+                    partSelected( model.name, checked );
                 }
             }
         }
     }
+    //
+    //
+    //
+    signal partSelected( string name, bool selected )
 }

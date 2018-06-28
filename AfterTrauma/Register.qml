@@ -65,6 +65,7 @@ Popup {
             anchors.right: parent.right
             anchors.bottom: parent.bottom
             anchors.margins: 16
+            visible: !userProfile
             image: "icons/close.png"
             onClicked: {
                 container.close();
@@ -316,6 +317,7 @@ Popup {
             //
             AfterTrauma.Button {
                 id: gotoRegisterButton
+                visible: !userProfile
                 anchors.left: parent.left
                 anchors.bottom: parent.bottom
                 anchors.margins: 8
@@ -362,6 +364,11 @@ Popup {
                 if ( command.command === 'register' || command.command === 'login' ) {
                     loggedIn    = true;
                     userProfile = command.response;
+                    //
+                    // save userProfile
+                    //
+                    userProfile.stayLoggedIn = ( command.command === 'login' && loginStayLoggedIn.checked ) || ( command.command === 'register' && stayLoggedIn.checked )
+                    JSONFile.write('user.json',userProfile);
                     //container.close();
                     //
                     // TODO: move all update logic to single module
@@ -396,10 +403,14 @@ Popup {
                     container.close();
                 }
             } else if ( command.error ) {
-                errorDialog.show( '<h1>Server says</h1><br/>' + ( typeof command.error === 'string' ? command.error : command.error.error ), [
-                                     { label: 'try again', action: function() {} },
-                                     { label: 'forget about it', action: function() { container.close(); } },
-                                 ] );
+                errorDialog.show( '<h1>Server says</h1><br/>' + ( typeof command.error === 'string' ? command.error : command.error.error ), userProfile ?
+                                     [
+                                         { label: 'try again', action: function() {} }
+                                     ] :
+                                     [
+                                         { label: 'try again', action: function() {} },
+                                         { label: 'forget about it', action: function() { container.close(); } },
+                                     ] );
             } else {
                 console.log( 'unknown message: ' + message );
             }
@@ -407,10 +418,14 @@ Popup {
         }
         onError: {
             busyIndicator.running = false;
-            errorDialog.show( '<h1>Network error</h1><br/>' + error, [
-                                 { label: 'try again', action: function() {} },
-                                 { label: 'forget about it', action: function() { container.close(); } },
-                             ] );
+            errorDialog.show( '<h1>Network error</h1><br/>' + error, userProfile ?
+                                 [
+                                     { label: 'try again', action: function() {} }
+                                 ] :
+                                 [
+                                     { label: 'try again', action: function() {} },
+                                     { label: 'forget about it', action: function() { container.close(); } },
+                                 ] );
         }
         onOpened: {
 
@@ -423,6 +438,7 @@ Popup {
 
     }
     onOpened: {
+        content.currentIndex = userProfile ? 1 : 0;
         authenticationChannel.open();
     }
     onClosed: {
@@ -446,17 +462,23 @@ Popup {
         if ( target === register ) {
             console.log( 'validating registration' );
             if ( username.acceptableInput && email.acceptableInput && password.acceptableInput && confirmPassword.text === password.text && acceptTerms.checked ) {
-                busyIndicator.running = true;
-                user = {
-                    command: 'register',
-                    username: username.text,
-                    email: email.text,
-                    password: password.text,
-                    id: GuidGenerator.generate()
-                };
-                authenticationChannel.send(user);
+                if( userProfile && username.text !== userProfile.username ) {
+                    message = "<h1>Error</h1>Please enter username associated with this device";
+                } else {
+                    busyIndicator.running = true;
+                    user = {
+                        command: 'register',
+                        username: username.text,
+                        email: email.text,
+                        password: password.text,
+                        id: GuidGenerator.generate()
+                    };
+                    authenticationChannel.send(user);
+                }
             } else {
+                //
                 // show error
+                //
                 message = "<h1>Error</h1>";
                 if ( !username.acceptableInput ) {
                     message += "Please enter a username containing 6 or more letters and/or numbers";
@@ -469,7 +491,6 @@ Popup {
                 } else {
                     message += "You must accept our terms and conditions";
                 }
-
             }
         } else {
             console.log( 'validating login' );
@@ -581,6 +602,7 @@ Popup {
     function installChallenges( challenges ) {
         challenges.forEach( function( challenge ) {
             console.log( 'updating challenge : ' + challenge._id );
+            challenge.active = false;
             var result = challengeModel.update( {_id: challenge._id}, challenge, true );
             console.log( 'updated challenges : ' + JSON.stringify(result) );
         });
