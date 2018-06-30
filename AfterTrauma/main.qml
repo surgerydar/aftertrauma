@@ -174,6 +174,9 @@ ApplicationWindow {
     LinkPopup {
         id: linkPopup
     }
+    TermsAndConditions {
+        id: terms
+    }
     AfterTrauma.ConfirmDialog {
         id: confirmDialog
         x: 0
@@ -223,10 +226,8 @@ ApplicationWindow {
         // TODO: check settings for first use
         //
         userProfile = JSONFile.read('user.json') || null;
-        if ( !userProfile ) {//SystemUtils.isFirstRun() ) {
+        if ( !userProfile ) {
             console.log( 'installing' );
-            //stack.push("qrc:///Install.qml")
-            //SystemUtils.install();
             intro.open();
         } else {
             //
@@ -242,9 +243,9 @@ ApplicationWindow {
                 register.open();
                 chatChannel.open();
             }
-            stack.push("qrc:///Dashboard.qml");
-            flowerChart.enabled = true;
         }
+        stack.push("qrc:///Dashboard.qml");
+        flowerChart.enabled = true;
     }
     //
     //

@@ -64,7 +64,7 @@ DatabaseList {
                             ]
                         },
                         {
-                            category: "relationships",
+                            category: "emotions",
                             minimum: 0.5,
                             maximum: 0.75,
                             recomendation: "Emotions, good",
@@ -212,9 +212,19 @@ DatabaseList {
         var query = { $and: [ { category: c }, { minimum: { $lte: value } }, { maximum: { $gte: value } } ]};
         console.log( 'getRecomendation : looking for : ' + JSON.stringify( query ) );
         var recomendation = findOne( query );
+        var text;
+        if ( recomendation ) {
+            text = recomendation.recomendation;
+            if ( value < .5 ) {
+                text += '<br/><a href="link://' + c + '">' + c + ' resources</a>';
+            }
+        } else {
+            text = 'Insufficient information to assess : ' + c;
+        }
+
         //
         //
         //
-        return recomendation ? recomendation.recomendation : 'Insufficient information to assess : ' + c;
+        return text;
     }
 }

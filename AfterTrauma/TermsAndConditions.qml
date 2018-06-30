@@ -77,15 +77,14 @@ Popup {
         id: content
         anchors.fill: parent
         anchors.topMargin: 68
+        clip: true
+        spacing: 4
         model: ListModel {}
         delegate: AfterTrauma.Block {
             anchors.left: parent.left
             anchors.right: parent.right
             type: model.type
             media: model.content
-        }
-        add: Transition {
-            NumberAnimation { properties: "y"; from: contentContainer.height; duration: 250 }
         }
     }
     //

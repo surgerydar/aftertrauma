@@ -69,7 +69,7 @@ AfterTrauma.Page {
                             anchors.top: parent.top
                             anchors.right: parent.right
                             anchors.margins: 8
-                            text: "stay logged in"
+                            text: "Stay logged in"
                             checked: profile && profile.stayLoggedIn
                             direction: "Right"
                             onCheckedChanged: {

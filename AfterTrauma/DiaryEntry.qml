@@ -193,16 +193,24 @@ AfterTrauma.Page {
                 fontSize: 12
                 values: dailyModel.valuesForDate(date)
             }
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                    stack.navigateTo("qrc:///Questionnaire.qml");
+                }
+            }
         }
         //
         //
         //
+        /* JONS: transitions causing layout issues
         add: Transition {
             NumberAnimation { properties: "y"; from: contents.height; duration: 250 }
         }
         displaced: Transition {
             NumberAnimation { properties: "y"; duration: 250 }
         }
+        */
     }
     //
     //

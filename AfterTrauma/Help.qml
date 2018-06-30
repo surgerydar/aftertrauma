@@ -56,6 +56,7 @@ AfterTrauma.Page {
         height: 64
         anchors.left: parent.left
         anchors.right: parent.right
+        /*
         AfterTrauma.PageIndicator {
             id: pageIndicator
             anchors.horizontalCenter: parent.horizontalCenter
@@ -68,6 +69,35 @@ AfterTrauma.Page {
             count: contentContainer.count
             onCurrentIndexChanged: {
                 if ( currentIndex != contentContainer.currentIndex ) contentContainer.currentIndex = currentIndex;
+            }
+        }
+        */
+        AfterTrauma.Button {
+            anchors.left: parent.left
+            anchors.leftMargin: 4
+            anchors.verticalCenter: parent.verticalCenter
+            image: "icons/left_arrow.png"
+            visible: contentContainer.currentIndex > 0
+            onClicked: {
+                contentContainer.decrementCurrentIndex();
+            }
+        }
+        AfterTrauma.PageIndicator {
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.horizontalCenter: parent.horizontalCenter
+            currentIndex: contentContainer.currentIndex
+            count: contentContainer.count
+            interactive: true
+            colour: Colours.lightSlate
+        }
+        AfterTrauma.Button {
+            anchors.right: parent.right
+            anchors.rightMargin: 4
+            anchors.verticalCenter: parent.verticalCenter
+            image: "icons/right_arrow.png"
+            visible: contentContainer.currentIndex < contentContainer.count - 1
+            onClicked: {
+                contentContainer.incrementCurrentIndex();
             }
         }
     }

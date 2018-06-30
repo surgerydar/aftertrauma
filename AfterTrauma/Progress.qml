@@ -218,12 +218,14 @@ AfterTrauma.Page {
                 Repeater {
                     model: lineChart.legend
                     Item {
+                        id: legendItem
                         height: 32
                         width: swatch.width + label.contentWidth + 12
+                        opacity: lineChart.datasetActive[lineChart.legend[index].label] ? 1. : .5
                         Rectangle {
                             id: swatch
                             height: 2
-                            width: 64
+                            width: 24
                             anchors.verticalCenter: parent.verticalCenter
                             anchors.left: parent.left
                             color: lineChart.legend[index].colour
@@ -242,6 +244,14 @@ AfterTrauma.Page {
                             font.pointSize: 24
                             color: lineChart.legend[index].colour
                             text: lineChart.legend[index].label
+                        }
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                console.log( 'toggling : ' + lineChart.legend[index].label );
+                                lineChart.toggleDataSet( lineChart.legend[index].label );
+                                //legendItem.opacity = lineChart.active[lineChart.legend[index].label] ? 1. : .5
+                            }
                         }
                     }
                 }

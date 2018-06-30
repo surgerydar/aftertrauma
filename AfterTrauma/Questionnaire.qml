@@ -71,11 +71,16 @@ AfterTrauma.Page {
                             recomendations.forceLayout();
                         }
                     }
-                    property int questionnaireIndex: index
-
+                    //
+                    //
+                    //
                     add: Transition {
                         NumberAnimation { properties: "y"; from: questionnaire.height; duration: 250 }
                     }
+                    //
+                    //
+                    //
+                    property int questionnaireIndex: index
                 }
                 //
                 //
@@ -134,6 +139,12 @@ AfterTrauma.Page {
                         //
                         horizontalAlignment: Text.AlignLeft
                         text: recomendationModel.getRecomendation(model.category)
+                        onLinkActivated: {
+                            //console.log( 'link clicked : ' + link + ' : index : ' + link.indexOf('link://') );
+                            if ( link.indexOf('link://') === 0 ) {
+                                linkPopup.find([model.category]);
+                            }
+                        }
                     }
                 }
                 //

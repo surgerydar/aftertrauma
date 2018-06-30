@@ -202,7 +202,24 @@ Popup {
                 direction: "Right"
                 textSize: 18
                 text: "Accept terms & conditions"
+                visible: termsViewed
             }
+            AfterTrauma.Button {
+                id: viewTerms
+                anchors.top: confirmPassword.bottom
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.margins: 8
+                backgroundColour: Colours.veryLightSlate
+                textColour: Colours.veryDarkSlate
+                text: "View terms & conditions"
+                visible: !termsViewed
+                onClicked: {
+                    terms.open();
+                    termsViewed = true
+                }
+            }
+
             AfterTrauma.CheckBox {
                 id: stayLoggedIn
                 anchors.top: acceptTerms.bottom
@@ -448,6 +465,7 @@ Popup {
         password.text = "";
         confirmPassword.text = "";
         acceptTerms.checked = false;
+        termsViewed = false;
         stayLoggedIn.checked = false;
         loginUsername.text = "";
         loginPassword.text = "";
@@ -462,19 +480,15 @@ Popup {
         if ( target === register ) {
             console.log( 'validating registration' );
             if ( username.acceptableInput && email.acceptableInput && password.acceptableInput && confirmPassword.text === password.text && acceptTerms.checked ) {
-                if( userProfile && username.text !== userProfile.username ) {
-                    message = "<h1>Error</h1>Please enter username associated with this device";
-                } else {
-                    busyIndicator.running = true;
-                    user = {
-                        command: 'register',
-                        username: username.text,
-                        email: email.text,
-                        password: password.text,
-                        id: GuidGenerator.generate()
-                    };
-                    authenticationChannel.send(user);
-                }
+                busyIndicator.running = true;
+                user = {
+                    command: 'register',
+                    username: username.text,
+                    email: email.text,
+                    password: password.text,
+                    id: GuidGenerator.generate()
+                };
+                authenticationChannel.send(user);
             } else {
                 //
                 // show error
@@ -495,12 +509,17 @@ Popup {
         } else {
             console.log( 'validating login' );
             if( loginUsername.acceptableInput && loginPassword.acceptableInput ) {
-                user = {
-                    command: 'login',
-                    username: loginUsername.text,
-                    password: loginPassword.text
-                };
-                authenticationChannel.send(user);
+                if( userProfile && loginUsername.text !== userProfile.username ) {
+                    console.log( 'entered: ' + loginUsername.text + ' stored:' + userProfile.username );
+                    message = "<h1>Error</h1>Please enter username associated with this device";
+                } else {
+                    user = {
+                        command: 'login',
+                        username: loginUsername.text,
+                        password: loginPassword.text
+                    };
+                    authenticationChannel.send(user);
+                }
             } else {
                 // show error
                 message = "<h1>Error</h1>Please enter username and password";
@@ -608,4 +627,5 @@ Popup {
         });
         challengeModel.save();
     }
+    property bool termsViewed: false
 }

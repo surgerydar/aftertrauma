@@ -147,7 +147,6 @@ Popup {
             contentContainer.incrementCurrentIndex();
         }
     }
-
     //
     //
     //

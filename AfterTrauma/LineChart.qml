@@ -16,6 +16,7 @@ Rectangle {
     property int gridSize: 4
     property real gridStep: gridSize ? (width - canvas.tickMargin) / gridSize : canvas.xGridStep
     property var legend: []
+    property var datasetActive: ({})
     property var values: ({})
     //
     //
@@ -28,13 +29,13 @@ Rectangle {
         anchors.margins: 4
         width: 64
         Repeater {
-            model: 5
+            model: 4
             Image {
                 width: yScale.width
-                height: yScale.height / 5
+                height: yScale.height / 4
                 fillMode: Image.PreserveAspectFit
                 opacity: .75
-                source: "icons/face" + index + ".png"
+                source: "icons/face" + ( 3 - index ) + ".png"
             }
         }
     }
@@ -232,6 +233,7 @@ Rectangle {
                         y: h - ( h * value.value )
                     };
                     points[value.label].push(point);
+
                     //
                     //
                     //
@@ -249,7 +251,12 @@ Rectangle {
             for ( var label in points ) {
                 //console.log( 'drawing : ' + name + ' : ' + points[ name ].length + ' points');
                 var colour = Colours.categoryColour(i++);
-                drawValues( ctx, points[ label ], colour);
+                if ( datasetActive[label] === undefined ) {
+                    datasetActive[label] = true;
+                }
+                if ( datasetActive[ label ] ) {
+                    drawValues( ctx, points[ label ], colour);
+                }
                 legend.push( { label: label, colour: colour } );
             }
             chart.legend = legend;
@@ -321,6 +328,16 @@ Rectangle {
         canvas.requestPaint();
     }
     function forceRepaint() {
+        canvas.requestPaint();
+    }
+    function toggleDataSet( label ) {
+        if ( datasetActive[ label ] !== undefined ) {
+            datasetActive[ label ]  = !datasetActive[ label ];
+        } else {
+            console.log( JSON.stringify(datasetActive) );
+        }
+
+        console.log( 'LineChart datasetActive[' + label + '] = ' + datasetActive[ label ] );
         canvas.requestPaint();
     }
 }

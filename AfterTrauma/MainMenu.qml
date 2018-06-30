@@ -244,7 +244,7 @@ Rectangle {
             textHorizontalAlignment: Text.AlignRight
             textVerticalAlignment: Text.AlignVCenter
             textSize: 32
-            text: "Help"
+            text: "About"
             image: "icons/help.png"
             direction: "Right"
             spacing: 8

@@ -92,8 +92,8 @@ ios {
     # factsheetmedia.path =
     # QMAKE_BUNDLE_DATA += factsheetmedia
 
-    launch_images.files = $$files($$PWD/ios/launchimages/LaunchImage*.png)
-    QMAKE_BUNDLE_DATA += launch_images
+    # launch_images.files = $$files($$PWD/ios/launchimages/LaunchImage*.png)
+    # QMAKE_BUNDLE_DATA += launch_images
 
     ios_icon.files = $$files($$PWD/ios/icons/AppIcon*.png)
     QMAKE_BUNDLE_DATA += ios_icon
