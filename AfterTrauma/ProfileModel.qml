@@ -14,7 +14,7 @@ Item {
         onReceived: {
             busyIndicator.running = false;
             var command = JSON.parse(message); // TODO: channel should probably emit object
-            if ( command.command === 'findpublicprofiles' ) {
+            if ( command.command === 'filterpublicprofiles' ) {
                 if( command.status === "OK" ) {
                     model.clear();
                     command.response.forEach(function( profile ) {

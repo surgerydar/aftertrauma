@@ -6,6 +6,12 @@ import "colours.js" as Colours
 
 AfterTrauma.EditableListItem {
     id: container
+    //
+    //
+    //
+    height: 64
+    //contentEditable: owner === userProfile.id
+
     contentItem: Item {
         width: parent.width
         anchors.top: parent.top
@@ -49,47 +55,76 @@ AfterTrauma.EditableListItem {
         //
         //
         Text {
-            id: usernameText
-            height: 32
+            id: subjectText
             anchors.top: parent.top
             anchors.left: avatarImage.right
+            //anchors.bottom: parent.bottom
             anchors.right: parent.right
-            anchors.bottom: parent.verticalCenter
-            anchors.margins: 4
+            anchors.margins: 8
             //
             //
             //
             font.weight: Font.Light
             font.family: fonts.light
-            font.pointSize: 18
+            font.pointSize: 32
+            minimumPointSize: 16
+            fontSizeMode: Text.Fit
+            elide: Text.ElideRight
             color: Colours.almostWhite
+            //
+            //
+            //
+            horizontalAlignment: Text.AlignLeft
+            verticalAlignment: Text.AlignTop
         }
         //
         //
         //
         Text {
-            id: profileText
-            anchors.top: parent.verticalCenter
+            id: activityText
+            anchors.top: subjectText.top
             anchors.left: avatarImage.right
-            anchors.bottom: parent.bottom
+            //anchors.bottom: parent.bottom
             anchors.right: parent.right
-            anchors.margins: 4
+            anchors.margins: 8
             //
             //
             //
-            wrapMode: Text.WordWrap
-            elide: Text.ElideRight
             font.weight: Font.Light
             font.family: fonts.light
-            font.pointSize: 12
+            font.pointSize: 16
+            minimumPointSize: 12
+            fontSizeMode: Text.Fit
+            elide: Text.ElideRight
             color: Colours.almostWhite
+            //
+            //
+            //
+            horizontalAlignment: Text.AlignLeft
+            verticalAlignment: Text.AlignTop
+        }
+
+        //
+        //
+        //
+        MouseArea {
+            anchors.fill: parent
+            enabled: container.status === "active"
+            onClicked: {
+                chat();
+            }
         }
     }
     //
     //
     //
+    signal chat()
+    //
+    //
+    //
     property alias avatar: avatarImage.source
-    property alias username: usernameText.text
-    property alias profile: profileText.text
-    property string userId: ""
+    property alias subject: subjectText.text
+    property alias activity: activityText.text
+    property string owner: ""
+    property var members: []
 }

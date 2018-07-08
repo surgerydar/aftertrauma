@@ -3,6 +3,7 @@
 //
 var _db;
 var _live = [];
+var jwt = require('jsonwebtoken');
 //
 //
 //
@@ -65,15 +66,21 @@ Chat.prototype.getuserchats = function( wss, ws, command ) {
     // add chat to db
     //
     process.nextTick(function(){   
-        _db.find('chats',{$or:[{to: command.id},{from: command.id}]}).then(function( response ) {
-            command.status = 'OK';
-            command.response = response;
-            ws.send(JSON.stringify(command));
-        }).catch( function( error ) {
+        if ( jwt.verify( command.token, 'afterparty' ) ) {
+            _db.find('chats',{$or:[{to: command.id},{from: command.id}]}).then(function( response ) {
+                command.status = 'OK';
+                command.response = response;
+                ws.send(JSON.stringify(command));
+            }).catch( function( error ) {
+                command.status = 'ERROR';
+                command.error = error;
+                ws.send(JSON.stringify(command));
+            });
+        } else {
             command.status = 'ERROR';
-            command.error = error;
+            command.error = 'user not authenticated';
             ws.send(JSON.stringify(command));
-        });
+        }
     }); 
 }
 
@@ -84,27 +91,33 @@ Chat.prototype.sendinvite = function( wss, ws, command ) {
     //
     process.nextTick(function(){   
         //console.log('updating user : ' + JSON.stringify(command.Chat));
-        var chat = {
-            id: command.id,
-            from: command.from,
-            fromUsername: command.fromUsername,
-            to: command.to,
-            toUsername: command.toUsername,
-            status: "invite"
-        };
-        _db.putChat(chat).then(function( response ) {
-            command.status = 'OK';
-            command.response = response;
-            ws.send(JSON.stringify(command));
-            //
-            //
-            //
-            sendToLive(command.to,command);
-        }).catch( function( error ) {
+        if ( jwt.verify( command.token, 'afterparty' ) ) {
+            var chat = {
+                id: command.id,
+                from: command.from,
+                fromUsername: command.fromUsername,
+                to: command.to,
+                toUsername: command.toUsername,
+                status: "invite"
+            };
+            _db.putChat(chat).then(function( response ) {
+                command.status = 'OK';
+                command.response = response;
+                ws.send(JSON.stringify(command));
+                //
+                //
+                //
+                sendToLive(command.to,command);
+            }).catch( function( error ) {
+                command.status = 'ERROR';
+                command.error = error;
+                ws.send(JSON.stringify(command));
+            });
+        } else {
             command.status = 'ERROR';
-            command.error = error;
+            command.error = 'user not authenticated';
             ws.send(JSON.stringify(command));
-        });
+        }
     }); 
 }
 
@@ -114,16 +127,22 @@ Chat.prototype.acceptinvite = function( wss, ws, command ) {
     // update chat status
     //
     process.nextTick(function(){   
-        _db.updateOne('chats', { id: command.id }, {$set:{status:"active"}}).then(function( response ) {
-            command.status = 'OK';
-            command.response = response;
-            ws.send(JSON.stringify(command));
-            sendToLive( command.from, command );
-        }).catch( function( error ) {
+        if ( jwt.verify( command.token, 'afterparty' ) ) {
+            _db.updateOne('chats', { id: command.id }, {$set:{status:"active"}}).then(function( response ) {
+                command.status = 'OK';
+                command.response = response;
+                ws.send(JSON.stringify(command));
+                sendToLive( command.from, command );
+            }).catch( function( error ) {
+                command.status = 'ERROR';
+                command.error = error;
+                ws.send(JSON.stringify(command));
+            });
+        } else {
             command.status = 'ERROR';
-            command.error = error;
+            command.error = 'user not authenticated';
             ws.send(JSON.stringify(command));
-        });
+        }
     }); 
 }
 
@@ -133,15 +152,21 @@ Chat.prototype.removechat = function( wss, ws, command ) {
     // remove chat
     //
     process.nextTick(function(){   
-        _db.remove('chats', { id: command.id }).then(function( response ) {
-            command.status = 'OK';
-            command.response = response;
-            ws.send(JSON.stringify(command));
-        }).catch( function( error ) {
+        if ( jwt.verify( command.token, 'afterparty' ) ) {
+            _db.remove('chats', { id: command.id }).then(function( response ) {
+                command.status = 'OK';
+                command.response = response;
+                ws.send(JSON.stringify(command));
+            }).catch( function( error ) {
+                command.status = 'ERROR';
+                command.error = error;
+                ws.send(JSON.stringify(command));
+            });
+        } else {
             command.status = 'ERROR';
-            command.error = error;
+            command.error = 'user not authenticated';
             ws.send(JSON.stringify(command));
-        });
+        }
     }); 
 }
 
@@ -151,16 +176,22 @@ Chat.prototype.sendmessage = function( wss, ws, command ) {
     // update chat status
     //
     process.nextTick(function(){   
-        _db.updateOne('chats', { id: command.id }, {$push: { messages: { from: command.from, message: command.message } } }).then(function( response ) {
-            command.status = 'OK';
-            command.response = response;
-            ws.send(JSON.stringify(command));
-            sendToLive( command.to, command );
-        }).catch( function( error ) {
+        if ( jwt.verify( command.token, 'afterparty' ) ) {
+            _db.updateOne('chats', { id: command.id }, {$push: { messages: { from: command.from, message: command.message } } }).then(function( response ) {
+                command.status = 'OK';
+                command.response = response;
+                ws.send(JSON.stringify(command));
+                sendToLive( command.to, command );
+            }).catch( function( error ) {
+                command.status = 'ERROR';
+                command.error = error;
+                ws.send(JSON.stringify(command));
+            });
+        } else {
             command.status = 'ERROR';
-            command.error = error;
+            command.error = 'user not authenticated';
             ws.send(JSON.stringify(command));
-        });
+        }
     }); 
 }
 
@@ -171,6 +202,10 @@ Chat.prototype.golive = function( wss, ws, command ) {
     //
     //
     addToLive( command.id, command.username, ws );
+    process.nextTick(function(){
+        command.status = 'OK';
+        
+    });
 }
 
 module.exports = new Chat();

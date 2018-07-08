@@ -7,6 +7,59 @@ Item {
     //
     //
     //
+    y: parent.height
+    // TODO: network status indicator
+    /* DEBUG UI
+    anchors.fill: parent
+    Rectangle {
+        anchors.fill: response
+        color: "white"
+    }
+    TextArea {
+        id: response
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.bottom: parent.verticalCenter
+        anchors.right: parent.right
+        anchors.margins: 8
+    }
+    Rectangle {
+        anchors.fill: source
+        color: "white"
+    }
+
+    TextArea {
+        id: source
+        anchors.top: parent.verticalCenter
+        anchors.left: parent.left
+        anchors.bottom: action.top
+        anchors.right: parent.right
+        anchors.margins: 8
+    }
+    Button {
+        id: action
+        anchors.bottom: parent.bottom
+        anchors.right: parent.right
+        anchors.margins: 8
+        text: "send"
+        onClicked: {
+            var src = source.text;
+            try {
+            var command = JSON.parse(src);
+            if ( command ) {
+                send( command );
+            }
+            } catch( error ) {
+                console.log(error.name);
+                console.log(error.lineNumber);
+                console.log(error.columnNumber);
+            }
+        }
+    }
+    */
+    //
+    //
+    //
     WebSocketChannel {
         id: chatChannel
         url: "wss://aftertrauma.uk:4000"
@@ -21,7 +74,7 @@ Item {
                 //
                 console.log( 'Chat : chatChannel open going live' );
                 var command = {
-                    command: 'golive',
+                    command: 'groupgolive',
                     id: userProfile.id,
                     username: userProfile.username
                 }
@@ -29,37 +82,64 @@ Item {
             }
             connected = true;
         }
+        //
+        //
+        //
         onClosed: {
             console.log( 'ChatChannel : closed' );
             connected = false;
             pollConnection.start();
         }
-
+        //
+        //
+        //
         onReceived: {
+            //response.text = message;
             var command = JSON.parse(message);
             console.log( 'ChatChannel : received : ' + message );
-            if ( command.status === 'OK' ) {
+            if ( command.command === 'welcome' ) {
+                send({
+                         command: 'groupgetuserchats',
+                         token: userProfile.token,
+                         id: userProfile.id
+                     });
+            } else if ( command.status === 'OK' ) {
                 switch( command.command ) {
-                case 'getuserchats':
-                    container.getuserchats( command );
+                case 'groupgetuserchats':
+                    // TODO: container.getUserChats( command );
+                    chatModel.clear();
+                    chatModel.beginBatch();
+                    command.response.forEach(function(chat) {
+                        //
+                        // TODO: update rather than replace, store ids for future delete
+                        //
+                        console.log( 'adding user chat: ' + JSON.stringify( chat ) );
+                        chatModel.batchAdd(chat);
+                    });
+                    chatModel.endBatch();
+                    //
+                    //
+                    //
+                    chatModel.save();
                     break;
-                case 'sendmessage':
-                    container.sendmessage( command );
+                case 'groupcreatechat':
+                    container.createChat( command );
                     break;
-                case 'sendinvite':
-                    container.sendinvite( command );
+                case 'groupupdatechat':
+                    container.updateChat( command );
                     break;
-                case 'acceptinvite':
-                    container.acceptinvite( command );
+                case 'groupremovechat':
+                    container.removeChat( command );
                     break;
-                case 'removechat':
-                    container.removechat( command );
+                case 'groupsendmessage':
+                    container.sendMessage( command );
                     break;
-                }
+                 }
             } else {
                 // TODO: handle error
                 console.log( 'ChatChannel : error : ' + command.error );
             }
+
         }
     }
     //
@@ -71,7 +151,9 @@ Item {
         repeat: false
         onTriggered: {
             console.log('ChatChannel : polling connection');
-            chatChannel.open();
+            if ( !connected ) {
+                chatChannel.open();
+            }
         }
     }
     //
@@ -81,6 +163,7 @@ Item {
         chatChannel.open();
     }
     function close() {
+        console.log( 'ChatChannel.close' );
         chatChannel.close();
     }
     function send( command ) {
@@ -92,11 +175,11 @@ Item {
     //
     //
     //
-    signal getuserchats( var command )
-    signal sendmessage( var command )
-    signal sendinvite( var command )
-    signal acceptinvite( var command )
-    signal removechat( var command )
+    signal getUserChats( var command )
+    signal sendMessage( var command )
+    signal createChat( var command )
+    signal updateChat( var command )
+    signal removeChat( var command )
     //
     //
     //

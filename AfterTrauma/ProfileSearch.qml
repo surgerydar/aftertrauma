@@ -7,7 +7,7 @@ import "colours.js" as Colours
 
 Rectangle {
     id: container
-    color: Colours.lightSlate
+    color: Colours.darkPurple
     //
     //
     //
@@ -36,7 +36,7 @@ Rectangle {
             font.pixelSize: 36
             font.weight: Font.Light
             font.family: fonts.light
-            text: "FIND USERS"
+            text: "FIND PEOPLE"
         }
         //
         //
@@ -47,7 +47,7 @@ Rectangle {
             anchors.right: parent.right
             anchors.bottom: parent.bottom
             anchors.margins: 16
-            image: "icons/down_arrow.png"
+            image: "icons/close.png"
             onClicked: {
                 container.close();
             }
@@ -109,12 +109,15 @@ Rectangle {
         placeholderText: "username"
         onTextChanged: {
             if ( text.length > 0 ) {
-                console.log( 'seraching for text : ' + text );
+                Qt.callLater( updateSearch, text );
+                /*
+                console.log( 'searching for text : ' + text );
                 profiles.model.command = {
                     command: 'filterpublicprofiles',
                     filter: {$and:[{id:{$not:{$eq:userProfile.id}}},{username: { $regex: '^' + text, $options:'i'} }]}
                 };
                 profiles.model.refresh();
+                */
             } else {
                 profiles.model.clear();
             }
@@ -150,51 +153,26 @@ Rectangle {
     //
     //
     //
+    function updateSearch( text ) {
+        console.log( 'searching for text : ' + text );
+        profiles.model.command = {
+            command: 'filterpublicprofiles',
+            filter: {$and:[{id:{$not:{$eq:userProfile.id}}},{username: { $regex: '^' + text, $options:'i'} }]}
+        };
+        profiles.model.refresh();
+    }
+    //
+    //
+    //
     function open() {
         container.state = "open";
         console.log('ProfileSearch.open');
-        //profileChannel.open();
         profiles.model.open();
     }
     function close() {
         container.state = "closed";
         console.log('ProfileSearch.close');
-        //profileChannel.close();
         profiles.model.close();
         container.closed();
     }
-    /*
-    //
-    //
-    //
-    WebSocketChannel {
-        id: profileChannel
-        url: "wss://aftertrauma.uk:4000"
-        onReceived: {
-            busyIndicator.running = false;
-            var command = JSON.parse(message); // TODO: channel should probably emit object
-            if ( command.command === 'filterpublicprofiles' ) {
-                if( command.status === "OK" ) {
-                    profiles.model.clear();
-                    command.response.forEach(function( profile ) {
-                        profiles.model.append( profile );
-                    });
-                } else {
-                    errorDialog.show( '<h1>Server says</h1><br/>' + ( typeof command.error === 'string' ? command.error : command.error.error ), [
-                                         { label: 'try again', action: function() {} },
-                                         { label: 'forget about it', action: function() {} },
-                                     ] );
-                }
-            }
-        }
-        onOpened: {
-            console.log('profileChannel open');
-            //busyIndicator.running = true;
-            //send({command: 'getpublicprofiles', exclude: userProfile.id });
-        }
-        onClosed: {
-            console.log('profileChannel closed');
-        }
-    }
-    */
 }

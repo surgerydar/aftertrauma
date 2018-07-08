@@ -39,7 +39,12 @@ ApplicationWindow {
     Questionnaires {
         id: questionnaireModel
     }
+    /*
     Chats {
+        id: chatModel
+    }
+    */
+    GroupChats {
         id: chatModel
     }
     Categories {
@@ -56,12 +61,6 @@ ApplicationWindow {
     }
     BodyPartList {
         id: bodyPartModel
-    }
-    //
-    //
-    //
-    ChatChannel {
-        id: chatChannel
     }
     //
     // notifications
@@ -149,13 +148,22 @@ ApplicationWindow {
 
         }
     }
+    //
+    //
+    //
+    ChatChannel {
+        id: chatChannel
+    }
+    //
+    //
+    //
     ShortcutPopup {
         id: shortcut
     }
     BlockEditor {
         id: blockEditor
     }
-    ChatEditor {
+    GroupChatEditor {
         id: chatEditor
     }
     MainMenu {

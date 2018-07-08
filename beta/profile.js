@@ -80,21 +80,25 @@ Profile.prototype.findpublicprofiles = function( wss, ws, command ) {
 }
 
 Profile.prototype.filterpublicprofiles = function( wss, ws, command ) {
-    console.log( 'Profile.filterpublicprofiles : filter:' + command.filter );
+    console.log( 'Profile.filterpublicprofiles : filter:' + JSON.stringify( command ) );
     //
     // update user
     //
     process.nextTick(function() {  
-        let query = {};
-        _db.findUsers(command.filter,{password: 0, email: 0},{}).then(function( response ) {
-            command.status = 'OK';
-            command.response = response;
-            ws.send(JSON.stringify(command));
-        }).catch( function( error ) {
-            command.status = 'ERROR';
-            command.error = error;
-            ws.send(JSON.stringify(command));
-        });
+        try {
+            //_db.find('users', command.filter, {password: 0, email: 0}, command.order, command.limit).then(function( response ) {
+            _db.findUsers(command.filter,{password: 0, email: 0},{}).then(function( response ) {
+                command.status = 'OK';
+                command.response = response;
+                ws.send(JSON.stringify(command));
+            }).catch( function( error ) {
+                command.status = 'ERROR';
+                command.error = error;
+                ws.send(JSON.stringify(command));
+            });
+        } catch( error ) {
+            console.log( 'Profile.filterpublicprofiles : error : ' + error );
+        }
     }); 
 }
 

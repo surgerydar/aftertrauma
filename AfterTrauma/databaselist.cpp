@@ -250,7 +250,9 @@ void DatabaseList::beginBatch() {
 }
 QVariant DatabaseList::batchAdd(QVariant o) {
     QVariantMap object = o.value<QVariantMap>();
-    object["_id"] = QUuid::createUuid().toString();
+    if ( !object.contains("_id") ) {
+        object["_id"] = QUuid::createUuid().toString();
+    }
     m_objects.append(object);
     QVariantMap id;
     id["_id"] = object["_id"];

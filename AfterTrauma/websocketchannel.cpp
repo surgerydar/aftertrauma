@@ -20,6 +20,7 @@ void WebSocketChannel::open() {
 }
 
 void WebSocketChannel::close() {
+    qDebug() << "WebSocketChannel:close";
     m_webSocket.close();
 }
 
@@ -54,7 +55,7 @@ void WebSocketChannel::connected() {
 }
 
 void WebSocketChannel::disconnected() {
-    qDebug() << "WebSocketChannel:disconnected";
+    qDebug() << "WebSocketChannel:disconnected : reason : " << m_webSocket.closeReason();
     emit closed();
     if ( m_autoreconnect ) {
         open();

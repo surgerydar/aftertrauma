@@ -235,7 +235,8 @@ Rectangle {
             spacing: 8
             enabled: userProfile
             onClicked: {
-                stack.navigateTo("qrc:///ChatManager.qml");
+                //stack.navigateTo("qrc:///ChatManager.qml");
+                stack.navigateTo("qrc:///GroupChatManager.qml");
                 container.close();
             }
         }

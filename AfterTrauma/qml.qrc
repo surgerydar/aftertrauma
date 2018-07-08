@@ -148,7 +148,7 @@
         <file>DiaryEntry.qml</file>
         <file>BlockEditor.qml</file>
         <file>icons/reorder.png</file>
-        <file>ChatEditor.qml</file>
+        <file>GroupChatEditor.qml</file>
         <file>ProfileSearch.qml</file>
         <file>ProfileSearchItem.qml</file>
         <file>ProfileModel.qml</file>
@@ -159,5 +159,10 @@
         <file>icons/face1.png</file>
         <file>icons/face2.png</file>
         <file>icons/face3.png</file>
+        <file>ImageStack.qml</file>
+        <file>GroupChatManager.qml</file>
+        <file>GroupChatItem.qml</file>
+        <file>GroupChats.qml</file>
+        <file>GroupChat.qml</file>
     </qresource>
 </RCC>

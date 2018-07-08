@@ -107,6 +107,16 @@ db.connect(
         let chat = require('./chat');
         chat.setup(wsr,db);
         //
+        // connect groupchat
+        //
+        try { // TODO: roll out exception handling for all modules, what about let scope though?
+            console.log('groupchat');
+            let groupchat = require('./groupchat');
+            groupchat.setup(wsr,db);
+        } catch( error ) {
+            console.error('unable to install croup chat : ' + error );
+        }
+        //
         // connect day
         //
         console.log('day');

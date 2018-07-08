@@ -75,11 +75,15 @@ Rectangle {
             enabled: subjectField.text.length > 0 && membersList.count > 0
             onClicked: {
                 if ( callback ) {
+
                     chat.subject = subjectField.text;
                     var tags = tagsField.text.split();
                     chat.tags = [];
                     tags.forEach( function(tag) {
-                        chat.tags.push( tag.trim().toLowerCase() );
+                        var trimmedTag = tag.trim().toLowerCase();
+                        if ( chat.tags.indexOf(trimmedTag) < 0 ) {
+                            chat.tags.push(trimmedTag);
+                        }
                     });
                     //
                     // TODO: send invites
@@ -141,6 +145,13 @@ Rectangle {
         model: WebSocketList {
             url: "wss://aftertrauma.uk:4000"
             roles: ["_id","id","username","profile","avatar"]
+            onOpened: {
+                Qt.callLater( setMembers, members || [] );
+
+            }
+            onError: {
+                console.log( 'membersList.model : error : ' + error );
+            }
         }
         delegate: ProfileListItem {
             width: membersList.width
@@ -152,7 +163,8 @@ Rectangle {
             onRemove: {
                 var temp = members;
                 temp.splice( index, 1 );
-                members = temp;
+                Qt.callLater( setMembers, temp );
+                //members = temp;
             }
         }
     }
@@ -188,7 +200,7 @@ Rectangle {
             anchors.rightMargin: 8
             anchors.verticalCenter: parent.verticalCenter
             backgroundColour: "transparent"
-            text: "add user"
+            text: "add people"
             onClicked: {
                 profileSearch.open();
             }
@@ -219,79 +231,21 @@ Rectangle {
                     temp.splice( offset, 1 );
                 }
             }
-            console.log( '' )
-            members = temp;
+            Qt.callLater( setMembers, temp );
+            //members = temp;
         }
         onClosed: {
         }
     }
-    /*
     //
     //
     //
-    WebSocketChannel {
-        id: profileChannel
-        url: "wss://aftertrauma.uk:4000"
-        onReceived: {
-            busyIndicator.running = false;
-            var command = JSON.parse(message); // TODO: channel should probably emit object
-            if ( command.command === 'filterpublicprofiles' ) {
-                if( command.status === "OK" ) {
-                    membersList.model.clear();
-                    command.response.forEach(function( profile ) {
-                        membersList.model.append( profile );
-                    });
-                } else {
-                    errorDialog.show( '<h1>Server says</h1><br/>' + ( typeof command.error === 'string' ? command.error : command.error.error ), [
-                                         { label: 'try again', action: function() {} },
-                                         { label: 'forget about it', action: function() {} },
-                                     ] );
-                }
-            }
-        }
-        onOpened: {
-            console.log('profileChannel open');
-            //busyIndicator.running = true;
-            //send({command: 'getpublicprofiles', exclude: userProfile.id });
-        }
-        onClosed: {
-            console.log('profileChannel closed');
-        }
-    }
-    */
-    //
-    //
-    //
-    /*
-    onMembersChanged: {
-        var command = {
-            command: 'filterpublicprofiles',
-            filter: {id:{$in:members}}
-        };
-        busyIndicator.running = true;
-        profileChannel.send(command);
-    }
-    */
-    onMembersChanged: {
-        console.log( 'ChatEditor.onMembersChanged')
-        membersList.model.command = {
-            command: 'filterpublicprofiles',
-            filter: {id:{$in:members}}
-        };
-        membersList.model.refresh();
-    }
-    //
-    //
-    //
-    function show( c, callbackFunction ) {
-        chat = c;
-        subjectField.text = c.subject;
-        tagsField.text = c.tags ? c.tags.join() : "";
-        publicCheckBox.checked = c.isPublic;
-        //
-        // populate membersList
-        //
-        members = chat.members || [];
+    function show( _chat, callbackFunction ) {
+        chat = _chat;
+        subjectField.text = _chat.subject;
+        tagsField.text = _chat.tags ? _chat.tags.join() : "";
+        publicCheckBox.checked = _chat['public'];
+        members = _chat.members || [];
         //
         //
         //
@@ -300,6 +254,16 @@ Rectangle {
         //
         //
         open();
+    }
+
+    function setMembers( _members ) {
+        console.log( 'setting members : ' + JSON.stringify(_members) );
+        members = _members;
+        membersList.model.command = {
+            command: 'filterpublicprofiles',
+            filter: {id:{$in:members}}
+        };
+        membersList.model.refresh();
     }
 
     property var callback: undefined

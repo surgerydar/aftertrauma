@@ -2,6 +2,7 @@
 // 
 //
 var _db;
+var jwt = require('jsonwebtoken');
 
 function Authentication() {
 }
@@ -30,7 +31,7 @@ Authentication.prototype.register = function( wss, ws, command ) {
         profile: "",
         tags: []
     };
-    process.nextTick(function(){   
+    process.nextTick(function(){ 
         console.log('registering user : ' + JSON.stringify(user));
         _db.findOne('users', { $or: [{username: user.username},{email:user.email}] } ).then( function( response ) {
             if ( response === null ) {
@@ -44,10 +45,11 @@ Authentication.prototype.register = function( wss, ws, command ) {
                         id: command.id,
                         username: user.username,
                         email: user.email,
-                        password: user.password,
+                        //password: user.password, // JONS: password should not be returned
                         avatar: user.avatar,
                         profile: user.profile,
-                        tags: user.tags
+                        tags: user.tags,
+                        token: jwt.sign({ user: command.username }, 'afterparty')
                     };
                     ws.send(JSON.stringify(command));
                 }).catch(function(error){
@@ -82,6 +84,38 @@ Authentication.prototype.login = function( wss, ws, command ) {
                 // TODO: generate json web token
                 //
                 command.status = 'OK';
+                response.token = jwt.sign({ user: command.username }, 'afterparty');
+                command.response = response;
+            }
+            //console.log('authentications response : ' + JSON.stringify( command ) );
+            ws.send(JSON.stringify(command));
+        }).catch( function( error ) {
+            command.status = 'ERROR';
+            command.error = error;
+            ws.send(JSON.stringify(command));
+        });
+    });
+}
+
+Authentication.prototype.logout = function( wss, ws, command ) {
+    //
+    // TODO
+    //
+    console.log( 'Authentication.logout : username:' + command.username + ' password:' + command.password );
+    //
+    // find user
+    //
+    process.nextTick(function(){   
+        _db.findOne('users', {$and: [ { username:command.username }, { password:command.password } ]}, { password: 0, _id: 0 } ).then(function( response ) {
+            if ( response === null ) {
+                command.status = 'ERROR';
+                command.error = 'username or password incorrect';
+            } else {
+                //
+                // TODO: generate json web token
+                //
+                command.status = 'OK';
+                response.token = jwt.sign({ user: command.username }, 'afterparty');
                 command.response = response;
             }
             //console.log('authentications response : ' + JSON.stringify( command ) );

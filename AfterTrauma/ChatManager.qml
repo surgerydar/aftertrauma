@@ -106,6 +106,7 @@ AfterTrauma.Page {
             backgroundColour: "transparent"
             image: "icons/add.png"
             onClicked: {
+
                 var exclude = [userProfile.id];
                 var count = chatModel.count;
                 for ( var i = 0; i < count; i++ ) {
@@ -119,106 +120,27 @@ AfterTrauma.Page {
                 var chat = {
                     owner: userProfile.id,
                     subject: "",
-                    isPublic: false
-                }
+                    isPublic: false,
+                    members: []
+                };
                 chatEditor.show(chat, function(edited) {
-
+                    console.log('edited chat: ' + JSON.stringify(chat));
                 });
                 */
             }
         }
     }
-
+    //
+    //
+    //
     StackView.onActivated: {
-        //chatChannel.open();
         chatModel.load();
     }
     StackView.onDeactivated: {
-        //chatChannel.close();
     }
     //
     //
     //
-    /*
-    WebSocketChannel {
-        id: chatChannel
-        url: "wss://aftertrauma.uk:4000"
-        //
-        //
-        //
-        onOpened: {
-            //
-            // go live
-            //
-            var command = {
-                command: 'golive',
-                id: userProfile.id,
-                username: userProfile.username
-            }
-            send( command );
-            //
-            // request chats
-            //
-            command = {
-                command: 'getuserchats',
-                id: userProfile.id
-            }
-            send( command );
-        }
-        onClosed: {
-
-        }
-        onReceived: {
-            //
-            //
-            //
-            var command = JSON.parse(message);
-            if ( command.command === 'getuserchats' ) {
-                if( command.status === "OK" ) {
-                    chatModel.clear();
-                    chatModel.beginBatch();
-                    command.response.forEach(function(chat) {
-                        chatModel.batchAdd(chat);
-                    });
-                    chatModel.endBatch();
-                    chatModel.save();
-                } else {
-                    console.log( 'error : ' + message );
-                    errorDialog.show( '<h1>Server says</h1><br/>' + ( typeof command.error === 'string' ? command.error : command.error.error ), [
-                                         { label: 'try again', action: function() {} },
-                                         { label: 'forget about it', action: function() { stack.pop(); } },
-                                     ] );
-                }
-            } else if ( command.command === 'sendinvite' ) {
-                if ( command.to === userProfile.id ) {
-                    chatModel.add( command );
-                    chatModel.save();
-                }
-            } else if ( command.command === 'acceptinvite' ) {
-                //
-                // FIXME: possible error here ????
-                //
-                chatModel.update({id: command.id},{status:"active"});
-                chatModel.save();
-            } else if ( command.command === 'removechat' ) {
-                //
-                //
-                //
-                chatModel.remove({id: command.id});
-                chatModel.save();
-            } else if ( command.command === 'sendmessage' ) {
-                if ( command.to === userProfile.id ) {
-                    var chat = chatModel.findOne({id:command.id});
-                    if ( chat ) {
-                        var newMessage = { from: command.from, message: command.message };
-                        chat.messages.push( newMessage );
-                        chatModel.update({id:command.id},{messages:chat.messages});
-                    }
-                }
-            }
-        }
-    }
-    */
     Connections {
         target: chatChannel
         onGetuserchats:{

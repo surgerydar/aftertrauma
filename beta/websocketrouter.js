@@ -34,7 +34,7 @@ WebSocketRouter.prototype.connection = function(wss,ws) {
         console.log('WebSocketRouter.socketError: ' + error);
     });
     ws.on('close', (code,reason) => {
-        console.log( 'connection closed : ' + clientId );
+        console.log( 'connection to ' + clientId + 'closed, code: ' + code + ' reason: ' + reason );
     });
     //
     //

@@ -64,14 +64,12 @@ Item {
         anchors.bottom: parent.bottom
         anchors.margins: 4
         fillMode: Image.PreserveAspectCrop
-        /*
-        visible: (images&&images.length > 0)
-        source: (images&&images.length > 0) ? images[0].image : "icons/image.png"
-        */
         visible: status === Image.Ready
         source: firstBlockContent("image")
     }
-
+    //
+    //
+    //
     Label {
         id: notesIndicator
         width: height
@@ -91,10 +89,6 @@ Item {
         leftPadding: 4
         rightPadding: 4
         color: Colours.darkSlate
-        /*
-        visible: (notes&&notes.length > 0)
-        text: (notes&&notes.length > 0) ? notes[ 0 ].note : ""
-        */
         visible: text.length > 0
         text: firstBlockContent("text")
 
@@ -105,7 +99,7 @@ Item {
                 var ctx = getContext("2d");
                 ctx.resetTransform();
                 ctx.fillStyle = Colours.lightSlate;
-                ctx.strokeStyle = Colours.darkSlate;
+                ctx.strokeStyle = Colours.almostWhite;
                 ctx.lineWidth = 2;
 
                 ctx.beginPath();
@@ -117,6 +111,29 @@ Item {
             }
         }
     }
+    //
+    //
+    //
+    /*
+    ImageStack {
+        id: imageStack
+        width: height
+        anchors.top: parent.top
+        anchors.left: imageIndicator.right
+        anchors.bottom: parent.bottom
+        anchors.margins: 4
+    }
+    //
+    //
+    //
+    onBlocksChanged: {
+        var images = []
+        for ( var i = 0; i < blocks.length; i++ ) {
+            if ( blocks[ i ].type === 'image' ) images.push(blocks[ i ].content);
+        }
+        imageStack.images = images;
+    }
+    */
     //
     //
     //
@@ -135,7 +152,7 @@ Item {
     //
     function firstBlockContent(type) {
         for ( var i = 0; i < blocks.length; i++ ) {
-            if ( blocks[ i ].type === type ) return blocks[ i ].content;
+            if ( blocks[ i ].type === type ) return ( type === 'image' ? "image://cached/" : "" ) + blocks[ i ].content;
         }
         return "";
     }
