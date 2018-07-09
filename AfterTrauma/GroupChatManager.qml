@@ -51,11 +51,31 @@ AfterTrauma.Page {
             width: parent.width
             avatar: "https://aftertrauma.uk:4000/avatar/" + model.owner
             subject: model.subject
+            contentEditable: model.owner === userProfile.id
             // TODO: owner name, last message as subtitle
+            // TODO: indicator for invite
+            // TODO: list of active members
             onChat: {
+                if ( model.owner !== userProfile.id ) {
+                    //
+                    // check if we have accepted invite
+                    //
+                    if ( model.active.indexOf(userProfile.id) < 0 ) {
+                        if ( model.invited.indexOf(userProfile.id) < 0 ) return;
+                        var command = {
+                            command: 'groupacceptinvite',
+                            token: userProfile.token,
+                            chatid: model.id,
+                            userid: userProfile.id
+                        };
+                        chatChannel.send(command);
+                    }
+                }
+
                 var properties = {
                     chatId:model.id,
-                    messages:chatModel.getMessageModel(model.id)
+                    messages:chatModel.getMessageModel(model.id),
+                    subject: model.subject
                 };
                 stack.push( "qrc:///GroupChat.qml", properties);
             }
@@ -74,7 +94,7 @@ AfterTrauma.Page {
             }
             onRemove: {
                 var command = {
-                    command: 'groupremovechat',
+                    command: model.owner === userProfile.id ? 'groupremovechat' : 'groupleavechat',
                     token: userProfile.token,
                     userid: userProfile.id,
                     chatid: model.id
@@ -109,7 +129,8 @@ AfterTrauma.Page {
                     owner: userProfile.id,
                     subject: "",
                     "public": false,
-                    members: []
+                    members: [],
+                    messages: []
                 };
                 chatEditor.show(chat, function(edited) {
                     var command = {
@@ -139,20 +160,28 @@ AfterTrauma.Page {
         onGetUserChats:{
             // TODO:
         }
+
         onCreateChat:{
             console.log( 'ChatManager : create chat');
+            /*
             chatModel.add(command.chat);
             chatModel.save();
+            */
         }
         onUpdateChat:{
             console.log( 'ChatManager : update chat : ' + JSON.stringify(command.chat) );
+            /*
             chatModel.update({id: command.chat.id}, command.chat);
             chatModel.save();
+            */
         }
         onRemoveChat:{
             console.log( 'ChatManager : remove chat');
+            /*
             chatModel.remove({id: command.chatid});
             chatModel.save();
+            */
         }
+
     }
 }

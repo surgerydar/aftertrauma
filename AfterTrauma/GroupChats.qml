@@ -4,7 +4,7 @@ import SodaControls 1.0
 DatabaseList {
     id: model
     collection: "chats"
-    roles: [ "id", "date", "subject", "owner", "public", "members", "messages", "status", "unread" ]
+    roles: [ "id", "date", "subject", "owner", "public", "members", "active", "invited", "messages", "status", "unread" ]
     sort: { "status": 1, "date": -1 }
     //
     //
@@ -47,7 +47,8 @@ DatabaseList {
         //
         var cached = findMessageModel(chatId);
         if ( cached ) {
-            cached.model.append(message);
+            //cached.model.append(message);
+            cached.model.add(message);
         } else {
             var chat = findOne({id:chatId});
             if ( chat ) {
@@ -80,23 +81,48 @@ DatabaseList {
                 //
                 if ( chat.messages ) {
                     chat.messages.forEach( function( message ) {
-                        cached.model.append(message);
+                        console.log( 'GroupChats.getMessageModel : appending : ' + message + ' : to model : ' + cached.model );
+                        //cached.model.append(message);
+                        cached.model.add(message);
                     });
                 }
                 //
                 // connect to sync changes
                 //
+                /*
                 cached.model.rowsInserted.connect( function( index, first, last ) {
+                    //
+                    // update chat model with messages from cached message model
+                    //
                     console.log( 'messages inserted ' + first + ' : ' + last );
                     var chat = findOne({id: chatId});
                     if ( chat ) {
                         for ( var i = first; i <= last; i++ ) {
-                            chat.messages[ i ] = cached.model.get(i);
+                            var message = cached.model.get(i);
+                            var sanitisedMessage = {
+                                id: message.id,
+                                date: message.date,
+                                from: message.from,
+                                message: message.message
+                            };
+                            if ( i >= chat.messages.length ) {
+                                chat.messages.push(sanitisedMessage);
+                            } else {
+                                chat.messages[i] = sanitisedMessage;
+                            }
                         }
                         update( {id: chatId},{messages: chat.messages});
                         save();
+                        //
+                        //
+                        //
+                        chat = findOne({id: chatId});
+                        if ( chat ) {
+                            console.log( 'updated chat : \n' + JSON.stringify(chat) );
+                        }
                     }
                 });
+                */
                 //
                 // cache model
                 //

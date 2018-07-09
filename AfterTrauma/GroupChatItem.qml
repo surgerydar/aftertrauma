@@ -59,7 +59,7 @@ AfterTrauma.EditableListItem {
             anchors.top: parent.top
             anchors.left: avatarImage.right
             //anchors.bottom: parent.bottom
-            anchors.right: parent.right
+            anchors.right: chatButton.left
             anchors.margins: 8
             //
             //
@@ -103,17 +103,27 @@ AfterTrauma.EditableListItem {
             horizontalAlignment: Text.AlignLeft
             verticalAlignment: Text.AlignTop
         }
-
         //
         //
         //
-        MouseArea {
-            anchors.fill: parent
-            enabled: container.status === "active"
+        AfterTrauma.Button {
+            id: chatButton
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.right: parent.right
+            anchors.rightMargin: 8
+            image: "icons/chat.png"
             onClicked: {
                 chat();
             }
         }
+        /*
+        MouseArea {
+            anchors.fill: parent
+            onClicked: {
+                chat();
+            }
+        }
+        */
     }
     //
     //

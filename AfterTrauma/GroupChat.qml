@@ -79,24 +79,23 @@ AfterTrauma.Page {
             image: "icons/add.png"
             onClicked: {
                 if ( messageText.text.length > 0 ) {
-                    var message = { from: userProfile.id, message: messageText.text };
-                    messageList.model.append( message );
+                    var message = { id: GuidGenerator.generate(), from: userProfile.id, message: messageText.text };
+                    //messageList.model.append( message );
                     messageText.text = "";
                     messageList.positionViewAtEnd();
                     //
                     //
                     //
                     var command = {
-                        command: 'sendmessage',
-                        id: chatId,
-                        from: message.from,
-                        to: recipient,
-                        message: message.message
+                        command: 'groupsendmessage',
+                        token: userProfile.token,
+                        id: GuidGenerator.generate(),
+                        chatid: chatId,
+                        userid: message.from,
+                        message: message
                     };
-                    var guid = chatChannel.send(command);
-                    if ( guid.length === 0 ) {
-                        pendingMessages.push( command );
-                    }
+                    chatChannel.send(command);
+                    pendingMessages.push( command );
                 }
             }
         }
@@ -111,7 +110,6 @@ AfterTrauma.Page {
     //
     StackView.onActivated: {
         messageList.positionViewAtEnd();
-
     }
     StackView.onDeactivated: {
         chatModel.releaseMessageModel(chatId);
@@ -131,31 +129,28 @@ AfterTrauma.Page {
             // TODO: this may fail half way through so need to requeue those which are not sent
             //
             if ( chatChannel.connected ) {
+                /* TODO: disabled during transition to group chat, will have to impliment
                 pendingMessages.forEach(function(message){
-                    send(message);
+                    chatChannel.send(message);
                 });
+                */
                 pendingMessages = [];
             }
         }
-        onSendmessage: {
-            console.log( 'chatId:' + chatId + 'incomming chat id:' + command.id + 'from:' + command.from + ' to:' + command.to + ' userProfile.id:' + userProfile.id );
-            if ( command.id === chatId && command.to === userProfile.id ) {
-                console.log( 'appending message ' );
-                //
-                // TODO: sort by date
-                //
-                messageList.model.append( { from: command.from, message: command.message } );
+
+        onSendMessage: {
+            if ( command.chatid === chatId ) {
                 messageList.positionViewAtEnd();
             }
-        }
-    }
 
+        }
+
+    }
     //
     //
     //
-    property var pendingMessages: []
     property alias messages: messageList.model
-    property alias recipientUsername: container.subtitle
-    property string recipient: ""
+    property alias subject: container.subtitle
+    property var pendingMessages: []
     property string chatId: ""
 }

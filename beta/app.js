@@ -103,13 +103,15 @@ db.connect(
         //
         // connect chat
         //
+        /*
         console.log('chat');
         let chat = require('./chat');
         chat.setup(wsr,db);
+        */
         //
         // connect groupchat
         //
-        try { // TODO: roll out exception handling for all modules, what about let scope though?
+        try { // TODO: roll out exception handling for all modules
             console.log('groupchat');
             let groupchat = require('./groupchat');
             groupchat.setup(wsr,db);

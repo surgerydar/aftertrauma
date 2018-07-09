@@ -60,9 +60,23 @@ function sendToLive( id, message ) {
     }
 }
 
-function sendToActiveMembers( chat, command ) {
+function sendToAllLive( message ) {
+    for ( var i = 0; i < _live.length; i++ ) {
+        _live[ i ].ws.send( JSON.stringify( message ) );
+    }
+}
+
+function sendToMembers( chat, command, exclude ) {
+    if ( chat.owner !== exclude ) sendToLive( chat.owner, command );
     chat.members.forEach( function( member ) {
-        if ( chat.active.indexOf(member) >= 0 ) { // check user has accepted invite 
+        if( member !== exclude ) sendToLive( member, command );
+    });
+}
+
+function sendToActiveMembers( chat, command, exclude ) {
+    if ( chat.owner !== exclude ) sendToLive( chat.owner, command );
+    chat.members.forEach( function( member ) {
+        if ( member !== exclude && chat.active.indexOf(member) >= 0 ) { // check user has accepted invite 
             sendToLive( member, command );
         }    
     });
@@ -88,13 +102,17 @@ function inviteMembers( chat ) {
 }
 
 function verify( ws, command ) {
-    try {
-        if ( jwt.verify( command.token, 'afterparty' ) ) {
-            return true
+    if ( command.token ) {
+        try {
+            if( jwt.verify( command.token, 'afterparty' ) ) {
+                return true
+            }
+            command.error = 'authentication required';
+        } catch( error ) {
+            command.error = error;
         }
+    } else {
         command.error = 'authentication required';
-    } catch( error ) {
-        command.error = error;
     }
     command.status = 'ERROR';
     ws.send(JSON.stringify(command));
@@ -150,21 +168,27 @@ GroupChat.prototype.groupcreatechat = function( wss, ws, command ) {
             chat.active = [];
             inviteMembers( chat );
             _db.insert('groupchats', chat ).then(function( response ) {
-                /*
-                if ( chat.public ) {
-                    sendToLive( {
-                        command: 'groupcreatechat',
-                        status: 'OK',
-                        chat: chat
-                    });
-                }
-                */
                 //
                 //
                 //
                 command.status = 'OK';
-                command.response = response;
-                ws.send(JSON.stringify(command));
+                if ( chat.public ) {
+                    sendToAllLive( command );
+                } else {
+                    //
+                    // alert members
+                    //
+                    sendToMembers( chat, command, chat.owner );
+                    //
+                    // respond to caller
+                    //
+                    command.response = response;
+                    ws.send(JSON.stringify(command));
+                }
+                //
+                //
+                //
+                
             }).catch( function( error ) {
                 command.status = 'ERROR';
                 command.error = error;
@@ -188,12 +212,12 @@ GroupChat.prototype.groupupdatechat = function( wss, ws, command ) {
                 //
                 //
                 command.status = 'OK';
-                command.response = response;
-                ws.send(JSON.stringify(command));
+                //command.response = response;
+                //ws.send(JSON.stringify(command));
                 //
                 //
                 //
-                sendToActiveMembers(chat,command);
+                sendToMembers(chat,command);
             }).catch( function( error ) {
                 command.status = 'ERROR';
                 command.error = error;
@@ -262,7 +286,7 @@ GroupChat.prototype.groupacceptinvite = function( wss, ws, command ) {
     }); 
 }
 
-GroupChat.prototype.groupdeclineinvite = function( wss, ws, command ) {
+GroupChat.prototype.groupdeclineinvite = function( wss, ws, command ) { 
     console.log( 'GroupChat.groupdeclineinvite : chat ' +  command.chatid + ' user ' + command.userid );
     //
     // update chat status
@@ -412,7 +436,7 @@ GroupChat.prototype.groupleavechat = function( wss, ws, command ) {
                         command: 'groupupdatechat',
                         status: 'OK',
                         chat: chat
-                    });
+                    } );
                 }).catch( function( error) {
                     command.status = 'ERROR';
                     command.error = error;
@@ -436,12 +460,19 @@ GroupChat.prototype.groupremovechat = function( wss, ws, command ) {
         if ( verify( ws, command ) ) {
             //
             // only allow remove 
-            // 
-            _db.remove('groupchats', { id: command.chatid, owner: command.userid }).then(function( response ) {
-                command.status = 'OK';
-                command.response = response;
-                ws.send(JSON.stringify(command));
-            }).catch( function( error ) {
+            //
+            _db.findOne('groupchats', { id: command.chatid }).then(function( chat ) {
+                _db.remove('groupchats', { id: command.chatid, owner: command.userid }).then(function( response ) {
+                    command.status = 'OK';
+                    //command.response = response;
+                    //ws.send(JSON.stringify(command));
+                    sendToMembers( chat, command );
+                }).catch( function( error ) {
+                    command.status = 'ERROR';
+                    command.error = error;
+                    ws.send(JSON.stringify(command));
+                });
+            }).catch(function(error) {
                 command.status = 'ERROR';
                 command.error = error;
                 ws.send(JSON.stringify(command));
@@ -455,24 +486,29 @@ GroupChat.prototype.groupsendmessage = function( wss, ws, command ) {
     // message should be in the following format
     // { id: guid, from: userid, message: text }
     //
-    console.log( 'GroupChat.sendmessage : chat id:' + command.chatid + 'from user ' + command.userid + ' message:' + JSON.stringify( command.message ) );
+    console.log( 'GroupChat.groupsendmessage : ' + JSON.stringify( command ) );
     process.nextTick(function(){   
         if ( verify( ws, command ) ) {
             _db.findOne('groupchats', { $and: [ { id: command.chatid }, { $or: [ { owner: command.userid }, { members: command.userid } ]}]},{}).then(function( chat ) {
                 //
                 // add message
                 //
-                chat.messages.push(message);
+                chat.date = Date.now();
+                command.message.date = Date.now();
+                if ( chat.messages === undefined ) chat.messages = [];
+                chat.messages.push(command.message);
+                console.log( 'GroupChat.groupsendmessage : updating chat : ' + command.chatid );
                 //
                 // update
+                // TODO: look at pushing message using mongo
                 //
                 _db.updateOne('groupchats', { id: command.chatid }, {$set: chat }).then(function( response ) {
                     //
                     // respond to caller
                     //
                     command.status = 'OK';
-                    command.response = response;
-                    ws.send(JSON.stringify(command));
+                    //command.response = response; // JONS: no need to return response
+                    //ws.send(JSON.stringify(command)); // JONS: will be handled by sendToActiveMembers
                     //
                     // forward to active members
                     //
@@ -483,6 +519,7 @@ GroupChat.prototype.groupsendmessage = function( wss, ws, command ) {
                     ws.send(JSON.stringify(command));
                 });
             }).catch( function( error ) {
+                console.log('GroupChat.groupsendmessage : unable to find chat : ' + command.chatid + ' : error : ' + JSON.stringify( error ) );
                 command.status = 'ERROR';
                 command.error = error;
                 ws.send(JSON.stringify(command));

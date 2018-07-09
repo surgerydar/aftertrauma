@@ -123,16 +123,76 @@ Item {
                     chatModel.save();
                     break;
                 case 'groupcreatechat':
+                    //
+                    // update database
+                    //
+                    chatModel.add(command.chat);
+                    chatModel.save();
+                    //
+                    //
+                    //
                     container.createChat( command );
                     break;
                 case 'groupupdatechat':
+                    //
+                    // update database
+                    //
+                    chatModel.update({id:command.chat.id},command.chat);
+                    chatModel.save();
+                    //
+                    // pass it on
+                    //
                     container.updateChat( command );
                     break;
                 case 'groupremovechat':
+                    //
+                    // remove from database
+                    //
+                    chatModel.remove({id:command.chatid});
+                    chatModel.save();
+                    //
+                    // pass it on
+                    //
                     container.removeChat( command );
                     break;
-                case 'groupsendmessage':
-                    container.sendMessage( command );
+                case 'groupsendmessage': {
+                        //
+                        // update chat model
+                        //
+                        var chat = chatModel.findOne({id:command.chatid});
+                        if ( chat ) {
+                            //
+                            // check for duplicate
+                            //
+                            var message = command.message;
+                            var duplicate = false;
+                            for ( var i = 0; i < chat.messages.length; i++ ) {
+                                if ( chat.messages[ i ].id === message.id ) {
+                                    duplicate = true;
+                                    break;
+                                }
+                            }
+                            if ( !duplicate ) {
+                                //
+                                // update cached message model
+                                //
+                                var messageModel = chatModel.getMessageModel(command.chatid);
+                                if ( messageModel ) {
+                                    messageModel.add( message );
+                                }
+                                //
+                                // update database
+                                //
+                                chat.messages.push( message );
+                                chatModel.update({id: command.chatid},{ messages: chat.messages, date: message.date || Date.now() });
+                                chatModel.save();
+                            }
+                        }
+                        //
+                        // pass it on
+                        //
+                        container.sendMessage( command );
+                    }
                     break;
                  }
             } else {
