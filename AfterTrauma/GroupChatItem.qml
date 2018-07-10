@@ -110,7 +110,7 @@ AfterTrauma.EditableListItem {
             id: chatButton
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
-            anchors.rightMargin: 8
+            anchors.rightMargin: 16
             image: "icons/chat.png"
             onClicked: {
                 chat();

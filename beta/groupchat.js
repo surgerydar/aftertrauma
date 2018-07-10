@@ -62,7 +62,11 @@ function sendToLive( id, message ) {
 
 function sendToAllLive( message ) {
     for ( var i = 0; i < _live.length; i++ ) {
-        _live[ i ].ws.send( JSON.stringify( message ) );
+        try {
+            _live[ i ].ws.send( JSON.stringify( message ) );
+        } catch( error ) {
+            console.error( 'groupchat sendToAllLive : error sending to : ' + _live[ i ].id + ' : ' + error );
+        }
     }
 }
 
@@ -142,7 +146,7 @@ GroupChat.prototype.groupgetuserchats = function( wss, ws, command ) {
     process.nextTick(function(){   
         if ( verify( ws, command ) ) {
             // get all group chats user is a member of
-            _db.find('groupchats',{$or:[{members: command.id},{owner: command.id}]},{},{date:-1}).then(function( response ) {
+            _db.find('groupchats',{$or:[{members: command.id},{owner: command.id},{public:true}]},{},{date:-1}).then(function( response ) {
                 command.status = 'OK';
                 command.response = response;
                 ws.send(JSON.stringify(command));
@@ -459,7 +463,7 @@ GroupChat.prototype.groupremovechat = function( wss, ws, command ) {
     process.nextTick(function(){   
         if ( verify( ws, command ) ) {
             //
-            // only allow remove 
+            // only allow remove from the owner
             //
             _db.findOne('groupchats', { id: command.chatid }).then(function( chat ) {
                 _db.remove('groupchats', { id: command.chatid, owner: command.userid }).then(function( response ) {
@@ -489,7 +493,7 @@ GroupChat.prototype.groupsendmessage = function( wss, ws, command ) {
     console.log( 'GroupChat.groupsendmessage : ' + JSON.stringify( command ) );
     process.nextTick(function(){   
         if ( verify( ws, command ) ) {
-            _db.findOne('groupchats', { $and: [ { id: command.chatid }, { $or: [ { owner: command.userid }, { members: command.userid } ]}]},{}).then(function( chat ) {
+            _db.findOne('groupchats', { $and: [ { id: command.chatid }, { $or: [ { owner: command.userid }, { members: command.userid }, { public: true }]}]},{}).then(function( chat ) {
                 //
                 // add message
                 //
@@ -591,6 +595,28 @@ GroupChat.prototype.groupgolive = function( wss, ws, command ) {
         command.status = 'OK';
         
     });
+}
+
+GroupChat.prototype.groupfilterchats = function( wss, ws, command ) {
+    console.log( 'GroupChat.groupfilterchats : filter:' + JSON.stringify( command ) );
+    //
+    // update user
+    //
+    process.nextTick(function() {  
+        try {
+            _db.find('groupchats', command.filter, {}, command.order || {}, command.limit || 0).then(function( response ) {
+                command.status = 'OK';
+                command.response = response;
+                ws.send(JSON.stringify(command));
+            }).catch( function( error ) {
+                command.status = 'ERROR';
+                command.error = error;
+                ws.send(JSON.stringify(command));
+            });
+        } catch( error ) {
+            console.log( 'GroupChat.filterpublicprofiles : error : ' + error );
+        }
+    }); 
 }
 
 module.exports = new GroupChat();

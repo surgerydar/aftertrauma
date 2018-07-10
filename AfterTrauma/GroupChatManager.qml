@@ -6,6 +6,7 @@ import "controls" as AfterTrauma
 import "colours.js" as Colours
 
 AfterTrauma.Page {
+    id: container
     title: "CHATS"
     colour: Colours.darkPurple
     //
@@ -46,8 +47,6 @@ AfterTrauma.Page {
         //
         //
         delegate: GroupChatItem {
-            //anchors.left: chats.left
-            //anchors.right: chats.right
             width: parent.width
             avatar: "https://aftertrauma.uk:4000/avatar/" + model.owner
             subject: model.subject
@@ -56,28 +55,7 @@ AfterTrauma.Page {
             // TODO: indicator for invite
             // TODO: list of active members
             onChat: {
-                if ( model.owner !== userProfile.id ) {
-                    //
-                    // check if we have accepted invite
-                    //
-                    if ( model.active.indexOf(userProfile.id) < 0 ) {
-                        if ( model.invited.indexOf(userProfile.id) < 0 ) return;
-                        var command = {
-                            command: 'groupacceptinvite',
-                            token: userProfile.token,
-                            chatid: model.id,
-                            userid: userProfile.id
-                        };
-                        chatChannel.send(command);
-                    }
-                }
-
-                var properties = {
-                    chatId:model.id,
-                    messages:chatModel.getMessageModel(model.id),
-                    subject: model.subject
-                };
-                stack.push( "qrc:///GroupChat.qml", properties);
+                openChat(index);
             }
             onEdit: {
                 var chat = chatModel.get( index );
@@ -106,13 +84,38 @@ AfterTrauma.Page {
     //
     //
     //
+    GroupChatSearch {
+        id: searchChats
+        width: container.width
+        height: container.height - ( footerItem.height * 2 )
+        x: 0
+        onAction: {
+            openChat( index );
+            close();
+        }
+    }
+    //
+    //
+    //
     footer: Item {
+        id: footerItem
         height: 64
         anchors.left: parent.left
         anchors.right: parent.right
         //
         //
         //
+        AfterTrauma.Button {
+            id: searchChat
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.right: addChat.left
+            anchors.rightMargin: 8
+            backgroundColour: "transparent"
+            image: "icons/search.png"
+            onClicked: {
+                searchChats.open();
+            }
+        }
         AfterTrauma.Button {
             id: addChat
             anchors.verticalCenter: parent.verticalCenter
@@ -182,6 +185,56 @@ AfterTrauma.Page {
             chatModel.save();
             */
         }
+    }
+    //
+    //
+    //
+    function openChat( index ) {
+        var chat = chatModel.get(index);
+        if ( chat ) {
+            if ( chat.owner !== userProfile.id ) {
+                //
+                // check if we have accepted invite
+                //
+                if ( chat.active.indexOf(userProfile.id) < 0 ) {
+                    var command;
+                    if ( chat.invited.indexOf(userProfile.id) >= 0 ) {
+                        //
+                        // invited so accept
+                        //
+                        command = {
+                            command: 'groupacceptinvite',
+                            token: userProfile.token,
+                            chatid: chat.id,
+                            userid: userProfile.id
+                        };
 
+                    } else if ( chat["public"] ) {
+                        console.log( 'GroupChatManager.openChat : joining public chat : ' + chat.id );
+                        //
+                        // public so join
+                        //
+                        command = {
+                            command: 'groupjoinchat',
+                            token: userProfile.token,
+                            chatid: chat.id,
+                            userid: userProfile.id
+                        };
+                    }
+                    if ( command ) {
+                        chatChannel.send(command);
+                    } else {
+                        return;
+                    }
+                }
+            }
+
+            var properties = {
+                chatId:chat.id,
+                messages:chatModel.getMessageModel(chat.id),
+                subject: chat.subject
+            };
+            stack.push( "qrc:///GroupChat.qml", properties);
+        }
     }
 }

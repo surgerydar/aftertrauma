@@ -72,7 +72,7 @@ Rectangle {
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
             text: "save"
-            enabled: subjectField.text.length > 0 && membersList.count > 0
+            enabled: subjectField.text.length > 0 && ( membersList.count > 0 || publicCheckBox.checked )
             onClicked: {
                 if ( callback ) {
 
@@ -89,6 +89,7 @@ Rectangle {
                     // TODO: send invites
                     //
                     chat.members = members;
+                    chat["public"] = publicCheckBox.checked;
                     console.log( 'new chat : ' + JSON.stringify(chat) );
                     callback(chat);
                 }

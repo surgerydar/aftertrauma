@@ -164,5 +164,7 @@
         <file>GroupChatItem.qml</file>
         <file>GroupChats.qml</file>
         <file>GroupChat.qml</file>
+        <file>GroupChatSearch.qml</file>
+        <file>GroupChatSearchItem.qml</file>
     </qresource>
 </RCC>

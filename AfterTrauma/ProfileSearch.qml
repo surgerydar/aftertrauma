@@ -155,9 +155,11 @@ Rectangle {
     //
     function updateSearch( text ) {
         console.log( 'searching for text : ' + text );
+        var exclude = [userProfile.id]; // TODO: exclude users currenly
+        var regex = { $regex: '^' + text, $options:'i'};
         profiles.model.command = {
             command: 'filterpublicprofiles',
-            filter: {$and:[{id:{$not:{$eq:userProfile.id}}},{username: { $regex: '^' + text, $options:'i'} }]}
+            filter: {$and:[{id:{$nin:exclude}},{ $or:[{username: regex},{tags: regex}]}]}
         };
         profiles.model.refresh();
     }
