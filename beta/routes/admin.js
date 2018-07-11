@@ -289,9 +289,14 @@ module.exports = function( authentication, db ) {
     router.get('/:section/:category', authentication, function (req, res) {
         var section = req.params.section;
         var _id = db.ObjectId(req.params.category);
+        var format = req.query.format;
         db.findOne( 'category', { _id: _id } ).then( function( category ) {
             db.find( 'document', { category: req.params.category }, {}, { index: 1 } ).then( function( documents ) {
-                res.render('category', {title:'AfterTrauma > ' + capitalise( section ) + ' > ' + category.title, section: category.section, category: category, documents: documents });
+                if ( format === 'json' ) {
+                    res.json( documents );
+                } else {
+                    res.render('category', {title:'AfterTrauma > ' + capitalise( section ) + ' > ' + category.title, section: category.section, category: category, documents: documents });
+                }
             }).catch( function( error ) {
                 //
                 // TODO: error

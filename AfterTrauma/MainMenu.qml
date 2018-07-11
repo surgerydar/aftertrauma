@@ -9,10 +9,11 @@ import "colours.js" as Colours
 Rectangle {
     id: container
     width: parent.width
-    x: -width
+    x: parent.width
     anchors.top: parent.top
-    anchors.bottom: parent.bottom
-    color: Qt.rgba(0,0,0,.5)
+    anchors.bottom: navigationBar.top
+    //anchors.bottomMargin: 64
+    color: "transparent"//Qt.rgba(0,0,0,.5)
     //
     //
     //
@@ -22,14 +23,14 @@ Rectangle {
             name: "closed"
             PropertyChanges {
                 target: container
-                x: -container.width
+                x: parent.width
             }
         },
         State {
             name: "open"
             PropertyChanges {
                 target: container
-                x: 0
+                x: parent.width-container.width
             }
         }
     ]
@@ -58,35 +59,22 @@ Rectangle {
     //
     //
     Rectangle {
-        width: parent.width <= 320 ? parent.width : parent.width * .75
-        anchors.top: parent.top
-        anchors.left: parent.left
+        width: menuItems.width + 32
+        height: Math.min( parent.height, (menuItemsModel.count * ( 48 + menuItems.spacing ) ) + 16 )
+        anchors.right: parent.right
         anchors.bottom: parent.bottom
         color: Colours.darkOrange
         //
         //
         //
-        AfterTrauma.Button {
-            id: closeButton
-            anchors.top: parent.top
-            anchors.right: parent.right
-            anchors.margins: 8
-            image: "icons/left_arrow.png"
-            onClicked: {
-                close();
-            }
-        }
-        //
-        //
-        //
         ListView {
             id: menuItems
-            anchors.top: closeButton.bottom
-            anchors.left: parent.left
+            width: contentItem.childrenRect.width
+            anchors.top: parent.top
             anchors.bottom: parent.bottom
-            anchors.right: parent.right
+            anchors.horizontalCenter: parent.horizontalCenter
             anchors.margins: 8
-            spacing: 4
+            spacing: 16
             model: menuItemsModel
             ScrollBar.vertical: ScrollBar { }
         }
@@ -97,99 +85,27 @@ Rectangle {
     VisualItemModel {
         id: menuItemsModel
         AfterTrauma.Button {
-            anchors.left: parent.left
+            //anchors.left: parent.left
             textHorizontalAlignment: Text.AlignLeft
-            textVerticalAlignment: Text.AlignVCenter
-            textSize: 32
-            text: "ADD"
-        }
-        AfterTrauma.Button {
-            anchors.right: parent.right
-            textHorizontalAlignment: Text.AlignRight
-            textVerticalAlignment: Text.AlignVCenter
-            textSize: 32
-            text: "My Recovery"
-            image: "icons/add.png"
-            direction: "Right"
-            spacing: 8
-            onClicked: {
-                stack.navigateTo("qrc:///Questionnaire.qml");
-                container.close();
-            }
-        }
-        AfterTrauma.Button {
-            anchors.right: parent.right
-            textHorizontalAlignment: Text.AlignRight
             textVerticalAlignment: Text.AlignVCenter
             textSize: 32
             text: "Challenge"
             image: "icons/add.png"
-            direction: "Right"
+            direction: "Left"
             spacing: 8
             onClicked: {
                 stack.navigateTo("qrc:///ChallengeManager.qml");
                 container.close();
             }
         }
-        /*
         AfterTrauma.Button {
-            anchors.right: parent.right
-            textHorizontalAlignment: Text.AlignRight
-            textVerticalAlignment: Text.AlignVCenter
-            textSize: 32
-            text: "Image"
-            image: "icons/add.png"
-            direction: "Right"
-            spacing: 8
-            onClicked: {
-                stack.navigateTo("qrc:///ImageManager.qml");
-                container.close();
-            }
-        }
-        AfterTrauma.Button {
-            anchors.right: parent.right
-            textHorizontalAlignment: Text.AlignRight
-            textVerticalAlignment: Text.AlignVCenter
-            textSize: 32
-            text: "Notes"
-            image: "icons/add.png"
-            direction: "Right"
-            spacing: 8
-            onClicked: {
-                stack.navigateTo("qrc:///NotesManager.qml");
-                container.close();
-            }
-        }
-        */
-        AfterTrauma.Button {
-            anchors.left: parent.left
+            //anchors.left: parent.left
             textHorizontalAlignment: Text.AlignLeft
             textVerticalAlignment: Text.AlignVCenter
             textSize: 32
-            text: "PROGRESS"
-        }
-        AfterTrauma.Button {
-            anchors.right: parent.right
-            textHorizontalAlignment: Text.AlignRight
-            textVerticalAlignment: Text.AlignVCenter
-            textSize: 32
-            text: "Diary"
-            image: "icons/timeline.png"
-            direction: "Right"
-            spacing: 8
-            onClicked: {
-                stack.navigateTo("qrc:///Diary.qml");
-                container.close();
-            }
-        }
-        AfterTrauma.Button {
-            anchors.right: parent.right
-            textHorizontalAlignment: Text.AlignRight
-            textVerticalAlignment: Text.AlignVCenter
-            textSize: 32
-            text: "My Progress"
+            text: "Graphs"
             image: "icons/chart.png"
-            direction: "Right"
+            direction: "Left"
             spacing: 8
             onClicked: {
                 stack.navigateTo("qrc:///Progress.qml",{ period: "week" });
@@ -197,27 +113,13 @@ Rectangle {
             }
         }
         AfterTrauma.Button {
-            anchors.right: parent.right
-            textHorizontalAlignment: Text.AlignRight
-            textVerticalAlignment: Text.AlignVCenter
-            textSize: 32
-            text: "Information"
-            image: "icons/resources.png"
-            direction: "Right"
-            spacing: 8
-            onClicked: {
-                stack.navigateTo("qrc:///FactsheetCategories.qml");
-                container.close();
-            }
-        }
-        AfterTrauma.Button {
-            anchors.right: parent.right
-            textHorizontalAlignment: Text.AlignRight
+            //anchors.left: parent.left
+            textHorizontalAlignment: Text.AlignLeft
             textVerticalAlignment: Text.AlignVCenter
             textSize: 32
             text: "Search"
             image: "icons/search.png"
-            direction: "Right"
+            direction: "Left"
             spacing: 8
             onClicked: {
                 stack.navigateTo("qrc:///Search.qml");
@@ -225,32 +127,36 @@ Rectangle {
             }
         }
         AfterTrauma.Button {
-            anchors.right: parent.right
-            textHorizontalAlignment: Text.AlignRight
-            textVerticalAlignment: Text.AlignVCenter
-            textSize: 32
-            text: "Chat"
-            image: "icons/chat.png"
-            direction: "Right"
-            spacing: 8
-            enabled: userProfile
-            onClicked: {
-                //stack.navigateTo("qrc:///ChatManager.qml");
-                stack.navigateTo("qrc:///GroupChatManager.qml");
-                container.close();
-            }
-        }
-        AfterTrauma.Button {
-            anchors.right: parent.right
-            textHorizontalAlignment: Text.AlignRight
+            //anchors.left: parent.left
+            textHorizontalAlignment: Text.AlignLeft
             textVerticalAlignment: Text.AlignVCenter
             textSize: 32
             text: "About"
             image: "icons/help.png"
-            direction: "Right"
+            direction: "Left"
             spacing: 8
             onClicked: {
                 stack.navigateTo("qrc:///Help.qml");
+                container.close();
+            }
+        }
+        AfterTrauma.Button {
+            //anchors.left: parent.left
+            textHorizontalAlignment: Text.AlignLeft
+            textVerticalAlignment: Text.AlignVCenter
+            textSize: 32
+            text: userProfile && loggedIn ? "About Me" : "login or register"
+            image: "icons/profile_icon_white.png"
+            direction: "Left"
+            spacing: 8
+            onClicked: {
+                onClicked: {
+                    if ( loggedIn ) {
+                        stack.push("qrc:///ProfileManager.qml", { profile: userProfile } );
+                    } else {
+                        register.open();
+                    }
+                }
                 container.close();
             }
         }

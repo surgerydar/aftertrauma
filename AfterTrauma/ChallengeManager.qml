@@ -53,6 +53,7 @@ AfterTrauma.Page {
             activity: model.activity
             count: model.count || 0
             swipeEnabled: editable
+            active: model.active
             onCountChanged: {
                 challengeModel.updateCount( model.index, count );
             }
@@ -61,6 +62,17 @@ AfterTrauma.Page {
             }
             onRemove: {
                 challengeModel.remove({_id:challengeModel.get(index)._id});
+            }
+            onClicked: {
+                if ( !editable ) {
+                    var properties = {
+                        title: model.name,
+                        activity: model.activity,
+                        active: model.active,
+                        challengeId: challengeModel.get(index)._id
+                    };
+                    stack.push( "qrc:///ChallengeViewer.qml", properties );
+                }
             }
         }
         add: Transition {

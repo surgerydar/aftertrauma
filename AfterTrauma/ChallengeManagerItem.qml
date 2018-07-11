@@ -54,7 +54,7 @@ AfterTrauma.EditableListItem {
             anchors.top: nameText.bottom
             anchors.left: parent.left
             anchors.bottom: parent.bottom
-            anchors.right: countSpinner.left
+            anchors.right: active ? countSpinner.left : parent.right
             anchors.margins: 8
             //
             //
@@ -78,6 +78,7 @@ AfterTrauma.EditableListItem {
             anchors.bottom: parent.bottom
             anchors.right: parent.right
             anchors.margins: 8
+            visible: false
         }
     }
     //
@@ -86,4 +87,5 @@ AfterTrauma.EditableListItem {
     property alias name: nameText.text
     property alias activity: activityText.text
     property alias count: countSpinner.value
+    property alias active: countSpinner.visible
 }

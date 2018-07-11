@@ -125,6 +125,7 @@ ApplicationWindow {
         anchors.fill: parent
         //visible: depth > 1
         anchors.topMargin: depth > 1 ? 0 : titleBar.height
+        anchors.bottomMargin: depth > 1 ? 0 : navigationBar.height
         transitions: Transition {
             AnchorAnimation { duration: 100 }
         }
@@ -148,6 +149,17 @@ ApplicationWindow {
 
         }
     }
+    //
+    //
+    //
+    NavigationBar {
+        id: navigationBar
+        //
+        //
+        //
+        state: stack.depth > 1 ? "closed" : "open"
+    }
+
     //
     //
     //

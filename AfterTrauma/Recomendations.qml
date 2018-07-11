@@ -19,7 +19,7 @@ DatabaseList {
                             category: "body",
                             minimum: 0.0,
                             maximum: 0.25,
-                            recomendation: "Body, not good",
+                            recomendation: "Some difficulties. Need some help?",
                             links: [
                             ]
                         },
@@ -27,7 +27,7 @@ DatabaseList {
                             category: "body",
                             minimum: 0.25,
                             maximum: 0.5,
-                            recomendation: "Body, not so bad",
+                            recomendation: "Some difficulties. Need some help?",
                             links: [
                             ]
                         },
@@ -35,7 +35,7 @@ DatabaseList {
                             category: "body",
                             minimum: 0.5,
                             maximum: 0.75,
-                            recomendation: "Body, good",
+                            recomendation: "You’re making good progress! Keep it up!",
                             links: [
                             ]
                         },
@@ -43,7 +43,7 @@ DatabaseList {
                             category: "body",
                             minimum: 0.75,
                             maximum: 1.0,
-                            recomendation: "Body, great!",
+                            recomendation: "You’re making good progress! Keep it up!",
                             links: [
                             ]
                         },
@@ -51,7 +51,7 @@ DatabaseList {
                             category: "emotions",
                             minimum: 0.0,
                             maximum: 0.25,
-                            recomendation: "Emotions, not good",
+                            recomendation: "Some difficulties. Need some help?",
                             links: [
                             ]
                         },
@@ -59,7 +59,7 @@ DatabaseList {
                             category: "emotions",
                             minimum: 0.25,
                             maximum: 0.5,
-                            recomendation: "Emotions, not so bad",
+                            recomendation: "Some difficulties. Need some help?",
                             links: [
                             ]
                         },
@@ -67,7 +67,7 @@ DatabaseList {
                             category: "emotions",
                             minimum: 0.5,
                             maximum: 0.75,
-                            recomendation: "Emotions, good",
+                            recomendation: "You’re making good progress! Keep it up!",
                             links: [
                             ]
                         },
@@ -75,7 +75,7 @@ DatabaseList {
                             category: "emotions",
                             minimum: 0.75,
                             maximum: 1.0,
-                            recomendation: "Emotions, great!",
+                            recomendation: "You’re making good progress! Keep it up!",
                             links: [
                             ]
                         },
@@ -83,7 +83,7 @@ DatabaseList {
                             category: "relationships",
                             minimum: 0.0,
                             maximum: 0.25,
-                            recomendation: "Relationships, not good",
+                            recomendation: "Some difficulties. Need some help?",
                             links: [
                             ]
                         },
@@ -91,7 +91,7 @@ DatabaseList {
                             category: "relationships",
                             minimum: 0.25,
                             maximum: 0.5,
-                            recomendation: "Relationships, not so bad",
+                            recomendation: "Some difficulties. Need some help?",
                             links: [
                             ]
                         },
@@ -99,7 +99,7 @@ DatabaseList {
                             category: "relationships",
                             minimum: 0.5,
                             maximum: 0.75,
-                            recomendation: "Relationships, good",
+                            recomendation: "You’re making good progress! Keep it up!",
                             links: [
                             ]
                         },
@@ -107,7 +107,7 @@ DatabaseList {
                             category: "relationships",
                             minimum: 0.75,
                             maximum: 1.0,
-                            recomendation: "Relationships, great!",
+                            recomendation: "You’re making good progress! Keep it up!",
                             links: [
                             ]
                         },
@@ -115,7 +115,7 @@ DatabaseList {
                             category: "life",
                             minimum: 0.0,
                             maximum: 0.25,
-                            recomendation: "Life, not good",
+                            recomendation: "Some difficulties. Need some help?",
                             links: [
                             ]
                         },
@@ -123,7 +123,7 @@ DatabaseList {
                             category: "life",
                             minimum: 0.25,
                             maximum: 0.5,
-                            recomendation: "Life, not so bad",
+                            recomendation: "Some difficulties. Need some help?",
                             links: [
                             ]
                         },
@@ -131,7 +131,7 @@ DatabaseList {
                             category: "life",
                             minimum: 0.5,
                             maximum: 0.75,
-                            recomendation: "Life, good",
+                            recomendation: "You’re making good progress! Keep it up!",
                             links: [
                             ]
                         },
@@ -139,7 +139,7 @@ DatabaseList {
                             category: "life",
                             minimum: 0.75,
                             maximum: 1.0,
-                            recomendation: "Life, great!",
+                            recomendation: "You’re making good progress! Keep it up!",
                             links: [
                             ]
                         },
@@ -147,7 +147,7 @@ DatabaseList {
                             category: "confidence",
                             minimum: 0.0,
                             maximum: 0.25,
-                            recomendation: "Confidence, not good",
+                            recomendation: "Some difficulties. Need some help?",
                             links: [
                             ]
                         },
@@ -155,7 +155,7 @@ DatabaseList {
                             category: "confidence",
                             minimum: 0.25,
                             maximum: 0.5,
-                            recomendation: "Confidence, not so bad",
+                            recomendation: "Some difficulties. Need some help?",
                             links: [
                             ]
                         },
@@ -163,7 +163,7 @@ DatabaseList {
                             category: "confidence",
                             minimum: 0.5,
                             maximum: 0.75,
-                            recomendation: "Confidence, good",
+                            recomendation: "You’re making good progress! Keep it up!",
                             links: [
                             ]
                         },
@@ -171,7 +171,7 @@ DatabaseList {
                             category: "confidence",
                             minimum: 0.75,
                             maximum: 1.0,
-                            recomendation: "Confidence, great!",
+                            recomendation: "You’re making good progress! Keep it up!",
                             links: [
                             ]
                         }

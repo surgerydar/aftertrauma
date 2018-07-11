@@ -4,7 +4,7 @@ import SodaControls 1.0
 DatabaseList {
     id: model
     collection: "challenges"
-    roles: [ "name", "activity", "repeats", "frequency", "values", "notes", "images", "notifications", "active", "date", "count" ]
+    roles: [ "_id,", "name", "activity", "repeats", "frequency", "values", "notes", "images", "notifications", "active", "date", "count" ]
     sort: { "active": -1 }//, "name": 1 }
     //
     //

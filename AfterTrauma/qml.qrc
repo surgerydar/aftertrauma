@@ -166,5 +166,8 @@
         <file>GroupChat.qml</file>
         <file>GroupChatSearch.qml</file>
         <file>GroupChatSearchItem.qml</file>
+        <file>ChallengeViewer.qml</file>
+        <file>icons/profile_icon_white.png</file>
+        <file>icons/diary_white.png</file>
     </qresource>
 </RCC>

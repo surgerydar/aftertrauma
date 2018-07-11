@@ -3,16 +3,13 @@ import QtQuick.Controls 2.1
 
 import "colours.js" as Colours
 
-Rectangle {
+Item {
     id: container
-    width: 48
-    height: width
-    radius: width / 2
-    color: Colours.darkOrange
     //
     //
     //
     property alias icon: iconImage.source
+    property alias label: labelText.text
     //
     //
     //
@@ -23,9 +20,25 @@ Rectangle {
     Image {
         id: iconImage
         anchors.fill: container
+        anchors.bottomMargin: labelText.height
         anchors.margins: 8
         fillMode: Image.PreserveAspectFit
     }
+    //
+    //
+    //
+    Label {
+        id: labelText
+        anchors.left: parent.left
+        anchors.bottom: parent.bottom
+        anchors.right: parent.right
+        horizontalAlignment: Text.AlignHCenter
+        font.weight: Font.Light
+        font.family: fonts.light
+        font.pointSize: 12
+        color: Colours.almostWhite
+    }
+
     //
     //
     //

@@ -1,131 +1,105 @@
 import QtQuick 2.0
 
+import "controls" as AfterTrauma
 import "colours.js" as Colours
 
 Item {
+    id: container
     height: 64
     anchors.left: parent.left
-    anchors.bottom: parent.bottom
     anchors.right: parent.right
+    //
+    //
+    //
+    states: [
+        State {
+            name: "closed"
+            PropertyChanges {
+                target: container
+                y: parent.height
+            }
+        },
+        State {
+            name: "open"
+            PropertyChanges {
+                target: container
+                y: parent.height - height
+            }
+        }
+    ]
+    transitions: Transition {
+        NumberAnimation { properties: "y"; easing.type: Easing.InOutQuad }
+    }
     //
     //
     //
     Rectangle {
         id: background
         anchors.fill: parent
-        anchors.topMargin: 36
         color: Colours.darkOrange
     }
     //
     //
     //
-    NavigationButton {
-        id: helpButton
-        anchors.bottom: parent.bottom
-        anchors.right: chatButton.left
-        anchors.margins: 4
-        icon: "icons/help.png"
-        onClicked: {
-            stack.navigateTo("qrc:///Help.qml");
-        }
-    }
-    NavigationButton {
-        id: chatButton
-        anchors.bottom: parent.bottom
-        anchors.right: addButton.left
-        anchors.margins: 4
-        icon: "icons/chat.png"
-        onClicked: {
-            if ( loggedIn ) {
-                stack.navigateTo("qrc:///ChatManager.qml");
-            } else {
-                register.open();
+    Row {
+        anchors.fill: parent
+        NavigationButton {
+            width: parent.width / 5
+            height: parent.height - 16
+            anchors.verticalCenter: parent.verticalCenter
+            label: "recovery"
+            icon: "icons/profile_icon_white.png"
+            onClicked:{
+                stack.navigateTo("qrc:///Questionnaire.qml");
+                mainMenu.close();
             }
         }
-    }
-    NavigationButton {
-        id: addButton
-        width: 64
-        anchors.bottom: parent.bottom
-        anchors.right: parent.horizontalCenter
-        anchors.rightMargin: -4
-        icon: "icons/add.png"
-        onClicked: {
-            /*
-            if( loggedIn ) {
-                var options = [
-                            { title: "Questionnaire", destination: "Questionnaire.qml" },
-                            { title: "Challenge", destination: "ChallengeManager.qml" },
-                            { title: "Image", destination: "ImageManager.qml", options: { date: 0 } },
-                            { title: "Notes", destination: "NotesManager.qml", options: { date: 0 } }
-                        ];
-                shortcut.setOptions( options );
-                shortcut.open();
-            } else {
-                register.open();
+        NavigationButton {
+            width: parent.width / 5
+            height: parent.height - 16
+            anchors.verticalCenter: parent.verticalCenter
+            label: "diary"
+            icon: "icons/diary_white.png"
+            onClicked:{
+                stack.navigateTo("qrc:///Diary.qml");
+                mainMenu.close();
             }
-            */
-            var options = [
-                        { title: "Questionnaire", destination: "Questionnaire.qml" },
-                        { title: "Challenge", destination: "ChallengeManager.qml" },
-                        { title: "Image", destination: "ImageManager.qml", options: { date: 0 } },
-                        { title: "Notes", destination: "NotesManager.qml", options: { date: 0 } }
-                    ];
-            shortcut.setOptions( options );
-            shortcut.open();
         }
-    }
-    NavigationButton {
-        id: chartButton
-        width: 64
-        anchors.bottom: parent.bottom
-        anchors.left: parent.horizontalCenter
-        anchors.leftMargin: -4
-        icon: "icons/chart.png"
-        onClicked: {
-            /*
-            if( loggedIn ) {
-                var options = [
-                            { title: "Timeline", destination: "Timeline.qml" },
-                            { title: "Weekly", destination: "Progress.qml", options: { period: "week" } },
-                            { title: "Monthly", destination: "Progress.qml", options: { period: "month" } },
-                            { title: "Yearly", destination: "Progress.qml", options: { period: "year" } }
-                        ];
-                shortcut.setOptions( options );
-                shortcut.open();
-            } else {
-                register.open();
+        NavigationButton {
+            width: parent.width / 5
+            height: parent.height - 16
+            anchors.verticalCenter: parent.verticalCenter
+            label: "chat"
+            icon: "icons/chat.png"
+            onClicked:{
+                stack.navigateTo("qrc:///GroupChatManager.qml");
+                mainMenu.close();
             }
-            */
-            var options = [
-                        { title: "Timeline", destination: "Timeline.qml" },
-                        { title: "Weekly", destination: "Progress.qml", options: { period: "week" } },
-                        { title: "Monthly", destination: "Progress.qml", options: { period: "month" } },
-                        { title: "Yearly", destination: "Progress.qml", options: { period: "year" } }
-                    ];
-            shortcut.setOptions( options );
-            shortcut.open();
         }
-    }
-
-    NavigationButton {
-        id: factsheetButton
-        anchors.bottom: parent.bottom
-        anchors.left: chartButton.right
-        anchors.margins: 4
-        icon: "icons/factsheet.png"
-        onClicked: {
-            stack.navigateTo("qrc:///FactsheetCategories.qml");
+        NavigationButton {
+            width: parent.width / 5
+            height: parent.height - 16
+            anchors.verticalCenter: parent.verticalCenter
+            label: "information"
+            icon: "icons/resources.png"
+            onClicked:{
+                stack.navigateTo("qrc:///FactsheetCategories.qml");
+                mainMenu.close();
+            }
         }
-    }
-    NavigationButton {
-        id: searchButton
-        anchors.bottom: parent.bottom
-        anchors.left: factsheetButton.right
-        anchors.margins: 4
-        icon: "icons/search.png"
-        onClicked: {
-            stack.navigateTo("qrc:///Search.qml");
+        NavigationButton {
+            width: parent.width / 5
+            height: parent.height - 16
+            anchors.verticalCenter: parent.verticalCenter
+            label: "menu"
+            icon:mainMenu.state === "open" ? "icons/right_arrow.png" : "icons/left_arrow.png"
+            onClicked: {
+                if ( mainMenu.state === "open" ) {
+                    mainMenu.close();
+                } else {
+                    mainMenu.open();
+                }
+            }
         }
     }
 }

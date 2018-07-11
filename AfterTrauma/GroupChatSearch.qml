@@ -36,7 +36,7 @@ Rectangle {
             font.pixelSize: 36
             font.weight: Font.Light
             font.family: fonts.light
-            text: "FIND CONNECTIONS"
+            text: "FIND GROUPS"
         }
         //
         //
@@ -105,7 +105,7 @@ Rectangle {
         anchors.bottom: parent.bottom
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.margins: 8
-        placeholderText: "username"
+        placeholderText: "subject"
         onTextChanged: {
             if ( text.length > 0 ) {
                 Qt.callLater( updateSearch, text );
