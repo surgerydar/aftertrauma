@@ -469,7 +469,7 @@ AfterTrauma.Page {
                 //
                 confirmDialog.show('<h1>Save Changes?</h1>Do you want to save the changes you have made?', [
                                        { label: 'yes', action: function() { saveProfile() } },
-                                       { label: 'no', action: function() { profileChannel.close() } }
+                                       { label: 'no', action: function() { profileChannel.close(); stack.pop(); } }
                                    ] );
                 return false;
             }

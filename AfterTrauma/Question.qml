@@ -54,7 +54,9 @@ Item {
         anchors.right: parent.right
         //anchors.top: parent.verticalCenter
         anchors.bottom: parent.bottom
-        anchors.margins: 8
+        anchors.bottomMargin: 8
+        anchors.leftMargin: 32
+        anchors.rightMargin: 32
         //
         //
         //
@@ -89,10 +91,13 @@ Item {
     //
     //
     MouseArea {
+        /*
         anchors.top: ticks.top
         anchors.left: parent.left
         anchors.bottom: parent.bottom
         anchors.right: parent.right
+        */
+        anchors.fill: ticks
         preventStealing: true
         //
         //
@@ -113,14 +118,15 @@ Item {
             //
             //
             //
-            container.score = mouseX / width
+            container.score = Math.max( Math.min( ( mouseX - x ) / width, 0.9999999999 ), 0.00000000001 );
         }
     }
     //
     //
     //
     function indicatorPosition( score ) {
-        var offset = score * container.width;
+        //var offset = score * container.width;
+        var offset = score * ticks.width;
         var starWidth = ticks.width / 4.;
         var index = Math.max( 0, Math.min( 4., Math.floor( offset / starWidth ) ) );
         var indicatorPosn = ( index * starWidth ) + ( starWidth / 2. );

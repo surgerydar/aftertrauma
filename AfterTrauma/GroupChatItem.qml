@@ -116,6 +116,19 @@ AfterTrauma.EditableListItem {
                 chat();
             }
         }
+        //
+        //
+        //
+        NumberBadge {
+            id: count
+            height: chatButton.height / 2
+            anchors.top: chatButton.top
+            anchors.right: chatButton.right
+        }
+
+        //
+        //
+        //
         /*
         MouseArea {
             anchors.fill: parent
@@ -137,4 +150,5 @@ AfterTrauma.EditableListItem {
     property alias activity: activityText.text
     property string owner: ""
     property var members: []
+    property alias count: count.text
 }

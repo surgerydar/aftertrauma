@@ -131,7 +131,9 @@ Rectangle {
             AfterTrauma.TextArea {
                 id: textMedia
                 anchors.fill: parent
+                anchors.topMargin: activeFocus ? 32 : 0 // acommodate "done" button
                 padding: 8
+                wrapMode: TextArea.Wrap
                 placeholderText: "type a note"
             }
         }

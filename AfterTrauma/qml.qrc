@@ -169,5 +169,13 @@
         <file>ChallengeViewer.qml</file>
         <file>icons/profile_icon_white.png</file>
         <file>icons/diary_white.png</file>
+        <file>icons/about_me.png</file>
+        <file>icons/burger_menu.png</file>
+        <file>icons/challenge.png</file>
+        <file>icons/graphs.png</file>
+        <file>icons/recovery.png</file>
+        <file>icons/diary.png</file>
+        <file>UnreadChats.qml</file>
+        <file>NumberBadge.qml</file>
     </qresource>
 </RCC>

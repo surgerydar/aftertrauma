@@ -5,11 +5,13 @@ import "colours.js" as Colours
 
 Item {
     id: container
+    opacity: enabled ? 1. : .5
     //
     //
     //
     property alias icon: iconImage.source
     property alias label: labelText.text
+    property alias badge: badge.text
     //
     //
     //
@@ -38,7 +40,16 @@ Item {
         font.pointSize: 12
         color: Colours.almostWhite
     }
-
+    //
+    //
+    //
+    NumberBadge {
+        id: badge
+        height: iconImage.height / 2
+        anchors.top: iconImage.top
+        anchors.right: iconImage.right
+        anchors.rightMargin: ( iconImage.width - iconImage.paintedWidth ) / 2.
+    }
     //
     //
     //

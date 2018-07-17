@@ -9,6 +9,7 @@
 //
 //
 WebSocketChannel::WebSocketChannel(QObject *parent) : QObject(parent) {
+    m_autoreconnect = false;
     connect(&m_webSocket, &QWebSocket::connected, this, &WebSocketChannel::connected);
     connect(&m_webSocket, &QWebSocket::disconnected, this, &WebSocketChannel::disconnected);
     connect(&m_webSocket, &QWebSocket::textMessageReceived, this, &WebSocketChannel::textMessageReceived);
@@ -22,6 +23,19 @@ void WebSocketChannel::open() {
 void WebSocketChannel::close() {
     qDebug() << "WebSocketChannel:close";
     m_webSocket.close();
+}
+
+void WebSocketChannel::ping() {
+    if ( m_webSocket.state() == QAbstractSocket::UnconnectedState ) {
+        qDebug() << "WebSocketChannel:ping : error : not connected to : " << m_url;
+        emit error("not connected");
+    } else {
+        m_webSocket.ping();
+    }
+}
+
+void WebSocketChannel::pong() {
+
 }
 
 QString WebSocketChannel::send(QVariant command) {

@@ -18,25 +18,11 @@ DatabaseList {
     //
     //
     //
-    function totalUnread() {
-        var count = 0;
+    function indexOfChat( id ) {
         for ( var i = 0; i < count; i++ ) {
-            var chat = get( i );
+            if ( get(i).id === id ) return i;
         }
-        return count;
-    }
-
-    //
-    //
-    //
-    function chattingTo( id ) {
-        for ( var i = 0; i < count; i++ ) {
-            var chat = get( i );
-            if ( chat.to === id || chat.from === id ) {
-                return true;
-            }
-        }
-        return false;
+        return -1;
     }
     //
     //
@@ -52,6 +38,9 @@ DatabaseList {
         } else {
             var chat = findOne({id:chatId});
             if ( chat ) {
+                //
+                // JONS: not sure about this logic, the database is rebuilt each time the user logs in so could probably do with a separate file containing unread count for each chat
+                //
                 var unread = ( chat.unread || chat.messages.length ) + 1
                 chat.messages.push(message);
                 update({id:chatId},{messages:chat.messages,unread:unread});

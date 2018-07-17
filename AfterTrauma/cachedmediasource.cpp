@@ -64,7 +64,8 @@ void CachedMediaSource::setMediaSource() {
                 // create tee
                 //
                 QMediaContent content( url );
-                QFile* output = new QFile( localPath );
+                QString temporaryPath = localPath + ".temp";
+                QFile* output = new QFile( temporaryPath );
                 if ( output->open(QFile::WriteOnly) ) {
                     qDebug() << "CachedMediaSource::setMediaSource : downloading media from server : " << url;
                     QNetworkReply* input = NetworkAccess::shared()->get(url);
@@ -81,7 +82,7 @@ void CachedMediaSource::setMediaSource() {
                         //
                         //
                         //
-                        connect( input, QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::error),[tee,localPath](QNetworkReply::NetworkError code) {
+                        connect( input, QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::error),[tee,temporaryPath](QNetworkReply::NetworkError code) {
                             qDebug() << "QNetworkReply::error : " << code;
                             //
                             // close tee
@@ -90,11 +91,15 @@ void CachedMediaSource::setMediaSource() {
                             //
                             // delete local file
                             //
-                            QFile::remove(localPath);
+                            QFile::remove(temporaryPath);
                         });
-                        connect( input, &QNetworkReply::finished,[tee]() {
+                        connect( input, &QNetworkReply::finished,[tee,temporaryPath,localPath]() {
                             qDebug() << "QNetworkReply::finished";
                             tee->close();
+                            //
+                            //
+                            //
+                            QFile::rename(temporaryPath,localPath);
                         });
                         tee->setup(input,output);
                         tee->open(CachedTee::ReadOnly);

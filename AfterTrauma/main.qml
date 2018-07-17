@@ -44,6 +44,9 @@ ApplicationWindow {
         id: chatModel
     }
     */
+    UnreadChats {
+        id: unreadChatsModel
+    }
     GroupChats {
         id: chatModel
     }

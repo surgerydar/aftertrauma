@@ -62,7 +62,7 @@ Item {
     //
     WebSocketChannel {
         id: chatChannel
-        url: "wss://aftertrauma.uk:4000"
+        url: baseWS
         //
         //
         //
@@ -81,6 +81,7 @@ Item {
                 send( command );
             }
             connected = true;
+            pingTimer.start();
         }
         //
         //
@@ -88,7 +89,10 @@ Item {
         onClosed: {
             console.log( 'ChatChannel : closed' );
             connected = false;
-            pollConnection.start();
+            pingTimer.stop();
+            if ( !pollConnection.running ) {
+                pollConnection.start();
+            }
         }
         //
         //
@@ -106,7 +110,24 @@ Item {
             } else if ( command.status === 'OK' ) {
                 switch( command.command ) {
                 case 'groupgetuserchats':
-                    // TODO: container.getUserChats( command );
+                    //
+                    // update unread count
+                    //
+                    command.response.forEach(function(chat) {
+                        var delta = 0;
+                        var existing = chatModel.findOne({id:chat.id});
+                        if ( existing ) {
+                            delta = chat.messages && existing.messages ? chat.messages.length - existing.messages.length : 0;
+                        } else {
+                            delta = chat.messages ? chat.messages.length : 0;
+                        }
+                        for ( var i = 0; i < delta; i++ ) {
+                            unreadChatsModel.addMessage(chat.id);
+                        }
+                    });
+                    //
+                    // update model
+                    //
                     chatModel.clear();
                     chatModel.beginBatch();
                     command.response.forEach(function(chat) {
@@ -186,6 +207,10 @@ Item {
                                 chat.messages.push( message );
                                 chatModel.update({id: command.chatid},{ messages: chat.messages, date: message.date || Date.now() });
                                 chatModel.save();
+                                //
+                                //
+                                //
+                                unreadChatsModel.addMessage(command.chatid);
                             }
                         }
                         //
@@ -207,20 +232,30 @@ Item {
     //
     Timer {
         id: pollConnection
-        interval: 1000
+        interval: 1000 * 30
         repeat: false
         onTriggered: {
             console.log('ChatChannel : polling connection');
             if ( !connected ) {
+                console.log('ChatChannel.pollConnection : attempting to open channel');
                 chatChannel.open();
             }
         }
     }
+    Timer {
+        id: pingTimer
+        interval: 1000 * 60
+        repeat: true
+        onTriggered: {
+            chatChannel.ping();
+        }
+    }
+
     //
     //
     //
     function open() {
-        chatChannel.open();
+        if ( !connected ) chatChannel.open();
     }
     function close() {
         console.log( 'ChatChannel.close' );

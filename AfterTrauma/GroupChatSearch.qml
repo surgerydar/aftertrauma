@@ -74,15 +74,10 @@ Rectangle {
             avatar: "https://aftertrauma.uk:4000/avatar/" + model.owner
             subject: model.subject
             onClicked: {
-                action( index );
-                /*
-                var properties = {
-                    chatId: model.id,
-                    messages: chatModel.getMessageModel(model.id),
-                    subject: model.subject
-                };
-                stack.push( "qrc:///GroupChat.qml", properties);
-                */
+                var chatIndex = chatModel.indexOfChat(model.id);
+                if ( chatIndex >= 0 ) {
+                    action( chatIndex );
+                }
             }
         }
         //

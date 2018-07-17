@@ -110,6 +110,7 @@ AfterTrauma.Page {
     //
     StackView.onActivated: {
         messageList.positionViewAtEnd();
+        unreadChatsModel.markAsRead(chatId);
     }
     StackView.onDeactivated: {
         chatModel.releaseMessageModel(chatId);
@@ -141,6 +142,8 @@ AfterTrauma.Page {
         onSendMessage: {
             if ( command.chatid === chatId ) {
                 messageList.positionViewAtEnd();
+                unreadChatsModel.markAsRead(chatId);
+                unreadChatsModel.save();
             }
 
         }

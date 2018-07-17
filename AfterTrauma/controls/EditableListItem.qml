@@ -12,8 +12,12 @@ SwipeDelegate {
     //
     //
     //
+    /*
     leftPadding: swipeEnabled && contentEditable ? 4 : 0
     rightPadding: swipeEnabled ? 4 : 0
+    */
+    leftPadding: swipeEnabled && contentEditable ? 8 : 0
+    rightPadding: swipeEnabled ? 8 : 0
     //
     //
     //

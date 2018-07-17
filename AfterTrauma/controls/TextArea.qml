@@ -9,9 +9,26 @@ TextArea {
     padding: 8
     font.pointSize: 24
     background: Rectangle {
-            anchors.fill: parent
-            radius: 4
-            color: Colours.veryLightSlate
-            border.color: "transparent"
+        anchors.fill: parent
+        radius: 4
+        color: Colours.veryLightSlate
+        border.color: "transparent"
+    }
+    Button {
+        id: doneButton
+        anchors.bottom: parent.top
+        anchors.right: parent.right
+        visible: false
+        text: "done"
+        onClicked: {
+            Qt.inputMethod.hide();
         }
+
+    }
+    //
+    //
+    //
+    onActiveFocusChanged: {
+        doneButton.visible = activeFocus;
+    }
 }

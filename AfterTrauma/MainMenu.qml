@@ -90,7 +90,7 @@ Rectangle {
             textVerticalAlignment: Text.AlignVCenter
             textSize: 32
             text: "Challenge"
-            image: "icons/add.png"
+            image: "icons/challenge.png"
             direction: "Left"
             spacing: 8
             onClicked: {
@@ -104,7 +104,7 @@ Rectangle {
             textVerticalAlignment: Text.AlignVCenter
             textSize: 32
             text: "Graphs"
-            image: "icons/chart.png"
+            image: "icons/graphs.png"
             direction: "Left"
             spacing: 8
             onClicked: {
@@ -146,7 +146,7 @@ Rectangle {
             textVerticalAlignment: Text.AlignVCenter
             textSize: 32
             text: userProfile && loggedIn ? "About Me" : "login or register"
-            image: "icons/profile_icon_white.png"
+            image: "icons/about_me.png"
             direction: "Left"
             spacing: 8
             onClicked: {

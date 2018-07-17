@@ -381,6 +381,8 @@ Popup {
                 if ( command.command === 'register' || command.command === 'login' ) {
                     loggedIn    = true;
                     userProfile = command.response;
+                    console.log( 'logged in, openning chat channel');
+                    chatChannel.open();
                     //
                     // save userProfile
                     //

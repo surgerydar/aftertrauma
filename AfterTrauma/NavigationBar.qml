@@ -48,7 +48,7 @@ Item {
             height: parent.height - 16
             anchors.verticalCenter: parent.verticalCenter
             label: "recovery"
-            icon: "icons/profile_icon_white.png"
+            icon: "icons/recovery.png"
             onClicked:{
                 stack.navigateTo("qrc:///Questionnaire.qml");
                 mainMenu.close();
@@ -59,7 +59,7 @@ Item {
             height: parent.height - 16
             anchors.verticalCenter: parent.verticalCenter
             label: "diary"
-            icon: "icons/diary_white.png"
+            icon: "icons/diary.png"
             onClicked:{
                 stack.navigateTo("qrc:///Diary.qml");
                 mainMenu.close();
@@ -71,6 +71,8 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             label: "chat"
             icon: "icons/chat.png"
+            enabled: userProfile && loggedIn && chatChannel.connected
+            badge: unreadChatsModel.totalUnread > 0 ? unreadChatsModel.totalUnread : ""
             onClicked:{
                 stack.navigateTo("qrc:///GroupChatManager.qml");
                 mainMenu.close();
@@ -92,7 +94,7 @@ Item {
             height: parent.height - 16
             anchors.verticalCenter: parent.verticalCenter
             label: "menu"
-            icon:mainMenu.state === "open" ? "icons/right_arrow.png" : "icons/left_arrow.png"
+            icon:mainMenu.state === "open" ? "icons/right_arrow.png" : "icons/burger_menu.png"
             onClicked: {
                 if ( mainMenu.state === "open" ) {
                     mainMenu.close();

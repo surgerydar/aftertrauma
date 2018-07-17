@@ -22,6 +22,8 @@ signals:
 public slots:
     void open();
     void close();
+    void ping();
+    void pong();
     //
     // param : { command: 'name', guid: 'guid', param: .... }
     // returns : GUID

@@ -51,6 +51,7 @@ AfterTrauma.Page {
             avatar: "https://aftertrauma.uk:4000/avatar/" + model.owner
             subject: model.subject
             contentEditable: model.owner === userProfile.id
+            count: unreadChatsModel.totalUnread > 0 ? unreadChatsModel.getUnreadCountText(model.id) : ""
             // TODO: owner name, last message as subtitle
             // TODO: indicator for invite
             // TODO: list of active members
