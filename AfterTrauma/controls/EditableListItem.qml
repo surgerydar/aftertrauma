@@ -12,10 +12,6 @@ SwipeDelegate {
     //
     //
     //
-    /*
-    leftPadding: swipeEnabled && contentEditable ? 4 : 0
-    rightPadding: swipeEnabled ? 4 : 0
-    */
     leftPadding: swipeEnabled && contentEditable ? 8 : 0
     rightPadding: swipeEnabled ? 8 : 0
     //
@@ -24,8 +20,8 @@ SwipeDelegate {
     Component {
         id: editComponent
         Label {
-            id: editLabel
-            text: "Edit"
+            //id: editLabel
+            text: container.editLabel
             color: Colours.almostWhite
             verticalAlignment: Label.AlignVCenter
             padding: 12
@@ -48,8 +44,8 @@ SwipeDelegate {
     Component {
         id: deleteComponent
         Label {
-            id: deleteLabel
-            text: "Delete"
+            //id: deleteLabel
+            text: container.deleteLabel
             color: Colours.almostWhite
             verticalAlignment: Label.AlignVCenter
             padding: 12
@@ -138,4 +134,6 @@ SwipeDelegate {
     //
     property bool swipeEnabled: true
     property bool contentEditable: true
+    property string editLabel: "Edit"
+    property string deleteLabel: "Delete"
 }

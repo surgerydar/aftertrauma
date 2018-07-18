@@ -71,6 +71,7 @@ Rectangle {
         }
         delegate: ProfileSearchItem {
             width: profiles.width
+            userId: model.id
             avatar: model.avatar || "icons/profile_icon.png"
             username: model.username
             profile: model.profile

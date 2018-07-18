@@ -177,5 +177,7 @@
         <file>icons/diary.png</file>
         <file>UnreadChats.qml</file>
         <file>NumberBadge.qml</file>
+        <file>ProfileViewer.qml</file>
+        <file>controls/Label.qml</file>
     </qresource>
 </RCC>

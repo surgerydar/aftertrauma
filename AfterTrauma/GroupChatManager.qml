@@ -47,11 +47,14 @@ AfterTrauma.Page {
         //
         //
         delegate: GroupChatItem {
-            width: parent.width
+            width: chats.width
             avatar: "https://aftertrauma.uk:4000/avatar/" + model.owner
+            owner: model.owner
             subject: model.subject
             contentEditable: model.owner === userProfile.id
+            deleteLabel: model.owner === userProfile.id ? "Delete" : "Leave"
             count: unreadChatsModel.totalUnread > 0 ? unreadChatsModel.getUnreadCountText(model.id) : ""
+            members: model.members
             // TODO: owner name, last message as subtitle
             // TODO: indicator for invite
             // TODO: list of active members

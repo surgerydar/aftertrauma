@@ -425,7 +425,6 @@ AfterTrauma.Page {
             if( profile ) {
                 dirty = true;
                 profile.avatar = encoded;
-                //profile.avatar = url.substring(url.lastIndexOf('/')+1,url.length);
             }
         }
     }

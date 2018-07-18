@@ -172,6 +172,18 @@ Rectangle {
     //
     //
     //
+    AfterTrauma.Label {
+        width: membersList.width
+        anchors.centerIn: membersList
+        visible: membersList.count === 0
+        text: "please add people"
+        onVisibleChanged: {
+            console.log( 'add people label visible=' + visible );
+        }
+    }
+    //
+    //
+    //
     Item {
         id: footer
         height: 64

@@ -32,7 +32,7 @@ AfterTrauma.EditableListItem {
             anchors.top: parent.top
             anchors.left: parent.left
             anchors.bottom: parent.bottom
-            anchors.margins: 8
+            anchors.margins: 4
             //
             //
             //
@@ -50,6 +50,15 @@ AfterTrauma.EditableListItem {
                     source = "icons/profile_icon.png";
                 }
             }
+            //
+            //
+            //
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                   stack.push( "qrc:///ProfileViewer.qml", { userId: owner } );
+                }
+            }
         }
         //
         //
@@ -58,9 +67,10 @@ AfterTrauma.EditableListItem {
             id: subjectText
             anchors.top: parent.top
             anchors.left: avatarImage.right
-            //anchors.bottom: parent.bottom
+            anchors.bottom: parent.verticalCenter
             anchors.right: chatButton.left
             anchors.margins: 8
+            anchors.bottomMargin: 4
             //
             //
             //
@@ -80,28 +90,39 @@ AfterTrauma.EditableListItem {
         //
         //
         //
-        Text {
-            id: activityText
-            anchors.top: subjectText.top
+        ListView {
+            id: memberList
+            anchors.top: parent.verticalCenter
             anchors.left: avatarImage.right
-            //anchors.bottom: parent.bottom
-            anchors.right: parent.right
-            anchors.margins: 8
+            anchors.leftMargin: 8
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 4
+            anchors.right: chatButton.left
+            anchors.rightMargin: 8
             //
             //
             //
-            font.weight: Font.Light
-            font.family: fonts.light
-            font.pointSize: 16
-            minimumPointSize: 12
-            fontSizeMode: Text.Fit
-            elide: Text.ElideRight
-            color: Colours.almostWhite
+            interactive: count * height > width
+            clip: true
+            orientation: ListView.Horizontal
             //
             //
             //
-            horizontalAlignment: Text.AlignLeft
-            verticalAlignment: Text.AlignTop
+            delegate: Image {
+                height: memberList.height
+                width: height
+                fillMode: Image.PreserveAspectCrop
+                source: "https://aftertrauma.uk:4000/avatar/" + model.modelData
+                //
+                //
+                //
+                onStatusChanged: {
+                    if ( status === Image.Error ) {
+                        console.log( 'error loading avatar icon : ' + source );
+                        source = "icons/profile_icon.png";
+                    }
+                }
+            }
         }
         //
         //
@@ -125,7 +146,6 @@ AfterTrauma.EditableListItem {
             anchors.top: chatButton.top
             anchors.right: chatButton.right
         }
-
         //
         //
         //
@@ -147,8 +167,7 @@ AfterTrauma.EditableListItem {
     //
     property alias avatar: avatarImage.source
     property alias subject: subjectText.text
-    property alias activity: activityText.text
     property string owner: ""
-    property var members: []
+    property alias members: memberList.model
     property alias count: count.text
 }

@@ -10,7 +10,7 @@ Item {
     //
     WebSocketChannel {
         id: profileChannel
-        url: "wss://aftertrauma.uk:4000"
+        url: baseWS
         onReceived: {
             busyIndicator.running = false;
             var command = JSON.parse(message); // TODO: channel should probably emit object

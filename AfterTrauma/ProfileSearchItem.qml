@@ -32,6 +32,17 @@ Rectangle {
                 source = "icons/profile_icon.png";
             }
         }
+        //
+        //
+        //
+        /*
+        MouseArea {
+            anchors.fill: parent
+            onClicked: {
+                stack.push( "qrc:///ProfileViewer.qml", { userId: userId } );
+            }
+        }
+        */
     }
     //
     //
@@ -85,6 +96,7 @@ Rectangle {
     //
     //
     //
+    property string userId: ""
     property alias avatar: avatarImage.source
     property alias username: usernameText.text
     property alias profile: profileText.text
