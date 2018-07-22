@@ -55,7 +55,8 @@ Rectangle {
         anchors.bottomMargin: 4
         */
         anchors.top: parent.top
-        anchors.left: parent.left
+        //anchors.left: parent.left
+        anchors.left: yScale.right
         anchors.bottom: fromDate.top
         anchors.right: parent.right
         //
@@ -271,8 +272,9 @@ Rectangle {
         color: Colours.veryDarkSlate
         font.weight: Font.Light
         font.family: fonts.light
-        font.pointSize: 18
-        anchors.left: parent.left
+        font.pointSize: 12
+        //anchors.left: parent.left
+        anchors.left: yScale.right
         anchors.bottom: parent.bottom
         text: "< " + startDate.toDateString()
     }
@@ -282,7 +284,7 @@ Rectangle {
         color: Colours.veryDarkSlate
         font.weight: Font.Light
         font.family: fonts.light
-        font.pointSize: 18
+        font.pointSize: 12
         anchors.right: parent.right
         anchors.rightMargin: canvas.tickMargin
         anchors.bottom: parent.bottom

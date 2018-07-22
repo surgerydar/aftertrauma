@@ -24,7 +24,8 @@ SOURCES += main.cpp \
     sharedialog.cpp \
     pdfgenerator.cpp \
     linechartdata.cpp \
-    websocketlist.cpp
+    websocketlist.cpp \
+    notificationmanager.cpp
 
 HEADERS += \
     imagepicker.h \
@@ -49,7 +50,8 @@ HEADERS += \
     pdfgenerator.h \
     linechartdata.h \
     paintable.h \
-    websocketlist.h
+    websocketlist.h \
+    notificationmanager.h
 
 
 RESOURCES += qml.qrc
@@ -76,13 +78,17 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-DISTFILES +=
+DISTFILES += \
+    android/src/uk/co/soda/NotificationScheduler.java
 
 ios {
     OBJECTIVE_SOURCES += ios/ImagePicker.mm
     OBJECTIVE_SOURCES += ios/ShareDialog.mm
+    OBJECTIVE_SOURCES += ios/NotificationScheduler.mm
 
     QMAKE_INFO_PLIST = ios/Info.plist
+
+    LIBS += -framework UserNotifications
 
     # factsheet.files = ./factsheets
     # factsheet.path =
@@ -121,6 +127,7 @@ android {
 
     SOURCES += ./android/androidimagepicker.cpp
     SOURCES += ./android/androidsharedialog.cpp
+    SOURCES += ./android/androidnotificationscheduler.cpp
 
     ANDROID_EXTRA_LIBS += $$PWD/android/OpenSSL/armeabi-v7a/libcrypto.so
     ANDROID_EXTRA_LIBS += $$PWD/android/OpenSSL/armeabi-v7a/libssl.so

@@ -241,7 +241,7 @@ AfterTrauma.Page {
                             verticalAlignment: Text.AlignVCenter
                             font.weight: Font.Light
                             font.family: fonts.light
-                            font.pointSize: 24
+                            font.pointSize: 18
                             color: lineChart.legend[index].colour
                             text: lineChart.legend[index].label
                         }

@@ -15,8 +15,8 @@ public:
     explicit WebSocketChannel(QObject *parent = 0);
 
 signals:
-    void received(QString message);
-    void error(QString error);
+    void received(const QString &message);
+    void error(const QString &error);
     void opened();
     void closed();
 public slots:

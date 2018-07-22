@@ -15,7 +15,7 @@ AfterTrauma.Page {
     ListView {
         id: chats
         anchors.fill: parent
-        anchors.bottomMargin: 8
+        anchors.bottomMargin: 4
         //
         //
         //
@@ -101,11 +101,12 @@ AfterTrauma.Page {
     //
     //
     //
-    footer: Item {
+    footer: Rectangle {
         id: footerItem
         height: 64
         anchors.left: parent.left
         anchors.right: parent.right
+        color: Colours.darkPurple
         //
         //
         //

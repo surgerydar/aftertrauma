@@ -233,14 +233,15 @@ ApplicationWindow {
         anchors.margins: 2
         text: "(" + parent.width + "," + parent.height + ")"
     }
-    /*
-    AfterTrauma.DatePicker {
-        height: 256
+    Button {
         anchors.top: parent.top
-        anchors.left: parent.left
         anchors.right: parent.right
+        text: "notify"
+        onClicked: {
+            NotificationManager.schedule("testing",0,false);
+        }
     }
-    */
+
     //
     //
     //
@@ -300,8 +301,8 @@ ApplicationWindow {
     Connections {
         target: BackKeyFilter
         onBackKeyPressed : {
-            if ( Qt.platform === 'android' ) {
-                console.log( 'BackKeyPressed' );
+            if ( Qt.platform.os === 'android' ) {
+                console.log( 'BackKeyFilter.BackKeyPressed' );
                 if ( stack.depth <= 1 ) {
                     Qt.quit();
                 } else {

@@ -61,14 +61,14 @@
     </activity>
 
     <!-- For adding service(s) please check: https://wiki.qt.io/AndroidServices -->
-    <!-- JONS: look into FileProvider support
-    <provider
-        android:name="android.support.v4.content.FileProvider"
-        android:authorities="uk.co.soda.aftertrauma.fileprovider"
-        android:exported="false"
-        android:grantUriPermissions="true">
-        </provider>
-        -->
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="uk.aftertrauma.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+                <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/filepaths"/>
+                </provider>
+
     </application>
 
 

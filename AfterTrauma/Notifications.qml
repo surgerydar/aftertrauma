@@ -19,6 +19,7 @@ ListModel {
             if ( !findNotification("questionnaire") ) {
                 console.log( 'Notifications : adding questionnaire prompt' );
                 append({subject:"questionnaire", text:"don't forget to complete your daily questionnaire"});
+                NotificationManager.schedule("don't forget to complete your daily questionnaire",5,false);
                 updated();
             }
         } else {

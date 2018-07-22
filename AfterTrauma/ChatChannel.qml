@@ -99,84 +99,86 @@ Item {
         //
         onReceived: {
             //response.text = message;
-            var command = JSON.parse(message);
-            console.log( 'ChatChannel : received : ' + message );
-            if ( command.command === 'welcome' ) {
-                send({
-                         command: 'groupgetuserchats',
-                         token: userProfile.token,
-                         id: userProfile.id
-                     });
-            } else if ( command.status === 'OK' ) {
-                switch( command.command ) {
-                case 'groupgetuserchats':
-                    //
-                    // update unread count
-                    //
-                    command.response.forEach(function(chat) {
-                        var delta = 0;
-                        var existing = chatModel.findOne({id:chat.id});
-                        if ( existing ) {
-                            delta = chat.messages && existing.messages ? chat.messages.length - existing.messages.length : 0;
-                        } else {
-                            delta = chat.messages ? chat.messages.length : 0;
-                        }
-                        for ( var i = 0; i < delta; i++ ) {
-                            unreadChatsModel.addMessage(chat.id);
-                        }
-                    });
-                    //
-                    // update model
-                    //
-                    chatModel.clear();
-                    chatModel.beginBatch();
-                    command.response.forEach(function(chat) {
+            try {
+                var command = JSON.parse(message);
+
+                console.log( 'ChatChannel : received : ' + message );
+                if ( command.command === 'welcome' ) {
+                    send({
+                             command: 'groupgetuserchats',
+                             token: userProfile.token,
+                             id: userProfile.id
+                         });
+                } else if ( command.status === 'OK' ) {
+                    switch( command.command ) {
+                    case 'groupgetuserchats':
                         //
-                        // TODO: update rather than replace, store ids for future delete
+                        // update unread count
                         //
-                        console.log( 'adding user chat: ' + JSON.stringify( chat ) );
-                        chatModel.batchAdd(chat);
-                    });
-                    chatModel.endBatch();
-                    //
-                    //
-                    //
-                    chatModel.save();
-                    break;
-                case 'groupcreatechat':
-                    //
-                    // update database
-                    //
-                    chatModel.add(command.chat);
-                    chatModel.save();
-                    //
-                    //
-                    //
-                    container.createChat( command );
-                    break;
-                case 'groupupdatechat':
-                    //
-                    // update database
-                    //
-                    chatModel.update({id:command.chat.id},command.chat);
-                    chatModel.save();
-                    //
-                    // pass it on
-                    //
-                    container.updateChat( command );
-                    break;
-                case 'groupremovechat':
-                    //
-                    // remove from database
-                    //
-                    chatModel.remove({id:command.chatid});
-                    chatModel.save();
-                    //
-                    // pass it on
-                    //
-                    container.removeChat( command );
-                    break;
-                case 'groupsendmessage': {
+                        command.response.forEach(function(chat) {
+                            var delta = 0;
+                            var existing = chatModel.findOne({id:chat.id});
+                            if ( existing ) {
+                                delta = chat.messages && existing.messages ? chat.messages.length - existing.messages.length : 0;
+                            } else {
+                                delta = chat.messages ? chat.messages.length : 0;
+                            }
+                            for ( var i = 0; i < delta; i++ ) {
+                                unreadChatsModel.addMessage(chat.id);
+                            }
+                        });
+                        //
+                        // update model
+                        //
+                        chatModel.clear();
+                        chatModel.beginBatch();
+                        command.response.forEach(function(chat) {
+                            //
+                            // TODO: update rather than replace, store ids for future delete
+                            //
+                            console.log( 'adding user chat: ' + JSON.stringify( chat ) );
+                            chatModel.batchAdd(chat);
+                        });
+                        chatModel.endBatch();
+                        //
+                        //
+                        //
+                        chatModel.save();
+                        break;
+                    case 'groupcreatechat':
+                        //
+                        // update database
+                        //
+                        chatModel.add(command.chat);
+                        chatModel.save();
+                        //
+                        //
+                        //
+                        container.createChat( command );
+                        break;
+                    case 'groupupdatechat':
+                        //
+                        // update database
+                        //
+                        chatModel.update({id:command.chat.id},command.chat);
+                        chatModel.save();
+                        //
+                        // pass it on
+                        //
+                        container.updateChat( command );
+                        break;
+                    case 'groupremovechat':
+                        //
+                        // remove from database
+                        //
+                        chatModel.remove({id:command.chatid});
+                        chatModel.save();
+                        //
+                        // pass it on
+                        //
+                        container.removeChat( command );
+                        break;
+                    case 'groupsendmessage': {
                         //
                         // update chat model
                         //
@@ -219,10 +221,13 @@ Item {
                         container.sendMessage( command );
                     }
                     break;
-                 }
-            } else {
-                // TODO: handle error
-                console.log( 'ChatChannel : error : ' + command.error );
+                    }
+                } else {
+                    // TODO: handle error
+                    console.log( 'ChatChannel : error : ' + command.error );
+                }
+            } catch( error ) {
+                console.log('ChatChannel : unable to parse message : ' );
             }
 
         }
