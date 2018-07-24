@@ -12,10 +12,17 @@ public:
     //
     //
     static NotificationManager* shared();
+    //
+    //
+    //
+    void display( QString message ) { emit notificationReceived(message); }
 signals:
+    void notificationReceived( QString message );
 
 public slots:
-    void schedule( QString message, int date, bool repeat );
+    void scheduleNotification( int id, QString message, unsigned int delay, unsigned int frequency );
+    void cancelNotification( int id );
+    void cancelAllNotifications();
 private:
     static NotificationManager* s_shared;
 };

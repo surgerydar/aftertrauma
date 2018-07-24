@@ -15,17 +15,29 @@ ListModel {
     //
     //
     function update() {
+        //
+        // questionnaires
+        //
         if(!questionnaireModel.dailyCompleted()) {
             if ( !findNotification("questionnaire") ) {
                 console.log( 'Notifications : adding questionnaire prompt' );
                 append({subject:"questionnaire", text:"don't forget to complete your daily questionnaire"});
-                NotificationManager.schedule("don't forget to complete your daily questionnaire",5,false);
+                NotificationManager.scheduleNotification(102, "don't forget to complete the questionnaire",0,60000);
                 updated();
             }
         } else {
-            removeNotification("questionnaire");
+            //removeNotification("questionnaire");
+            NotificationManager.cancelNotification(102);
             updated();
         }
+        //
+        // challenges
+        //
+
+        //
+        // motivational
+        //
+
     }
     function findNotification( subject ) {
         var nNotifications = model.count;

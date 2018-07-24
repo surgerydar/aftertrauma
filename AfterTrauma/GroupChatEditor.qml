@@ -86,9 +86,13 @@ Rectangle {
                         }
                     });
                     //
-                    // TODO: send invites
+                    // TODO: store usernames
                     //
                     chat.members = members;
+                    chat.usernames = [];
+                    for ( var i = 0; i < membersList.model.count; i++ ) {
+                        chat.usernames.push( membersList.model.get(i).username );
+                    }
                     chat["public"] = publicCheckBox.checked;
                     console.log( 'new chat : ' + JSON.stringify(chat) );
                     callback(chat);

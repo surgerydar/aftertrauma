@@ -78,6 +78,9 @@ ApplicationWindow {
     }
     Notifications {
         id: notificationModel
+        //
+        //
+        //
     }
     //
     //
@@ -238,8 +241,14 @@ ApplicationWindow {
         anchors.right: parent.right
         text: "notify"
         onClicked: {
-            NotificationManager.schedule("testing",0,false);
+            if ( notify ) {
+                NotificationManager.scheduleNotification(101, "testing", 0, 60000);
+            } else {
+                NotificationManager.cancelNotification(101);
+            }
+            notify = !notify;
         }
+        property bool notify: true
     }
 
     //
@@ -311,6 +320,16 @@ ApplicationWindow {
             }
         }
     }
+    //
+    //
+    //
+    Connections {
+        target: NotificationManager
+        onNotificationReceived: {
+            confirmDialog.show(message);
+        }
+    }
+
     //
     // global properties
     //

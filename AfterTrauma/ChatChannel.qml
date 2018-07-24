@@ -213,6 +213,11 @@ Item {
                                 //
                                 //
                                 unreadChatsModel.addMessage(command.chatid);
+                                //
+                                // TODO: need to store usernames in chat so we can add from
+                                //
+                                var notification = 'New message';
+                                NotificationManager.schedule("chat",notification,0,false);
                             }
                         }
                         //

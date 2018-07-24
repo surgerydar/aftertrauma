@@ -68,7 +68,7 @@ AfterTrauma.Page {
                 if ( !editable ) {
                     var properties = {
                         title: model.name,
-                        activity: model.activity,
+                        activity: formatDescription(model.activity, model.repeats, model.frequency),
                         active: model.active,
                         challengeId: challengeModel.get(index)._id
                     };
@@ -147,6 +147,10 @@ AfterTrauma.Page {
         challengeModel.load();
         //editable = false;
     }
+    function formatDescription( activity, repeats, frequency ) {
+        return activity + '<br/>' + 'repeat ' + repeats + 'time' + ( repeats > 1 ? 's ' : ' ' ) + ',' + frequency;
+    }
+
     //
     //
     //

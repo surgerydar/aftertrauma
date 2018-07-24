@@ -79,7 +79,9 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
-    android/src/uk/co/soda/NotificationScheduler.java
+    android/src/uk/co/soda/NotificationScheduler.java \
+    android/src/uk/co/soda/FileShareDialog.java \
+    android/src/uk/co/soda/NotificationPublisher.java
 
 ios {
     OBJECTIVE_SOURCES += ios/ImagePicker.mm

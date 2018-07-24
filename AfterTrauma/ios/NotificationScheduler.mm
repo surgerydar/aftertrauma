@@ -1,10 +1,14 @@
 #include <QCoreApplication>
-#include <UIKit/UIKit.h>
 #include <QPointer>
 #include <QtCore>
 #include <QImage>
 #include <QDebug>
+#include <UIKit/UIKit.h>
 #import <UserNotifications/UserNotifications.h>
+//
+//
+//
+#include "notificationmanager.h"
 //
 //
 //
@@ -24,6 +28,7 @@ static bool _notificationsEnabled = false;
     //
     // TODO: this is called when the app is in the foreground so should present notification in app, possibly add to scrolling list of pending notifications
     //
+    //NotificationManager::shared()->display("hello");
 }
 
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void(^)(void))completionHandler {
@@ -38,6 +43,9 @@ static bool _notificationsEnabled = false;
 //
 //
 void _requestNotificationPermision() {
+    //
+    // TODO: check for active permissions
+    //
     UNUserNotificationCenter* center = [UNUserNotificationCenter currentNotificationCenter];
     [center requestAuthorizationWithOptions:
              (UNAuthorizationOptionAlert +
@@ -51,13 +59,16 @@ void _requestNotificationPermision() {
               //
               // attach delegate
               //
-              [center setDelegate:[[NotificationDelegate alloc]init]];
+              //[center setDelegate:[[NotificationDelegate alloc]init]];
           }
     }];
+    //
+    // attach delegate
+    //
     [center setDelegate:[[NotificationDelegate alloc]init]];
 }
 
-void _scheduleNotification( QString message, int date, bool repeat ) {
+void _scheduleNotification( int id, QString message, unsigned int delay, unsigned int frequency ) {
     qDebug("_scheduleNotification : 1");
     /*
     if ( !_notificationsEnabled ) {
@@ -66,24 +77,26 @@ void _scheduleNotification( QString message, int date, bool repeat ) {
     }
     */
     if ( @available(iOS 10, * ) ) {
+        qDebug( "notification id=%d, message=%s", id, message.toStdString().c_str());
         qDebug("_scheduleNotification : 2.1");
         UNMutableNotificationContent* content = [[UNMutableNotificationContent alloc] init];
-        content.title = [NSString localizedUserNotificationStringForKey:@"Hello!" arguments:nil];
+        content.title = [NSString localizedUserNotificationStringForKey:@"AfterTrauma" arguments:nil];
         content.body = [NSString localizedUserNotificationStringForKey:message.toNSString()
                     arguments:nil];
         content.sound = [UNNotificationSound defaultSound];
-        content.badge = [NSNumber numberWithInt: 1];
-        // Deliver the notification in five seconds.
+        //content.badge = [NSNumber numberWithInt: 1];
+        qDebug("_scheduleNotification : 2.2");
         UNTimeIntervalNotificationTrigger* trigger = [UNTimeIntervalNotificationTrigger
-                    triggerWithTimeInterval:30 repeats:repeat];
-        UNNotificationRequest* request = [UNNotificationRequest requestWithIdentifier:@"FiveSecond"
+                    triggerWithTimeInterval:(frequency > 0 ? frequency : delay) / 1000 repeats:frequency > 0];
+        qDebug("_scheduleNotification : 2.3");
+        UNNotificationRequest* request = [UNNotificationRequest requestWithIdentifier:[NSString stringWithFormat:@"0x%X",id]
                     content:content trigger:trigger];
 
         // Schedule the notification.
-        qDebug("_scheduleNotification : 2.2");
+        qDebug("_scheduleNotification : 2.4");
         UNUserNotificationCenter* center = [UNUserNotificationCenter currentNotificationCenter];
         [center addNotificationRequest:request withCompletionHandler:^(NSError *error) {
-            NSLog( @"notification scheduled");
+            qDebug( "notification scheduled");
             if ( error ) {
                 NSLog( [error localizedDescription] );
             }
@@ -100,4 +113,18 @@ void _scheduleNotification( QString message, int date, bool repeat ) {
         [[UIApplication sharedApplication] scheduleLocalNotification:localNotification];
     }
 }
+
+void _cancelNotification( int id ) {
+    qDebug( "_cancelNotification" );
+    UNUserNotificationCenter* center = [UNUserNotificationCenter currentNotificationCenter];
+    NSString* _id = [NSString stringWithFormat:@"0x%X",id];
+    [center removePendingNotificationRequestsWithIdentifiers:[NSArray arrayWithObjects: _id, nil] ];
+}
+
+void _cancelAllNotifications() {
+    qDebug( "_cancelAllNotifications" );
+    UNUserNotificationCenter* center = [UNUserNotificationCenter currentNotificationCenter];
+    [center removeAllPendingNotificationRequests];
+}
+
 
