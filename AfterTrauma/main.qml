@@ -114,7 +114,7 @@ ApplicationWindow {
             linkPopup.find([category]);
         }
         Behavior on opacity {
-            NumberAnimation { duration: 500 }
+            NumberAnimation { duration: 250 }
         }
     }
     //
@@ -236,13 +236,15 @@ ApplicationWindow {
         anchors.margins: 2
         text: "(" + parent.width + "," + parent.height + ")"
     }
+    /* notification tests
     Button {
+        id: notify1
         anchors.top: parent.top
         anchors.right: parent.right
-        text: "notify"
+        text: notify ? "notify" : "clear"
         onClicked: {
             if ( notify ) {
-                NotificationManager.scheduleNotification(101, "testing", 0, 60000);
+                NotificationManager.scheduleNotification(101, "testing 101", 0, 60000);
             } else {
                 NotificationManager.cancelNotification(101);
             }
@@ -250,7 +252,22 @@ ApplicationWindow {
         }
         property bool notify: true
     }
-
+    Button {
+        id: notify2
+        anchors.top: notify1.bottom
+        anchors.right: parent.right
+        text: notify ? "notify" : "clear"
+        onClicked: {
+            if ( notify ) {
+                NotificationManager.scheduleNotification(104, "testing 104", 0, 30000);
+            } else {
+                NotificationManager.cancelNotification(104);
+            }
+            notify = !notify;
+        }
+        property bool notify: true
+    }
+    */
     //
     //
     //
@@ -319,6 +336,17 @@ ApplicationWindow {
                 }
             }
         }
+        onApplicationActivated: {
+            if ( !firstActivation && userProfile && !chatChannel.connected ) chatChannel.open();
+            firstActivation = false;
+        }
+        onApplicationDeactivated: {
+            chatChannel.close();
+        }
+        onApplicationSuspended: {
+
+        }
+        property bool firstActivation: true
     }
     //
     //

@@ -17,12 +17,36 @@ AndroidBackKeyFilter* AndroidBackKeyFilter::shared() {
 }
 
 bool AndroidBackKeyFilter::eventFilter(QObject *obj, QEvent *event) {
+    //
+    // TODO: tidy this up, replace with switch etc
+    //
     if (event->type() == QEvent::KeyRelease) {
         QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
         if ( keyEvent->key() == Qt::Key_Back ) {
             emit backKeyPressed();
             return true;
         }
+    /*} else if ( event->type() == QEvent::Expose ) {
+        QExposeEvent* exposeEvent = static_cast<QExposeEvent *>(event);
+        qDebug() << "AndroidBackKeyFilter::eventFilter : ExposeEvent : " << exposeEvent->region();
+        */
+    } else if ( event->type() == QEvent::ApplicationStateChange ) {
+        QApplicationStateChangeEvent* stateChangedEvent = static_cast<QApplicationStateChangeEvent *>(event);
+        qDebug() << "AndroidBackKeyFilter::eventFilter : ApplicationStateChange : " << stateChangedEvent->applicationState();
+        switch( stateChangedEvent->applicationState() ) {
+        case Qt::ApplicationActive :
+            emit applicationActivated();
+            break;
+        case Qt::ApplicationInactive :
+            emit applicationDeactivated();
+            break;
+        case Qt::ApplicationSuspended :
+            emit applicationSuspended();
+            break;
+        }
+
+    /*} else {
+        qDebug() << "AndroidBackKeyFilter::eventFilter : " << event->type();*/
     }
     return QObject::eventFilter(obj, event);
 }

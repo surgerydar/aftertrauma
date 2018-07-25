@@ -603,6 +603,15 @@ Popup {
                 var result = documentModel.update( {document: document._id}, entry, true );
                 console.log( 'updated document : ' + JSON.stringify(result) );
                 if ( result ) {
+                    //
+                    // add category title as tag
+                    //
+                    if ( category.section === "resources" ) {
+                        tagsModel.updateTag( category.title.toLowerCase(), document._id || result._id );
+                    }
+                    //
+                    //
+                    //
                     document.blocks.forEach( function( block ) {
                         console.log( 'extracting tags : ' + JSON.stringify(block.tags) );
                         block.tags.forEach( function( tag ) {
@@ -611,6 +620,10 @@ Popup {
                             }
                         });
                     });
+                    //
+                    //
+                    //
+
                     tagsModel.save();
                 }
             } else {

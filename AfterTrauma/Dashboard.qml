@@ -45,6 +45,7 @@ AfterTrauma.Page {
         //
         //
         //
+        /* now handled by system notifications
         SwipeView {
             id: notifications
             anchors.top: dateSlider.bottom
@@ -78,8 +79,8 @@ AfterTrauma.Page {
                     }
                 }
             }
+
         }
-        /*
         AfterTrauma.PageIndicator {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
@@ -92,6 +93,7 @@ AfterTrauma.Page {
     //
     //
     //
+    /*
     Timer {
         id: scrollTimer
         interval: 30 * 1000
@@ -106,17 +108,18 @@ AfterTrauma.Page {
             }
         }
     }
+    */
     //
     //
     //
     StackView.onActivated: {
-        scrollTimer.start();
+        //scrollTimer.start();
         dateSlider.value = 1;
         flowerChart.enabled = true;
         flowerChart.values = dailyModel.valuesForDate( dateSlider.currentDate.getTime() );
     }
     StackView.onDeactivated: {
-        scrollTimer.stop();
+        //scrollTimer.stop();
         flowerChart.enabled = false;
     }
     //
@@ -125,8 +128,9 @@ AfterTrauma.Page {
     Connections {
         target: notificationModel
         onUpdated: {
-            console.log( 'Dashboard : notificationModel updated');
-            notificationsRepeater.model = notificationModel.count
+            // now handled by system level notifications
+            //console.log( 'Dashboard : notificationModel updated');
+            //notificationsRepeater.model = notificationModel.count
         }
     }
 }

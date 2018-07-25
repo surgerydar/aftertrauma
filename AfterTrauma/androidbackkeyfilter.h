@@ -2,7 +2,9 @@
 #define ANDROIDBACKKEYFILTER_H
 
 #include <QObject>
-
+//
+// TODO: refactor to something like EventFilter
+//
 class AndroidBackKeyFilter : public QObject
 {
     Q_OBJECT
@@ -16,6 +18,9 @@ private:
 
 signals:
     void backKeyPressed();
+    void applicationActivated();
+    void applicationDeactivated();
+    void applicationSuspended();
 
 public slots:
 };

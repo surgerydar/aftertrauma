@@ -212,12 +212,14 @@ Item {
                                 //
                                 //
                                 //
-                                unreadChatsModel.addMessage(command.chatid);
-                                //
-                                // TODO: need to store usernames in chat so we can add from
-                                //
-                                var notification = 'New message';
-                                NotificationManager.schedule("chat",notification,0,false);
+                                if ( message.from !== userProfile.id ) {
+                                    unreadChatsModel.addMessage(command.chatid);
+                                    // Notify user
+                                    // TODO: need to store usernames in chat so we can add from???
+                                    //
+                                    var notification = 'New chat message, you have ' + unreadChatsModel.totalUnread + ' new messages';
+                                    NotificationManager.scheduleNotification(103,notification,0,0);
+                                }
                             }
                         }
                         //

@@ -89,7 +89,7 @@ Rectangle {
             textHorizontalAlignment: Text.AlignLeft
             textVerticalAlignment: Text.AlignVCenter
             textSize: 32
-            text: "Challenge"
+            text: "Challenges"
             image: "icons/challenge.png"
             direction: "Left"
             spacing: 8

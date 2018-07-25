@@ -9,28 +9,27 @@ Popup {
     modal: true
     focus: true
     x: 0
-    y: (appWindow.height/2.) - ( height / 2.)
+    y: 32
     width: appWindow.width
-    height: Math.min( contentHeight, appWindow.height - 16 )
+    height: appWindow.height - 128
     //
     //
     //
-    /*
     background: AfterTrauma.Background {
         anchors.fill: parent
-        fill: Colours.almostWhite
-        //opacity: .5
+        fill: Colours.veryDarkSlate
+        opacity: .5
     }
-    */
     //
     //
     //
     contentItem: ListView {
         id: links
         width: parent.width
-        height: Math.min( parent.height, contentHeight )
+        height: Math.min( container.height - 16, contentHeight )
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
+        clip: true
         spacing: 4
         model: ListModel {}
         delegate: SearchItem {
@@ -42,7 +41,15 @@ Popup {
             //
             //
             onClicked: {
-                stack.push( "qrc:///DocumentViewer.qml", { title: 'LINK', subtitle: model.title, colour: Colours.darkOrange, document: model.document });
+                var colour = Colours.darkOrange;
+                var category = categoryModel.findOne({category:model.category});
+                if ( category ) {
+                    colour = Colours.categoryColour(category.index);
+                } else {
+                    console.log( 'unable to find category : ' + model.category );
+                }
+
+                stack.push( "qrc:///DocumentViewer.qml", { title: ( category && category.title ? category.title : 'LINK' ), subtitle: model.title, colour: colour, document: model.document });
                 container.close();
             }
         }
@@ -94,12 +101,13 @@ Popup {
                 }
                 console.log( 'appending : ' + document.title);
                 links.model.append( {
+                                       category: document.category,
                                        document: document.document,
                                        title: document.title,
                                        summary: summary
                                    });
             });
-            links.height = Math.min( parent.height, links.model.count * ( 64 + 4 ) );
+            //links.height = Math.min( parent.height, links.model.count * ( 64 + 4 ) );
             open();
         }
     }

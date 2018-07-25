@@ -22,11 +22,11 @@ ListModel {
             if ( !findNotification("questionnaire") ) {
                 console.log( 'Notifications : adding questionnaire prompt' );
                 append({subject:"questionnaire", text:"don't forget to complete your daily questionnaire"});
-                NotificationManager.scheduleNotification(102, "don't forget to complete the questionnaire",0,60000);
+                NotificationManager.scheduleNotification(102, "don't forget to complete the questionnaire", 0, 60000);
                 updated();
             }
         } else {
-            //removeNotification("questionnaire");
+            removeNotification("questionnaire");
             NotificationManager.cancelNotification(102);
             updated();
         }

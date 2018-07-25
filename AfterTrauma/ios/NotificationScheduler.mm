@@ -27,8 +27,9 @@ static bool _notificationsEnabled = false;
     qDebug("present notification");
     //
     // TODO: this is called when the app is in the foreground so should present notification in app, possibly add to scrolling list of pending notifications
-    //
-    //NotificationManager::shared()->display("hello");
+    // Possibly just rely on system alert system
+    // NotificationManager::shared()->display("hello");
+    completionHandler(UNNotificationPresentationOptionAlert);
 }
 
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void(^)(void))completionHandler {
@@ -86,12 +87,11 @@ void _scheduleNotification( int id, QString message, unsigned int delay, unsigne
         content.sound = [UNNotificationSound defaultSound];
         //content.badge = [NSNumber numberWithInt: 1];
         qDebug("_scheduleNotification : 2.2");
-        UNTimeIntervalNotificationTrigger* trigger = [UNTimeIntervalNotificationTrigger
-                    triggerWithTimeInterval:(frequency > 0 ? frequency : delay) / 1000 repeats:frequency > 0];
+        UNTimeIntervalNotificationTrigger* trigger = ( delay > 0 || frequency > 0 ) ? [UNTimeIntervalNotificationTrigger
+                    triggerWithTimeInterval:(frequency > 0 ? frequency : delay) / 1000 repeats:frequency > 0] : nil;
         qDebug("_scheduleNotification : 2.3");
         UNNotificationRequest* request = [UNNotificationRequest requestWithIdentifier:[NSString stringWithFormat:@"0x%X",id]
                     content:content trigger:trigger];
-
         // Schedule the notification.
         qDebug("_scheduleNotification : 2.4");
         UNUserNotificationCenter* center = [UNUserNotificationCenter currentNotificationCenter];

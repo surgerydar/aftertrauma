@@ -19,64 +19,46 @@ import java.lang.String;
 
 public class NotificationScheduler {
 
-    public static void show(String title, String caption, int id) {
+    public static void show( int id, String message, int delay, int frequency ) {
         System.out.println("show");
-        scheduleNotification( getNotification( caption ), 0 );
-        /*
-        Context context = QtNative.activity();
-
-        NotificationManager notificationManager = getManager();
-        Notification.Builder builder =
-                new Notification.Builder(context)
-                .setSmallIcon(R.drawable.app_icon)
-                .setContentTitle(title)
-                .setContentText(caption)
-                .setAutoCancel(true)
-                ;
-
-        String packageName = context.getApplicationContext().getPackageName();
-        Intent resultIntent = context.getPackageManager().getLaunchIntentForPackage(packageName);
-        resultIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-
-        PendingIntent resultPendingIntent =
-            PendingIntent.getActivity(
-            context, 0,
-            resultIntent, PendingIntent.FLAG_UPDATE_CURRENT
-        );
-
-        builder.setContentIntent(resultPendingIntent);
-
-        notificationManager.notify(id, builder.build());
-        */
+        scheduleNotification( id, getNotification( message ), delay, frequency );
     }
 
-    private static void scheduleNotification(Notification notification, int delay) {
+    private static void scheduleNotification( int id, Notification notification, int delay, int frequency) {
         Context context = QtNative.activity();
 
         Intent notificationIntent = new Intent(context, NotificationPublisher.class);
-        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ID, 1);
+        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ID, id);
         notificationIntent.putExtra(NotificationPublisher.NOTIFICATION, notification);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, id, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         long futureInMillis = SystemClock.elapsedRealtime() + delay;
         AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-        //alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis, pendingIntent);
-        alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis, 60000, pendingIntent);
+        if ( frequency > 0 ) {
+            alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis, frequency, pendingIntent);
+        } else {
+            alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis, pendingIntent);
+        }
     }
 
     private static Notification getNotification(String content) {
         Context context = QtNative.activity();
         Notification.Builder builder = new Notification.Builder(context);
-        builder.setContentTitle("Scheduled Notification");
+        //builder.setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE);
+        builder.setDefaults(Notification.DEFAULT_SOUND);
+        builder.setContentTitle("AfterTrauma");
         builder.setContentText(content);
-        //builder.setSmallIcon(android.R.drawable.ic_delete);
         builder.setSmallIcon(R.drawable.notification_icon);
         builder.setPriority( NotificationManager.IMPORTANCE_HIGH );
         return builder.build();
     }
 
     public static void hide(int id) {
-        getManager().cancel(id);
+        Context context = QtNative.activity();
+        Intent notificationIntent = new Intent(context, NotificationPublisher.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, id, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+        alarmManager.cancel(pendingIntent);
     }
 
     public static void hideAll() {

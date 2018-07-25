@@ -18,7 +18,7 @@ AfterTrauma.Page {
         //
         //
         anchors.fill: parent
-        //anchors.bottomMargin: 36
+        anchors.bottomMargin: 4
         //
         //
         //
@@ -188,9 +188,10 @@ AfterTrauma.Page {
     //
     //
     //
-    footer: Item {
+    footer: Rectangle {
         height: 64
         width: parent.width
+        color: Colours.blue
         AfterTrauma.Button {
             anchors.left: parent.left
             anchors.leftMargin: 4

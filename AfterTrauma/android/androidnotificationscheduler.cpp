@@ -6,23 +6,31 @@ void _requestNotificationPermision() {
 
 }
 
-void _scheduleNotification( QString message, int date, bool repeat ) {
+void _scheduleNotification( int id, QString message, unsigned int delay, unsigned int frequency ) {
     QAndroidJniEnvironment env;
     qDebug() << "scheduling notification : " << message;
-    QAndroidJniObject jni_caption = QAndroidJniObject::fromString(message);
-    QAndroidJniObject jni_title   = QAndroidJniObject::fromString("AfterTrauma");
+    QAndroidJniObject jni_message = QAndroidJniObject::fromString(message);
 
     QAndroidJniObject::callStaticMethod<void>("uk/co/soda/NotificationScheduler",
                                               "show",
-                                              "(Ljava/lang/String;Ljava/lang/String;I)V",
-                                              jni_title.object<jstring>(),
-                                              jni_caption.object<jstring>(),
-                                              (jint) 1);
-    if (env->ExceptionCheck()) {
-        qDebug() << "problem scheduling native notification " ;
-        // Handle exception here.
-        env->ExceptionClear();
-    }
+                                              "(ILjava/lang/String;II)V",
+                                              (jint) id,
+                                              jni_message.object<jstring>(),
+                                              (jint) delay,
+                                              (jint) frequency);
+}
+
+void _cancelNotification( int id ) {
+    QAndroidJniObject::callStaticMethod<void>("uk/co/soda/NotificationScheduler",
+                                              "hide",
+                                              "(I)V",
+                                              (jint) id);
+}
+
+void _cancelAllNotifications() {
+    QAndroidJniObject::callStaticMethod<void>("uk/co/soda/NotificationScheduler",
+                                              "hideAll",
+                                              "()V");
 }
 
 /*

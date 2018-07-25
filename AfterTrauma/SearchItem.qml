@@ -29,6 +29,7 @@ Item {
         //
         //
         //
+        elide: Text.ElideRight
         font.weight: Font.Light
         font.family: fonts.light
         font.pixelSize: 18

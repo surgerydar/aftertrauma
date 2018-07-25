@@ -31,8 +31,6 @@ Item {
     //
     MediaPlayer {
         id: content
-        //audioRole: MediaPlayer.VideoRole
-        //source: "file:///Users/jons/Documents/media/emotions.depression.video1.m4v"
         //
         //
         //
