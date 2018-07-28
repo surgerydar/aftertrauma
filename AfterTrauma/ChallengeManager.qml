@@ -70,6 +70,7 @@ AfterTrauma.Page {
                         title: model.name,
                         activity: formatDescription(model.activity, model.repeats, model.frequency),
                         active: model.active,
+                        notifications: model.notifications,
                         challengeId: challengeModel.get(index)._id
                     };
                     stack.push( "qrc:///ChallengeViewer.qml", properties );

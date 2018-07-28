@@ -14,26 +14,25 @@ Mailer.prototype.send = function( address, subject, html ) {
                 port: 465,
                 secure: true, // use SSL
                 auth: {
-                    user: 'aftertrauma@gmail.com',
-                    pass: 'Ta8le202'
+                    user: 'aftertraumaapp@gmail.com',
+                    pass: 'TraumaAfterAdmin101'
                 }
             });
-
+            
             // setup e-mail data
             var mailOptions = {
-                from: '"AfterTrauma " <aftertrauma@gmail.com>', // sender address (who sends)
+                from: '"AfterTrauma Admin" <aftertraumaapp@gmail.com>', // sender address (who sends)
                 to: address, // list of receivers (who receives)
                 subject: subject, // Subject line
                 html: html // html body
             };
-
+            console.log( 'Mailer send : ' + JSON.stringify(mailOptions) );
             // send mail with defined transport object
             transporter.sendMail(mailOptions, function(error, info){
                 if(error){
                     console.log( error );
                     reject( error )
                 }
-
                 resolve( info );
             });
         } catch( error ) {

@@ -13,6 +13,7 @@ AfterTrauma.Page {
     //
     colour: Colours.lightGreen
     showNavigation: true
+    validate: updateNotification
     //
     //
     //
@@ -28,14 +29,36 @@ AfterTrauma.Page {
         font.family: fonts.light
         font.pixelSize: 32
     }
-    footer: Item {
+    footer: Rectangle {
         height: 64
         anchors.left: parent.left
         anchors.right: parent.right
+        color: Colours.lightGreen
         //
         //
         //
         Label {
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.right: notificationsSwitch.left
+            anchors.rightMargin: 4
+            color: Colours.almostWhite
+            font.weight: Font.Light
+            font.family: fonts.light
+            font.pointSize: 18
+            text: "Notifications"
+        }
+        AfterTrauma.Switch {
+            id: notificationsSwitch
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.right: activeLabel.left
+            anchors.rightMargin: 8
+            onClicked: {
+                challengeModel.update({_id:challengeId},{notifications:checked});
+                challengeModel.save();
+            }
+        }
+        Label {
+            id: activeLabel
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: activeSwitch.left
             anchors.rightMargin: 4
@@ -45,9 +68,6 @@ AfterTrauma.Page {
             font.pointSize: 18
             text: "Active"
         }
-        //
-        //
-        //
         AfterTrauma.Switch {
             id: activeSwitch
             anchors.verticalCenter: parent.verticalCenter
@@ -62,7 +82,18 @@ AfterTrauma.Page {
     //
     //
     //
+    function updateNotification() {
+        //
+        //
+        //
+        challengeModel.updateNotification( challengeId );
+        return true;
+    }
+    //
+    //
+    //
     property alias activity: activityText.text
     property alias active: activeSwitch.checked
+    property alias notifications: notificationsSwitch.checked
     property string challengeId: ""
 }

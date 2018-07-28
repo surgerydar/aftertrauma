@@ -10,7 +10,7 @@ AfterTrauma.Page {
     //
     //
     //
-    title: "About You"
+    title: profile.username || "About You"
     colour: Colours.almostWhite
     //
     //
@@ -23,7 +23,8 @@ AfterTrauma.Page {
         //
         Page {
             padding: 0
-            title: "About You"
+            //title: "About You"
+            title: profile.username || "About You"
             background: Rectangle {
                 anchors.fill: parent
                 color: "transparent"
@@ -56,28 +57,6 @@ AfterTrauma.Page {
                     anchors.left: parent.left
                     anchors.right: parent.right
                     spacing: 4
-                    //
-                    //
-                    //
-                    Rectangle {
-                        id: stayLoggedInBlock
-                        width: profileContainer.width
-                        height: childrenRect.height + 16
-                        color: Colours.almostWhite
-                        AfterTrauma.CheckBox {
-                            id: stayLoggedIn
-                            anchors.top: parent.top
-                            anchors.right: parent.right
-                            anchors.margins: 8
-                            text: "Stay logged in"
-                            checked: profile && profile.stayLoggedIn
-                            direction: "Right"
-                            onCheckedChanged: {
-                                profile.stayLoggedIn = checked;
-                                dirty = true;
-                            }
-                        }
-                    }
                     //
                     //
                     //
@@ -330,6 +309,96 @@ AfterTrauma.Page {
                 }
             }
         }
+        Page {
+            padding: 0
+            title: "Settings"
+            background: Rectangle {
+                anchors.fill: parent
+                color: "transparent"
+            }
+            //
+            //
+            //
+            Flickable {
+                id: settingsContainer
+                anchors.fill: parent
+                clip: true
+                contentHeight: settingsItems.childrenRect.height + 16
+                //
+                //
+                //
+                Column {
+                    id: settingsItems
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    spacing: 4
+                    //
+                    //
+                    //
+                    Rectangle {
+                        id: stayLoggedInBlock
+                        width: profileContainer.width
+                        height: childrenRect.height + 16
+                        color: Colours.almostWhite
+                        AfterTrauma.CheckBox {
+                            id: stayLoggedIn
+                            anchors.top: parent.top
+                            anchors.right: parent.right
+                            anchors.margins: 8
+                            text: "Stay logged in"
+                            checked: profile && profile.stayLoggedIn
+                            direction: "Right"
+                            onCheckedChanged: {
+                                profile.stayLoggedIn = checked;
+                                dirty = true;
+                            }
+                        }
+                    }
+                    Rectangle {
+                        id: changePasswordBlock
+                        width: profileContainer.width
+                        height: childrenRect.height + 16
+                        color: Colours.almostWhite
+                        AfterTrauma.TextField {
+                            id: currentPassword
+                            anchors.top: parent.top
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                            anchors.margins: 8
+                            echoMode: TextField.Password
+                            placeholderText: "current password"
+                        }
+                        AfterTrauma.TextField {
+                            id: newPassword
+                            anchors.top: currentPassword.bottom
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                            anchors.margins: 8
+                            echoMode: TextField.Password
+                            placeholderText: "new password"
+                        }
+                        AfterTrauma.Button {
+                            anchors.top: newPassword.bottom
+                            anchors.right: parent.right
+                            anchors.margins: 8
+                            backgroundColour: Colours.slate
+                            textColour: Colours.almostWhite
+                            text: "reset password"
+                            onClicked: {
+                                profileChannel.send({
+                                                        command : 'changepassword',
+                                                        token : profile.token,
+                                                        username: profile.username,
+                                                        oldpass : currentPassword.text,
+                                                        newpass : newPassword.text
+                                                    });
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
         onCurrentItemChanged: {
             container.title = currentItem.title || "Your Profile"
         }
@@ -399,15 +468,19 @@ AfterTrauma.Page {
         onReceived: {
             busyIndicator.running = false;
             var command = JSON.parse(message); // TODO: channel should probably emit object
-            if ( command.command === 'updateprofile' ) {
-                if( command.status === "OK" ) {
+            if( command.status === "OK" ) {
+                if ( command.command === 'updateprofile' ) {
                     stack.pop()
-                } else {
-                    errorDialog.show( '<h1>Server says</h1><br/>' + ( typeof command.error === 'string' ? command.error : command.error.error ), [
-                                         { label: 'try again', action: function() {} },
-                                         { label: 'forget about it', action: function() { stack.pop(); } },
-                                     ] );
+                } else if ( command.command === 'changepassword' ) {
+                    confirmDialog.show( '<h1>Password Changed</h1>' );
+                    currentPassword.text = "";
+                    newPassword.text = "";
                 }
+            } else {
+                errorDialog.show( '<h1>Server says</h1><br/>' + ( typeof command.error === 'string' ? command.error : command.error.error ), [
+                                     { label: 'try again', action: function() {} },
+                                     { label: 'forget about it', action: function() { stack.pop(); } },
+                                 ] );
             }
         }
 
@@ -455,7 +528,7 @@ AfterTrauma.Page {
             console.log( 'profile tags: ' + JSON.stringify(profile.tags));
         }
         JSONFile.write('user.json',profile);
-        profileChannel.send({command:'updateprofile',profile:profile});
+        profileChannel.send({command:'updateprofile', token: profile.token, profile:profile});
     }
     //
     //

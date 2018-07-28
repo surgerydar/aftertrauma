@@ -5,45 +5,91 @@ import SodaControls 1.0
 import "controls" as AfterTrauma
 import "colours.js" as Colours
 
-AfterTrauma.Page {
+Rectangle {
     id: container
-    title: "PROFILE"
-    colour: Colours.almostWhite
+    height: parent.height
+    y: parent.height
+    anchors.left: parent.left
+    anchors.right: parent.right
+    color: Colours.blue
     //
     //
     //
-    contentItem: Flickable {
-        anchors.fill: parent
-        contentHeight: profileItems.childrenRect.height + 16
+    signal closed();
+    //
+    //
+    //
+    Item {
+        id: header
+        height: 64
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
         //
         //
         //
-        Column {
-            id: profileItems
+        Label {
+            id: title
             anchors.fill: parent
-            spacing: 4
-            Image {
-                id: avatarImage
-                anchors.left: parent.left
-                anchors.right: parent.right
-                fillMode: Image.PreserveAspectFit
+            anchors.leftMargin: closeButton.width + 24
+            anchors.rightMargin: closeButton.width + 24
+            horizontalAlignment: Label.AlignHCenter
+            verticalAlignment: Label.AlignVCenter
+            fontSizeMode: Label.Fit
+            color: Colours.almostWhite
+            font.pixelSize: 36
+            font.weight: Font.Light
+            font.family: fonts.light
+            text: "PROFILE"
+        }
+        //
+        //
+        //
+        AfterTrauma.Button {
+            id: closeButton
+            anchors.top: parent.top
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+            anchors.margins: 16
+            image: "icons/close.png"
+            onClicked: {
+                container.close();
             }
-            //
-            //
-            //
-            Text {
-                id: profileText
-                anchors.left: parent.left
-                anchors.right: parent.right
-                wrapMode: Text.WordWrap
-            }
-            //
-            //
-            //
-            Text {
-                id: tagsText
-                anchors.left: parent.left
-                anchors.right: parent.right
+        }
+    }
+    //
+    //
+    //
+    ListView {
+        id: contents
+        anchors.top: header.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        anchors.margins: 4
+        //
+        //
+        //
+        clip: true
+        spacing: 4
+        //
+        //
+        //
+        model: ListModel {}
+        //
+        //
+        //
+        delegate: AfterTrauma.Block {
+            /*
+            anchors.left: parent.left
+            anchors.right: parent.right
+            */
+            width: parent.width
+            anchors.horizontalCenter: parent.horizontalCenter
+            type: model.type
+            media: model.content
+            onMediaReady: {
+                contents.forceLayout();
             }
         }
     }
@@ -71,10 +117,20 @@ AfterTrauma.Page {
                 if( command.status === "OK" ) {
                     if ( command.response && command.response.length > 0 ) {
                         var profile = command.response[ 0 ];
-                        title = profile.username;
-                        avatarImage.source = profile.avatar || "icons/profile_icon.png";
-                        profileText.text = profile.profile;
-                        tagsText.text = profile.tags.join();
+                        title.text = profile.username;
+                        contents.model.clear();
+                        contents.model.append( {
+                                                  type: 'image',
+                                                  content: profile.avatar || "icons/profile_icon.png"
+                                              });
+                        contents.model.append( {
+                                                  type: 'text',
+                                                  content: profile.profile
+                                              });
+                        contents.model.append( {
+                                                  type: 'text',
+                                                  content: profile.tags.join()
+                                              });
                     } else {
                         console.log( 'ProfileViewer invalid response ' + JSON.stringify(command.response) + ' : filter : ' + JSON.stringify(command.filter) );
                     }
@@ -90,10 +146,36 @@ AfterTrauma.Page {
     //
     //
     //
-    StackView.onActivated: {
+    state: "closed"
+    states: [
+        State {
+            name: "closed"
+            PropertyChanges {
+                target: container
+                y: parent.height
+            }
+        },
+        State {
+            name: "open"
+            PropertyChanges {
+                target: container
+                y: 0
+            }
+        }
+    ]
+    transitions: Transition {
+        NumberAnimation { properties: "y"; easing.type: Easing.InOutQuad }
+    }
+    //
+    //
+    //
+    function open( _userId ) {
+        userId = _userId;
+        container.state = "open";
         profileChannel.open();
     }
-    StackView.onDeactivated: {
+    function close() {
+        container.state = "closed";
         profileChannel.close();
     }
     //

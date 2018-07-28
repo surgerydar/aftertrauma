@@ -145,7 +145,7 @@ Rectangle {
             textHorizontalAlignment: Text.AlignLeft
             textVerticalAlignment: Text.AlignVCenter
             textSize: 32
-            text: userProfile && loggedIn ? "About Me" : "login or register"
+            text: userProfile && loggedIn ? userProfile.username || "About Me" : "login or register"
             image: "icons/about_me.png"
             direction: "Left"
             spacing: 8

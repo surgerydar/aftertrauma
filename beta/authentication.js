@@ -2,8 +2,11 @@
 // 
 //
 var _db;
-var jwt = require('jsonwebtoken');
-
+var access = require('./access');
+var mailer = require('./mailer');
+//
+//
+//
 function Authentication() {
 }
 
@@ -37,7 +40,7 @@ Authentication.prototype.register = function( wss, ws, command ) {
             if ( response === null ) {
                 _db.insert('users', user ).then(function( response ) {
                     //
-                    // TODO: generate json web token
+                    //
                     //
                     console.log( 'inserted: ' + JSON.stringify(user) + ' : response:' + JSON.stringify(response) );
                     command.status = 'OK';
@@ -49,7 +52,7 @@ Authentication.prototype.register = function( wss, ws, command ) {
                         avatar: user.avatar,
                         profile: user.profile,
                         tags: user.tags,
-                        token: jwt.sign({ user: command.username }, 'afterparty')
+                        token: access.sign({ user: command.username })
                     };
                     ws.send(JSON.stringify(command));
                 }).catch(function(error){
@@ -81,10 +84,10 @@ Authentication.prototype.login = function( wss, ws, command ) {
                 command.error = 'username or password incorrect';
             } else {
                 //
-                // TODO: generate json web token
+                //
                 //
                 command.status = 'OK';
-                response.token = jwt.sign({ user: command.username }, 'afterparty');
+                response.token = access.sign({ user: command.username });
                 command.response = response;
             }
             //console.log('authentications response : ' + JSON.stringify( command ) );
@@ -97,36 +100,93 @@ Authentication.prototype.login = function( wss, ws, command ) {
     });
 }
 
-Authentication.prototype.logout = function( wss, ws, command ) {
+Authentication.prototype.changepassword = function( wss, ws, command ) {
     //
-    // TODO
+    // 
     //
-    console.log( 'Authentication.logout : username:' + command.username + ' password:' + command.password );
+    console.log( 'Authentication.changepassword : username:' + command.username + ' old:' + command.oldpass + ' new:' + command.newpass );
+    //
+    // find and update user
+    //
+    process.nextTick(function(){
+        if ( access.verifyCommand(ws,command) ) {
+            _db.updateOne('users', {$and: [ { username:command.username }, { password:command.oldpass } ]}, { $set: { password: command.newpass } } ).then(function( response ) {
+                if ( response === null || response.value === null ) {
+                    command.status = 'ERROR';
+                    command.error = 'username or password incorrect';
+                    ws.send(JSON.stringify(command));
+                } else {
+                    //
+                    // create new command to avoid sending both passwords back
+                    //
+                    console.log( 'Authentication.prototype.changepassword : response : ' + JSON.stringify( response ) );
+                    ws.send(JSON.stringify({
+                        command : 'changepassword',
+                        status : 'OK'
+                    }));
+                }
+                
+            }).catch( function( error ) {
+                command.status = 'ERROR';
+                command.error = error;
+                ws.send(JSON.stringify(command));
+            });
+        } 
+    });
+}
+
+Authentication.prototype.resetpassword = function( wss, ws, command ) {
+    //
+    // 
+    //
+    console.log( 'Authentication.resetpassword : username or email:' + command.identifier );
     //
     // find user
     //
-    process.nextTick(function(){   
-        _db.findOne('users', {$and: [ { username:command.username }, { password:command.password } ]}, { password: 0, _id: 0 } ).then(function( response ) {
-            if ( response === null ) {
-                command.status = 'ERROR';
-                command.error = 'username or password incorrect';
-            } else {
-                //
-                // TODO: generate json web token
-                //
-                command.status = 'OK';
-                response.token = jwt.sign({ user: command.username }, 'afterparty');
-                command.response = response;
+    process.nextTick(function(){
+        //
+        // TODO: replace this and move to somewhere more sensible
+        //
+        let randomPassword = function(length) {
+            var chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOP1234567890";
+            var pass = "";
+            for (var x = 0; x < length; x++) {
+            var i = Math.floor(Math.random() * chars.length);
+                pass += chars.charAt(i);
             }
-            //console.log('authentications response : ' + JSON.stringify( command ) );
-            ws.send(JSON.stringify(command));
-        }).catch( function( error ) {
+            return pass;
+        };
+        //
+        //
+        //
+        let password = randomPassword( 8 );
+        _db.updateOne( 'users', { $or: [ { username: command.identifier }, { email: command.identifier } ] }, { $set: { password: password } } ).then( function( response ) {
+            if ( response ) {
+                let username = response.username || response.value.username;
+                let address = response.email || response.value.email;
+                let message = 'Hi ' + username + ' your AfterTrauma password has been reset to <br/><b>' + password + '</b><br/>go to About Me to replace it with something more memorable'; 
+                mailer.send( address, 'AfterTrauma - password reset', message ).then( function( response ) {
+                    command.status = 'OK';
+                    command.response = 'A temporary password has been sent to ' + address + ' please check your mailbox';
+                    ws.send( JSON.stringify(command) );
+                }).catch( function( error ) {
+                    command.status = 'ERROR';
+                    command.error = error;
+                    ws.send( JSON.stringify(command) );
+                });
+            } else {
+                command.status = 'ERROR';
+                command.error = 'unable to find user with name or email ' + command.identifier;
+                ws.send( JSON.stringify(command) );
+            }
+        } ).catch( function( error ) {
             command.status = 'ERROR';
             command.error = error;
-            ws.send(JSON.stringify(command));
-        });
+            ws.send( JSON.stringify(command) );
+        } );
     });
 }
+
 
 module.exports = new Authentication();
 

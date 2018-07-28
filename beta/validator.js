@@ -1,6 +1,5 @@
 //var WebSocket = require('ws');
 //
-// TODO: move sketch session storage to db
 //
 function Validator() {
 }

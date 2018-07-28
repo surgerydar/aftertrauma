@@ -329,6 +329,64 @@ Popup {
                 direction: "Right"
                 text: "Stay logged in"
             }
+            AfterTrauma.Button {
+                anchors.top: loginStayLoggedIn.bottom
+                anchors.right: parent.right
+                anchors.margins: 8
+                backgroundColour: Colours.lightSlate
+                textColour: Colours.almostWhite
+                text: "forgotten password"
+                onClicked: {
+                    resetPassword.y = 0;
+                }
+            }
+            Rectangle {
+                id: resetPassword
+                height: 256
+                y: -height
+                anchors.left: parent.left
+                anchors.right: parent.right
+                //
+                //
+                //
+                AfterTrauma.TextField {
+                    id: resetUsernameEmail
+                    anchors.top: parent.top
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.margins: 8
+                    placeholderText: "username or email"
+                }
+                AfterTrauma.Button {
+                    anchors.bottom: parent.bottom
+                    anchors.left: parent.left
+                    anchors.margins: 8
+                    backgroundColour: Colours.lightSlate
+                    textColour: Colours.almostWhite
+                    text: "cancel"
+                    onClicked: {
+                        resetPassword.y = -resetPassword.height;
+                    }
+                }
+                AfterTrauma.Button {
+                    anchors.bottom: parent.bottom
+                    anchors.right: parent.right
+                    anchors.margins: 8
+                    backgroundColour: Colours.lightSlate
+                    textColour: Colours.almostWhite
+                    text: "request password"
+                    onClicked: {
+                        authenticationChannel.send({
+                            command: 'resetpassword',
+                            identifier: resetUsernameEmail.text
+                        });
+                        resetPassword.y = -resetPassword.height;
+                    }
+                }
+                Behavior on y {
+                    NumberAnimation { duration: 250 }
+                }
+            }
             //
             //
             //
@@ -420,6 +478,8 @@ Popup {
                         installChallenges(command.response);
                     }
                     container.close();
+                } else if ( command.command === 'resetpassword' ) {
+                    confirmDialog.show('<h1>Password Reset</h1>' + command.response );
                 }
             } else if ( command.error ) {
                 errorDialog.show( '<h1>Server says</h1><br/>' + ( typeof command.error === 'string' ? command.error : command.error.error ), userProfile ?

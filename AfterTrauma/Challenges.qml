@@ -87,4 +87,34 @@ DatabaseList {
             save();
         }
     }
+    function updateNotification(challengeId) {
+        //
+        //
+        //
+        var identifier = notificationModel.challenge_base_id + parseInt( '0x' + challengeId.substring( challengeId.length - 5 ) );
+        var challenge  = challengeModel.findOne({_id:challengeId});
+        if ( challenge && challenge.active && challenge.notifications ) {
+            /*
+            var intervals = {
+                "everyhour": 60 * 60 * 1000,
+                "fourtimesdaily": 3 * 60 * 60 * 1000,
+                "morningandevening": 6 * 60 * 60 * 1000,
+                "daily": 12 * 60 * 60 * 1000,
+                "weekly": 7 * 12 * 60 * 60 * 1000
+            };
+            */
+            var intervals = {
+                "everyhour": 60 * 1000,
+                "fourtimesdaily": 3 * 60 * 1000,
+                "morningandevening": 6 * 60 * 1000,
+                "daily": 12 * 60 * 1000,
+                "weekly": 7 * 12 * 60 * 1000
+            };
+            var frequency = challenge.frequency.replace(/\s+/g, '').toLowerCase();
+            var interval = intervals[ frequency ] || 0;
+            NotificationManager.scheduleNotification(identifier,challenge.name,0,interval);
+        } else {
+            NotificationManager.cancelNotification(identifier);
+        }
+    }
 }

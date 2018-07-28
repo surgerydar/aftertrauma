@@ -22,12 +22,12 @@ ListModel {
             if ( !findNotification("questionnaire") ) {
                 console.log( 'Notifications : adding questionnaire prompt' );
                 append({subject:"questionnaire", text:"don't forget to complete your daily questionnaire"});
-                NotificationManager.scheduleNotification(102, "don't forget to complete the questionnaire", 0, 60000);
+                NotificationManager.scheduleNotification(questionnaire_base_id, "don't forget to complete the questionnaire", 0, 60000);
                 updated();
             }
         } else {
             removeNotification("questionnaire");
-            NotificationManager.cancelNotification(102);
+            NotificationManager.cancelNotification(questionnaire_base_id);
             updated();
         }
         //
@@ -59,5 +59,10 @@ ListModel {
             }
         }
     }
-
+    //
+    //
+    //
+    property int questionnaire_base_id: 102
+    property int chat_base_id: 103
+    property int challenge_base_id: 104
 }

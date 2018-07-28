@@ -14,8 +14,8 @@ Item {
     //
     //
     AfterTrauma.Background {
+        id: background
         anchors.fill: parent
-        fill: Colours.darkOrange
     }
     //
     //
@@ -78,4 +78,5 @@ Item {
     //
     property alias title: titleText.text
     property alias summary: summaryText.text
+    property alias colour: background.fill
 }

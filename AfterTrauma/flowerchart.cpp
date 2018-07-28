@@ -40,7 +40,7 @@ const QVector<QString> categoryColours = {
 };
 
 QString categoryColour( int index ) {
-    return categoryColours[ index % categoryColours.size() ];
+    return categoryColours[ ( index % categoryColours.size() ) ];
 }
 
 const QVector<QString> labels = {

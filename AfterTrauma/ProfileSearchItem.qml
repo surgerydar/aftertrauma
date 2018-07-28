@@ -35,14 +35,13 @@ Rectangle {
         //
         //
         //
-        /*
         MouseArea {
             anchors.fill: parent
             onClicked: {
-                stack.push( "qrc:///ProfileViewer.qml", { userId: userId } );
+                //stack.push( "qrc:///ProfileViewer.qml", { userId: userId } );
+                profileViewer.open(userId);
             }
         }
-        */
     }
     //
     //

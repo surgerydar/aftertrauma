@@ -50,9 +50,9 @@ AfterTrauma.Page {
             type: model.type
             options: model.options || undefined
             radius: model.index === 0 ? [16,16,0,0] : model.index === builder.model.count - 1 ? [0,0,16,16] : [0]
-            on: model.type === "switch"  && source ? source[ model.field ] : false
-            value: model.type === "number" && source ? source[ model.field ] : 1
-            sourceText: ( model.field === "name" || model.field === "activity" ) && source ? source[model.field] : ""
+            on: model.type === "switch"  && source ? source[ model.field ] || false : false
+            value: model.type === "number" && source ? source[ model.field ] || 1 : 1
+            sourceText: ( model.field === "name" || model.field === "activity" ) && source ? source[model.field] || "" : ""
 
             onSelected: {
                 container.closeall(index);
@@ -64,6 +64,7 @@ AfterTrauma.Page {
             }
             onOnChanged: {
                 if ( model.type === "switch" ) {
+                    console.log( 'ChallengeBuilder : changing ' + model.field + ' from ' + challenge[ model.field ] + ' to ' + on );
                     challenge[ model.field ] = on;
                 }
             }
@@ -168,6 +169,14 @@ AfterTrauma.Page {
                 } else {
                     challengeModel.addChallenge(challenge);
                 }
+                challengeModel.save();
+                //
+                // update notifications
+                //
+                challengeModel.updateNotification(challenge._id);
+                //
+                //
+                //
                 return true;
             }
         }

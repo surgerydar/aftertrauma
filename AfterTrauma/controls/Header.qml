@@ -61,10 +61,12 @@ Item {
         radius: 0
         visible: showNavigation && stack && stack.depth > 1
         onClicked: {
-            if ( validate ) {
-                if ( validate() && stack ) stack.pop();
-            } else if ( stack ) {
-                stack.pop();
+            if ( stack ) {
+                if ( validate ) {
+                    if ( validate() ) stack.pop();
+                } else{
+                    stack.pop();
+                }
             }
         }
     }

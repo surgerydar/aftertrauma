@@ -10,7 +10,9 @@ extern void _cancelAllNotifications();
 NotificationManager* NotificationManager::s_shared = nullptr;
 
 NotificationManager::NotificationManager(QObject *parent) : QObject(parent) {
+#if defined(Q_OS_IOS) || defined(Q_OS_ANDROID)
     _requestNotificationPermision();
+#endif
 }
 
 NotificationManager* NotificationManager::shared() {

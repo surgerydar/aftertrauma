@@ -104,11 +104,7 @@ Item {
 
                 console.log( 'ChatChannel : received : ' + message );
                 if ( command.command === 'welcome' ) {
-                    send({
-                             command: 'groupgetuserchats',
-                             token: userProfile.token,
-                             id: userProfile.id
-                         });
+                    refresh();
                 } else if ( command.status === 'OK' ) {
                     switch( command.command ) {
                     case 'groupgetuserchats':
@@ -141,7 +137,7 @@ Item {
                         });
                         chatModel.endBatch();
                         //
-                        //
+                        // TODO: refresh all active message models
                         //
                         chatModel.save();
                         break;
@@ -218,7 +214,7 @@ Item {
                                     // TODO: need to store usernames in chat so we can add from???
                                     //
                                     var notification = 'New chat message, you have ' + unreadChatsModel.totalUnread + ' new messages';
-                                    NotificationManager.scheduleNotification(103,notification,0,0);
+                                    NotificationManager.scheduleNotification(notificationModel.chat_base_id,notification,0,0);
                                 }
                             }
                         }
@@ -278,6 +274,13 @@ Item {
             return chatChannel.send(command);
         }
         return undefined;
+    }
+    function refresh() {
+        send({
+                 command: 'groupgetuserchats',
+                 token: userProfile.token,
+                 id: userProfile.id
+             });
     }
     //
     //

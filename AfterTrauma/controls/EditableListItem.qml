@@ -17,6 +17,10 @@ SwipeDelegate {
     //
     //
     //
+    layer.enabled: editable && Qt.platform.os === 'android'
+    //
+    //
+    //
     Component {
         id: editComponent
         Label {
@@ -70,6 +74,7 @@ SwipeDelegate {
         anchors.top: parent.top
         anchors.bottom: parent.bottom
         width: parent.width
+        visible: editable
         Rectangle {
             anchors.top: parent.top
             anchors.left: parent.left

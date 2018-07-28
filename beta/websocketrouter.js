@@ -39,7 +39,7 @@ WebSocketRouter.prototype.connection = function(wss,ws) {
     //
     //
     //
-    let response = { command: 'welcome' };
+    let response = { command: 'welcome', status: 'OK' };
     ws.send(JSON.stringify(response));
 }
 

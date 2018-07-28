@@ -56,7 +56,8 @@ AfterTrauma.EditableListItem {
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
-                   stack.push( "qrc:///ProfileViewer.qml", { userId: owner } );
+                    //stack.push( "qrc:///ProfileViewer.qml", { userId: owner } );
+                    profileViewer.open( owner );
                 }
             }
         }

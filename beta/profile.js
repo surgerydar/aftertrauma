@@ -4,6 +4,7 @@
 var _db;
 
 function Profile() {
+    
 }
 
 Profile.prototype.setup = function( wsr, db ) {
@@ -101,7 +102,6 @@ Profile.prototype.filterpublicprofiles = function( wss, ws, command ) {
         }
     }); 
 }
-
 
 module.exports = new Profile();
 

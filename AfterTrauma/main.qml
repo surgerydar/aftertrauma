@@ -184,6 +184,9 @@ ApplicationWindow {
     GroupChatEditor {
         id: chatEditor
     }
+    ProfileViewer {
+        id: profileViewer
+    }
     MainMenu {
         id: mainMenu
     }
@@ -230,12 +233,14 @@ ApplicationWindow {
     //
     //
     //
+    /*
     Text {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.margins: 2
         text: "(" + parent.width + "," + parent.height + ")"
     }
+    */
     /* notification tests
     Button {
         id: notify1
@@ -337,14 +342,13 @@ ApplicationWindow {
             }
         }
         onApplicationActivated: {
-            if ( !firstActivation && userProfile && !chatChannel.connected ) chatChannel.open();
+            if ( !firstActivation && userProfile && chatChannel.connected ) chatChannel.refresh();
             firstActivation = false;
         }
         onApplicationDeactivated: {
-            chatChannel.close();
+
         }
         onApplicationSuspended: {
-
         }
         property bool firstActivation: true
     }

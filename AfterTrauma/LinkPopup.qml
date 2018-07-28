@@ -9,9 +9,9 @@ Popup {
     modal: true
     focus: true
     x: 0
-    y: 32
+    y: ( appWindow.height - height ) / 2
     width: appWindow.width
-    height: appWindow.height - 128
+    height: Math.min( links.contentHeight + 16, appWindow.height - 128 )
     //
     //
     //
@@ -37,20 +37,32 @@ Popup {
             anchors.right: parent.right
             title: model.title
             summary: model.summary
+            colour: Colours.darkOrange
             //
             //
             //
             onClicked: {
-                var colour = Colours.darkOrange;
+                stack.push( "qrc:///DocumentViewer.qml", { title: ( category && category.title ? category.title : 'LINK' ), subtitle: model.title, colour: colour, document: model.document });
+                container.close();
+            }
+            //
+            //
+            //
+            Component.onCompleted: {
+                setColour();
+            }
+            //
+            //
+            //
+            function setColour() {
+                colour = Colours.darkOrange;
                 var category = categoryModel.findOne({category:model.category});
                 if ( category ) {
                     colour = Colours.categoryColour(category.index);
                 } else {
                     console.log( 'unable to find category : ' + model.category );
                 }
-
-                stack.push( "qrc:///DocumentViewer.qml", { title: ( category && category.title ? category.title : 'LINK' ), subtitle: model.title, colour: colour, document: model.document });
-                container.close();
+                return colour;
             }
         }
     }
