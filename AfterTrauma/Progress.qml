@@ -261,7 +261,7 @@ AfterTrauma.Page {
     footer: Item {
         height: 64
         AfterTrauma.Button {
-            text: "Share"
+            text: "share"
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
             anchors.rightMargin: 8

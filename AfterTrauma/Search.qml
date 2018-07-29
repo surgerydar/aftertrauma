@@ -38,7 +38,14 @@ AfterTrauma.Page {
             //
             //
             onClicked: {
-                stack.push( "qrc:///DocumentViewer.qml", { title: container.title, subtitle: model.title, colour: container.colour, document: model.document });
+                var category = categoryModel.findOne({category:model.category});
+                stack.push( "qrc:///DocumentViewer.qml", { title: ( category && category.title ? category.title : container.title ), subtitle: model.title, colour: colour, document: model.document });
+            }
+            //
+            //
+            //
+            Component.onCompleted: {
+                setColour(model.category);
             }
         }
         add: Transition {
@@ -151,7 +158,8 @@ AfterTrauma.Page {
                     results.model.append( {
                                              document: document.document,
                                              title: document.title,
-                                             summary: summary
+                                             summary: summary,
+                                             category: document.category
                                          });
                 });
             }

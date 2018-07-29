@@ -16,6 +16,7 @@ Item {
     AfterTrauma.Background {
         id: background
         anchors.fill: parent
+        fill: Colours.darkOrange
     }
     //
     //
@@ -76,7 +77,20 @@ Item {
     //
     //
     //
+    function setColour( categoryId ) {
+        colour = Colours.darkOrange;
+        var category = categoryModel.findOne({category:categoryId});
+        if ( category ) {
+            colour = Colours.categoryColour(category.index);
+        } else {
+            console.log( 'unable to find category : ' + categoryId );
+        }
+    }
+    //
+    //
+    //
     property alias title: titleText.text
     property alias summary: summaryText.text
     property alias colour: background.fill
+    property string categoryId: ""
 }

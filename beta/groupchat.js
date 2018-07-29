@@ -352,7 +352,7 @@ GroupChat.prototype.groupjoinchat = function( wss, ws, command ) {
                         // respond to caller
                         //
                         command.status = 'OK';
-                        command.response = response;
+                        command.chat = chat;
                         ws.send(JSON.stringify(command));
                         //
                         // inform active members

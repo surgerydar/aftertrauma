@@ -121,16 +121,23 @@ Rectangle {
                         contents.model.clear();
                         contents.model.append( {
                                                   type: 'image',
-                                                  content: profile.avatar || "icons/profile_icon.png"
+                                                  content: profile.avatar || "qrc:///icons/profile_icon.png"
                                               });
-                        contents.model.append( {
-                                                  type: 'text',
-                                                  content: profile.profile
-                                              });
-                        contents.model.append( {
-                                                  type: 'text',
-                                                  content: profile.tags.join()
-                                              });
+                        if ( profile.age || profile.gender )
+                            contents.model.append( {
+                                                      type: 'text',
+                                                      content: formatAgeAndGender( profile )
+                                                  });
+                        if ( profile.profile && profile.profile.length > 0 )
+                            contents.model.append( {
+                                                      type: 'text',
+                                                      content: profile.profile
+                                                  });
+                        if ( profile.tags && profile.tags.length > 0 )
+                            contents.model.append( {
+                                                      type: 'text',
+                                                      content: profile.tags.join()
+                                                  });
                     } else {
                         console.log( 'ProfileViewer invalid response ' + JSON.stringify(command.response) + ' : filter : ' + JSON.stringify(command.filter) );
                     }
@@ -172,11 +179,15 @@ Rectangle {
     function open( _userId ) {
         userId = _userId;
         container.state = "open";
+        contents.model.clear();
         profileChannel.open();
     }
     function close() {
         container.state = "closed";
         profileChannel.close();
+    }
+    function formatAgeAndGender( profile ) {
+        return ( profile.age ?  profile.age + ' ' : '' ) + ( profile.gender === 'male' || profile.gender === 'female' ? profile.gender : '' );
     }
     //
     //

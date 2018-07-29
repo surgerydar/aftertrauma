@@ -49,6 +49,12 @@ db.connect(
         app.get('/avatar/:id', function (req, res) {
             // update user
             db.findOne( 'users', { id: req.params.id }, { avatar: 1 } ).then( function( response ) {
+                /*
+  				let width = parseInt(req.query.width);
+				let height = parseInt(req.query.height);
+				let transform = sharp().resize(width, height).max();
+				request(redirUrl).pipe(transform).pipe(res);              
+                */
                 //
                 //
                 //

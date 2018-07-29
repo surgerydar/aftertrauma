@@ -59,17 +59,18 @@ AfterTrauma.Page {
             // TODO: indicator for invite
             // TODO: list of active members
             onChat: {
-                openChat(index);
+                openChat(model.id);
             }
             onEdit: {
                 var chat = chatModel.get( index );
                 console.log( 'editing chat : ' + JSON.stringify(chat) );
-                chatEditor.show(chat, function(edited) {
+                chatEditor.show(chat, function(edited,showChat) {
                     delete chat._id; // JONS: fudge to prevent update conflict on mongo update
                     var command = {
                         command: 'groupupdatechat',
                         token: userProfile.token,
-                        chat: edited
+                        chat: edited,
+                        show: showChat
                     };
                     chatChannel.send(command);
                 });
@@ -94,7 +95,7 @@ AfterTrauma.Page {
         height: container.height - ( footerItem.height * 2 )
         x: 0
         onAction: {
-            openChat( index );
+            openChat( chatId, true );
             close();
         }
     }
@@ -113,8 +114,8 @@ AfterTrauma.Page {
         AfterTrauma.Button {
             id: searchChat
             anchors.verticalCenter: parent.verticalCenter
-            anchors.right: addChat.left
-            anchors.rightMargin: 8
+            anchors.left: parent.left
+            anchors.leftMargin: 8
             backgroundColour: "transparent"
             image: "icons/search.png"
             onClicked: {
@@ -140,11 +141,12 @@ AfterTrauma.Page {
                     members: [],
                     messages: []
                 };
-                chatEditor.show(chat, function(edited) {
+                chatEditor.show(chat, function(edited,showChat) {
                     var command = {
                         command: 'groupcreatechat',
                         token: userProfile.token,
-                        chat: edited
+                        chat: edited,
+                        show: showChat
                     };
                     chatChannel.send(command);
                 });
@@ -171,14 +173,20 @@ AfterTrauma.Page {
 
         onCreateChat:{
             console.log( 'ChatManager : create chat');
-            /*
+            if ( command.show ) {
+                openChat( command.chat.id );
+            }
+            /* JONS: these have been moved to ChatChannel
             chatModel.add(command.chat);
             chatModel.save();
             */
         }
         onUpdateChat:{
             console.log( 'ChatManager : update chat : ' + JSON.stringify(command.chat) );
-            /*
+            if ( command.show ) {
+                openChat( command.chat.id );
+            }
+            /* JONS: these have been moved to ChatChannel
             chatModel.update({id: command.chat.id}, command.chat);
             chatModel.save();
             */
@@ -190,20 +198,27 @@ AfterTrauma.Page {
             chatModel.save();
             */
         }
+        onJoinChat: {
+            console.log( 'ChatManager : join chat : ' + JSON.stringify(command.chatid) );
+            if ( command.show ) {
+                openChat( command.chatid );
+            }
+        }
     }
     //
     //
     //
-    function openChat( index ) {
-        var chat = chatModel.get(index);
+    function openChat( chatId, join ) {
+        var chat = chatModel.findOne({id:chatId});
+        var command;
         if ( chat ) {
             if ( chat.owner !== userProfile.id ) {
                 //
                 // check if we have accepted invite
                 //
-                if ( chat.active.indexOf(userProfile.id) < 0 ) {
-                    var command;
-                    if ( chat.invited.indexOf(userProfile.id) >= 0 ) {
+                if ( chat.active === undefined || chat.active.indexOf(userProfile.id) < 0 ) { // TODO: remove legacy chat support
+
+                    if ( chat.invited !== undefined && chat.invited.indexOf(userProfile.id) >= 0 ) { // TODO: remove legacy chat support
                         //
                         // invited so accept
                         //
@@ -229,17 +244,30 @@ AfterTrauma.Page {
                     if ( command ) {
                         chatChannel.send(command);
                     } else {
+                        console.log( 'GroupChatManager.openChat : unable to load chat ' + JSON.stringify(chat ) );
                         return;
                     }
                 }
             }
-
+            console.log( 'GroupChatManager.openChat : loading chat : ' + chat.subject );
             var properties = {
                 chatId:chat.id,
                 messages:chatModel.getMessageModel(chat.id),
                 subject: chat.subject
             };
             stack.push( "qrc:///GroupChat.qml", properties);
+        } else if ( join ) {
+            //
+            // join chat
+            //
+            command = {
+                command: 'groupjoinchat',
+                token: userProfile.token,
+                chatid: chatId,
+                userid: userProfile.id,
+                show: true
+            };
+            chatChannel.send(command);
         }
     }
 }

@@ -42,6 +42,7 @@ Popup {
             //
             //
             onClicked: {
+                var category = categoryModel.findOne({category:model.category});
                 stack.push( "qrc:///DocumentViewer.qml", { title: ( category && category.title ? category.title : 'LINK' ), subtitle: model.title, colour: colour, document: model.document });
                 container.close();
             }
@@ -49,20 +50,7 @@ Popup {
             //
             //
             Component.onCompleted: {
-                setColour();
-            }
-            //
-            //
-            //
-            function setColour() {
-                colour = Colours.darkOrange;
-                var category = categoryModel.findOne({category:model.category});
-                if ( category ) {
-                    colour = Colours.categoryColour(category.index);
-                } else {
-                    console.log( 'unable to find category : ' + model.category );
-                }
-                return colour;
+                setColour(model.category);
             }
         }
     }

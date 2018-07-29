@@ -74,29 +74,7 @@ Rectangle {
             text: "save"
             enabled: subjectField.text.length > 0 && ( membersList.count > 0 || publicCheckBox.checked )
             onClicked: {
-                if ( callback ) {
-
-                    chat.subject = subjectField.text;
-                    var tags = tagsField.text.split();
-                    chat.tags = [];
-                    tags.forEach( function(tag) {
-                        var trimmedTag = tag.trim().toLowerCase();
-                        if ( chat.tags.indexOf(trimmedTag) < 0 ) {
-                            chat.tags.push(trimmedTag);
-                        }
-                    });
-                    //
-                    // TODO: store usernames
-                    //
-                    chat.members = members;
-                    chat.usernames = [];
-                    for ( var i = 0; i < membersList.model.count; i++ ) {
-                        chat.usernames.push( membersList.model.get(i).username );
-                    }
-                    chat["public"] = publicCheckBox.checked;
-                    console.log( 'new chat : ' + JSON.stringify(chat) );
-                    callback(chat);
-                }
+                save(false);
                 container.close();
             }
         }
@@ -197,17 +175,17 @@ Rectangle {
         //
         //
         //
-        /*
         AfterTrauma.Button {
-            anchors.left: parent.left
-            anchors.leftMargin: 8
+            id: chatButton
             anchors.verticalCenter: parent.verticalCenter
-            text: membersList.editable ? "done" : "edit"
+            anchors.left: parent.left
+            anchors.leftMargin: 16
+            image: "icons/chat.png"
             onClicked: {
-                membersList.editable = !membersList.editable;
+                save( true );
+                container.close();
             }
         }
-        */
         //
         //
         //
@@ -281,6 +259,32 @@ Rectangle {
             filter: {id:{$in:members}}
         };
         membersList.model.refresh();
+    }
+
+    function save( viewChat ) {
+        if ( callback ) {
+
+            chat.subject = subjectField.text;
+            var tags = tagsField.text.split();
+            chat.tags = [];
+            tags.forEach( function(tag) {
+                var trimmedTag = tag.trim().toLowerCase();
+                if ( chat.tags.indexOf(trimmedTag) < 0 ) {
+                    chat.tags.push(trimmedTag);
+                }
+            });
+            //
+            // TODO: store usernames
+            //
+            chat.members = members;
+            chat.usernames = [];
+            for ( var i = 0; i < membersList.model.count; i++ ) {
+                chat.usernames.push( membersList.model.get(i).username );
+            }
+            chat["public"] = publicCheckBox.checked;
+            console.log( 'new chat : ' + JSON.stringify(chat) );
+            callback(chat,viewChat);
+        }
     }
 
     property var callback: undefined

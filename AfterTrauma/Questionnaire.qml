@@ -231,7 +231,7 @@ AfterTrauma.Page {
     //
     //
     StackView.onActivated: {
-        questionnaires.currentIndex = 0;
+        //questionnaires.currentIndex = 0;
         questionnaireModel.loadScores();
     }
     StackView.onDeactivated: {

@@ -61,6 +61,42 @@ AfterTrauma.Page {
                     //
                     //
                     Rectangle {
+                        id: dateBlock
+                        width: profileContainer.width
+                        height: childrenRect.height + 16
+                        color: Colours.almostWhite
+                        //
+                        //
+                        //
+                        Label {
+                            id: dateHeader
+                            anchors.top: parent.top
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                            anchors.margins: 8
+                            color: Colours.veryDarkSlate
+                            fontSizeMode: Label.Fit
+                            font.family: fonts.light
+                            font.pointSize: 24
+                            text: "Date of injury"
+                        }
+                        AfterTrauma.DatePicker {
+                            id: injuryDate
+                            height: 128
+                            width: dateBlock.width - 8
+                            anchors.top: dateHeader.bottom
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.topMargin: 4
+                            textMonth: true
+                            onCurrentDateChanged: {
+                                dirty = true;
+                            }
+                        }
+                    }
+                    //
+                    //
+                    //
+                    Rectangle {
                         id: profileBlock0
                         width: profileContainer.width
                         height: childrenRect.height + 16
@@ -444,6 +480,7 @@ AfterTrauma.Page {
         dirty = false;
         if ( profile ) {
             console.log( 'profile:' + profile.username );
+            injuryDate.currentDate = profile.injuryDate ?  new Date( profile.injuryDate ): new Date()
         } else {
             console.log( 'no profile!' );
         }
@@ -506,6 +543,7 @@ AfterTrauma.Page {
     //
     function saveProfile() {
         var newProfile = { id: profile.id };
+        profile.injuryDate = injuryDate.currentDate.getTime();
         if ( patient.checked ) {
             profile.role = "patient";
         } else if ( carer.checked ) {

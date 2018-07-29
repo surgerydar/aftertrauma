@@ -74,10 +74,7 @@ Rectangle {
             avatar: "https://aftertrauma.uk:4000/avatar/" + model.owner
             subject: model.subject
             onClicked: {
-                var chatIndex = chatModel.indexOfChat(model.id);
-                if ( chatIndex >= 0 ) {
-                    action( chatIndex );
-                }
+                action( model.id );
             }
         }
         //
@@ -112,7 +109,7 @@ Rectangle {
     //
     //
     //
-    signal action( int index )
+    signal action( string chatId )
     //
     //
     //

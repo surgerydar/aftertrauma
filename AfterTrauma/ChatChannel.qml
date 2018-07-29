@@ -174,6 +174,29 @@ Item {
                         //
                         container.removeChat( command );
                         break;
+                    case 'groupleavechat':
+                        //
+                        // remove from database
+                        //
+                        unreadChatsModel.markAsRead(command.chatid);
+                        chatModel.remove({id:command.chatid});
+                        chatModel.save();
+                        //
+                        // pass it on
+                        //
+                        container.leaveChat( command );
+                        break;
+                    case 'groupjoinchat':
+                        //
+                        // add to database
+                        //
+                        chatModel.add(command.chat);
+                        chatModel.save();
+                        //
+                        // pass it on
+                        //
+                        container.joinChat( command );
+                        break;
                     case 'groupsendmessage': {
                         //
                         // update chat model
@@ -290,6 +313,8 @@ Item {
     signal createChat( var command )
     signal updateChat( var command )
     signal removeChat( var command )
+    signal leaveChat( var command )
+    signal joinChat( var command )
     //
     //
     //

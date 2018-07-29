@@ -27,6 +27,12 @@ Item {
                 source = "icons/profile_icon.png";
             }
         }
+        MouseArea {
+            anchors.fill: parent
+            onClicked: {
+                profileViewer.open( from );
+            }
+        }
     }
     //
     //

@@ -17,7 +17,7 @@ SwipeDelegate {
     //
     //
     //
-    layer.enabled: editable && Qt.platform.os === 'android'
+    layer.enabled: swipeEnabled && Qt.platform.os === 'android'
     //
     //
     //
@@ -74,7 +74,7 @@ SwipeDelegate {
         anchors.top: parent.top
         anchors.bottom: parent.bottom
         width: parent.width
-        visible: editable
+        visible: swipeEnabled
         Rectangle {
             anchors.top: parent.top
             anchors.left: parent.left
