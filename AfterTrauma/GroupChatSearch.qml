@@ -71,7 +71,7 @@ Rectangle {
         }
         delegate: GroupChatSearchItem {
             width: chats.width
-            avatar: "https://aftertrauma.uk:4000/avatar/" + model.owner
+            avatar: "https://aftertrauma.uk:4000/avatar/" + model.owner  + '?width=56&height=56'
             subject: model.subject
             onClicked: {
                 action( model.id );

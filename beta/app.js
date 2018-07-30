@@ -1,6 +1,7 @@
 var env = process.env;
 var config = require('./config');
 var fs = require('fs');
+var sharp = require('sharp');
 //
 // connect to database
 //
@@ -49,21 +50,26 @@ db.connect(
         app.get('/avatar/:id', function (req, res) {
             // update user
             db.findOne( 'users', { id: req.params.id }, { avatar: 1 } ).then( function( response ) {
-                /*
-  				let width = parseInt(req.query.width);
-				let height = parseInt(req.query.height);
-				let transform = sharp().resize(width, height).max();
-				request(redirUrl).pipe(transform).pipe(res);              
-                */
-                //
-                //
-                //
-                var img = new Buffer(response.avatar.split(',')[1], 'base64');
-                res.writeHead(200, {
-                    'Content-Type': 'image/png',
-                    'Content-Length': img.length
-                });
-                res.end( img );
+                if ( req.query.width && req.query.height ) {
+                    var buffer = new Buffer(response.avatar.split(',')[1], 'base64');
+                    let width = parseInt(req.query.width);
+                    let height = parseInt(req.query.height);
+                    let transform = sharp(buffer).resize(width, height).max();
+                    res.writeHead(200, {
+                        'Content-Type': 'image/png'
+                    });
+                    transform.pipe(res);  
+                } else {
+                    //
+                    //
+                    //
+                    var img = new Buffer(response.avatar.split(',')[1], 'base64');
+                    res.writeHead(200, {
+                        'Content-Type': 'image/png',
+                        'Content-Length': img.length
+                    });
+                    res.end( img );
+                }
             } ).catch( function( error ) {
                 res.json( {status: 'ERROR', message: JSON.stringify( error ) } );
             });

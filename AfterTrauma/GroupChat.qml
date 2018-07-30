@@ -36,6 +36,7 @@ AfterTrauma.Page {
             anchors.right: parent.right
             from: model.from
             message: model.message
+            date: new Date( model.date ).toLocaleString()
         }
         //
         //

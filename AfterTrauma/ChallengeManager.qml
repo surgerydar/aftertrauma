@@ -149,7 +149,7 @@ AfterTrauma.Page {
         //editable = false;
     }
     function formatDescription( activity, repeats, frequency ) {
-        return activity + '<br/>' + 'repeat ' + repeats + 'time' + ( repeats > 1 ? 's ' : ' ' ) + ',' + frequency;
+        return activity + '<p>' + 'repeat ' + repeats + ' time' + ( repeats > 1 ? 's ' : ' ' ) + ', ' + frequency;
     }
 
     //

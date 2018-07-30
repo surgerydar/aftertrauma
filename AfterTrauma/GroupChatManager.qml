@@ -48,7 +48,7 @@ AfterTrauma.Page {
         //
         delegate: GroupChatItem {
             width: chats.width
-            avatar: "https://aftertrauma.uk:4000/avatar/" + model.owner
+            avatar: "https://aftertrauma.uk:4000/avatar/" + model.owner + '?width=56&height=56'
             owner: model.owner
             subject: model.subject
             contentEditable: model.owner === userProfile.id

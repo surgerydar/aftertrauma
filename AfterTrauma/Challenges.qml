@@ -60,7 +60,7 @@ DatabaseList {
         challenge.count = 0;
         challenge.date = Date.now();
         challenge.active = challenge.active | false;
-        add(challenge);
+        challenge._id = add(challenge)._id;
         save();
     }
     function updateChallenge(challenge) {
@@ -74,8 +74,7 @@ DatabaseList {
         save();
     }
     function findChallenge(name) {
-        var finds = find({name:name});
-        return finds.length > 0 ? finds[0] : undefined;
+        return findOne({name:name});
     }
     function updateCount(index,count) {
         //

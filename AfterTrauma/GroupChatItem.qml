@@ -113,7 +113,7 @@ AfterTrauma.EditableListItem {
                 height: memberList.height
                 width: height
                 fillMode: Image.PreserveAspectCrop
-                source: "https://aftertrauma.uk:4000/avatar/" + model.modelData
+                source: "https://aftertrauma.uk:4000/avatar/" + model.modelData + '?width=' + width + '&height=' + height
                 //
                 //
                 //

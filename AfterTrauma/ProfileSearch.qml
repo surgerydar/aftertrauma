@@ -66,13 +66,13 @@ Rectangle {
         clip: true
         spacing: 4
         model: WebSocketList {
-            url: "wss://aftertrauma.uk:4000"
+            url: baseWS
             roles: ["_id","id","username","profile","avatar"]
         }
         delegate: ProfileSearchItem {
             width: profiles.width
             userId: model.id
-            avatar: model.avatar || "icons/profile_icon.png"
+            avatar: ( model.avatar || "qrc://icons/profile_icon.png" ) +  '?width=56&height=56'
             username: model.username
             profile: model.profile
             actionLabel: "add"

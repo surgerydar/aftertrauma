@@ -9,7 +9,7 @@ Item {
     //
     //
     //
-    height: Math.max( 64, messageText.contentHeight + 16 )
+    height: Math.max( 64, messageText.contentHeight + 24 )
     //
     //
     //
@@ -21,7 +21,7 @@ Item {
         anchors.left: from === userProfile.id ? parent.left : undefined
         anchors.right: from === userProfile.id ? undefined : parent.right
         fillMode: Image.PreserveAspectFit
-        source: baseURL + "/avatar/" + from
+        source: baseURL + "/avatar/" + from + '?width=56&height=56'
         onStatusChanged: {
             if ( status === Image.Error ) {
                 source = "icons/profile_icon.png";
@@ -55,17 +55,35 @@ Item {
         Text {
             id: messageText
             anchors.fill: parent
-            anchors.margins: 8
+            anchors.topMargin: 8
+            anchors.leftMargin: 8
+            anchors.bottomMargin: 16
+            anchors.rightMargin: 8
             color: Colours.veryDarkSlate
             verticalAlignment: Text.AlignVCenter
             wrapMode: Text.WordWrap
             font.family: fonts.light
             font.pixelSize: 24
         }
+        //
+        //
+        //
+        Text {
+            id: dateText
+            anchors.left: parent.left
+            anchors.bottom: parent.bottom
+            anchors.leftMargin: 8
+            anchors.bottomMargin: 4
+            color: Colours.veryDarkSlate
+            font.weight: Font.Light
+            font.family: fonts.light
+            font.pointSize: 10
+        }
     }
     //
     //
     //
     property alias message: messageText.text
+    property alias date: dateText.text
     property string from: ""
 }
