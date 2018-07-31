@@ -23,6 +23,7 @@
 #include "linechartdata.h"
 #include "websocketlist.h"
 #include "notificationmanager.h"
+#include "archive.h"
 //
 // TODO: find a better way of doing this
 //
@@ -85,6 +86,7 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("BackKeyFilter", AndroidBackKeyFilter::shared());
     engine.rootContext()->setContextProperty("PDFGenerator", PDFGenerator::shared());
     engine.rootContext()->setContextProperty("NotificationManager", NotificationManager::shared());
+    engine.rootContext()->setContextProperty("Archive", Archive::shared());
     //engine.rootContext()->setContextProperty("LineChartData", LineChartData::shared());
     //
     //

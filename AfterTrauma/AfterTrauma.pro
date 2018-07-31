@@ -25,7 +25,8 @@ SOURCES += main.cpp \
     pdfgenerator.cpp \
     linechartdata.cpp \
     websocketlist.cpp \
-    notificationmanager.cpp
+    notificationmanager.cpp \
+    archive.cpp
 
 HEADERS += \
     imagepicker.h \
@@ -51,7 +52,10 @@ HEADERS += \
     linechartdata.h \
     paintable.h \
     websocketlist.h \
-    notificationmanager.h
+    notificationmanager.h \
+    archive.h \
+    archiver.h \
+    unarchiver.h
 
 
 RESOURCES += qml.qrc

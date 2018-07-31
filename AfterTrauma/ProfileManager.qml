@@ -431,7 +431,40 @@ AfterTrauma.Page {
                             }
                         }
                     }
-
+                    Rectangle {
+                        id: archiveBlock
+                        width: profileContainer.width
+                        height: childrenRect.height + 16
+                        color: Colours.almostWhite
+                        AfterTrauma.Button {
+                            id: archiveButton
+                            anchors.top: parent.top
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.topMargin: 8
+                            backgroundColour: Colours.slate
+                            textColour: Colours.almostWhite
+                            text: "archive personal data"
+                            onClicked: {
+                                var source = SystemUtils.documentDirectory();
+                                var archive = source + '/media/aftertrauma.archive';
+                                Archive.archive(source,archive);
+                            }
+                        }
+                        AfterTrauma.Button {
+                            id: unarchiveButton
+                            anchors.top:archiveButton.bottom
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.topMargin: 8
+                            backgroundColour: Colours.slate
+                            textColour: Colours.almostWhite
+                            text: "restore personal data"
+                            onClicked: {
+                                var archive = SystemUtils.documentDirectory() + '/media/aftertrauma.archive';
+                                var target = SystemUtils.documentDirectory() + '/restore';
+                                Archive.unarchive(archive,target);
+                            }
+                        }
+                    }
                 }
             }
         }
