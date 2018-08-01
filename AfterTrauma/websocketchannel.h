@@ -8,12 +8,21 @@
 class WebSocketChannel : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(QString url READ url WRITE setUrl)
+    Q_PROPERTY(bool autoreconnect READ autoreconnect WRITE setAutoreconnect)
+    /*
     Q_PROPERTY(QString url MEMBER m_url )
     Q_PROPERTY(bool autoreconnect MEMBER m_autoreconnect )
-
+    */
 public:
     explicit WebSocketChannel(QObject *parent = 0);
-
+    //
+    //
+    //
+    QString url() const { return m_url; }
+    void setUrl( const QString& url ) { m_url = url; }
+    bool autoreconnect() const { return m_autoreconnect; }
+    void setAutoreconnect( const bool autoreconnect ) { m_autoreconnect = autoreconnect; }
 signals:
     void received(const QString &message);
     void error(const QString &error);
@@ -29,7 +38,6 @@ public slots:
     // returns : GUID
     //
     QString send(QVariant command);
-
 private slots:
     void connected();
     void disconnected();

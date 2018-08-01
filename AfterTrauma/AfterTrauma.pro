@@ -26,7 +26,10 @@ SOURCES += main.cpp \
     linechartdata.cpp \
     websocketlist.cpp \
     notificationmanager.cpp \
-    archive.cpp
+    archive.cpp \
+    uploader.cpp \
+    uploadchannel.cpp \
+    downloader.cpp
 
 HEADERS += \
     imagepicker.h \
@@ -55,7 +58,10 @@ HEADERS += \
     notificationmanager.h \
     archive.h \
     archiver.h \
-    unarchiver.h
+    unarchiver.h \
+    uploader.h \
+    uploadchannel.h \
+    downloader.h
 
 
 RESOURCES += qml.qrc

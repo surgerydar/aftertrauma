@@ -24,8 +24,8 @@ public:
     static Archive* shared();
 
 signals:
-    void done( const QString& operation, const QString& archive, const QString& target );
-    void error( const QString& operation, const QString& archive, const QString& target, const QString& error );
+    void done( const QString& operation, const QString& source, const QString& target );
+    void error( const QString& operation, const QString& source, const QString& target, const QString& error );
 
 public slots:
     void archive( const QString& source, const QString& archive );

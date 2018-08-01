@@ -459,9 +459,14 @@ AfterTrauma.Page {
                             textColour: Colours.almostWhite
                             text: "restore personal data"
                             onClicked: {
+                                /*
                                 var archive = SystemUtils.documentDirectory() + '/media/aftertrauma.archive';
                                 var target = SystemUtils.documentDirectory() + '/restore';
                                 Archive.unarchive(archive,target);
+                                */
+                                var url = baseURL + '/media/aftertrauma.archive';
+                                var target = SystemUtils.documentDirectory() + '/media/aftertrauma.archive';
+                                Downloader.download(url,target);
                             }
                         }
                     }
@@ -601,6 +606,42 @@ AfterTrauma.Page {
         JSONFile.write('user.json',profile);
         profileChannel.send({command:'updateprofile', token: profile.token, profile:profile});
     }
+    //
+    //
+    //
+    Connections {
+        target: Archive
+        onDone: {
+            console.log( 'Archiver : done : ' + operation + ' : ' + source + ' > ' + target );
+            if ( operation === "archive" ) {
+                Uploader.upload( target, baseWS );
+            }
+        }
+        onError: {
+            console.log( 'Archiver : error : ' + source + ' > ' + target + ' : ' + message );
+        }
+    }
+    Connections {
+        target: Uploader
+        onDone: {
+            console.log( 'Uploader : done : ' + source + ' > ' + destination );
+        }
+        onError: {
+            console.log( 'Uploader : error : ' + source + ' > ' + destination + ' : ' + message );
+        }
+        onProgress: {
+            console.log( 'Uploader : progress : ' + source + ' > ' + destination + ' : ' + current + ' of ' + total + ' : ' + message );
+        }
+    }
+    Connections {
+        target: Downloader
+        onDone: {
+            console.log( 'Downloader : done : ' + source + ' > ' + destination );
+            var target = SystemUtils.documentDirectory() + '/restore';
+            Archive.unarchive(destination,target);
+        }
+    }
+
     //
     //
     //

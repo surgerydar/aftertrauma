@@ -9,9 +9,10 @@ function FileWriter( guid, filename, fileSize ) {
     this.fileSize   = fileSize;
     this.processed  = 0;
     this.filename   = filename;
-    this.file       = fs.createWriteStream('./upload/' + filename);
-    if ( !this.file ) {
-        console.log( 'unable to open file : ' + './upload/' + filename );
+    try {
+        this.file = fs.createWriteStream('./upload/' + filename);
+    } catch( error ) {
+        console.log( 'unable to open file : ' + './upload/' + filename + ' : error : ' + error );
     }
 }
 FileWriter.prototype.writeChunk = function( ws, data ) {

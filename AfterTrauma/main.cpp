@@ -24,6 +24,8 @@
 #include "websocketlist.h"
 #include "notificationmanager.h"
 #include "archive.h"
+#include "uploader.h"
+#include "downloader.h"
 //
 // TODO: find a better way of doing this
 //
@@ -87,6 +89,8 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("PDFGenerator", PDFGenerator::shared());
     engine.rootContext()->setContextProperty("NotificationManager", NotificationManager::shared());
     engine.rootContext()->setContextProperty("Archive", Archive::shared());
+    engine.rootContext()->setContextProperty("Uploader", Uploader::shared());
+    engine.rootContext()->setContextProperty("Downloader", Downloader::shared());
     //engine.rootContext()->setContextProperty("LineChartData", LineChartData::shared());
     //
     //
