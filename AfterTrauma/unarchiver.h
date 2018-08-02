@@ -32,7 +32,10 @@ public:
             //
             QFile file(m_archive);
             if ( file.open(QFile::ReadOnly) ) {
+                int fileSize = ( int ) file.size();
+                int bytesProcessed = 0;
                 m_dataStream.setDevice(&file);
+                message = "extracting data";
                 while( !m_dataStream.atEnd() ) {
                     QString filename;
                     m_dataStream >> filename;
@@ -46,6 +49,8 @@ public:
                     } else {
                         qDebug() << "invalid filename";
                     }
+                    bytesProcessed = (int)file.pos();
+                    emit progress( m_archive, m_target, fileSize, bytesProcessed, message );
                 }
                 emit done( m_archive, m_target );
             } else {
@@ -61,7 +66,8 @@ public:
     }
 signals:
     void done( const QString& archive, const QString& target );
-    void error( const QString& archive, const QString& target, const QString& error );
+    void progress( const QString& source, const QString& archive, int total, int current, const QString& message );
+    void error( const QString& archive, const QString& target, const QString& message );
 
 private:
     bool _extractFile( const QString& filepath ) {
@@ -72,6 +78,7 @@ private:
             m_dataStream >> compressed;
             QByteArray data = qUncompress(compressed);
             file.write(data);
+            return true;
         } else {
             qDebug() << "unable to open file : " << filepath;
         }

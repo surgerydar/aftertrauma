@@ -44,9 +44,14 @@ private:
     //
     //
     //
-    quint16     m_guid;
+    char        m_guid[ 16 ];
     QFile       m_file;
     QWebSocket* m_channel;
+    //
+    //
+    //
+    quint32     m_fileSize;
+    quint32     m_bytesWritten;
     //
     //
     //

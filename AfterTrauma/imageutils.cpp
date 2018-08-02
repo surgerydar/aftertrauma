@@ -45,3 +45,21 @@ QString ImageUtils::urlEncode( QString path, int width, int height ) {
     }
     return "";
 }
+
+bool ImageUtils::resize( QString path, int width, int height ) {
+    QImage sourceImage;
+    if( sourceImage.load(path) ) {
+        //
+        // scale image
+        //
+        if ( sourceImage.width() > width || sourceImage.height() > height ) {
+            QImage destinationImage = sourceImage.scaled(QSize(width,height),Qt::KeepAspectRatio);
+            //
+            // write file as
+            //
+            return destinationImage.save(path);
+        }
+        return true;
+    }
+    return false;
+}

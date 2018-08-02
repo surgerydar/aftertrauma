@@ -17,6 +17,7 @@ signals:
 
 public slots:
     QString urlEncode(  QString path, int width, int height );
+    bool resize(  QString path, int width, int height );
 };
 
 #endif // IMAGEUTILS_H

@@ -24,7 +24,7 @@ FileWriter.prototype.writeChunk = function( ws, data ) {
         return true;
     }
     this.processed += data.length;
-    //console.log( this.fileSize + ' bytes remaining' );
+    //console.log( ( this.fileSize - this.processed ) + ' bytes remaining' );
     if ( this.processed >= this.fileSize ) {
         console.log( 'closing file');
         this.file.end();

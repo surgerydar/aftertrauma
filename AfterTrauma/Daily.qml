@@ -33,10 +33,6 @@ DatabaseList {
                         { label: 'life', value: Math.random() * multiplier },
                         { label: 'relationships', value: Math.random() * multiplier },
                     ],
-                    /*
-                    notes: [],
-                    images: []
-                    */
                     blocks: []
                 }
                 if ( i > 0 ) {
@@ -179,8 +175,7 @@ DatabaseList {
                 { label: 'life', value: 0. },
                 { label: 'relationships', value: 0. },
             ],
-            notes: [],
-            images: []
+            blocks: []
         }
         add(daily);
         save();

@@ -63,7 +63,8 @@ public:
     }
 signals:
     void done( const QString& source, const QString& archive );
-    void error( const QString& source, const QString& archive, const QString& error );
+    void progress( const QString& source, const QString& archive, int total, int current, const QString& message );
+    void error( const QString& source, const QString& archive, const QString& message );
 
 private:
     void _addFile( const QString& filename, const QString& filepath ) {

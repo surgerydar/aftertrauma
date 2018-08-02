@@ -250,7 +250,7 @@ AfterTrauma.Page {
                         type: type,
                         title: Date(),
                         content: content,
-                        tags: JSON.stringify([])
+                        tags: []
                     };
                     blocksModel.model.append(block);
                     contents.positionViewAtIndex(blocksModel.model.count-1,ListView.Visible);
@@ -272,16 +272,20 @@ AfterTrauma.Page {
         };
         var day = dailyModel.findOne(query);
         blocksModel.model.clear();
-        if ( day && day.blocks ) {
-            day.blocks.forEach( function(block){
-                if ( block.tags.length <= 0 ) {
-                    for ( var i = 0; i < 4; i++ ) {
-                        block.tags.push( 'testtag' + i );
+        if ( day  ) {
+            if ( day.blocks ) {
+                day.blocks.forEach( function(block){
+                    /*
+                    if ( block.tags.length <= 0 ) {
+                        for ( var i = 0; i < 4; i++ ) {
+                            block.tags.push( 'testtag' + i );
+                        }
                     }
-                }
-                block.tags = JSON.stringify(block.tags);
-                blocksModel.model.append(block);
-            });
+                    block.tags = JSON.stringify(block.tags);
+                    */
+                    blocksModel.model.append(block);
+                });
+            }
         }
     }
     StackView.onDeactivating: {
@@ -292,18 +296,20 @@ AfterTrauma.Page {
         var blocks = [];
         for ( var i = 0; i < count; i++ ) {
             var block = blocksModel.items.get(i).model;
-            var tags = block.tags ? JSON.parse(block.tags) : [];
+           // var tags = block.tags ? JSON.parse(block.tags) : [];
             blocks.push({
                             type: block.type,
                             title: block.title,
                             content: block.content,
-                            tags: tags
+                            tags: block.tags // tags
                         });
         }
+        console.log( 'DiaryEntry StackView.onDeactivating : saving blocks : ' + JSON.stringify(blocks) );
         //
         //
         //
         dailyModel.updateDay( date, { blocks: blocks } );
+        dailyModel.save();
     }
     //
     //

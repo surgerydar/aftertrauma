@@ -72,14 +72,20 @@ void UploadChannel::openChannel() {
 
 void UploadChannel::makeCommandHeader( QDataStream& stream, const char* selector ) {
     stream.writeRawData(upld,4);
-    //stream << m_guid;
-    char* guid = "0000000066666666";
-    stream.writeRawData(guid,16);
+    stream.writeRawData(m_guid,16);
     stream.writeRawData(selector,4);
 
 }
 
 void UploadChannel::sendHeader() {
+    //
+    //
+    //
+    m_fileSize = ( quint32 ) m_file.size();
+    m_bytesWritten = 0;
+    for ( int i = 0; i < 16; i++ ) {
+        m_guid[ i ] = qrand() % 128;
+    }
     //
     // write header
     //
@@ -91,7 +97,7 @@ void UploadChannel::sendHeader() {
     QByteArray filename = filepath.right((filepath.length()-filepath.lastIndexOf('/'))-1).toLatin1(); // TODO: need a better way of achieving this
     stream << ( quint16 ) filename.size();
     stream.writeRawData(filename.data(),filename.size());
-    stream << ( quint32 ) m_file.size();
+    stream << m_fileSize;
     qDebug() << "UploadChannel::sendHeader : filename " << filename;
     m_channel->sendBinaryMessage(buffer);
 }
@@ -111,7 +117,12 @@ bool UploadChannel::sendChunk() {
         //stream << ( quint16 ) data.size();
         stream.writeRawData(data.data(),data.size());
         m_channel->sendBinaryMessage(buffer);
+        //
+        //
+        //
+        m_bytesWritten += data.size();
     }
+    qDebug() << "UploadChannel::sendChunk : written " << m_bytesWritten << " of " << m_fileSize;
     return data.size() == kChunkSize;
 }
 
@@ -140,7 +151,8 @@ void UploadChannel::textMessageReceived(const QString& message) {
         if ( command.contains("status") ) {
             if ( command["status"] == "DONE" ) {
                 prompt = "data uploaded";
-                emit progress( m_source, m_destination, m_chunkCount, m_chunksWritten++, prompt );
+                //emit progress( m_source, m_destination, m_chunkCount, m_chunksWritten++, prompt );
+                emit done(m_source, m_destination);
                 m_channel->close();
                 this->deleteLater();
             } else if ( command["status"] == "READY" ){

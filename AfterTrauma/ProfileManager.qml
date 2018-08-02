@@ -89,7 +89,8 @@ AfterTrauma.Page {
                             anchors.topMargin: 4
                             textMonth: true
                             onCurrentDateChanged: {
-                                dirty = true;
+                                // TODO: initialisation causes this to fire FIXIT
+                                // dirty = true;
                             }
                         }
                     }
@@ -446,8 +447,13 @@ AfterTrauma.Page {
                             text: "archive personal data"
                             onClicked: {
                                 var source = SystemUtils.documentDirectory();
-                                var archive = source + '/media/aftertrauma.archive';
+                                var archive = source + archivePath();
                                 Archive.archive(source,archive);
+                                enabled = false;
+                            }
+                            function reset() {
+                                text = "archive personal data";
+                                enabled = true;
                             }
                         }
                         AfterTrauma.Button {
@@ -458,14 +464,17 @@ AfterTrauma.Page {
                             backgroundColour: Colours.slate
                             textColour: Colours.almostWhite
                             text: "restore personal data"
+                            enabled: profile.hasarchive === undefined ? false : profile.hasarchive
                             onClicked: {
                                 /*
                                 var archive = SystemUtils.documentDirectory() + '/media/aftertrauma.archive';
                                 var target = SystemUtils.documentDirectory() + '/restore';
                                 Archive.unarchive(archive,target);
                                 */
-                                var url = baseURL + '/media/aftertrauma.archive';
-                                var target = SystemUtils.documentDirectory() + '/media/aftertrauma.archive';
+                                console.log( 'ProfileManager : restoring archive' );
+                                var path = archivePath()
+                                var url = baseURL + path;
+                                var target = SystemUtils.documentDirectory() + path;
                                 Downloader.download(url,target);
                             }
                         }
@@ -536,7 +545,7 @@ AfterTrauma.Page {
     //
     WebSocketChannel {
         id: profileChannel
-        url: "wss://aftertrauma.uk:4000"
+        url: baseWS
         //
         //
         //
@@ -544,7 +553,7 @@ AfterTrauma.Page {
             busyIndicator.running = false;
             var command = JSON.parse(message); // TODO: channel should probably emit object
             if( command.status === "OK" ) {
-                if ( command.command === 'updateprofile' ) {
+                if ( command.command === 'updateprofile' && command.close ) {
                     stack.pop()
                 } else if ( command.command === 'changepassword' ) {
                     confirmDialog.show( '<h1>Password Changed</h1>' );
@@ -579,8 +588,7 @@ AfterTrauma.Page {
     //
     //
     //
-    function saveProfile() {
-        var newProfile = { id: profile.id };
+    function saveProfile(closeManager) {
         profile.injuryDate = injuryDate.currentDate.getTime();
         if ( patient.checked ) {
             profile.role = "patient";
@@ -604,7 +612,10 @@ AfterTrauma.Page {
             console.log( 'profile tags: ' + JSON.stringify(profile.tags));
         }
         JSONFile.write('user.json',profile);
-        profileChannel.send({command:'updateprofile', token: profile.token, profile:profile});
+        profileChannel.send({command:'updateprofile', token: profile.token, profile:profile, close: closeManager});
+    }
+    function archivePath() {
+        return '/media/' + profile.id.replace( /[{}]/g, '') + '.archive';
     }
     //
     //
@@ -625,11 +636,17 @@ AfterTrauma.Page {
         target: Uploader
         onDone: {
             console.log( 'Uploader : done : ' + source + ' > ' + destination );
+            profile.hasarchive = true;
+            unarchiveButton.enabled = true;
+            archiveButton.reset();
+            saveProfile(false);
         }
         onError: {
             console.log( 'Uploader : error : ' + source + ' > ' + destination + ' : ' + message );
+            archiveButton.reset();
         }
         onProgress: {
+            archiveButton.text = 'archiving ' + Math.floor(( ( current / total ) * 100 )) + '%';
             console.log( 'Uploader : progress : ' + source + ' > ' + destination + ' : ' + current + ' of ' + total + ' : ' + message );
         }
     }
@@ -637,7 +654,7 @@ AfterTrauma.Page {
         target: Downloader
         onDone: {
             console.log( 'Downloader : done : ' + source + ' > ' + destination );
-            var target = SystemUtils.documentDirectory() + '/restore';
+            var target = SystemUtils.documentDirectory();
             Archive.unarchive(destination,target);
         }
     }
@@ -647,12 +664,12 @@ AfterTrauma.Page {
     //
     validate: function() {
         if ( profile ) {
-            if ( dirty ) {
+            if ( dirty || profile.injuryDate !== injuryDate.currentDate.getTime() ) {
                 //
                 // serialise profile
                 //
                 confirmDialog.show('<h1>Save Changes?</h1>Do you want to save the changes you have made?', [
-                                       { label: 'yes', action: function() { saveProfile() } },
+                                       { label: 'yes', action: function() { saveProfile(true) } },
                                        { label: 'no', action: function() { profileChannel.close(); stack.pop(); } }
                                    ] );
                 return false;

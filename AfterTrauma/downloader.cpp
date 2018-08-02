@@ -3,6 +3,7 @@
 #include <QNetworkRequest>
 #include <QNetworkReply>
 #include <QFile>
+#include <QDebug>
 #include "systemutils.h"
 
 Downloader* Downloader::s_shared = nullptr;
@@ -24,11 +25,13 @@ void Downloader::download(const QString &url, const QString &filepath) {
     // delete existing
     //
     if ( QFile::exists(temporaryPath) ) {
+        qDebug() << "Downloader::download : removing existing temporary archive : " << temporaryPath;
         QFile::remove(temporaryPath);
     }
     //
     // download new
     //
+    qDebug() << "Downloader::download : requesting file from : " << url;
     QNetworkReply *reply = m_manager.get(QNetworkRequest(QUrl(url)));
     //
     //
@@ -38,14 +41,19 @@ void Downloader::download(const QString &url, const QString &filepath) {
         if ( file.open(QFile::WriteOnly|QFile::Append) ) {
             QByteArray data = reply->readAll();
             file.write(data);
+            qDebug() << "Downloader::download : QNetworkReply::readyRead : downloaded : " << file.size() << "bytes";
             file.close();
         }
     } );
-    connect(reply, static_cast<void (QNetworkReply::*)(QNetworkReply::NetworkError)>(&QNetworkReply::error),[=](QNetworkReply::NetworkError /*error*/) {
+    connect( reply, &QNetworkReply::downloadProgress,[=](qint64 bytesReceived, qint64 bytesTotal){
+        qDebug() << "Downloader::download : QNetworkReply::downloadProgress : " << bytesReceived << " of " << bytesTotal;
+    });
+    connect( reply, static_cast<void (QNetworkReply::*)(QNetworkReply::NetworkError)>(&QNetworkReply::error),[=](QNetworkReply::NetworkError errorNo ) {
         if ( QFile::exists(temporaryPath) ) {
             QFile::remove(temporaryPath);
             QString message = "network error";
             emit error( url, filepath, message );
+            qDebug() << "Downloader::download : QNetworkReply::error : " << errorNo;
         }
     });
     connect(reply, &QNetworkReply::sslErrors,[=](const QList<QSslError>& /*errors*/) {
@@ -59,9 +67,11 @@ void Downloader::download(const QString &url, const QString &filepath) {
         if ( QFile::exists(temporaryPath) ) {
             SystemUtils::shared()->moveFile(temporaryPath,filepath,true);
             emit done( url, filepath );
+            qDebug() << "Downloader::download : QNetworkReply::finished";
         } else {
             QString message = "file did not download";
             emit error( url, filepath, message );
+            qDebug() << "Downloader::download : QNetworkReply::finished : " << message;
 
         }
         reply->deleteLater();

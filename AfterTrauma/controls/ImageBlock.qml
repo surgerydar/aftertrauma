@@ -58,6 +58,7 @@ Item {
                 container.height = Math.max(64, Math.min(width * ( sourceSize.height / sourceSize.width ),sourceSize.height) + 16);
                 console.log( 'resizing ImageBlock to ' + container.height );
                 */
+                console.log('ImageBlock : loaded image : ' + source );
                 mediaReady();
             }
         }

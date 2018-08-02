@@ -183,13 +183,16 @@ Rectangle {
     Connections {
         target: ImagePicker
         onImagePicked: {
+            if ( ImageUtils.resize(url, appWindow.width, appWindow.height) ) {
+                imageSource = 'file://' + url;
+                console.log( 'image picked : ' + imageSource );
+                imageMedia.source = imageSource;
+            }
+            /*
             imageSource = 'file://' + url;
             console.log( 'image picked : ' + imageSource );
             imageMedia.source = imageSource;
-            //images[imagesView.currentIndex].image = source;
-            //imagesView.currentItem.image = images[imagesView.currentIndex].image;
-            //setImageTimer.source = source;
-            //setImageTimer.start();
+            */
         }
     }
     //

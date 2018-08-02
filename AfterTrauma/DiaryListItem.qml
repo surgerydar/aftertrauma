@@ -63,6 +63,8 @@ Item {
         anchors.left: dateText.right
         anchors.bottom: parent.bottom
         anchors.margins: 4
+        sourceSize.height: height
+        sourceSize.width: width
         fillMode: Image.PreserveAspectCrop
         visible: status === Image.Ready
         source: firstBlockContent("image")

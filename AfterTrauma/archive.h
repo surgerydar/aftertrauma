@@ -25,7 +25,7 @@ public:
 
 signals:
     void done( const QString& operation, const QString& source, const QString& target );
-    void error( const QString& operation, const QString& source, const QString& target, const QString& error );
+    void error( const QString& operation, const QString& source, const QString& target, const QString& message );
 
 public slots:
     void archive( const QString& source, const QString& archive );

@@ -96,7 +96,7 @@ bool showPicker( UIImagePickerControllerSourceType source ) {
                 //data["image"] = QVariant::fromValue<QImage>(chosenQImage);
 
 
-                QString pathTemplate = QStandardPaths::writableLocation(QStandardPaths::HomeLocation).append("/Documents/image%1.jpg");
+                QString pathTemplate = QStandardPaths::writableLocation(QStandardPaths::HomeLocation).append("/Documents/aftertrauma/image%1.jpg");
                 int i = 0;
                 QString path;
                 do {
