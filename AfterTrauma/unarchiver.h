@@ -32,8 +32,8 @@ public:
             //
             QFile file(m_archive);
             if ( file.open(QFile::ReadOnly) ) {
-                int fileSize = ( int ) file.size();
-                int bytesProcessed = 0;
+                quint64 fileSize = file.size();
+                quint64 bytesProcessed = 0;
                 m_dataStream.setDevice(&file);
                 message = "extracting data";
                 while( !m_dataStream.atEnd() ) {
@@ -49,7 +49,7 @@ public:
                     } else {
                         qDebug() << "invalid filename";
                     }
-                    bytesProcessed = (int)file.pos();
+                    bytesProcessed = file.pos();
                     emit progress( m_archive, m_target, fileSize, bytesProcessed, message );
                 }
                 emit done( m_archive, m_target );
@@ -66,7 +66,7 @@ public:
     }
 signals:
     void done( const QString& archive, const QString& target );
-    void progress( const QString& source, const QString& archive, int total, int current, const QString& message );
+    void progress( const QString& source, const QString& archive, quint64 total, quint64 current, const QString& message );
     void error( const QString& archive, const QString& target, const QString& message );
 
 private:

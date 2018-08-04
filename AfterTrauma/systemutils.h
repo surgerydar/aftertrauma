@@ -31,8 +31,12 @@ public slots:
     //
     //
     //
-    bool copyFile( QString from, QString to, bool force = false );
-    bool moveFile( QString from, QString to, bool force = false );
+    QString mediaPath( const QString& filename );
+    //
+    //
+    //
+    bool copyFile( const QString& from, const QString& to, bool force = false );
+    bool moveFile( const QString& from, const QString& to, bool force = false );
     //
     //
     //

@@ -38,16 +38,20 @@ Item {
         //
         //
         onStatusChanged: {
-            if ( status === Image.Error ) { // && !redirected ) {
+            if ( status === Image.Error ) {
+
                 /*
-                redirected = true;
                 var currentSource = JSON.stringify(source);
-                var mediaPath = 'file://' + SystemUtils.documentDirectory() + '/media' + currentSource.substring(currentSource.lastIndexOf('/'));
-                console.log( 'redirecting image block from ' + currentSource + ' to : ' + mediaPath );
-                source = mediaPath;
+                if ( currentSource.indexOf(SystemUtils.documentDirectory()) < 0 ) {
+                    var mediaPath = 'file://' + SystemUtils.documentDirectory() + '/media' + currentSource.substring(currentSource.lastIndexOf('/'));
+                    console.log( 'redirecting image block from ' + currentSource + ' to : ' + mediaPath );
+                    source = mediaPath;
+                } else {
+                    console.log('ImageBlock : error loading image : ' + source );
+                    mediaError( 'unable to load : ' + source );
+                }
                 */
-                console.log('ImageBlock : error loading image : ' + source );
-                mediaError( 'unable to load : ' + source );
+
             } else if ( status === Image.Ready ){
                 /*
                 //container.height = Math.max(64,content.paintedHeight + 16);
@@ -62,6 +66,9 @@ Item {
                 mediaReady();
             }
         }
+        //
+        //
+        //
     }
     //
     //

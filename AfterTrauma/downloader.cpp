@@ -20,6 +20,7 @@ Downloader* Downloader::shared() {
 }
 
 void Downloader::download(const QString &url, const QString &filepath) {
+    QString message = "downloading";
     QString temporaryPath = filepath + QString(".temp");
     //
     // delete existing
@@ -41,17 +42,16 @@ void Downloader::download(const QString &url, const QString &filepath) {
         if ( file.open(QFile::WriteOnly|QFile::Append) ) {
             QByteArray data = reply->readAll();
             file.write(data);
-            qDebug() << "Downloader::download : QNetworkReply::readyRead : downloaded : " << file.size() << "bytes";
             file.close();
         }
     } );
     connect( reply, &QNetworkReply::downloadProgress,[=](qint64 bytesReceived, qint64 bytesTotal){
         qDebug() << "Downloader::download : QNetworkReply::downloadProgress : " << bytesReceived << " of " << bytesTotal;
+        emit progress(url,filepath,bytesTotal,bytesReceived, message);
     });
     connect( reply, static_cast<void (QNetworkReply::*)(QNetworkReply::NetworkError)>(&QNetworkReply::error),[=](QNetworkReply::NetworkError errorNo ) {
         if ( QFile::exists(temporaryPath) ) {
             QFile::remove(temporaryPath);
-            QString message = "network error";
             emit error( url, filepath, message );
             qDebug() << "Downloader::download : QNetworkReply::error : " << errorNo;
         }

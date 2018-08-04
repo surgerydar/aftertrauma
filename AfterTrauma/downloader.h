@@ -17,7 +17,7 @@ public:
 signals:
     void done( const QString& source, const QString& destination );
     void error( const QString& source, const QString& destination, const QString& message );
-    void progress( const QString& source, const QString& destination, int total, int current, const QString& message );
+    void progress( const QString& source, const QString& destination, quint64 total, quint64 current, const QString& message );
 
 public slots:
     void download( const QString& url, const QString& filename );

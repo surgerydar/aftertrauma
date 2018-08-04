@@ -41,7 +41,7 @@ AfterTrauma.Page {
                     width: parent.width
                     anchors.verticalCenter: parent.verticalCenter
                     type: model.type
-                    media: model.content
+                    media: model.type === 'text' ? model.content : 'file://' + SystemUtils.documentDirectory() + '/' + model.content
                     onMediaReady: {
                         contents.forceLayout();
                     }

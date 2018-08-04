@@ -68,10 +68,14 @@ QString SystemUtils::documentDirectory() {
 QString SystemUtils::temporaryDirectory() {
     return QDir::tempPath();
 }
+
+QString SystemUtils::mediaPath( const QString& filename ) {
+    return documentDirectory().append("/media/").append(filename);
+}
 //
 //
 //
-bool SystemUtils::copyFile( QString from, QString to, bool force ) {
+bool SystemUtils::copyFile( const QString& from, const QString& to, bool force ) {
     if ( force ) {
         if ( QFile::exists(to) ) {
             QFile::remove(to);
@@ -79,7 +83,7 @@ bool SystemUtils::copyFile( QString from, QString to, bool force ) {
     }
     return QFile::copy( from, to );
 }
-bool SystemUtils::moveFile( QString from, QString to, bool force ) {
+bool SystemUtils::moveFile( const QString& from, const QString& to, bool force ) {
     if ( force ) {
         if ( QFile::exists(to) ) {
             QFile::remove(to);

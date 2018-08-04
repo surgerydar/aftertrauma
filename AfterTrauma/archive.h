@@ -25,6 +25,7 @@ public:
 
 signals:
     void done( const QString& operation, const QString& source, const QString& target );
+    void progress( const QString& operation, const QString& source, const QString& archive, quint64 total, quint64 current, const QString& message );
     void error( const QString& operation, const QString& source, const QString& target, const QString& message );
 
 public slots:

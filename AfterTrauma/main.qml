@@ -85,6 +85,15 @@ ApplicationWindow {
     //
     //
     //
+    property var models: [settingsModel,dailyModel,challengeModel,questionnaireModel,unreadChatsModel,chatModel,categoryModel,documentModel,tagsModel,recomendationModel,bodyPartModel]
+    function reloadModels() {
+        models.forEach( function( model ) {
+           model.load();
+        });
+    }
+    //
+    //
+    //
     background: Rectangle {
         anchors.fill: parent
         gradient: Gradient {

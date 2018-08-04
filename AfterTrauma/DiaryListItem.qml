@@ -154,7 +154,7 @@ Item {
     //
     function firstBlockContent(type) {
         for ( var i = 0; i < blocks.length; i++ ) {
-            if ( blocks[ i ].type === type ) return ( type === 'image' ? "image://cached/" : "" ) + blocks[ i ].content;
+            if ( blocks[ i ].type === type ) return ( type === 'image' ? 'file://' + SystemUtils.documentDirectory() + '/' : "" ) + blocks[ i ].content;
         }
         return "";
     }

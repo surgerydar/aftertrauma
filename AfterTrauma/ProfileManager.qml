@@ -450,6 +450,7 @@ AfterTrauma.Page {
                                 var archive = source + archivePath();
                                 Archive.archive(source,archive);
                                 enabled = false;
+                                unarchiveButton.enabled = false;
                             }
                             function reset() {
                                 text = "archive personal data";
@@ -476,6 +477,12 @@ AfterTrauma.Page {
                                 var url = baseURL + path;
                                 var target = SystemUtils.documentDirectory() + path;
                                 Downloader.download(url,target);
+                                enabled = false;
+                                archiveButton.enabled = false;
+                            }
+                            function reset() {
+                                text = "restore personal data";
+                                enabled = profile.hasarchive === undefined ? false : profile.hasarchive;
                             }
                         }
                     }
@@ -626,10 +633,21 @@ AfterTrauma.Page {
             console.log( 'Archiver : done : ' + operation + ' : ' + source + ' > ' + target );
             if ( operation === "archive" ) {
                 Uploader.upload( target, baseWS );
+            } else {
+                archiveButton.reset();
+                unarchiveButton.reset();
+                reloadModels();
             }
         }
         onError: {
             console.log( 'Archiver : error : ' + source + ' > ' + target + ' : ' + message );
+        }
+        onProgress: {
+            if ( operation === 'archive' ) {
+                archiveButton.text = 'archiving files ' + Math.floor(( ( current / total ) * 100 )) + '%';
+            } else {
+                unarchiveButton.text = 'extracting files ' + Math.floor(( ( current / total ) * 100 )) + '%';
+            }
         }
     }
     Connections {
@@ -637,8 +655,8 @@ AfterTrauma.Page {
         onDone: {
             console.log( 'Uploader : done : ' + source + ' > ' + destination );
             profile.hasarchive = true;
-            unarchiveButton.enabled = true;
             archiveButton.reset();
+            unarchiveButton.reset();
             saveProfile(false);
         }
         onError: {
@@ -656,6 +674,9 @@ AfterTrauma.Page {
             console.log( 'Downloader : done : ' + source + ' > ' + destination );
             var target = SystemUtils.documentDirectory();
             Archive.unarchive(destination,target);
+        }
+        onProgress: {
+            unarchiveButton.text = 'downloading ' + Math.floor(( ( current / total ) * 100 )) + '%';
         }
     }
 

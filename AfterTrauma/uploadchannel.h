@@ -46,7 +46,7 @@ private:
     //
     char        m_guid[ 16 ];
     QFile       m_file;
-    QWebSocket* m_channel;
+    QWebSocket  m_channel;
     //
     //
     //
@@ -64,7 +64,7 @@ private:
     void makeCommandHeader( QDataStream& command, const char* selector );
     void sendHeader();
     bool sendChunk();
-    bool isChannelOpen() const { return m_channel->state() == QAbstractSocket::ConnectedState; }
+    bool isChannelOpen() const { return m_channel.state() == QAbstractSocket::ConnectedState; }
     QVariantMap parseCommand( const QString& message );
 };
 

@@ -106,7 +106,6 @@ AfterTrauma.Page {
             ListView {
                 id: recomendations
                 anchors.fill: parent
-                anchors.bottomMargin: 36
                 clip: true
                 spacing: 8
                 model: ListModel {

@@ -42,10 +42,15 @@ public:
                 //
                 m_dataStream.setDevice(&archive);
                 QStringList files = dir.entryList(QDir::Files);
+                quint64 nFiles = files.size();
+                quint64 filesProcessed = 0;
+                message = "archiving files";
                 for ( auto& filename : files ) {
                     QString filePath = dir.absoluteFilePath(filename);
                     qDebug() << "archiving file : " << filename;
                     _addFile( filename, filePath );
+                    filesProcessed++;
+                    emit progress(m_source, m_archive,nFiles,filesProcessed,message);
                 }
                 archive.close();
                 emit done( m_source, m_archive);
@@ -63,7 +68,7 @@ public:
     }
 signals:
     void done( const QString& source, const QString& archive );
-    void progress( const QString& source, const QString& archive, int total, int current, const QString& message );
+    void progress( const QString& source, const QString& archive, quint64 total, quint64 current, const QString& message );
     void error( const QString& source, const QString& archive, const QString& message );
 
 private:

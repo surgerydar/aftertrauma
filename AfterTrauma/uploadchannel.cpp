@@ -12,7 +12,7 @@ const char* chnk = "chnk";
 const quint16 kChunkSize = 2048;
 
 UploadChannel::UploadChannel(QObject *parent) : QObject(parent) {
-
+    m_channel.setParent(this);
 }
 
 void UploadChannel::start() {
@@ -44,30 +44,19 @@ void UploadChannel::openChannel() {
     //
     //
     qDebug() << "UploadChannel::run : openning upload channel : " << m_destination;
-    m_channel = new QWebSocket();
+    //m_channel = new QWebSocket();
     //
     //
     //
-    /*
-    connect(m_channel, &QWebSocket::connected,[this]() {
-        qDebug() << "lambda connected";
-    });
-    connect(m_channel, &QWebSocket::disconnected,[this]() {
-        qDebug() << "lambda disconnected";
-    });
-    connect(m_channel, &QWebSocket::textMessageReceived,[this](const QString& message) {
-        qDebug() << "lambda textMessageReceived : " << message;
-    });
-    */
-    connect(m_channel, &QWebSocket::connected, this, &UploadChannel::connected);
-    connect(m_channel, &QWebSocket::disconnected, this, &UploadChannel::disconnected);
-    connect(m_channel, &QWebSocket::textMessageReceived, this, &UploadChannel::textMessageReceived);
-    connect(m_channel, &QWebSocket::binaryMessageReceived, this, &UploadChannel::binaryMessageReceived);
-    connect(m_channel, static_cast<void (QWebSocket::*)(QAbstractSocket::SocketError)>(&QWebSocket::error), this, &UploadChannel::socketError);
+    connect(&m_channel, &QWebSocket::connected, this, &UploadChannel::connected);
+    connect(&m_channel, &QWebSocket::disconnected, this, &UploadChannel::disconnected);
+    connect(&m_channel, &QWebSocket::textMessageReceived, this, &UploadChannel::textMessageReceived);
+    connect(&m_channel, &QWebSocket::binaryMessageReceived, this, &UploadChannel::binaryMessageReceived);
+    connect(&m_channel, static_cast<void (QWebSocket::*)(QAbstractSocket::SocketError)>(&QWebSocket::error), this, &UploadChannel::socketError);
     //
     //
     //
-    m_channel->open(m_destination);
+    m_channel.open(m_destination);
 }
 
 void UploadChannel::makeCommandHeader( QDataStream& stream, const char* selector ) {
@@ -99,7 +88,7 @@ void UploadChannel::sendHeader() {
     stream.writeRawData(filename.data(),filename.size());
     stream << m_fileSize;
     qDebug() << "UploadChannel::sendHeader : filename " << filename;
-    m_channel->sendBinaryMessage(buffer);
+    m_channel.sendBinaryMessage(buffer);
 }
 
 bool UploadChannel::sendChunk() {
@@ -116,7 +105,7 @@ bool UploadChannel::sendChunk() {
         makeCommandHeader( stream, chnk );
         //stream << ( quint16 ) data.size();
         stream.writeRawData(data.data(),data.size());
-        m_channel->sendBinaryMessage(buffer);
+        m_channel.sendBinaryMessage(buffer);
         //
         //
         //
@@ -153,7 +142,7 @@ void UploadChannel::textMessageReceived(const QString& message) {
                 prompt = "data uploaded";
                 //emit progress( m_source, m_destination, m_chunkCount, m_chunksWritten++, prompt );
                 emit done(m_source, m_destination);
-                m_channel->close();
+                m_channel.close();
                 this->deleteLater();
             } else if ( command["status"] == "READY" ){
                 sendChunk();
@@ -243,7 +232,7 @@ void UploadChannel::socketError(QAbstractSocket::SocketError error) {
     default:
         errorText.append("Unknown error");
     }
-    QString socketErrorString = m_channel->errorString();
+    QString socketErrorString = m_channel.errorString();
     if ( socketErrorString.length() > 0 ) {
         errorText.append(" : ");
         errorText.append( socketErrorString );

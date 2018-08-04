@@ -31,6 +31,9 @@ void Archive::archive( const QString& source, const QString& archive ) {
     connect(archiver, &Archiver::done, [this]( const QString& source, const QString& archive ) {
         emit done( ARCHIVE, source, archive );
     });
+    connect(archiver, &Archiver::progress, [this]( const QString& source, const QString& archive, quint64 total, quint64 current, const QString& message ) {
+        emit progress( ARCHIVE, source, archive, total, current, message );
+    });
     connect(archiver, &Archiver::error, [this]( const QString& source, const QString& archive, const QString& message ){
         emit error( ARCHIVE, source, archive, message );
     });
@@ -53,6 +56,9 @@ void Archive::unarchive( const QString& archive, const QString& target ) {
     //
     connect(unarchiver, &UnArchiver::done, [this]( const QString& archive, const QString& target ) {
         emit done( UNARCHIVE, target, archive );
+    });
+    connect(unarchiver, &UnArchiver::progress, [this]( const QString& source, const QString& archive, quint64 total, quint64 current, const QString& message ) {
+        emit progress( ARCHIVE, source, archive, total, current, message );
     });
     connect(unarchiver, &UnArchiver::error, [this]( const QString& archive, const QString& target, const QString& message ){
         emit error( UNARCHIVE, target, archive, message );

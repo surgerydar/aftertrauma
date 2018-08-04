@@ -31,6 +31,7 @@ Item {
     //
     MediaPlayer {
         id: content
+        autoLoad: true
         //
         //
         //
