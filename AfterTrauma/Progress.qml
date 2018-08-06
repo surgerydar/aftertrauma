@@ -54,7 +54,8 @@ AfterTrauma.Page {
             //
             //
             //
-            LineChart {
+            NewLineChart {
+            //LineChart {
                 id: lineChart
                 anchors.top: parent.top
                 anchors.left: parent.left

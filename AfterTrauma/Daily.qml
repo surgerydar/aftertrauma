@@ -57,6 +57,7 @@ DatabaseList {
                                             tags: []
                                         } );
                         } else {
+                            /*
                             daily.blocks.push(
                                         {
                                             type: "image",
@@ -64,6 +65,7 @@ DatabaseList {
                                             content: "qrc:///icons/image.png",
                                             tags: []
                                         } );
+                            */
                         }
                     }
                 }

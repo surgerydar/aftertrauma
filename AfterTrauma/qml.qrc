@@ -179,5 +179,6 @@
         <file>NumberBadge.qml</file>
         <file>ProfileViewer.qml</file>
         <file>controls/Label.qml</file>
+        <file>NewLineChart.qml</file>
     </qresource>
 </RCC>
