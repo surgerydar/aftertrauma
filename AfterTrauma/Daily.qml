@@ -274,4 +274,8 @@ DatabaseList {
         console.log( 'f : ' + first.date );
         console.log( 'l : ' + last.date );
     }
+    function dateRange() {
+
+        return count > 0 ? { min: get(count-1).date, max: get(0).date } : { min: Date.now(), max: Date.now() };
+    }
 }

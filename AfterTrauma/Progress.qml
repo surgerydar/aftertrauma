@@ -60,12 +60,13 @@ AfterTrauma.Page {
                 anchors.top: parent.top
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.bottom: parent.verticalCenter
-                //anchors.margins: 16
+                anchors.bottom: legendList.top
+                anchors.bottomMargin: 8
             }
             //
             //
             //
+            /*
             AfterTrauma.Button {
                 id: previousButton
                 anchors.top: parent.verticalCenter
@@ -152,6 +153,7 @@ AfterTrauma.Page {
                     }
                 }
             }
+
             //
             //
             //
@@ -197,12 +199,13 @@ AfterTrauma.Page {
                     lineChart.forceRepaint();
                 }
             }
+            */
             //
             //
             //
             Flow {
                 id: legendList
-                anchors.top: periodButtons.bottom
+                height: parent.height / 3
                 anchors.left: parent.left
                 anchors.bottom: parent.bottom
                 anchors.right: parent.right

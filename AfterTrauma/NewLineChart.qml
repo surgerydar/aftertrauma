@@ -196,7 +196,7 @@ Rectangle {
 
             var startIndex = dailyModel.indexOfFirstDayBefore( chart.startDate );
             var endIndex = dailyModel.indexOfFirstDayAfter( chart.endDate );
-            console.log( 'start: ' + startIndex + ' end: ' + endIndex + ' numDays: ' + numDays );
+            //console.log( 'start: ' + startIndex + ' end: ' + endIndex + ' numDays: ' + numDays );
 
             var ctx = canvas.getContext("2d");
             ctx.globalCompositeOperation = "source-over";
@@ -207,11 +207,13 @@ Rectangle {
             values = {};
             var points = {};
             var x = 0;
+            var previousX = 0;
             var h = 9 * yGridStep;
             var minTime = chart.startDate.getTime();
             var maxTime = chart.endDate.getTime();
             var dTime = maxTime - minTime;
-            for (var i = startIndex; i >= endIndex; i-- ) {
+            var dIndex = 1;// TODO: skip
+            for (var i = startIndex; i >= endIndex; i -= dIndex ) {
                 //
                 // get daily
                 //
@@ -220,28 +222,31 @@ Rectangle {
                 // increment x by diference between samples
                 //
                 x = Utils.daysBetweenMs(chart.startDate.getTime(),day.date) * xGridStep;
-                //
-                // calculate points for each value
-                //
-                var t = ( day.date - minTime ) / dTime;
-                for ( var j = 0; j < day.values.length; j++ ) {
-                    var value = day.values[j];
-                    if ( points[value.label] === undefined ) {
-                        points[value.label] = [];
-                    }
-                    var point = {
-                        x: x,
-                        y: h - ( h * value.value )
-                    };
-                    points[value.label].push(point);
+                if ( x == 0 || Math.abs( x - previousX ) >= 1 ) {
+                    previousX = x;
+                    //
+                    // calculate points for each value
+                    //
+                    var t = ( day.date - minTime ) / dTime;
+                    for ( var j = 0; j < day.values.length; j++ ) {
+                        var value = day.values[j];
+                        if ( points[value.label] === undefined ) {
+                            points[value.label] = [];
+                        }
+                        var point = {
+                            x: x,
+                            y: h - ( h * value.value )
+                        };
+                        points[value.label].push(point);
 
-                    //
-                    //
-                    //
-                    if ( values[value.label] === undefined ) {
-                        values[value.label] = [];
+                        //
+                        //
+                        //
+                        if ( values[value.label] === undefined ) {
+                            values[value.label] = [];
+                        }
+                        values[value.label].push( Qt.point(t,value.value) );
                     }
-                    values[value.label].push( Qt.point(t,value.value) );
                 }
             }
             //
@@ -290,25 +295,73 @@ Rectangle {
         anchors.bottom: parent.bottom
         text: endDate.toDateString() + " >"
     }
-
     //
     //
     //
     PinchArea {
+        id: pinchArea
         anchors.fill: parent
         pinch.dragAxis: Pinch.XAxis
         pinch.minimumX: -1.
         pinch.maximumX: 1.
-        pinch.minimumScale: .5
-        pinch.maximumScale: 2.
+        //pinch.minimumScale: .5
+        //pinch.maximumScale: 2.
+        onPinchStarted: {
+            dateRange = dailyModel.dateRange();
+            startX = pinch.center.x;
+            startMs = startDate.getTime();
+            startPeriod = endDate.getTime() - startMs;
+            msPerPixel = startPeriod / width;
+        }
+
         onPinchUpdated: {
-            console.log( 'NewLineChart scale: ' + pinch.scale + ' pan:' + pinch.center.x );
-            //startDate.setTime(startDate.getTime()+pinch.center.x);
-            //endDate.setTime(startDate.getTime()+pinch.center.x);
+            var newPeriod = Math.max( week, Math.min( year, startPeriod * ( 1. / pinch.scale ) ));
+            var dPeriod = newPeriod - startPeriod;
+            var dX = pinch.center.x - startX;
+            var newStartTime = ( ( startMs - ( dX * msPerPixel ) ) - ( dPeriod / 2 ) );
+            //newStartTime = Math.max( dateRange.min, Math.min( dateRange.max, newStartTime) );
+            newStartTime = Math.max( dateRange.min, Math.min( dateRange.max - newPeriod / 2, newStartTime ) );
+            startDate.setTime( newStartTime );
+            endDate.setTime( newStartTime + newPeriod );
             fromDate.text = '< ' + startDate.toDateString();
             toDate.text = endDate.toDateString() + ' >';
             canvas.requestPaint();
         }
+        //
+        //
+        //
+        MouseArea {
+            anchors.fill: parent
+            scrollGestureEnabled: false
+            onPressed: {
+                pinchArea.dateRange = dailyModel.dateRange();
+                pinchArea.startX = mouseX;
+                pinchArea.startMs = startDate.getTime();
+                pinchArea.startPeriod = endDate.getTime() - pinchArea.startMs;
+                pinchArea.msPerPixel = pinchArea.startPeriod / width;
+            }
+            onMouseXChanged: {
+                var dX = mouseX - pinchArea.startX;
+                var newStartTime = pinchArea.startMs - ( dX * pinchArea.msPerPixel );
+                newStartTime = Math.max( pinchArea.dateRange.min, Math.min( pinchArea.dateRange.max - pinchArea.startPeriod / 2, newStartTime ) );
+                startDate.setTime( newStartTime );
+                endDate.setTime( newStartTime + pinchArea.startPeriod );
+                fromDate.text = '< ' + startDate.toDateString();
+                toDate.text = endDate.toDateString() + ' >';
+                canvas.requestPaint();
+            }
+        }
+        //
+        //
+        //
+        property var dateRange: { "min": 0, "max": 0 }
+        property real startPeriod: 0
+        property real startMs: 0
+        property real msPerPixel: 0
+        property real startX: 0
+        property real week: 1000 * 60 * 60 * 24 * 7
+        property real year: 1000 * 60 * 60 * 24 * 7 * 52
+
     }
     //
     //
@@ -346,7 +399,15 @@ Rectangle {
             break;
 
         }
-        console.log( 'LineChart.setup : ' + period + ' : start : ' + chart.startDate.toDateString() + ' : end : ' + chart.endDate.toDateString() );
+        //
+        // adjust to fix
+        //
+        var dateRange = dailyModel.dateRange();
+        var newPeriod = endDate.getTime() - startDate.getTime();
+        startDate.setTime(Math.max( dateRange.min, Math.min( dateRange.max - newPeriod / 2, startDate.getTime() ) ));
+        //
+        //
+        //
         canvas.requestPaint();
     }
     function forceRepaint() {
