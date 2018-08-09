@@ -82,6 +82,24 @@ public slots:
         }
     }
 
+    void write(QString id, Paintable* paintable) {
+        if ( m_documents.contains(id) ) {
+            QPdfWriter* writer = m_documents[id]->m_writer.get();
+            //
+            //
+            //
+            writer->setPageOrientation(QPageLayout::Portrait);
+            //
+            // TODO: find a better way of getting bounds
+            //
+            QPainter painter;
+            painter.begin(writer);
+            QRect r = painter.viewport();
+            painter.end();
+            paintable->write(writer,r);
+        }
+    }
+
     //void drawText(QString id, QVariant position, QString text);
 private:
     static PDFGenerator* s_shared; // TODO: shared_ptr
@@ -108,7 +126,9 @@ private:
                 m_file.close();
             }
         }
-
+        //
+        //
+        //
         QTemporaryFile              m_file;
         std::shared_ptr<QPdfWriter> m_writer;
     };

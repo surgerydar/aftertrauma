@@ -29,7 +29,10 @@ SOURCES += main.cpp \
     archive.cpp \
     uploader.cpp \
     uploadchannel.cpp \
-    downloader.cpp
+    downloader.cpp \
+    diarypainter.cpp \
+    colours.cpp \
+    flowerchartpainter.cpp
 
 HEADERS += \
     imagepicker.h \
@@ -61,7 +64,10 @@ HEADERS += \
     unarchiver.h \
     uploader.h \
     uploadchannel.h \
-    downloader.h
+    downloader.h \
+    diarypainter.h \
+    colours.h \
+    flowerchartpainter.h
 
 
 RESOURCES += qml.qrc

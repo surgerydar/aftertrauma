@@ -54,15 +54,9 @@ Popup {
             }
         }
     }
-    /*
-    enter: Transition {
-        NumberAnimation { property: "y"; from: parent.height; to: parent.height - implicitHeight }
-    }
-
-    exit: Transition {
-        NumberAnimation { property: "y"; from: parent.height - implicitHeight; to: parent.height }
-    }
-    */
+    //
+    //
+    //
     function find( tags ) {
         documentModel.filter = {};
         links.model.clear();

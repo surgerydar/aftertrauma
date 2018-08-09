@@ -77,6 +77,25 @@ AfterTrauma.Page {
         //
         //
         AfterTrauma.Button {
+            id: share
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            backgroundColour: "transparent"
+            text: "share"
+            onClicked: {
+                //
+                // show date range dialog
+                //
+
+                //
+                // create pdf
+                //
+            }
+        }
+        //
+        //
+        //
+        AfterTrauma.Button {
             id: addEntry
             anchors.right: parent.right
             anchors.rightMargin: 8

@@ -5,6 +5,7 @@
 #include <QQuickPaintedItem>
 #include <QPainter>
 #include <QMutex>
+#include "flowerchartpainter.h"
 
 class FlowerChart : public QQuickPaintedItem {
     Q_OBJECT
@@ -45,22 +46,25 @@ protected:
     void mouseReleaseEvent(QMouseEvent *event) override;
 
 private:
+    /*
     void drawBackground(QPainter*painter);
     void drawPetal(QPainter* painter, QPointF& cp, int index, qreal angle, qreal sweep, QColor& colour);
     void generatePetalPath( QPainterPath& path, QPointF& cp, qreal radius, qreal angle, qreal sweep, bool isMinMax );
+    */
+    FlowerChartPainter m_painter;
     //
     //
     //
     int m_currentDate;
-    QList< qreal > m_values;
-    QList< qreal > m_maxValues;
-    QList< qreal > m_minValues;
+    QVector< qreal > m_values;
+    QVector< qreal > m_maxValues;
+    QVector< qreal > m_minValues;
     //
     // value animation
     //
     qreal           m_animationU;
-    QList< qreal >  m_valuesAnimationStart;
-    QList< qreal >  m_valuesAnimationEnd;
+    QVector< qreal >  m_valuesAnimationStart;
+    QVector< qreal >  m_valuesAnimationEnd;
     //
     //
     //

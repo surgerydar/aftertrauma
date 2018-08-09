@@ -26,6 +26,7 @@
 #include "archive.h"
 #include "uploader.h"
 #include "downloader.h"
+#include "diarypainter.h"
 //
 // TODO: find a better way of doing this
 //
@@ -74,6 +75,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<FlowerChart>("SodaControls", 1, 0, "FlowerChart");
     qmlRegisterType<CachedMediaSource>("SodaControls", 1, 0, "CachedMediaSource");
     qmlRegisterType<LineChartData>("SodaControls", 1, 0, "LineChartData");
+    qmlRegisterType<DiaryPainter>("SodaControls", 1, 0, "DiaryWriter");
     //
     //
     //

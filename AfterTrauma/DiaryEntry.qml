@@ -200,17 +200,6 @@ AfterTrauma.Page {
                 }
             }
         }
-        //
-        //
-        //
-        /* JONS: transitions causing layout issues
-        add: Transition {
-            NumberAnimation { properties: "y"; from: contents.height; duration: 250 }
-        }
-        displaced: Transition {
-            NumberAnimation { properties: "y"; duration: 250 }
-        }
-        */
     }
     //
     //
@@ -229,6 +218,35 @@ AfterTrauma.Page {
             text: editable ? "done" : "edit"
             onClicked: {
                 editable = !editable;
+            }
+        }
+        //
+        //
+        //
+        AfterTrauma.Button {
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            text: "share"
+            //
+            //
+            //
+            DiaryWriter {
+                id: writer
+                font: fonts.lightFont
+            }
+
+            onClicked: {
+                var query = {
+                    day: date.getDate(),
+                    month: date.getMonth(),
+                    year: date.getFullYear()
+                };
+                var day = dailyModel.findOne(query);
+                if ( day ) {
+                    console.log( 'sharing diary entry: ' + JSON.stringify(day) );
+                    var pdfPath = SystemUtils.documentDirectory() + "/diary.pdf";
+                    writer.save([day], pdfPath)
+                }
             }
         }
         //
