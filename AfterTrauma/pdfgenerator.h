@@ -89,14 +89,7 @@ public slots:
             //
             //
             writer->setPageOrientation(QPageLayout::Portrait);
-            //
-            // TODO: find a better way of getting bounds
-            //
-            QPainter painter;
-            painter.begin(writer);
-            QRect r = painter.viewport();
-            painter.end();
-            paintable->write(writer,r);
+            paintable->write(writer);
         }
     }
 

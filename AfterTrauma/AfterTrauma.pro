@@ -30,9 +30,9 @@ SOURCES += main.cpp \
     uploader.cpp \
     uploadchannel.cpp \
     downloader.cpp \
-    diarypainter.cpp \
     colours.cpp \
-    flowerchartpainter.cpp
+    flowerchartpainter.cpp \
+    diarywriter.cpp
 
 HEADERS += \
     imagepicker.h \
@@ -65,9 +65,9 @@ HEADERS += \
     uploader.h \
     uploadchannel.h \
     downloader.h \
-    diarypainter.h \
     colours.h \
-    flowerchartpainter.h
+    flowerchartpainter.h \
+    diarywriter.h
 
 
 RESOURCES += qml.qrc

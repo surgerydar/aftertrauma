@@ -138,17 +138,7 @@ Item {
     */
     Component.onCompleted: {
         console.log('DatePicker.Component.onCompleted() : currentDate=' + currentDate.toDateString() );
-        blockUpdate         = true;
-        currentDate.setHours(0,0,0,0); // standardise time
-        year.model          = 30000;
-        year.currentIndex   = currentDate.getFullYear();
-        month.model         = 12;
-        month.currentIndex  = currentDate.getMonth();
-        day.model           = daysInMonth(currentDate.getFullYear(),currentDate.getMonth());
-        day.currentIndex    = currentDate.getDate() - 1;
-        console.log('DatePicker.Component.onCompleted() : ' + currentDate.getDate() + '/' + currentDate.getMonth() + '/' + currentDate.getFullYear() );
-        console.log('DatePicker.Component.onCompleted() : ' + day.currentIndex + '/' + month.currentIndex + '/' + year.currentIndex );
-        blockUpdate = false;
+        updateUI();
     }
 
     function daysInMonth( _year, _month ) {
@@ -170,8 +160,26 @@ Item {
         }
     }
 
-    onCurrentDateChanged: {
+    function updateUI() {
+        blockUpdate         = true;
+        currentDate.setHours(0,0,0,0); // standardise time
+        year.model          = 30000;
+        year.currentIndex   = currentDate.getFullYear();
+        month.model         = 12;
+        month.currentIndex  = currentDate.getMonth();
+        day.model           = daysInMonth(currentDate.getFullYear(),currentDate.getMonth());
+        day.currentIndex    = currentDate.getDate() - 1;
+        //
+        //
+        //
+        console.log( 'DatePicker.updateUI : ' + currentDate );
+        console.log('DatePicker.updateUI : ' + currentDate.getDate() + '/' + currentDate.getMonth() + '/' + currentDate.getFullYear() );
+        console.log('DatePicker.updateUI : ' + day.currentIndex + '/' + month.currentIndex + '/' + year.currentIndex );
+        blockUpdate = false;
+    }
 
+    onCurrentDateChanged: {
+        //updateUI();
     }
 
     property bool blockUpdate: false

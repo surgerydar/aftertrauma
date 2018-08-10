@@ -1,6 +1,8 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.1
 
+import SodaControls 1.0
+
 import "controls" as AfterTrauma
 import "colours.js" as Colours
 import "utils.js" as Utils
@@ -82,15 +84,33 @@ AfterTrauma.Page {
             anchors.verticalCenter: parent.verticalCenter
             backgroundColour: "transparent"
             text: "share"
+            //
+            //
+            //
+            DiaryWriter {
+                id: writer
+                font: fonts.lightFont
+            }
+            //
+            //
+            //
             onClicked: {
                 //
                 // show date range dialog
                 //
-
-                //
-                // create pdf
-                //
+                dateRangePicker.show( function( fromDate, toDate ) {
+                    //var fromIndex = dailyModel.indexOfFirstDayBefore( fromDate );
+                    //var toIndex = dailyModel.indexOfFirstDayAfter( toDate );
+                    var query = { $and: [{ date: { $gte: fromDate.getTime() } }, { date: { $lte: toDate.getTime() } }] };
+                    var entries = dailyModel.find(query);
+                    if ( entries.length > 0 ) {
+                        var pdfPath = SystemUtils.documentDirectory() + '/diary.pdf';
+                        writer.save(entries,pdfPath);
+                        ShareDialog.shareFile('Shared from AfterTrauma', pdfPath);
+                    }
+                });
             }
+
         }
         //
         //

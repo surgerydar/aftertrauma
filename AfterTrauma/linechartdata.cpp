@@ -95,8 +95,9 @@ void LineChartData::setAxisLabel( QString id, QString label ) {
 //
 //
 //
-void LineChartData::write( QPdfWriter* writer, const QRect& r ) {
+void LineChartData::write( QPdfWriter* writer ) {
     QPainter painter( writer );
+    QRect r = painter.viewport();
     paint(&painter,r);
 }
 

@@ -196,6 +196,9 @@ ApplicationWindow {
     ProfileViewer {
         id: profileViewer
     }
+    DateRangePicker {
+        id: dateRangePicker
+    }
     MainMenu {
         id: mainMenu
     }

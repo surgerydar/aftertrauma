@@ -180,5 +180,6 @@
         <file>ProfileViewer.qml</file>
         <file>controls/Label.qml</file>
         <file>NewLineChart.qml</file>
+        <file>DateRangePicker.qml</file>
     </qresource>
 </RCC>

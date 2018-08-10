@@ -108,6 +108,7 @@ AfterTrauma.Page {
                         console.log( 'dragging from ' + from + ' to ' + to );
                         if ( from !== to ) {
                             blocksModel.items.move( from, to );
+                            //??? contents.positionViewAtIndex(to, ListView.Visible); // ???
                         }
                     }
                     onDropped: {
@@ -161,6 +162,7 @@ AfterTrauma.Page {
     ListView {
         id: contents
         anchors.fill: parent
+        anchors.bottomMargin: 4
         //
         //
         //
@@ -204,10 +206,11 @@ AfterTrauma.Page {
     //
     //
     //
-    footer: Item {
+    footer: Rectangle {
         height: 64
         anchors.left: parent.left
         anchors.right: parent.right
+        color: Colours.slate
         //
         //
         //
@@ -234,7 +237,9 @@ AfterTrauma.Page {
                 id: writer
                 font: fonts.lightFont
             }
-
+            //
+            //
+            //
             onClicked: {
                 var query = {
                     day: date.getDate(),
@@ -245,7 +250,8 @@ AfterTrauma.Page {
                 if ( day ) {
                     console.log( 'sharing diary entry: ' + JSON.stringify(day) );
                     var pdfPath = SystemUtils.documentDirectory() + "/diary.pdf";
-                    writer.save([day], pdfPath)
+                    writer.save([day], pdfPath);
+                    ShareDialog.shareFile('Shared from AfterTrauma', pdfPath);
                 }
             }
         }

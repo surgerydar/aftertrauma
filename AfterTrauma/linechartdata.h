@@ -58,7 +58,7 @@ public slots:
     // Paintable interface
     //
     void paint( QPainter* painter, const QRect& r ) override;
-    void write( QPdfWriter* writer, const QRect& r ) override;
+    void write( QPdfWriter* writer ) override;
     //
     //
     //
