@@ -233,9 +233,17 @@ AfterTrauma.Page {
             //
             //
             //
-            DiaryWriter {
+            AsyncDiaryWriter {
                 id: writer
-                font: fonts.lightFont
+                font: fonts.light
+                onDone: {
+                    ShareDialog.shareFile('Shared from AfterTrauma', filePath);
+                    busyIndicator.running = false;
+                }
+                onError: {
+                    busyIndicator.running = false;
+                    errorDialog.show( error );
+                }
             }
             //
             //
@@ -248,10 +256,11 @@ AfterTrauma.Page {
                 };
                 var day = dailyModel.findOne(query);
                 if ( day ) {
+                    busyIndicator.prompt = "preparing diary for sharing";
+                    busyIndicator.running = true;
                     console.log( 'sharing diary entry: ' + JSON.stringify(day) );
-                    var pdfPath = SystemUtils.documentDirectory() + "/diary.pdf";
+                    var pdfPath = SystemUtils.documentDirectory() + '/diary-' + day.day + '-' + day.month + '-' + day.year + '.pdf';
                     writer.save([day], pdfPath);
-                    ShareDialog.shareFile('Shared from AfterTrauma', pdfPath);
                 }
             }
         }

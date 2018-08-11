@@ -32,7 +32,8 @@ SOURCES += main.cpp \
     downloader.cpp \
     colours.cpp \
     flowerchartpainter.cpp \
-    diarywriter.cpp
+    diarywriter.cpp \
+    asyncdiarywriter.cpp
 
 HEADERS += \
     imagepicker.h \
@@ -67,7 +68,9 @@ HEADERS += \
     downloader.h \
     colours.h \
     flowerchartpainter.h \
-    diarywriter.h
+    diarywriter.h \
+    asyncdiarywriter.h \
+    asyncdiarywriterworker.h
 
 
 RESOURCES += qml.qrc

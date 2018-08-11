@@ -10,9 +10,9 @@
 class DiaryWriter : public QObject, public Paintable
 {
     Q_OBJECT
-    Q_PROPERTY(QFont font MEMBER m_font)
-    Q_PROPERTY( qreal padding MEMBER m_padding )
-    Q_PROPERTY( qreal spacing MEMBER m_spacing )
+    Q_PROPERTY(QFont font READ font WRITE setFont)
+    Q_PROPERTY(qreal padding READ padding WRITE setPadding)
+    Q_PROPERTY(qreal spacing READ spacing WRITE setSpacing)
 public:
     explicit DiaryWriter(QObject *parent = 0);
     //
@@ -20,9 +20,19 @@ public:
     //
     void paint( QPainter* painter, const QRect& r ) override;
     void write( QPdfWriter* painter ) override;
+    //
+    //
+    //
+    QFont font() const { return m_font; }
+    void setFont( const QFont& font ) { m_font = font; }
+    qreal padding() const { return m_padding; }
+    void setPadding( const qreal padding ) { m_padding = padding; }
+    qreal spacing() const { return m_spacing; }
+    void setSpacing( const qreal spacing ) { m_spacing = spacing; }
 
 signals:
-
+    void saved( QString pdfPath );
+    void error( QString error );
 
 public slots:
     void save( const QVariantList& entries, const QString& filePath );

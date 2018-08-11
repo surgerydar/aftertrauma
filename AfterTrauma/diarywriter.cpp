@@ -45,11 +45,16 @@ void DiaryWriter::save( const QVariantList& entries, const QString& filePath ) {
     QString documentId = PDFGenerator::shared()->openDocument();
     if ( documentId.length() > 0 ) {
         m_entries = entries;
+        qDebug() << "DiaryWriter::save : writing";
         PDFGenerator::shared()->write(documentId,this);
         PDFGenerator::shared()->closeDocument(documentId);
+        qDebug() << "DiaryWriter::save : copying temporary file";
         SystemUtils::shared()->moveFile(PDFGenerator::shared()->documentPath(documentId),filePath,true);
+        qDebug() << "DiaryWriter::save : removing temporary file";
         PDFGenerator::shared()->removeDocument(documentId);
         m_entries.clear();
+        qDebug() << "DiaryWriter::save : done";
+        emit saved( filePath );
     }
 }
 

@@ -8,6 +8,7 @@ import "colours.js" as Colours
 import "utils.js" as Utils
 
 AfterTrauma.Page {
+    id: container
     title: "DIARY"
     colour: Colours.slate
     //
@@ -87,9 +88,19 @@ AfterTrauma.Page {
             //
             //
             //
-            DiaryWriter {
+            AsyncDiaryWriter {
                 id: writer
                 font: fonts.lightFont
+                onDone: {
+                    ShareDialog.shareFile('Shared from AfterTrauma', filePath);
+                    busyIndicator.running = false;
+                    container.enabled = true;
+                }
+                onError: {
+                    busyIndicator.running = false;
+                    container.enabled = true;
+                    errorDialog.show( error );
+                }
             }
             //
             //
@@ -104,9 +115,13 @@ AfterTrauma.Page {
                     var query = { $and: [{ date: { $gte: fromDate.getTime() } }, { date: { $lte: toDate.getTime() } }] };
                     var entries = dailyModel.find(query);
                     if ( entries.length > 0 ) {
-                        var pdfPath = SystemUtils.documentDirectory() + '/diary.pdf';
+                        busyIndicator.prompt = "preparing diary for sharing";
+                        busyIndicator.running = true;
+                        container.enabled = false;
+                        var lastIndex = entries.length - 1;
+                        var rangeText = entries[ 0 ].day + '-' + entries[ 0 ].month + '-' + entries[ 0 ].year + '-to-' + entries[ lastIndex ].day + '-' + entries[ lastIndex ].month + '-' + entries[ lastIndex ].year;
+                        var pdfPath = SystemUtils.documentDirectory() + '/diary-' +  rangeText + '.pdf';
                         writer.save(entries,pdfPath);
-                        ShareDialog.shareFile('Shared from AfterTrauma', pdfPath);
                     }
                 });
             }

@@ -27,6 +27,7 @@
 #include "uploader.h"
 #include "downloader.h"
 #include "diarywriter.h"
+#include "asyncdiarywriter.h"
 //
 // TODO: find a better way of doing this
 //
@@ -76,6 +77,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<CachedMediaSource>("SodaControls", 1, 0, "CachedMediaSource");
     qmlRegisterType<LineChartData>("SodaControls", 1, 0, "LineChartData");
     qmlRegisterType<DiaryWriter>("SodaControls", 1, 0, "DiaryWriter");
+    qmlRegisterType<AsyncDiaryWriter>("SodaControls", 1, 0, "AsyncDiaryWriter");
     //
     //
     //

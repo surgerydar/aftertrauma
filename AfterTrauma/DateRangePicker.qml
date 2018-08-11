@@ -104,10 +104,10 @@ Popup {
                 text: "ok"
                 textColour: Colours.veryDarkSlate
                 onClicked: {
+                    container.close();
                     if ( callback ) {
                         callback( from.currentDate, to.currentDate );
                     }
-                    container.close();
                 }
             }
         }
