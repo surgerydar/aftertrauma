@@ -148,7 +148,8 @@ public:
                         //
                         // write
                         //
-                        jbyte *bytes = env->GetByteArrayElements(buffer, false);
+                        jboolean iscopy = false;
+                        jbyte *bytes = env->GetByteArrayElements(buffer, &iscopy);
                         destination.write((char*)bytes,read);
                         env->ReleaseByteArrayElements(buffer, bytes, 0);
                         //
@@ -165,6 +166,12 @@ public:
                     //
                     qDebug() << "written " << total << " bytes to " << path;
                     ImagePicker::shared()->imagePicked( path );
+                    //
+                    // delete source file
+                    //
+                    // TODO: get this to work, may be a permissions thing
+                    QAndroidJniObject removed = contentResolver.callObjectMethod("delete","(Landroid/net/Uri;Ljava/lang/String;[Ljava/lang/String;)I;", uri.object<jobject>(),NULL,NULL);
+                    qDebug() << "AndroidImagePicker::pickFile : deleted files : " << removed.toString();
                 } else {
                     qDebug() << "unable to open destination file : " << path;
                 }

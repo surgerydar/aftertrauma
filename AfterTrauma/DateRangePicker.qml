@@ -21,16 +21,29 @@ Popup {
     contentItem: Column {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-        spacing: 32
+        spacing: 8
         padding: 16
+        Label {
+            id: titleText
+            height: 48
+            anchors.left: parent.left
+            anchors.right: parent.right
+            color: Colours.veryDarkSlate
+            horizontalAlignment: Label.AlignHCenter
+            verticalAlignment: Label.AlignVCenter
+            font.pointSize: 36
+            font.weight: Font.Light
+            font.family: fonts.light
+            text: "Select Dates"
+        }
         //
         //
         //
         Label {
-            height: 48
+            height: 36
             anchors.horizontalCenter: parent.horizontalCenter
             color: Colours.veryDarkSlate
-            font.pointSize: 36
+            font.pointSize: 24
             font.weight: Font.Light
             font.family: fonts.light
             text: "from date"
@@ -57,10 +70,10 @@ Popup {
         //
         //
         Label {
-            height: 48
+            height: 36
             anchors.horizontalCenter: parent.horizontalCenter
             color: Colours.veryDarkSlate
-            font.pointSize: 36
+            font.pointSize: 24
             font.weight: Font.Light
             font.family: fonts.light
             text: "to date"
@@ -123,10 +136,11 @@ Popup {
     //
     //
     //
-    function show( callback, fromDate, toDate ) {
+    function show( callback, title, fromDate, toDate ) {
         blockUpdates = true;
 
         container.callback = callback;
+        titleText.text = title;
 
         if ( fromDate ) {
             from.currentDate = fromDate;

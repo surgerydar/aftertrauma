@@ -100,10 +100,23 @@ BusyIndicator {
             }
         }
     }
+    //
+    //
+    //
     onRunningChanged: {
         if ( !running ) {
             prompt.text = "";
         }
+    }
+    //
+    //
+    //
+    function show( text ) {
+        control.prompt = text;
+        running = true;
+    }
+    function hide() {
+        running = false;
     }
 
     property alias prompt: prompt.text

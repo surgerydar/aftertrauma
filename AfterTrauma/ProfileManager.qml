@@ -448,6 +448,7 @@ AfterTrauma.Page {
                             onClicked: {
                                 var source = SystemUtils.documentDirectory();
                                 var archive = source + archivePath();
+                                busyIndicator.show( 'archiving personal data' );
                                 Archive.archive(source,archive);
                                 enabled = false;
                                 unarchiveButton.enabled = false;
@@ -467,15 +468,11 @@ AfterTrauma.Page {
                             text: "restore personal data"
                             enabled: profile.hasarchive === undefined ? false : profile.hasarchive
                             onClicked: {
-                                /*
-                                var archive = SystemUtils.documentDirectory() + '/media/aftertrauma.archive';
-                                var target = SystemUtils.documentDirectory() + '/restore';
-                                Archive.unarchive(archive,target);
-                                */
                                 console.log( 'ProfileManager : restoring archive' );
                                 var path = archivePath()
                                 var url = baseURL + path;
                                 var target = SystemUtils.documentDirectory() + path;
+                                busyIndicator.show( 'downloading personal data' );
                                 Downloader.download(url,target);
                                 enabled = false;
                                 archiveButton.enabled = false;
@@ -557,7 +554,7 @@ AfterTrauma.Page {
         //
         //
         onReceived: {
-            busyIndicator.running = false;
+            busyIndicator.hide();
             var command = JSON.parse(message); // TODO: channel should probably emit object
             if( command.status === "OK" ) {
                 if ( command.command === 'updateprofile' && command.close ) {
@@ -619,6 +616,7 @@ AfterTrauma.Page {
             console.log( 'profile tags: ' + JSON.stringify(profile.tags));
         }
         JSONFile.write('user.json',profile);
+        busyIndicator.show( 'updating profile' );
         profileChannel.send({command:'updateprofile', token: profile.token, profile:profile, close: closeManager});
     }
     function archivePath() {
@@ -632,21 +630,25 @@ AfterTrauma.Page {
         onDone: {
             console.log( 'Archiver : done : ' + operation + ' : ' + source + ' > ' + target );
             if ( operation === "archive" ) {
+                busyIndicator.show( 'uploading personal data' );
                 Uploader.upload( target, baseWS );
             } else {
                 archiveButton.reset();
                 unarchiveButton.reset();
                 reloadModels();
+                busyIndicator.hide();
             }
         }
         onError: {
             console.log( 'Archiver : error : ' + source + ' > ' + target + ' : ' + message );
+            busyIndicator.hide();
+            errorDialog.show(message);
         }
         onProgress: {
             if ( operation === 'archive' ) {
-                archiveButton.text = 'archiving files ' + Math.floor(( ( current / total ) * 100 )) + '%';
+                busyIndicator.show( 'archiving files ' + Math.floor(( ( current / total ) * 100 )) + '%' );
             } else {
-                unarchiveButton.text = 'extracting files ' + Math.floor(( ( current / total ) * 100 )) + '%';
+                busyIndicator.show( 'extracting files ' + Math.floor(( ( current / total ) * 100 )) + '%' );
             }
         }
     }
@@ -658,13 +660,16 @@ AfterTrauma.Page {
             archiveButton.reset();
             unarchiveButton.reset();
             saveProfile(false);
+            busyIndicator.hide();
         }
         onError: {
             console.log( 'Uploader : error : ' + source + ' > ' + destination + ' : ' + message );
             archiveButton.reset();
+            busyIndicator.hide();
+            errorDialog.show(message);
         }
         onProgress: {
-            archiveButton.text = 'archiving ' + Math.floor(( ( current / total ) * 100 )) + '%';
+            busyIndicator.show( 'archiving ' + Math.floor(( ( current / total ) * 100 )) + '%' );
             console.log( 'Uploader : progress : ' + source + ' > ' + destination + ' : ' + current + ' of ' + total + ' : ' + message );
         }
     }
@@ -674,9 +679,10 @@ AfterTrauma.Page {
             console.log( 'Downloader : done : ' + source + ' > ' + destination );
             var target = SystemUtils.documentDirectory();
             Archive.unarchive(destination,target);
+            busyIndicator.show( 'extracting files' );
         }
         onProgress: {
-            unarchiveButton.text = 'downloading ' + Math.floor(( ( current / total ) * 100 )) + '%';
+            busyIndicator.show( 'downloading ' + Math.floor(( ( current / total ) * 100 )) + '%' );
         }
     }
 

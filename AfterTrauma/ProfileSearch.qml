@@ -101,6 +101,22 @@ Rectangle {
     //
     //
     //
+    Label {
+        anchors.verticalCenter: profiles.verticalCenter
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.margins: 8
+        visible: attemptedSearch && profiles.count === 0
+        font.family: fonts.light
+        font.pointSize: 18
+        color: Colours.almostWhite
+        wrapMode: Label.WordWrap
+        horizontalAlignment: Label.AlignHCenter
+        text: "no users match your search"
+    }
+    //
+    //
+    //
     AfterTrauma.TextField {
         id: searchTerm
         width: container.width - 16
@@ -155,6 +171,7 @@ Rectangle {
     //
     //
     function updateSearch( text ) {
+        attemptedSearch = true;
         console.log( 'searching for text : ' + text );
         var exclude = [userProfile.id]; // TODO: exclude users currenly
         var regex = { $regex: '^' + text, $options:'i'};
@@ -168,6 +185,7 @@ Rectangle {
     //
     //
     function open() {
+        attemptedSearch = false;
         container.state = "open";
         console.log('ProfileSearch.open');
         profiles.model.open();
@@ -178,4 +196,5 @@ Rectangle {
         profiles.model.close();
         container.closed();
     }
+    property bool attemptedSearch: false
 }

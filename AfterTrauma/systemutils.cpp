@@ -91,6 +91,14 @@ bool SystemUtils::moveFile( const QString& from, const QString& to, bool force )
     }
     return QFile::rename( from, to );
 }
+bool SystemUtils::removeFile( const QString& path ) {
+    if ( QFile::exists(path) ) {
+        qDebug() << "SystemUtils::removeFile : " << path;
+        if ( QFile::remove(path) ) {
+            qDebug() << "SystemUtils::removeFile : file removed";
+        }
+    }
+}
 //
 //
 //

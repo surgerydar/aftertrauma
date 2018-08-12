@@ -344,12 +344,14 @@ ApplicationWindow {
     Connections {
         target: BackKeyFilter
         onBackKeyPressed : {
-            if ( Qt.platform.os === 'android' ) {
-                console.log( 'BackKeyFilter.BackKeyPressed' );
-                if ( stack.depth <= 1 ) {
-                    Qt.quit();
-                } else {
-                    stack.pop();
+            if ( !busyIndicator.running ) {
+                if ( Qt.platform.os === 'android' ) {
+                    console.log( 'BackKeyFilter.BackKeyPressed' );
+                    if ( stack.depth <= 1 ) {
+                        Qt.quit();
+                    } else {
+                        stack.pop();
+                    }
                 }
             }
         }

@@ -37,6 +37,7 @@ public slots:
     //
     bool copyFile( const QString& from, const QString& to, bool force = false );
     bool moveFile( const QString& from, const QString& to, bool force = false );
+    bool removeFile( const QString& path );
     //
     //
     //

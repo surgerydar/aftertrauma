@@ -108,7 +108,7 @@ AfterTrauma.Page {
                         console.log( 'dragging from ' + from + ' to ' + to );
                         if ( from !== to ) {
                             blocksModel.items.move( from, to );
-                            //??? contents.positionViewAtIndex(to, ListView.Visible); // ???
+                            contents.positionViewAtIndex(to, ListView.Visible);
                         }
                     }
                     onDropped: {
@@ -136,6 +136,13 @@ AfterTrauma.Page {
             onRemove: {
                 swipe.close();
                 console.log( 'removing block : ' + model.index );
+                if ( model.type === 'image' ) {
+                    //
+                    // delete image file
+                    //
+                    SystemUtils.removeFile( SystemUtils.documentDirectory() + '/' + model.content );
+                }
+
                 blocksModel.model.remove(model.index);
             }
             onClicked: {

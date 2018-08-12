@@ -97,7 +97,7 @@ AfterTrauma.Page {
                     container.enabled = true;
                 }
                 onError: {
-                    busyIndicator.running = false;
+                    busyIndicator.hide();
                     container.enabled = true;
                     errorDialog.show( error );
                 }
@@ -115,15 +115,13 @@ AfterTrauma.Page {
                     var query = { $and: [{ date: { $gte: fromDate.getTime() } }, { date: { $lte: toDate.getTime() } }] };
                     var entries = dailyModel.find(query);
                     if ( entries.length > 0 ) {
-                        busyIndicator.prompt = "preparing diary for sharing";
-                        busyIndicator.running = true;
-                        container.enabled = false;
+                        busyIndicator.show( 'preparing diary for sharing' );
                         var lastIndex = entries.length - 1;
                         var rangeText = entries[ 0 ].day + '-' + entries[ 0 ].month + '-' + entries[ 0 ].year + '-to-' + entries[ lastIndex ].day + '-' + entries[ lastIndex ].month + '-' + entries[ lastIndex ].year;
                         var pdfPath = SystemUtils.documentDirectory() + '/diary-' +  rangeText + '.pdf';
                         writer.save(entries,pdfPath);
                     }
-                });
+                }, 'Share Diary' );
             }
 
         }
