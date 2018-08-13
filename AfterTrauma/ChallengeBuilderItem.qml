@@ -44,10 +44,10 @@ Item {
         color: Colours.almostWhite
         fontSizeMode: Text.Fit
         wrapMode: Text.WordWrap
-        minimumPixelSize: 14
+        minimumPointSize: 12
         font.weight: Font.Light
         font.family: fonts.light
-        font.pixelSize: 32
+        font.pointSize: 18
     }
     //
     // decoration
@@ -106,6 +106,7 @@ Item {
             anchors.fill: parent
             visible: container.type === "name"
             placeholderText: "Type name for activity"
+            font.pointSize: 14
             onAccepted: {
                 labelText.text = text;
                 container.open = false
@@ -119,6 +120,7 @@ Item {
             anchors.fill: parent
             visible: container.type === "description"
             placeholderText: "Type description of activity"
+            font.pointSize: 14
             wrapMode: Text.WordWrap
             onContentHeightChanged: {
                 if ( visible ) editorItem.height = contentHeight + 16;
@@ -126,11 +128,6 @@ Item {
         }
         ListView {
             id: optionsEditor
-            /*
-            anchors.left: editorItem.left
-            anchors.bottom: editorItem.bottom
-            anchors.right: editorItem.right
-            */
             anchors.fill: parent
             clip: true
             visible: container.type === "options"

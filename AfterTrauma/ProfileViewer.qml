@@ -4,6 +4,7 @@ import SodaControls 1.0
 
 import "controls" as AfterTrauma
 import "colours.js" as Colours
+import "utils.js" as Utils
 
 Rectangle {
     id: container
@@ -126,7 +127,7 @@ Rectangle {
                         if ( profile.age || profile.gender )
                             contents.model.append( {
                                                       type: 'text',
-                                                      content: formatAgeAndGender( profile )
+                                                      content: Utils.formatAgeAndGender( profile )
                                                   });
                         if ( profile.profile && profile.profile.length > 0 )
                             contents.model.append( {
@@ -185,9 +186,6 @@ Rectangle {
     function close() {
         container.state = "closed";
         profileChannel.close();
-    }
-    function formatAgeAndGender( profile ) {
-        return ( profile.age ?  profile.age + ' ' : '' ) + ( profile.gender === 'male' || profile.gender === 'female' ? profile.gender : '' );
     }
     //
     //

@@ -181,5 +181,8 @@
         <file>controls/Label.qml</file>
         <file>NewLineChart.qml</file>
         <file>DateRangePicker.qml</file>
+        <file>ProfilePreview.qml</file>
+        <file>icons/left_arrow_black.png</file>
+        <file>icons/right_arrow_black.png</file>
     </qresource>
 </RCC>

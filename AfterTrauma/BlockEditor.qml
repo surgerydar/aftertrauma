@@ -135,6 +135,7 @@ Rectangle {
                 padding: 8
                 wrapMode: TextArea.Wrap
                 placeholderText: "type a note"
+                showPlaceholderPrompt: true // TODO: this is just to compensate for placeholder text colour being the same as the background colour
             }
         }
         Page {

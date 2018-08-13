@@ -57,9 +57,10 @@ DatabaseList {
     //
     //
     function addChallenge(challenge) {
+        console.log( "adding challenge : " + JSON.stringify(challenge) );
         challenge.count = 0;
         challenge.date = Date.now();
-        challenge.active = challenge.active | false;
+        challenge.active = challenge.active || false;
         challenge._id = add(challenge)._id;
         save();
     }

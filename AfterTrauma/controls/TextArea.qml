@@ -18,13 +18,14 @@ TextArea {
     }
     Label {
         anchors.centerIn: parent
-        visible: container.text.length === 0 && !container.activeFocus
+        visible: showPlaceholderPrompt && container.text.length === 0 && !container.activeFocus
         color: Colours.slate
         verticalAlignment: Label.AlignVCenter
         horizontalAlignment: Label.AlignHCenter
         font.pointSize: 24
         text: container.placeholderText
     }
+
     Button {
         id: doneButton
         anchors.bottom: parent.top
@@ -42,4 +43,5 @@ TextArea {
     onActiveFocusChanged: {
         doneButton.visible = activeFocus;
     }
+    property bool showPlaceholderPrompt: false
 }

@@ -56,8 +56,12 @@ Item {
         anchors.verticalCenter: titleText.verticalCenter
         anchors.left: parent.left
         anchors.leftMargin: 4
+        image: Qt.colorEqual(container.backgroundColour,Colours.almostWhite) ? "../icons/left_arrow_black.png" : "../icons/left_arrow.png"
+        backgroundColour: "transparent"
+        /*
         image: "../icons/left_arrow.png"
         backgroundColour: Qt.colorEqual(container.backgroundColour,Colours.almostWhite) ? Colours.veryLightSlate : "transparent"
+        */
         radius: 0
         visible: showNavigation && stack && stack.depth > 1
         onClicked: {

@@ -61,3 +61,7 @@ function getEndOfWeek( start ) {
     while( temp.getDay() < 6 ) temp.setDate(temp.getDate()+1);
     return temp;
 }
+
+function formatAgeAndGender( profile ) {
+    return ( profile.age ?  profile.age + ' ' : '' ) + ( profile.gender === 'male' || profile.gender === 'female' ? profile.gender : '' );
+}

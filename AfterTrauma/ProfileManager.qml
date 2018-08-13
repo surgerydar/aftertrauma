@@ -317,6 +317,31 @@ AfterTrauma.Page {
                             }
                         }
                     }
+                    //
+                    //
+                    //
+                    Rectangle {
+                        id: previewBlock
+                        width: profileContainer.width
+                        height: childrenRect.height + 16
+                        color: Colours.almostWhite
+                        //
+                        //
+                        //
+                        AfterTrauma.Button {
+                            id: previewButton
+                            anchors.top: parent.top
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.topMargin: 8
+                            backgroundColour: Colours.slate
+                            textColour: Colours.almostWhite
+                            text: "preview public profile"
+                            onClicked: {
+                                stack.navigateTo("qrc:///ProfilePreview.qml",{ profile: profile });
+                            }
+                        }
+                    }
+
                 }
             }
         }
