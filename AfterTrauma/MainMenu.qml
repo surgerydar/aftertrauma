@@ -160,5 +160,25 @@ Rectangle {
                 container.close();
             }
         }
+        AfterTrauma.Button {
+            //anchors.left: parent.left
+            textHorizontalAlignment: Text.AlignLeft
+            textVerticalAlignment: Text.AlignVCenter
+            textSize: 32
+            text: "Prescriptions"
+            image: "icons/factsheet.png"
+            direction: "Left"
+            spacing: 8
+            onClicked: {
+                onClicked: {
+                    if ( loggedIn ) {
+                        stack.push("qrc:///PrescriptionManager.qml" );
+                    } else {
+                        register.open();
+                    }
+                }
+                container.close();
+            }
+        }
     }
 }

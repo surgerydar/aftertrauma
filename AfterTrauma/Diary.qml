@@ -42,7 +42,7 @@ AfterTrauma.Page {
             text: Utils.shortDate(model.date)
         }
         */
-
+        /*
         delegate: DiaryListItem {
             anchors.left: parent?parent.left:undefined
             anchors.right: parent?parent.right:undefined
@@ -52,6 +52,24 @@ AfterTrauma.Page {
             values: model.values
             blocks: model.blocks || []
         }
+        */
+        delegate: Component {
+            Loader {
+                source: "DiaryListItem.qml"
+                onLoaded: {
+                    //
+                    // set properties
+                    //
+                    item.width  = dailyList.width;
+                    item.date   = model.date;
+                    item.images = model.images;
+                    item.notes  = model.notes;
+                    item.values = model.values;
+                    item.blocks = model.blocks || [];
+                }
+            }
+        }
+
         //
         //
         //

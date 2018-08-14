@@ -46,6 +46,7 @@ AfterTrauma.Page {
         //
         //
         //
+        /*
         delegate: GroupChatItem {
             width: chats.width
             avatar: "https://aftertrauma.uk:4000/avatar/" + model.owner + '?width=56&height=56'
@@ -83,6 +84,54 @@ AfterTrauma.Page {
                     chatid: model.id
                 };
                 chatChannel.send(command);
+            }
+        }
+        */
+        delegate: Component {
+            Loader {
+                source: "GroupChatItem.qml"
+                onLoaded: {
+                    //
+                    // set properties
+                    //
+                    item.width = chats.width;
+                    item.avatar = "https://aftertrauma.uk:4000/avatar/" + model.owner + '?width=56&height=56'
+                    item.owner = model.owner
+                    item.subject = model.subject
+                    item.contentEditable = model.owner === userProfile.id
+                    item.deleteLabel = model.owner === userProfile.id ? "Delete" : "Leave"
+                    item.count = unreadChatsModel.totalUnread > 0 ? unreadChatsModel.getUnreadCountText(model.id) : ""
+                    item.members = model.members
+                    //
+                    // connect to signals
+                    //
+                    item.chat.connect(function() {
+                        openChat(model.id);
+                    });
+                    item.edit.connect(function() {
+                        var chat = chatModel.get( index );
+                        console.log( 'editing chat : ' + JSON.stringify(chat) );
+                        chatEditor.show(chat, function(edited,showChat) {
+                            delete chat._id; // JONS: fudge to prevent update conflict on mongo update
+                            var command = {
+                                command: 'groupupdatechat',
+                                token: userProfile.token,
+                                chat: edited,
+                                show: showChat
+                            };
+                            chatChannel.send(command);
+                        });
+                    });
+                    item.remove.connect(function() {
+                        var command = {
+                            command: model.owner === userProfile.id ? 'groupremovechat' : 'groupleavechat',
+                            token: userProfile.token,
+                            userid: userProfile.id,
+                            chatid: model.id
+                        };
+                        chatChannel.send(command);
+                    });
+                }
             }
         }
     }

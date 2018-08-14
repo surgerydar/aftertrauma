@@ -184,5 +184,8 @@
         <file>ProfilePreview.qml</file>
         <file>icons/left_arrow_black.png</file>
         <file>icons/right_arrow_black.png</file>
+        <file>PrescriptionManager.qml</file>
+        <file>PrescriptionPage.qml</file>
+        <file>Prescriptions.qml</file>
     </qresource>
 </RCC>

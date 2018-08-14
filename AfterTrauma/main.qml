@@ -39,11 +39,6 @@ ApplicationWindow {
     Questionnaires {
         id: questionnaireModel
     }
-    /*
-    Chats {
-        id: chatModel
-    }
-    */
     UnreadChats {
         id: unreadChatsModel
     }
@@ -65,6 +60,9 @@ ApplicationWindow {
     BodyPartList {
         id: bodyPartModel
     }
+    Prescriptions {
+        id: prescriptionsModel
+    }
     //
     // notifications
     //
@@ -85,7 +83,7 @@ ApplicationWindow {
     //
     //
     //
-    property var models: [settingsModel,dailyModel,challengeModel,questionnaireModel,unreadChatsModel,chatModel,categoryModel,documentModel,tagsModel,recomendationModel,bodyPartModel]
+    property var models: [settingsModel,dailyModel,challengeModel,questionnaireModel,unreadChatsModel,chatModel,categoryModel,documentModel,tagsModel,recomendationModel,bodyPartModel,prescriptionsModel]
     function reloadModels() {
         models.forEach( function( model ) {
            model.load();
