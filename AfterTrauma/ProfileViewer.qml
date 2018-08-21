@@ -66,7 +66,7 @@ Rectangle {
         anchors.top: header.bottom
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.bottom: parent.bottom
+        anchors.bottom: footer.top
         anchors.margins: 4
         //
         //
@@ -94,6 +94,30 @@ Rectangle {
             }
         }
     }
+    //
+    //
+    //
+    Rectangle {
+        id: footer
+        height: 64
+        anchors.left: parent.left
+        anchors.bottom: parent.bottom
+        anchors.right: parent.right
+        color: Colours.blue
+        //
+        //
+        //
+        AfterTrauma.Button {
+            id: chatButton
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.right: parent.right
+            anchors.rightMargin: 16
+            image: "icons/chat.png"
+            onClicked: {
+            }
+        }
+    }
+
     //
     //
     //

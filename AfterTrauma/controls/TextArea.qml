@@ -1,6 +1,5 @@
 import QtQuick 2.6
 import QtQuick.Controls 2.1
-import QtQuick.Controls.Styles 1.4
 
 import "../colours.js" as Colours
 
@@ -11,11 +10,12 @@ TextArea {
     padding: 8
     font.pointSize: 24
     background: Rectangle {
-        anchors.fill: parent
+        anchors.fill: parent.top
         radius: 4
         color: Colours.veryLightSlate
         border.color: "transparent"
     }
+
     Label {
         anchors.centerIn: parent
         visible: showPlaceholderPrompt && container.text.length === 0 && !container.activeFocus

@@ -123,6 +123,12 @@ AfterTrauma.EditableListItem {
                         source = "icons/profile_icon.png";
                     }
                 }
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        profileViewer.open( model.modelData );
+                    }
+                }
             }
         }
         //

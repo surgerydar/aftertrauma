@@ -122,9 +122,11 @@ void DiaryWriter::_paintEntryHeader( const QVariantMap& entry, QPdfWriter* write
         //
         // paint chart into offscreen image
         //
+
         QRect flowerBounds(m_adjustedPadding/2,m_adjustedPadding/2, headerRect.width()-m_adjustedPadding, headerRect.height()-m_adjustedPadding);
         FlowerChartPainter flowerChartPainter;
-        flowerChartPainter.paint(&flowerImagePainter, flowerBounds, values, labels, 12 * ( ( 1./ 72.) * writer->resolution() ), true);
+        QVector< qreal > maxValues  = { .25, .5, .75, 1., 1. };
+        flowerChartPainter.paint(&flowerImagePainter, flowerBounds, values, maxValues, labels, 12 * ( ( 1./ 72.) * writer->resolution() ), true);
         flowerImagePainter.end();
         //
         //

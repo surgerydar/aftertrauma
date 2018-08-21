@@ -9,11 +9,11 @@
 
 class FlowerChart : public QQuickPaintedItem {
     Q_OBJECT
-    //Q_PROPERTY(int currentDate READ currentDate WRITE setCurrentDate)
+    Q_PROPERTY(int currentDate READ currentDate WRITE setCurrentDate NOTIFY currentDateChanged)
     Q_PROPERTY(QVariantList values READ values WRITE setValues)
-    //Q_PROPERTY(QVariantList targetValues READ targetValues WRITE setTargetValues)
-    //Q_PROPERTY(QVariantList startValues READ startValues WRITE setStartValues)
+    Q_PROPERTY(QVariantList maxValues READ maxValues WRITE setMaxValues)
     Q_PROPERTY(int fontSize MEMBER m_fontSize)
+    Q_PROPERTY(bool animated MEMBER m_animated)
 public:
     explicit FlowerChart( QQuickItem* parent = 0 );
     //
@@ -28,17 +28,15 @@ public:
     void setCurrentDate( const int currentDate );
     QVariantList values();
     void setValues( const QVariantList values );
-    QVariantList targetValues() const;
-    void setTargetValues( const QVariantList targetValues );
-    QVariantList startValues() const;
-    void setStartValues( const QVariantList startValues );
+    QVariantList maxValues() const;
+    void setMaxValues( const QVariantList targetValues );
 
 public slots:
     void selectCategoryAt( qreal x, qreal y );
 
 signals:
     void categorySelected( QString category );
-
+    void currentDateChanged( int currentDate );
 protected:
     void timerEvent(QTimerEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
@@ -46,11 +44,6 @@ protected:
     void mouseReleaseEvent(QMouseEvent *event) override;
 
 private:
-    /*
-    void drawBackground(QPainter*painter);
-    void drawPetal(QPainter* painter, QPointF& cp, int index, qreal angle, qreal sweep, QColor& colour);
-    void generatePetalPath( QPainterPath& path, QPointF& cp, qreal radius, qreal angle, qreal sweep, bool isMinMax );
-    */
     FlowerChartPainter m_painter;
     //
     //
@@ -58,7 +51,6 @@ private:
     int m_currentDate;
     QVector< qreal > m_values;
     QVector< qreal > m_maxValues;
-    QVector< qreal > m_minValues;
     //
     // value animation
     //
@@ -69,6 +61,7 @@ private:
     //
     //
     int m_fontSize;
+    bool m_animated;
     //
     //
     //

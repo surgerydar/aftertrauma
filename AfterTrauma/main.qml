@@ -10,7 +10,7 @@ import "colours.js" as Colours
 ApplicationWindow {
     id: appWindow
     visible: true
-    width: 480
+    width: 320
     height: 640
     //
     //
@@ -141,6 +141,12 @@ ApplicationWindow {
         anchors.bottomMargin: depth > 1 ? 0 : navigationBar.height
         transitions: Transition {
             AnchorAnimation { duration: 100 }
+        }
+        //
+        //
+        //
+        onDepthChanged: {
+
         }
         //
         //
@@ -371,6 +377,41 @@ ApplicationWindow {
         target: NotificationManager
         onNotificationReceived: {
             confirmDialog.show(message);
+        }
+    }
+    //
+    //
+    //
+    function processLink( url ) {
+        console.log( 'link clicked : ' + url  );
+        if ( url.startsWith('link://') ) {
+            var tag = url.substring('link://'.length);
+            linkPopup.find([tag]);
+        } else if ( url.startsWith('navigate://') ) {
+            var target = url.substring('navigate://'.length);
+            console.log( 'navigating to : ' + target );
+            switch( target ) {
+            case 'diary' :
+                stack.navigateTo("qrc:///Diary.qml");
+                break;
+            case 'chat' :
+                stack.navigateTo("qrc:///GroupChatManager.qml");
+                break;
+            case 'myrecovery' :
+                stack.navigateTo("qrc:///Questionnaire.qml");
+                break;
+            case 'challenges' :
+                stack.navigateTo("qrc:///ChallengeManager.qml");
+                break;
+            case 'myprogress' :
+                stack.navigateTo("qrc:///Progress.qml");
+                break;
+            case 'information' :
+                stack.navigateTo("qrc:///FactsheetCategories.qml");
+                break;
+            }
+        } else {
+            Qt.openUrlExternally(url);
         }
     }
 

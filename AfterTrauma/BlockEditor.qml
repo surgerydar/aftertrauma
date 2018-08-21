@@ -128,14 +128,55 @@ Rectangle {
         clip: true
         currentIndex: mediaTypeSelector.currentIndex
         Page {
+            /*
             AfterTrauma.TextArea {
                 id: textMedia
                 anchors.fill: parent
                 anchors.topMargin: activeFocus ? 32 : 0 // acommodate "done" button
+                anchors.bottomMargin: activeFocus ? height / 2 : 0
                 padding: 8
                 wrapMode: TextArea.Wrap
                 placeholderText: "type a note"
                 showPlaceholderPrompt: true // TODO: this is just to compensate for placeholder text colour being the same as the background colour
+
+            }
+            */
+            /*
+            Flickable {
+                   id: flick
+                   anchors.fill: parent
+                   //contentWidth: textMedia.contentHeight
+                   contentHeight: textMedia.height + ( textMedia.padding * 2 )
+                   clip: true
+
+                   function ensureVisible(r) {
+                       if (contentX >= r.x)
+                           contentX = r.x;
+                       else if (contentX+width <= r.x+r.width)
+                           contentX = r.x+r.width-width;
+                       if (contentY >= r.y)
+                           contentY = r.y;
+                       else if (contentY+height <= r.y+r.height)
+                           contentY = r.y+r.height-height;
+                   }
+
+                   AfterTrauma.TextArea {
+                       id: textMedia
+                       width: flick.width
+                       height: Math.max(contentHeight,flick.height)
+                       focus: true
+                       padding: 8
+                       wrapMode: TextArea.Wrap
+                       placeholderText: "type a note"
+                       showPlaceholderPrompt: true // TODO: this is just to compensate for placeholder text colour being the same as the background colour
+                       onCursorRectangleChanged: flick.ensureVisible(cursorRectangle)
+                   }
+               }
+               */
+            AfterTrauma.ScrollableTextArea {
+                id: textMedia
+                anchors.fill: parent
+                placeholderText: "type a note"
             }
         }
         Page {

@@ -96,8 +96,10 @@ bool SystemUtils::removeFile( const QString& path ) {
         qDebug() << "SystemUtils::removeFile : " << path;
         if ( QFile::remove(path) ) {
             qDebug() << "SystemUtils::removeFile : file removed";
+            return true;
         }
     }
+    return false;
 }
 //
 //

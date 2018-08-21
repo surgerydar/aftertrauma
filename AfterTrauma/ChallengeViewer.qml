@@ -21,13 +21,23 @@ AfterTrauma.Page {
         id: activityText
         anchors.fill: parent
         anchors.margins: 4
+        //
+        //
+        //
         color: Colours.almostWhite
+        //
+        //
+        //
         fontSizeMode: Text.Fit
         wrapMode: Text.WordWrap
-        minimumPixelSize: 14
+        textFormat: Text.RichText
+        //
+        //
+        //
+        minimumPointSize: 12
         font.weight: Font.Light
         font.family: fonts.light
-        font.pixelSize: 32
+        font.pointSize: 24
     }
     footer: Rectangle {
         height: 64

@@ -4,7 +4,7 @@ import SodaControls 1.0
 DatabaseList {
     id: model
     collection: "daily"
-    roles: [ "date", "year", "month", "day", "values", "blocks" ] //"notes", "images" ]
+    roles: [ "date", "year", "month", "day", "values", "blocks" ]
     sort: { "date": -1 }
     //
     //
@@ -277,5 +277,13 @@ DatabaseList {
     function dateRange() {
 
         return count > 0 ? { min: get(count-1).date, max: get(0).date } : { min: Date.now(), max: Date.now() };
+    }
+    function blocksForDate( date ) {
+        var query = { date: date };
+        var day = findOne( query );
+        if ( day && day.blocks ) {
+            return day.blocks;
+        }
+        return [];
     }
 }

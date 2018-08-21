@@ -13,7 +13,7 @@ FlowerChartPainter::FlowerChartPainter(QObject *parent) : QObject(parent) {
 
 }
 
-void FlowerChartPainter::paint(QPainter*painter, const QRect& bounds, const QVector<qreal>& values, const QVector<QString>& labels, int fontSize, bool drawLabels) {
+void FlowerChartPainter::paint(QPainter*painter, const QRect& bounds, const QVector<qreal>& values, const QVector<qreal>& maxValues, const QVector<QString>& labels, int fontSize, bool drawLabels) {
     //
     // clear to transparent
     //
@@ -41,17 +41,30 @@ void FlowerChartPainter::paint(QPainter*painter, const QRect& bounds, const QVec
     //
     qreal sweep = (2*M_PI) / (qreal) values.size();
     qreal angle  = 0.;
+    QPainterPath maxPath;
     if ( values.size() > 0 ) {
         for ( int i = 0; i < values.size(); ++i ) {
             QColor colour = Colours::shared()->categoryColour(i);
-            drawPetal(painter, values[i], cp, radius, angle, sweep, colour, drawLabels);
+            drawPetal(painter, values[i], maxValues[ i ], cp, radius, angle, sweep, colour, maxPath);
             angle += sweep;
         }
+        maxPath.closeSubpath();;
     }
     //
     //
     //
     if ( drawLabels ) {
+        //
+        // draw min/max paths
+        //
+        QPen pen(QColor(255,255,255,128));
+        painter->save();
+        pen.setStyle(Qt::DashLine);
+        pen.setWidth(1);
+        painter->setBrush(Qt::NoBrush);
+        painter->setPen( pen );
+        painter->drawPath( maxPath );
+        painter->restore();
         //
         // draw labels
         //
@@ -102,7 +115,7 @@ void FlowerChartPainter::drawBackground( QPainter* painter, QPointF& cp,  qreal 
     painter->restore();
 }
 
-void FlowerChartPainter::drawPetal( QPainter* painter, qreal value, QPointF& cp, qreal radius, qreal angle, qreal sweep, QColor& colour, bool drawMinMax ) {
+void FlowerChartPainter::drawPetal( QPainter* painter, qreal value, qreal maxValue, QPointF& cp, qreal radius, qreal angle, qreal sweep, QColor& colour, QPainterPath& maxPath ) {
     //
     //
     //
@@ -111,7 +124,7 @@ void FlowerChartPainter::drawPetal( QPainter* painter, qreal value, QPointF& cp,
     // build petal path
     //
     QPainterPath petalPath;
-    generatePetalPath( petalPath, cp, radius*value, angle, sweep, false);
+    generatePetalPath( petalPath, cp, radius*value, angle, sweep, true);
     //
     // fill petal path
     //
@@ -120,31 +133,16 @@ void FlowerChartPainter::drawPetal( QPainter* painter, qreal value, QPointF& cp,
     painter->setPen(Qt::NoPen);
     painter->drawPath( petalPath );
     //
-    //
-    //
-    if ( drawMinMax ) {
-        //
-        // build min/max paths
-        //
-        QPainterPath maxPath;
-        generatePetalPath( maxPath, cp, radius, angle, sweep, true);
-        //
-        // draw min/max paths
-        //
-        QPen pen(QColor(255,255,255,128));
-        pen.setStyle(Qt::DashLine);
-        pen.setWidth(1);
-        painter->setBrush(Qt::NoBrush);
-        painter->setPen( pen );
-        painter->drawPath( maxPath );
-    }
-    //
     // restore painter state
     //
     painter->restore();
+    //
+    // append maxpath
+    //
+    generatePetalPath( maxPath, cp, radius*maxValue, angle, sweep, false);
 }
 
-void FlowerChartPainter::generatePetalPath( QPainterPath& path, QPointF& cp, qreal radius, qreal angle, qreal sweep, bool isMinMax ) {
+void FlowerChartPainter::generatePetalPath( QPainterPath& path, QPointF& cp, qreal radius, qreal angle, qreal sweep, bool close ) {
     //
     // calculate petal points
     //
@@ -188,15 +186,19 @@ void FlowerChartPainter::generatePetalPath( QPainterPath& path, QPointF& cp, qre
     //
     // build path
     //
-    if ( isMinMax ) {
-        path.moveTo(p0);
-    } else {
+    if ( close ) {
         path.moveTo(cp);
         path.lineTo(p0);
+    } else {
+        if ( path.elementCount() == 0 ) {
+            path.moveTo(p0);
+        } else {
+            path.lineTo(p0);
+        }
     }
     path.cubicTo(p1,p2,p3);
     path.cubicTo(p4,p5,p6);
-    if ( !isMinMax ) {
+    if ( close ) {
         path.closeSubpath();
     }
 }

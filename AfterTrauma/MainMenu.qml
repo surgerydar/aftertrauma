@@ -12,7 +12,7 @@ Rectangle {
     x: parent.width
     anchors.top: parent.top
     anchors.bottom: navigationBar.top
-    //anchors.bottomMargin: 64
+    anchors.bottomMargin: 4
     color: "transparent"//Qt.rgba(0,0,0,.5)
     //
     //
@@ -89,7 +89,7 @@ Rectangle {
             textHorizontalAlignment: Text.AlignLeft
             textVerticalAlignment: Text.AlignVCenter
             textSize: 32
-            text: "Challenges"
+            text: "My Challenges"
             image: "icons/challenge.png"
             direction: "Left"
             spacing: 8
@@ -103,7 +103,7 @@ Rectangle {
             textHorizontalAlignment: Text.AlignLeft
             textVerticalAlignment: Text.AlignVCenter
             textSize: 32
-            text: "Graphs"
+            text: "My Progress"
             image: "icons/graphs.png"
             direction: "Left"
             spacing: 8
@@ -117,26 +117,18 @@ Rectangle {
             textHorizontalAlignment: Text.AlignLeft
             textVerticalAlignment: Text.AlignVCenter
             textSize: 32
-            text: "Search"
-            image: "icons/search.png"
+            text: "My Prescriptions"
+            image: "icons/factsheet.png"
             direction: "Left"
             spacing: 8
             onClicked: {
-                stack.navigateTo("qrc:///Search.qml");
-                container.close();
-            }
-        }
-        AfterTrauma.Button {
-            //anchors.left: parent.left
-            textHorizontalAlignment: Text.AlignLeft
-            textVerticalAlignment: Text.AlignVCenter
-            textSize: 32
-            text: "About"
-            image: "icons/help.png"
-            direction: "Left"
-            spacing: 8
-            onClicked: {
-                stack.navigateTo("qrc:///Help.qml");
+                onClicked: {
+                    if ( loggedIn ) {
+                        stack.push("qrc:///PrescriptionManager.qml" );
+                    } else {
+                        register.open();
+                    }
+                }
                 container.close();
             }
         }
@@ -165,18 +157,26 @@ Rectangle {
             textHorizontalAlignment: Text.AlignLeft
             textVerticalAlignment: Text.AlignVCenter
             textSize: 32
-            text: "Prescriptions"
-            image: "icons/factsheet.png"
+            text: "Search"
+            image: "icons/search.png"
             direction: "Left"
             spacing: 8
             onClicked: {
-                onClicked: {
-                    if ( loggedIn ) {
-                        stack.push("qrc:///PrescriptionManager.qml" );
-                    } else {
-                        register.open();
-                    }
-                }
+                stack.navigateTo("qrc:///Search.qml");
+                container.close();
+            }
+        }
+        AfterTrauma.Button {
+            //anchors.left: parent.left
+            textHorizontalAlignment: Text.AlignLeft
+            textVerticalAlignment: Text.AlignVCenter
+            textSize: 32
+            text: "About"
+            image: "icons/help.png"
+            direction: "Left"
+            spacing: 8
+            onClicked: {
+                stack.navigateTo("qrc:///Help.qml");
                 container.close();
             }
         }

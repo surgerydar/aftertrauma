@@ -6,6 +6,7 @@ import SodaControls 1.0
 import "controls" as AfterTrauma
 import "colours.js" as Colours
 import "utils.js" as Utils
+
 Item {
     id: container
     //
@@ -41,7 +42,7 @@ Item {
         font.family: fonts.light
         font.pointSize: 32
         color: Colours.almostWhite
-        text: container.date?Utils.shortDateVertical(container.date,true):""
+        text: container.date?Utils.shortDateVertical(container.date,true):"no date"
     }
     //
     //
@@ -116,29 +117,6 @@ Item {
     //
     //
     //
-    /*
-    ImageStack {
-        id: imageStack
-        width: height
-        anchors.top: parent.top
-        anchors.left: imageIndicator.right
-        anchors.bottom: parent.bottom
-        anchors.margins: 4
-    }
-    //
-    //
-    //
-    onBlocksChanged: {
-        var images = []
-        for ( var i = 0; i < blocks.length; i++ ) {
-            if ( blocks[ i ].type === 'image' ) images.push(blocks[ i ].content);
-        }
-        imageStack.images = images;
-    }
-    */
-    //
-    //
-    //
     FlowerChart {
         id: flowerChart
         width: height
@@ -147,23 +125,25 @@ Item {
         anchors.right: parent.right
         anchors.margins: 4
         enabled: false
-        values: dailyModel.valuesForDate(date)
+        values: container.values //dailyModel.valuesForDate(date)
+        animated: false
     }
     //
     //
     //
     function firstBlockContent(type) {
-        for ( var i = 0; i < blocks.length; i++ ) {
+        //console.log( 'firstBlockContent : ' + type );
+        //var blocks = dailyModel.blocksForDate(date);
+        for ( var i = 0; i < container.blocks.length; i++ ) {
             if ( blocks[ i ].type === type ) return ( type === 'image' ? 'file://' + SystemUtils.documentDirectory() + '/' : "" ) + blocks[ i ].content;
         }
         return "";
     }
+
     //
     //
     //
     property var date: 0
-    property var images: []
-    property var notes: []
     property var values: []
     property var blocks: []
 }

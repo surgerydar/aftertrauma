@@ -58,18 +58,22 @@ AfterTrauma.Page {
                 source: "DiaryListItem.qml"
                 onLoaded: {
                     //
+                    // extract numeric scores
+                    //
+                    var scores = [];
+                    model.values.forEach( function( value ) {
+                        scores.push(value.value);
+                    });
+                    //
                     // set properties
                     //
                     item.width  = dailyList.width;
                     item.date   = model.date;
-                    item.images = model.images;
-                    item.notes  = model.notes;
-                    item.values = model.values;
-                    item.blocks = model.blocks || [];
+                    item.values = scores;
+                    item.blocks = model.blocks;
                 }
             }
         }
-
         //
         //
         //
@@ -108,7 +112,7 @@ AfterTrauma.Page {
             //
             AsyncDiaryWriter {
                 id: writer
-                font: fonts.lightFont
+                font.family: fonts.light
                 onDone: {
                     ShareDialog.shareFile('Shared from AfterTrauma', filePath);
                     busyIndicator.running = false;

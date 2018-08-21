@@ -187,5 +187,8 @@
         <file>PrescriptionManager.qml</file>
         <file>PrescriptionPage.qml</file>
         <file>Prescriptions.qml</file>
+        <file>controls/ScrollableTextArea.qml</file>
+        <file>ZoomableImage.qml</file>
+        <file>ImageViewer.qml</file>
     </qresource>
 </RCC>

@@ -34,5 +34,32 @@ DatabaseList {
             save();
         }
     }
+    //
+    //
+    //
+    function getPrescription( date ) {
+        var candidate = null;
+        var min = Number.MAX_VALUE;
+        for ( var i = 0; i < count; i++ ) {
+            var p = get(i);
+            var d = Math.abs( date - p.date );
+            if ( d < min ) {
+                min = d;
+                candidate = p;
+            }
+        }
+        return candidate;
+    }
+    function getGoalValues( date ) {
+        var prescription = getPrescription( date );
+        if ( prescription ) {
+            var goals = [];
+            prescription.goals.forEach( function( goal ) {
+                goals.push( goal.value );
+            } );
+            return goals;
+        }
+        return [ 1.,1.,1.,1.];
+    }
 
 }

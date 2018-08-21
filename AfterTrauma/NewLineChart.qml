@@ -27,7 +27,7 @@ Rectangle {
         anchors.left: parent.left
         anchors.bottom: fromDate.top
         anchors.margins: 4
-        width: 64
+        width: 32
         Repeater {
             model: 4
             Image {
@@ -44,16 +44,6 @@ Rectangle {
     //
     Canvas {
         id: canvas
-
-        // Uncomment below lines to use OpenGL hardware accelerated rendering.
-        // See Canvas documentation for available options.
-        // renderTarget: Canvas.FramebufferObject
-        // renderStrategy: Canvas.Threaded
-        /*
-        anchors.fill: parent
-        anchors.topMargin: 4
-        anchors.bottomMargin: 4
-        */
         anchors.top: parent.top
         //anchors.left: parent.left
         anchors.left: yScale.right
@@ -64,7 +54,6 @@ Rectangle {
         //
         property int pixelSkip: 1
         property int numDays: 1
-        //property int tickMargin: 34
         property int tickMargin: 0
 
         property real xGridStep: (width - tickMargin) / numDays
@@ -73,47 +62,6 @@ Rectangle {
 
         function drawBackground(ctx) {
             ctx.clearRect(0,0,canvas.width, canvas.height);
-            /*
-            ctx.save();
-            ctx.fillStyle = Colours.almostWhite;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            ctx.strokeStyle = Colours.veryLightSlate;
-            ctx.beginPath();
-            // Horizontal grid lines
-            for (var i = 0; i < 12; i++) {
-                ctx.moveTo(0, canvas.yGridOffset + i * canvas.yGridStep);
-                ctx.lineTo(canvas.width, canvas.yGridOffset + i * canvas.yGridStep);
-            }
-
-            // Vertical grid lines
-            var height = 35 * canvas.height / 36;
-            var yOffset = canvas.height - height;
-            var xOffset = 0;
-            for (i = 0; i < chart.gridSize; i++) {
-                ctx.moveTo(xOffset + i * chart.gridStep, yOffset);
-                ctx.lineTo(xOffset + i * chart.gridStep, height);
-            }
-            ctx.stroke();
-
-            // Right ticks
-            ctx.strokeStyle = Colours.veryLightSlate;
-            ctx.beginPath();
-            var xStart = canvas.width - tickMargin;
-            ctx.moveTo(xStart, 0);
-            ctx.lineTo(xStart, canvas.height);
-            for (i = 0; i < 12; i++) {
-                ctx.moveTo(xStart, canvas.yGridOffset + i * canvas.yGridStep);
-                ctx.lineTo(canvas.width, canvas.yGridOffset + i * canvas.yGridStep);
-            }
-            ctx.moveTo(0, canvas.yGridOffset + 9 * canvas.yGridStep);
-            ctx.lineTo(canvas.width, canvas.yGridOffset + 9 * canvas.yGridStep);
-            ctx.closePath();
-            ctx.stroke();
-
-            ctx.restore();
-            */
-
         }
         //
         //
@@ -266,10 +214,6 @@ Rectangle {
                 legend.push( { label: label, colour: colour } );
             }
             chart.legend = legend;
-            //
-            //
-            //
-            //drawScales(ctx, highestPrice, lowestPrice, highestVolume);
         }
     }
     Text {
@@ -277,7 +221,7 @@ Rectangle {
         color: Colours.veryDarkSlate
         font.weight: Font.Light
         font.family: fonts.light
-        font.pointSize: 12
+        font.pointSize: 14
         //anchors.left: parent.left
         anchors.left: yScale.right
         anchors.bottom: parent.bottom
@@ -289,7 +233,7 @@ Rectangle {
         color: Colours.veryDarkSlate
         font.weight: Font.Light
         font.family: fonts.light
-        font.pointSize: 12
+        font.pointSize: 14
         anchors.right: parent.right
         anchors.rightMargin: canvas.tickMargin
         anchors.bottom: parent.bottom

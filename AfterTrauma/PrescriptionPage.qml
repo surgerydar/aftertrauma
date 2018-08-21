@@ -50,7 +50,10 @@ Page {
                     //
                     //
                     Label {
-                        anchors.centerIn: parent
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.margins: 8
                         horizontalAlignment: Label.AlignHCenter
                         verticalAlignment: Label.AlignVCenter
                         visible: parent.status !== Image.Ready
@@ -58,7 +61,18 @@ Page {
                         font.pointSize: 24
                         color: Colours.veryDarkSlate
                         wrapMode: Label.WordWrap
-                        text: "add image of your prescription"
+                        text: "add a photo of your prescription"
+                    }
+                    //
+                    //
+                    //
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            if( parent.status === Image.Ready ) {
+                                zoomed.show(parent.source);
+                            }
+                        }
                     }
                 }
                 AfterTrauma.Button {
@@ -137,12 +151,24 @@ Page {
                                 anchors.margins: 8
                                 from: 0; to: 100;
                                 value: prescription.goals[ index ].value * 100
+                                onValueChanged: {
+                                    prescription.goals[ index ].value = value / 100.;
+                                    prescriptionsModel.update( {id:prescription.id},{goals: prescription.goals} );
+                                    prescriptionsModel.save();
+                                }
                             }
                         }
                     }
                 }
             }
         }
+    }
+    //
+    //
+    //
+    ImageViewer {
+        id: zoomed
+        anchors.fill: parent
     }
     //
     //

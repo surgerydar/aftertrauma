@@ -139,10 +139,7 @@ AfterTrauma.Page {
                         horizontalAlignment: Text.AlignLeft
                         text: recomendationModel.getRecomendation(model.category)
                         onLinkActivated: {
-                            console.log( 'link clicked : ' + link + ' : index : ' + link.indexOf('link://') );
-                            if ( link.indexOf('link://') === 0 ) {
-                                linkPopup.find([model.category]);
-                            }
+                            processLink(link);
                         }
                     }
                 }

@@ -15,7 +15,7 @@ public:
     //
     //
     //
-    void paint(QPainter*painter, const QRect& bounds, const QVector<qreal>& values, const QVector<QString>& labels, int fontSize, bool drawLabels);
+    void paint(QPainter*painter, const QRect& bounds, const QVector<qreal>& values, const QVector<qreal>& maxValues, const QVector<QString>& labels, int fontSize, bool drawLabels);
 
 signals:
 
@@ -23,9 +23,8 @@ public slots:
 
 private:
     void drawBackground( QPainter* painter, QPointF& cp, qreal radius );
-    void drawPetal( QPainter* painter, qreal value, QPointF& cp, qreal radius, qreal angle, qreal sweep, QColor& colour, bool drawMinMax  );
-    void generatePetalPath( QPainterPath& path, QPointF& cp, qreal radius, qreal angle, qreal sweep, bool isMinMax );
-
+    void drawPetal( QPainter* painter, qreal value, qreal maxValue, QPointF& cp, qreal radius, qreal angle, qreal sweep, QColor& colour, QPainterPath& maxPath );
+    void generatePetalPath( QPainterPath& path, QPointF& cp, qreal radius, qreal angle, qreal sweep, bool close );
 };
 
 #endif // FLOWERCHARTPAINTER_H

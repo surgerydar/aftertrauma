@@ -21,9 +21,8 @@ AfterTrauma.Page {
         model: ListModel {}
         delegate: AfterTrauma.EditableListItem {
             id: editableItem
+            width: contents.width
             height: block.implicitHeight
-            anchors.left: parent.left
-            anchors.right: parent.right
             topPadding: 0
             bottomPadding: 0
             swipeEnabled: editable
@@ -157,15 +156,6 @@ AfterTrauma.Page {
     //
     //
     //
-    /*
-    DropArea {
-        anchors.fill: parent
-        onPositionChanged: {
-            console.log( 'x:' + drag.x + ' y:' + drag.y );
-            drag.accepted = false;
-        }
-    }
-    */
     ListView {
         id: contents
         anchors.fill: parent
@@ -201,12 +191,8 @@ AfterTrauma.Page {
                 enabled: true
                 fontSize: 12
                 values: dailyModel.valuesForDate(date)
-            }
-            MouseArea {
-                anchors.fill: parent
-                onClicked: {
-                    stack.navigateTo("qrc:///Questionnaire.qml");
-                }
+                maxValues: prescriptionsModel.getGoalValues(date)
+                animated: false
             }
         }
     }

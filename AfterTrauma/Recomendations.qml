@@ -221,7 +221,6 @@ DatabaseList {
         } else {
             text = 'Insufficient information to assess : ' + c;
         }
-
         //
         //
         //

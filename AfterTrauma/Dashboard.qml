@@ -38,77 +38,14 @@ AfterTrauma.Page {
             anchors.rightMargin: 32
             onDateChanged: {
                 if ( flowerChart ) {
+                    flowerChart.maxValues = prescriptionsModel.getGoalValues(currentDate.getTime());
                     flowerChart.values = dailyModel.valuesForDate( currentDate.getTime() );
                 }
             }
         }
-        //
-        //
-        //
-        /* now handled by system notifications
-        SwipeView {
-            id: notifications
-            anchors.top: dateSlider.bottom
-            anchors.left: parent.left
-            anchors.bottom: parent.bottom
-            anchors.right: parent.right
-            //
-            //
-            //
-            Repeater {
-                id: notificationsRepeater
-                //
-                //
-                //
-                model: notificationModel.count
-                //
-                //
-                //
-                delegate: Item {
-                    Text {
-                        anchors.fill: parent
-                        color: Colours.almostWhite
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
-                        wrapMode: Text.WordWrap
-                        elide: Text.ElideRight
-                        font.family: fonts.light
-                        fontSizeMode: Text.Fit
-                        minimumPointSize: 12
-                        text: notificationModel.get( index ).text
-                    }
-                }
-            }
-
-        }
-        AfterTrauma.PageIndicator {
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.bottom: parent.bottom
-            currentIndex: notifications.currentIndex
-            count: notifications.count
-            colour: Colours.almostWhite
-        }
-        */
     }
     //
     //
-    //
-    /*
-    Timer {
-        id: scrollTimer
-        interval: 30 * 1000
-        repeat: true
-        onTriggered: {
-            if ( notifications.count ) {
-                if ( notifications.currentIndex < notifications.count - 1 ) {
-                    notifications.currentIndex++;
-                } else {
-                    notifications.currentIndex = 0;
-                }
-            }
-        }
-    }
-    */
     //
     //
     //
@@ -116,21 +53,10 @@ AfterTrauma.Page {
         //scrollTimer.start();
         dateSlider.value = 1;
         flowerChart.enabled = true;
+        flowerChart.maxValues = prescriptionsModel.getGoalValues( dateSlider.currentDate.getTime());
         flowerChart.values = dailyModel.valuesForDate( dateSlider.currentDate.getTime() );
     }
     StackView.onDeactivated: {
-        //scrollTimer.stop();
         flowerChart.enabled = false;
-    }
-    //
-    //
-    //
-    Connections {
-        target: notificationModel
-        onUpdated: {
-            // now handled by system level notifications
-            //console.log( 'Dashboard : notificationModel updated');
-            //notificationsRepeater.model = notificationModel.count
-        }
     }
 }

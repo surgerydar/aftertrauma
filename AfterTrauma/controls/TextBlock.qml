@@ -49,7 +49,7 @@ Item {
         //
         //
         onLinkActivated: {
-            Qt.openUrlExternally(link);
+            processLink(link);
         }
     }
     //

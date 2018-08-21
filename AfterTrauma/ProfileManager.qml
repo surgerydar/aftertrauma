@@ -184,7 +184,7 @@ AfterTrauma.Page {
                         //
                         //
                         Label {
-                            id: sexHeader
+                            id: genderHeader
                             anchors.top: parent.top
                             anchors.left: parent.left
                             anchors.margins: 8
@@ -196,7 +196,7 @@ AfterTrauma.Page {
                         }
                         AfterTrauma.CheckBox {
                             id: female
-                            anchors.top: sexHeader.bottom
+                            anchors.top: genderHeader.bottom
                             anchors.right: parent.right
                             anchors.margins: 8
                             direction: "Right"
@@ -302,14 +302,13 @@ AfterTrauma.Page {
                         //
                         //
                         //
-                        AfterTrauma.TextArea {
+                        AfterTrauma.ScrollableTextArea {
                             id: profileText
                             height: Math.max(contentHeight,128)
                             anchors.left: parent.left
                             anchors.bottom: parent.bottom
                             anchors.right: parent.right
                             anchors.margins: 8
-                            wrapMode: TextArea.WordWrap
                             placeholderText: "Tell us a little about you and your trauma experience"
                             text: profile && profile.profile ? profile.profile : ""
                             onTextChanged: {
@@ -360,12 +359,77 @@ AfterTrauma.Page {
                                 profile.tags.push(name);
                             }
                         }
+                        if ( !profile.injuries ) {
+                            profile.injuries = {};
+                        }
+                        if ( !profile.injuries[ name ] ) {
+                            profile.injuries[ name ] = "";
+                        }
                     } else {
                         if ( profile.tags ) {
                             var i = profile.tags.indexOf(name);
                             if ( i >= 0 ) {
                                 profile.tags.splice(i,1);
                             }
+                        }
+                        if ( profile.injuries && profile.injuries[ name ]) {
+                            delete profile.injuries[ name ];
+                        }
+                    }
+                }
+            }
+        }
+        Page {
+            visible: profile && profile.tags && profile.tags.length > 0
+            padding: 0
+            title: "Describe your injuries?"
+            ListView {
+                id: injuryDescriptionList
+                anchors.fill: parent
+                //
+                //
+                //
+                clip: true
+                model: profile.tags
+                //
+                //
+                //
+                delegate: Rectangle {
+                    height: childrenRect.height + 16
+                    width: injuryDescriptionList.width
+                    color: Colours.almostWhite
+                    //
+                    //
+                    //
+                    Label {
+                        id: injuryDescriptionHeader
+                        anchors.top: parent.top
+                        anchors.left: parent.left
+                        anchors.margins: 8
+                        color: Colours.veryDarkSlate
+                        wrapMode: Label.WordWrap
+                        font.family: fonts.light
+                        font.pointSize: 24
+                        text: profile.tags[ index ]
+                    }
+                    //
+                    //
+                    //
+                    AfterTrauma.ScrollableTextArea {
+                        id: injuryDescriptionText
+                        height: 128
+                        anchors.top: injuryDescriptionHeader.bottom
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.margins: 8
+                        placeholderText: "Tell us a little about your " + profile.tags[ index ] + " injury"
+                        text: profile.injuries && profile.injuries[ profile.tags[ index ] ] ? profile.injuries[ profile.tags[ index ] ] : ""
+                        onTextChanged: {
+                            if ( !profile.injuries ) {
+                                profile.injuries = {};
+                            }
+                            profile.injuries[ profile.tags[ index ] ] = text;
+                            dirty = true;
                         }
                     }
                 }
