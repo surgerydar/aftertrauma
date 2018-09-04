@@ -14,7 +14,7 @@ AfterTrauma.Page {
     //
     //
     //
-    ListView {
+    AfterTrauma.EditableList {
         id: dailyList
         //
         //
@@ -25,8 +25,10 @@ AfterTrauma.Page {
         //
         //
         clip: true
-        spacing: 8
-        cacheBuffer: 0
+        //
+        //
+        //
+        emptyPrompt: "Add a Diary Entry<br/>or<br/>complete your<br/>Recovery Questionnaire"
         //
         //
         //
@@ -35,24 +37,6 @@ AfterTrauma.Page {
         //
         //
         /*
-        delegate: Text {
-            height: 32
-            anchors.left: parent?parent.left:undefined
-            anchors.right: parent?parent.right:undefined
-            text: Utils.shortDate(model.date)
-        }
-        */
-        /*
-        delegate: DiaryListItem {
-            anchors.left: parent?parent.left:undefined
-            anchors.right: parent?parent.right:undefined
-            date: model.date
-            images: model.images
-            notes: model.notes
-            values: model.values
-            blocks: model.blocks || []
-        }
-        */
         delegate: Component {
             Loader {
                 source: "DiaryListItem.qml"
@@ -72,6 +56,121 @@ AfterTrauma.Page {
                     item.values = scores;
                     item.blocks = model.blocks;
                 }
+            }
+        }
+        */
+        delegate: Item {
+            width: dailyList.width;
+            height: width / 4.
+            //
+            //
+            //
+            Rectangle {
+                id: background
+                anchors.fill: parent
+                color: Colours.slate
+            }
+            //
+            //
+            //
+            Label {
+                id: dateText
+                width: height
+                anchors.top: parent.top
+                anchors.left: parent.left
+                anchors.bottom: parent.bottom
+                anchors.margins: 4
+                //
+                //
+                //
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                fontSizeMode: Text.Fit
+                font.weight: Font.Light
+                font.family: fonts.light
+                font.pointSize: 32
+                color: Colours.almostWhite
+                text: Utils.shortDateVertical(model.date,true)
+            }
+            //
+            // Indicators
+            //
+            Image {
+                id: imageIndicator
+                width: height
+                anchors.top: parent.top
+                anchors.left: dateText.right
+                anchors.bottom: parent.bottom
+                anchors.margins: 4
+                sourceSize.height: height
+                sourceSize.width: width
+                fillMode: Image.PreserveAspectCrop
+                visible: status === Image.Ready
+                source: firstBlockContent("image")
+            }
+            //
+            //
+            //
+            Label {
+                id: notesIndicator
+                width: height
+                anchors.top: parent.top
+                anchors.left: imageIndicator.right
+                anchors.bottom: parent.bottom
+                anchors.margins: 4
+                fontSizeMode: Label.Fit
+                minimumPointSize: 12
+                font.weight: Font.Light
+                font.family: fonts.light
+                font.pointSize: 32
+                elide: Label.ElideRight
+                wrapMode: Label.WordWrap
+                topPadding: height / 3.
+                bottomPadding: height / 3.
+                leftPadding: 4
+                rightPadding: 4
+                color: Colours.darkSlate
+                visible: text.length > 0
+                text: firstBlockContent("text")
+
+                background: Rectangle {
+                    anchors.fill: parent
+                    color: Colours.lightSlate
+                }
+            }
+            //
+            //
+            //
+            FlowerChart {
+                id: flowerChart
+                width: height
+                anchors.top: parent.top
+                anchors.bottom: parent.bottom
+                anchors.right: parent.right
+                anchors.margins: 4
+                enabled: false
+                values: dailyModel.valuesForDate(model.date)
+                animated: false
+            }
+            //
+            //
+            //
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                    var d = new Date( model.date );
+                    stack.push( "qrc:///DiaryEntry.qml", { date: d } );
+                }
+            }
+            //
+            //
+            //
+            function firstBlockContent(type) {
+                var blocks = model.blocks;
+                for ( var i = 0; i < blocks.length; i++ ) {
+                    if ( blocks[ i ].type === type ) return ( type === 'image' ? 'file://' + SystemUtils.documentDirectory() + '/' : "" ) + blocks[ i ].content;
+                }
+                return "";
             }
         }
         //
@@ -172,7 +271,7 @@ AfterTrauma.Page {
                         dailyModel.save();
                         var dayIndex = dailyModel.getDayIndex(date);
                         if ( dayIndex >= 0 ) {
-                            dailyList.positionViewAtIndex(dayIndex, ListView.Visible);
+                            dailyList.list.positionViewAtIndex(dayIndex, ListView.Visible);
                         }
                     }
                 });

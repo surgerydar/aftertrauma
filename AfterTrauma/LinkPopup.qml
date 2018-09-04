@@ -80,8 +80,9 @@ Popup {
                     ids.push(id);
                 }
             }
+            console.log( 'find documents : ' + JSON.stringify(ids) );
             var documents = documentModel.find( { document: { $in: ids } } );
-            console.log( 'find documents : ' + documents.length );
+            console.log(  documents.length + ' documents found' );
             documents.forEach( function( document ) {
                 //
                 // find first text block

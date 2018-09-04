@@ -10,7 +10,7 @@ AfterTrauma.Page {
     //
     //
     //
-    title: "PRESCRIPTIONS"
+    title: "MY REHAB"
     subtitle: prescriptionsView.count > 0 ? Utils.shortDate(prescriptionsRepeater.itemAt(prescriptionsView.currentIndex).prescription.date) : ""
     colour: Colours.blue
     //

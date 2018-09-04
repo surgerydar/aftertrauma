@@ -117,7 +117,7 @@ Rectangle {
             textHorizontalAlignment: Text.AlignLeft
             textVerticalAlignment: Text.AlignVCenter
             textSize: 32
-            text: "My Prescriptions"
+            text: "My Rehab"
             image: "icons/factsheet.png"
             direction: "Left"
             spacing: 8

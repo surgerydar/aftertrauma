@@ -12,7 +12,7 @@ AfterTrauma.Page {
     //
     //
     //
-    ListView {
+    AfterTrauma.EditableList { //ListView {
         id: chats
         anchors.fill: parent
         anchors.bottomMargin: 4
@@ -28,65 +28,10 @@ AfterTrauma.Page {
         //
         //
         //
-        /* TODO: work out sections for group chat
-        section.property: "status"
-        section.delegate: Text {
-            height: 48
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.margins: 8
-            font.weight: Font.Light
-            font.family: fonts.light
-            font.pixelSize: 32
-            font.capitalization: Font.Capitalize
-            color: Colours.almostWhite
-            text: section
-        }
-        */
+        emptyPrompt: "No active chat's<br/>Add a chat to start a new conversation<br/>or<br/>find a group chat"
         //
         //
         //
-        /*
-        delegate: GroupChatItem {
-            width: chats.width
-            avatar: "https://aftertrauma.uk:4000/avatar/" + model.owner + '?width=56&height=56'
-            owner: model.owner
-            subject: model.subject
-            contentEditable: model.owner === userProfile.id
-            deleteLabel: model.owner === userProfile.id ? "Delete" : "Leave"
-            count: unreadChatsModel.totalUnread > 0 ? unreadChatsModel.getUnreadCountText(model.id) : ""
-            members: model.members
-            // TODO: owner name, last message as subtitle
-            // TODO: indicator for invite
-            // TODO: list of active members
-            onChat: {
-                openChat(model.id);
-            }
-            onEdit: {
-                var chat = chatModel.get( index );
-                console.log( 'editing chat : ' + JSON.stringify(chat) );
-                chatEditor.show(chat, function(edited,showChat) {
-                    delete chat._id; // JONS: fudge to prevent update conflict on mongo update
-                    var command = {
-                        command: 'groupupdatechat',
-                        token: userProfile.token,
-                        chat: edited,
-                        show: showChat
-                    };
-                    chatChannel.send(command);
-                });
-            }
-            onRemove: {
-                var command = {
-                    command: model.owner === userProfile.id ? 'groupremovechat' : 'groupleavechat',
-                    token: userProfile.token,
-                    userid: userProfile.id,
-                    chatid: model.id
-                };
-                chatChannel.send(command);
-            }
-        }
-        */
         delegate: Component {
             Loader {
                 source: "GroupChatItem.qml"

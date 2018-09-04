@@ -52,12 +52,29 @@ AfterTrauma.Page {
             width: challenges.width
             name: model.name
             activity: model.activity
-            count: model.count || 0
             swipeEnabled: editable
             active: model.active
+            /*
+            count: model.count || 0
             onCountChanged: {
                 challengeModel.updateCount( model.index, count );
             }
+            */
+            done: model.count >= parseInt( model.repeats ) || false
+            onDoneChanged: {
+                challengeModel.updateCount( model.index, done ? model.repeats : 0 );
+                var challenge = {
+                    _id: model._id,
+                    name: model.name
+                };
+                var date = new Date();
+                if ( done ) {
+                    dailyModel.addChallenge( date, challenge );
+                } else {
+                    dailyModel.removeChallenge( date, challenge );
+                }
+            }
+
             onEdit: {
                 stack.push( "qrc:///ChallengeBuilder.qml", {source: challengeModel.get(index)});
             }

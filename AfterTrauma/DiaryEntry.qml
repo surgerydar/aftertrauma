@@ -156,6 +156,53 @@ AfterTrauma.Page {
     //
     //
     //
+    DelegateModel {
+        id: challengesModel
+        //
+        //
+        //
+        model: ListModel {}
+        delegate: Item {
+            width: contents.width
+            height: 32
+            //
+            //
+            //
+            Image {
+                id: challengeIcon
+                width: height
+                anchors.top: parent.top
+                anchors.left: parent.left
+                anchors.bottom: parent.bottom
+                anchors.margins: 4
+                fillMode: Image.PreserveAspectFit
+                source:"icons/challenge.png"
+            }
+            //
+            //
+            //
+            Text {
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.left: challengeIcon.right
+                anchors.right: parent.right
+                anchors.margins: 4
+                horizontalAlignment: Label.AlignLeft
+                verticalAlignment: Label.AlignVCenter
+                elide: Text.ElideRight
+                minimumPointSize: 12
+                fontSizeMode: Text.Fit
+                font.weight: Font.Light
+                font.family: fonts.light
+                font.pointSize: 18
+                color: Colours.almostWhite
+                text: model.name
+            }
+        }
+    }
+
+    //
+    //
+    //
     ListView {
         id: contents
         anchors.fill: parent
@@ -175,7 +222,7 @@ AfterTrauma.Page {
         header: Rectangle {
             anchors.left: parent.left
             anchors.right: parent.right
-            height: 256
+            height: childrenRect.height + 16
             radius: 4
             color: Colours.slate
             //
@@ -183,9 +230,9 @@ AfterTrauma.Page {
             //
             FlowerChart {
                 id: flowerChart
+                height: 240
                 anchors.top: parent.top
                 anchors.left: parent.left
-                anchors.bottom: parent.bottom
                 anchors.right: parent.right
                 anchors.margins: 8
                 enabled: true
@@ -193,6 +240,21 @@ AfterTrauma.Page {
                 values: dailyModel.valuesForDate(date)
                 maxValues: prescriptionsModel.getGoalValues(date)
                 animated: false
+            }
+            //
+            //
+            //
+            ListView {
+                id: challenges
+                width: parent.width
+                height: Math.min( model.count, 3 ) * 32
+                anchors.top: flowerChart.bottom
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.margins: 8
+                clip: true
+                visible: model.count > 0
+                model: challengesModel
             }
         }
     }
@@ -297,19 +359,20 @@ AfterTrauma.Page {
             year: date.getFullYear()
         };
         var day = dailyModel.findOne(query);
+        //
+        //
+        //
         blocksModel.model.clear();
+        challengesModel.model.clear();
         if ( day  ) {
             if ( day.blocks ) {
                 day.blocks.forEach( function(block){
-                    /*
-                    if ( block.tags.length <= 0 ) {
-                        for ( var i = 0; i < 4; i++ ) {
-                            block.tags.push( 'testtag' + i );
-                        }
-                    }
-                    block.tags = JSON.stringify(block.tags);
-                    */
                     blocksModel.model.append(block);
+                });
+            }
+            if ( day.challenges ) {
+                day.challenges.forEach( function(challenge) {
+                    challengesModel.model.append(challenge);
                 });
             }
         }

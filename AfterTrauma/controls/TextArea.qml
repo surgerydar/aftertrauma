@@ -9,8 +9,11 @@ TextArea {
     color: Colours.veryDarkSlate
     padding: 8
     font.pointSize: 24
+    //
+    //
+    //
     background: Rectangle {
-        anchors.fill: parent.top
+        anchors.fill: parent
         radius: 4
         color: Colours.veryLightSlate
         border.color: "transparent"

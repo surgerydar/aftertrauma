@@ -379,10 +379,14 @@ AfterTrauma.Page {
                 }
             }
         }
+        //
+        // injury description
+        //
         Page {
+            id: injuryDescriptionPage
             visible: profile && profile.tags && profile.tags.length > 0
             padding: 0
-            title: "Describe your injuries?"
+            title: "Describe your injuries"
             ListView {
                 id: injuryDescriptionList
                 anchors.fill: parent
@@ -434,6 +438,15 @@ AfterTrauma.Page {
                     }
                 }
             }
+            //
+            //
+            //
+            SwipeView.onIsCurrentItemChanged: {
+                if ( SwipeView.isCurrentItem ) {
+                    injuryDescriptionList.model = profile.tags;
+                }
+            }
+
         }
         Page {
             padding: 0

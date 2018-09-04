@@ -39,6 +39,8 @@ Page {
                     anchors.bottom: galleryButton.top
                     anchors.right: parent.right
                     anchors.margins: 16
+                    smooth: true
+                    mipmap: true
                     fillMode: Image.PreserveAspectFit
                     source: prescription ? 'file://' + SystemUtils.documentDirectory() + '/' + prescription.image : ""
                     onStatusChanged: {
@@ -70,11 +72,25 @@ Page {
                         anchors.fill: parent
                         onClicked: {
                             if( parent.status === Image.Ready ) {
-                                zoomed.show(parent.source);
+                                zoomed.show('file://' + SystemUtils.documentDirectory() + '/' + prescription.image);
                             }
                         }
                     }
                 }
+                /*
+                AfterTrauma.Button {
+                    id: shareButton
+                    anchors.bottom: parent.bottom
+                    anchors.left: galleryButton.right
+                    anchors.leftMargin: 1
+                    text: "share"
+                    backgroundColour: Colours.darkSlate
+                    radius: [0]
+                    onClicked: {
+                        ShareDialog.shareFile("Prescription Image", SystemUtils.documentDirectory() + '/' + prescription.image );
+                    }
+                }
+                */
                 AfterTrauma.Button {
                     id: galleryButton
                     anchors.bottom: parent.bottom
@@ -87,7 +103,7 @@ Page {
                         ImagePicker.openGallery();
                     }
                 }
-                AfterTrauma.Button {
+                 AfterTrauma.Button {
                     id: cameraButton
                     anchors.bottom: parent.bottom
                     anchors.right: parent.horizontalCenter

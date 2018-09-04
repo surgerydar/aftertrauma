@@ -3,6 +3,7 @@ import QtQuick.Controls 2.1
 
 import "controls" as AfterTrauma
 import "colours.js" as Colours
+import "styles.js" as Styles
 
 AfterTrauma.Page {
     title: "MY RECOVERY"
@@ -127,6 +128,7 @@ AfterTrauma.Page {
                         wrapMode: Text.WordWrap
                         elide: Text.ElideRight
                         color: Colours.almostWhite
+                        textFormat: Text.RichText
                         //
                         //
                         //
@@ -140,6 +142,16 @@ AfterTrauma.Page {
                         text: recomendationModel.getRecomendation(model.category)
                         onLinkActivated: {
                             processLink(link);
+                        }
+                        onTextChanged: {
+                            recomendation.text = Styles.style(text,"recomendations");
+                            /*
+                            if ( !text.startsWith('<html>') ) {
+                                var styledText = "<html><head><style> a { display: inline-block; text-decoration: none; color: black; background-color: white; padding: 4px;} </style></head><body>" + text + "</body></html>";
+                                //console.log( styledText );
+                                recomendation.text = styledText;
+                            }
+                            */
                         }
                     }
                 }

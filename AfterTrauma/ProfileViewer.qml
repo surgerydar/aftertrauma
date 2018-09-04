@@ -114,6 +114,27 @@ Rectangle {
             anchors.rightMargin: 16
             image: "icons/chat.png"
             onClicked: {
+                //
+                // create new chat
+                //
+                var chat = {
+                    id: GuidGenerator.generate(),
+                    owner: userProfile.id,
+                    subject: "Chat with " + title.text,
+                    "public": false,
+                    members: [userId],
+                    messages: []
+                };
+                chatEditor.show(chat, function(edited,showChat) {
+                    var command = {
+                        command: 'groupcreatechat',
+                        token: userProfile.token,
+                        chat: edited,
+                        show: showChat
+                    };
+                    chatChannel.send(command);
+                });
+                close();
             }
         }
     }

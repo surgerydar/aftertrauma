@@ -149,7 +149,6 @@ AfterTrauma.Page {
             }
         }
     }
-
     //
     //
     //

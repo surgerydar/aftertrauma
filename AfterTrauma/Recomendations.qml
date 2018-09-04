@@ -216,7 +216,7 @@ DatabaseList {
         if ( recomendation ) {
             text = recomendation.recomendation;
             if ( value < .5 ) {
-                text += '<br/><a href="link://' + c + '">' + c + ' resources</a>';
+                text += '<br/><a class="recommendation" href="link://' + c + '">' + c + ' resources</a>';
             }
         } else {
             text = 'Insufficient information to assess : ' + c;

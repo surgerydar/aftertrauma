@@ -286,4 +286,47 @@ DatabaseList {
         }
         return [];
     }
+    //
+    //
+    //
+    function addChallenge( date, challenge ) {
+        var query = {
+            day: date.getDate(),
+            month: date.getMonth(),
+            year: date.getFullYear()
+        };
+        var day = findOne( query ) || createDate( date );
+        if ( !day.challenges ) {
+            day.challenges = [];
+        }
+        var done = false;
+        for ( var i = 0; i < day.challenges.length; i++ ) {
+            if ( day.challenges[ i ]._id === challenge._id ) {
+                done = true;
+                break;
+            }
+        }
+        if ( !done ) {
+            day.challenges.push( challenge );
+            update(query,{challenges:day.challenges});
+        }
+    }
+    function removeChallenge( date, challenge ) {
+        var query = {
+            day: date.getDate(),
+            month: date.getMonth(),
+            year: date.getFullYear()
+        };
+        var day = findOne( query );
+        if ( day && day.challenges ) {
+            var done = false;
+            for ( var i = 0; i < day.challenges.length; i++ ) {
+                if ( day.challenges[ i ]._id === challenge._id ) {
+                    day.challenges.splice(i,1);
+                    update(query,{challenges:day.challenges});
+                    break;
+                }
+            }
+        }
+    }
 }

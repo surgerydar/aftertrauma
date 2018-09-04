@@ -42,7 +42,7 @@ AfterTrauma.EditableListItem {
             horizontalAlignment: Text.AlignLeft
             verticalAlignment: Text.AlignVCenter
             elide: Text.ElideRight
-            minimumPixelSize: 24
+            minimumPixelSize: 18
             fontSizeMode: Text.Fit
             font.weight: Font.Light
             font.family: fonts.light
@@ -54,7 +54,8 @@ AfterTrauma.EditableListItem {
             anchors.top: nameText.bottom
             anchors.left: parent.left
             anchors.bottom: parent.bottom
-            anchors.right: active ? countSpinner.left : parent.right
+            //anchors.right: active ? countSpinner.left : parent.right
+            anchors.right: active ? doneCheckbox.left : parent.right
             anchors.margins: 8
             //
             //
@@ -64,7 +65,7 @@ AfterTrauma.EditableListItem {
             fontSizeMode: Text.Fit
             wrapMode: Text.WordWrap
             elide: Text.ElideRight
-            minimumPixelSize: 18
+            minimumPixelSize: 12
             font.weight: Font.Light
             font.family: fonts.light
             font.pixelSize: 24
@@ -73,8 +74,17 @@ AfterTrauma.EditableListItem {
         //
         //
         //
+        /*
         AfterTrauma.SpinBox {
             id: countSpinner
+            anchors.bottom: parent.bottom
+            anchors.right: parent.right
+            anchors.margins: 8
+            visible: false
+        }
+        */
+        AfterTrauma.CheckBox {
+            id: doneCheckbox
             anchors.bottom: parent.bottom
             anchors.right: parent.right
             anchors.margins: 8
@@ -86,6 +96,11 @@ AfterTrauma.EditableListItem {
     //
     property alias name: nameText.text
     property alias activity: activityText.text
+    /*
     property alias count: countSpinner.value
     property alias active: countSpinner.visible
+    */
+    property alias done: doneCheckbox.checked
+    property alias active: doneCheckbox.visible
+
 }

@@ -188,7 +188,9 @@
         <file>PrescriptionPage.qml</file>
         <file>Prescriptions.qml</file>
         <file>controls/ScrollableTextArea.qml</file>
-        <file>ZoomableImage.qml</file>
         <file>ImageViewer.qml</file>
+        <file>controls/EditableList.qml</file>
+        <file>styles/aftertrauma.css</file>
+        <file>styles.js</file>
     </qresource>
 </RCC>

@@ -5,9 +5,11 @@ import "../colours.js" as Colours
 
 Flickable {
     id: container
-    contentHeight: textArea.height + ( textArea.padding * 2 )
+    contentHeight: textArea.height + ( textArea.padding * 2 ) // TODO: fix binding loop
     clip: true
-
+    //
+    //
+    //
     TextArea {
         id: textArea
         width: container.width
