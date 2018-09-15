@@ -19,15 +19,17 @@ public class NotificationPublisher extends BroadcastReceiver {
     public static String NOTIFICATION = "notification";
 
     public void onReceive(Context context, Intent intent) {
-        System.out.println("NotificationPublisher.onReceive");
+        //System.out.println("NotificationPublisher.onReceive");
 
         NotificationManager notificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
 
         Notification notification = intent.getParcelableExtra(NOTIFICATION);
         int id = intent.getIntExtra(NOTIFICATION_ID, 0);
+        System.out.println("NotificationPublisher.onReceive : notififaction id=" + id );
         notificationManager.notify(id, notification);
-
+        /*
         String packageName = context.getApplicationContext().getPackageName();
         System.out.println( packageName );
+        */
     }
 }

@@ -192,5 +192,8 @@
         <file>controls/EditableList.qml</file>
         <file>styles/aftertrauma.css</file>
         <file>styles.js</file>
+        <file>RehabPage.qml</file>
+        <file>RehabManager.qml</file>
+        <file>Rehab.qml</file>
     </qresource>
 </RCC>

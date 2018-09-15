@@ -33,6 +33,13 @@ void _cancelAllNotifications() {
                                               "()V");
 }
 
+extern int _getActivationNotificationId() {
+    return QAndroidJniObject::callStaticMethod<jint>("uk/co/soda/NotificationHandler",
+                                                         "getNotificationId",
+                                                         "()I");
+
+}
+
 /*
 // Qt
 import org.qtproject.qt5.android.QtNative;

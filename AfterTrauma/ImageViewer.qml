@@ -18,9 +18,6 @@ Rectangle {
         anchors.fill: parent
         Image {
             id: image
-            //transformOrigin: Item.Center
-            //smooth: true
-            //mipmap: true
             //
             //
             //
@@ -29,19 +26,29 @@ Rectangle {
             }
 
             onStatusChanged: {
-                if ( status === Image.Ready && fitToContainer ) {
-                    fitToContainer = false;
-                    console.log( 'image implicit [' + implicitWidth + ',' + implicitHeight + ']');
-                    if ( sourceSize ) {
-                        console.log( 'image source [' + sourceSize.width + ',' + sourceSize.height + ']');
+                if ( status === Image.Ready ) {
+                    if ( fitToContainer ) {
+                        fitToContainer = false;
+                        console.log( 'image actual [' + width + ',' + height + ']');
+                        console.log( 'image implicit [' + implicitWidth + ',' + implicitHeight + ']');
+                        if ( sourceSize ) {
+                            console.log( 'image source [' + sourceSize.width + ',' + sourceSize.height + ']');
+                        }
+                        console.log( 'image container [' + imageContainer.width + ',' + imageContainer.height + ']');
+                        image.scale = Math.min( imageContainer.width / implicitWidth, imageContainer.height / implicitHeight );
+                        /*
+                        image.x = ( imageContainer.width - ( implicitWidth * image.scale ) ) / 2.
+                        image.y = ( imageContainer.height - ( implicitHeight * image.scale ) ) / 2.
+                        */
+                        image.x = ( imageContainer.width / 2. ) - ( image.width / 2. );
+                        image.y = ( imageContainer.height / 2. ) - ( image.height / 2. );
+                        initialWidth = implicitWidth;
+                        initialHeight = implicitHeight;
+                    } else {
+                        if ( sourceSize ) {
+                            console.log( 'reloaded image source [' + sourceSize.width + ',' + sourceSize.height + ']');
+                        }
                     }
-                    console.log( 'image container [' + imageContainer.width + ',' + imageContainer.height + ']');
-                    image.scale = Math.min( imageContainer.width / implicitWidth, imageContainer.height / implicitHeight );
-                    image.x = ( imageContainer.width - ( implicitWidth * image.scale ) ) / 2.
-                    image.y = ( imageContainer.height - ( implicitHeight * image.scale ) ) / 2.
-                    initialWidth = implicitWidth;
-                    initialHeight = implicitHeight;
-                    console.log( 'image [' + image.width + ',' + image.height + ']')
                 }
             }
             /*
@@ -178,6 +185,9 @@ Rectangle {
 
                     targetX = Math.max( minX, Math.min( maxX, image.x ) );
                     targetY = Math.max( minY, Math.min( maxY, image.y ) );
+
+                    //image.sourceSize.width = targetWidth;
+                    //image.sourceSize.height = targetHeight;
 
                     start();
                 }

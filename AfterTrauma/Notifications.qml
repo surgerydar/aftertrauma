@@ -22,7 +22,7 @@ ListModel {
             if ( !findNotification("questionnaire") ) {
                 console.log( 'Notifications : adding questionnaire prompt' );
                 append({subject:"questionnaire", text:"don't forget to complete your daily questionnaire"});
-                NotificationManager.scheduleNotification(questionnaire_base_id, "don't forget to complete the questionnaire", 0, 60000);
+                NotificationManager.scheduleNotification(questionnaire_base_id, "don't forget to complete your recovery questionnaire", 0, 60000);
                 updated();
             }
         } else {
@@ -39,6 +39,9 @@ ListModel {
         //
 
     }
+    //
+    //
+    //
     function findNotification( subject ) {
         var nNotifications = model.count;
         for ( var i = 0; i < nNotifications; i++ ) {

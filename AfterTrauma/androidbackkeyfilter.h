@@ -21,6 +21,7 @@ signals:
     void applicationActivated();
     void applicationDeactivated();
     void applicationSuspended();
+    void applicationHidden();
 
 public slots:
 };

@@ -3,6 +3,7 @@ import QtQuick.Controls 2.1
 
 import "controls" as AfterTrauma
 import "colours.js" as Colours
+import "utils.js" as Utils
 
 AfterTrauma.Page {
     id: container
@@ -85,7 +86,7 @@ AfterTrauma.Page {
                 if ( !editable ) {
                     var properties = {
                         title: model.name,
-                        activity: formatDescription(model.activity, model.repeats, model.frequency),
+                        activity: Utils.formatChallengeDescription(model.activity, model.repeats, model.frequency),
                         active: model.active,
                         notifications: model.notifications,
                         challengeId: challengeModel.get(index)._id

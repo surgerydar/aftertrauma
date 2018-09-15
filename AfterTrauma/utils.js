@@ -65,3 +65,7 @@ function getEndOfWeek( start ) {
 function formatAgeAndGender( profile ) {
     return ( profile.age ?  profile.age + ' ' : '' ) + ( profile.gender === 'male' || profile.gender === 'female' ? profile.gender : '' );
 }
+
+function formatChallengeDescription( activity, repeats, frequency ) {
+    return activity + '<p>' + 'repeat ' + repeats + ' time' + ( repeats > 1 ? 's ' : ' ' ) + ', ' + frequency;
+}

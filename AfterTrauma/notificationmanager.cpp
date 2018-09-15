@@ -1,10 +1,14 @@
 #include "notificationmanager.h"
+#include <QDebug>
 
 #if defined(Q_OS_IOS) || defined(Q_OS_ANDROID)
 extern void _requestNotificationPermision();
 extern void _scheduleNotification( int id, QString message, unsigned int delay, unsigned int frequency );
 extern void _cancelNotification( int id );
 extern void _cancelAllNotifications();
+#if defined(Q_OS_ANDROID)
+extern int _getActivationNotificationId();
+#endif
 #endif
 
 NotificationManager* NotificationManager::s_shared = nullptr;
@@ -37,5 +41,17 @@ void NotificationManager::cancelNotification( int id ) {
 void NotificationManager::cancelAllNotifications() {
 #if defined(Q_OS_IOS) || defined(Q_OS_ANDROID)
     _cancelAllNotifications();
+#endif
+}
+
+void NotificationManager::processActivationNotification() {
+#if defined(Q_OS_ANDROID)
+    qDebug() << "NotificationManager::processActivationNotification";
+    int notificationId = _getActivationNotificationId();
+    if ( notificationId > 0 ) {
+        qDebug() << "NotificationManager::processActivationNotification : notificationId : " << notificationId;
+        QString message = "activation notification received";
+        emit notificationReceived(notificationId, message );
+    }
 #endif
 }

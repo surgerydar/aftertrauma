@@ -28,11 +28,13 @@ signals:
     void error(const QString &error);
     void opened();
     void closed();
+
 public slots:
     void open();
     void close();
     void ping();
     void pong();
+    bool isConnected() { return !( m_webSocket.state() == QAbstractSocket::UnconnectedState ); }
     //
     // param : { command: 'name', guid: 'guid', param: .... }
     // returns : GUID

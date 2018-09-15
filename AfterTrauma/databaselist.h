@@ -5,6 +5,7 @@
 #include <QList>
 #include <QVariant>
 #include <QVariantMap>
+#include <QMutex>
 
 class DatabaseList : public QAbstractListModel
 {
@@ -83,6 +84,10 @@ private:
     QVariantMap         m_filter;
     QList<QVariantMap>  m_objects;
     QList<QVariantMap>  m_filtered;
+    //
+    //
+    //
+    QMutex              m_objectGuard;
     //
     //
     //

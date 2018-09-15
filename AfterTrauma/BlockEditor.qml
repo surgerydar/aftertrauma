@@ -223,18 +223,21 @@ Rectangle {
     //
     //
     Connections {
+        id: imagePickerConnection
         target: ImagePicker
         onImagePicked: {
-            if ( ImageUtils.resize(url, appWindow.width, appWindow.height) ) {
+            if ( container.state === "open" ) {
+                /*
+                if ( ImageUtils.resize(url, appWindow.width, appWindow.height) ) {
+                    imageSource = url.substring( url.lastIndexOf('/') + 1 );
+                    console.log( 'image picked : ' + imageSource );
+                    imageMedia.source = 'file://' + url;
+                }
+                */
                 imageSource = url.substring( url.lastIndexOf('/') + 1 );
                 console.log( 'image picked : ' + imageSource );
-                imageMedia.source = 'file://' + url;;
+                imageMedia.source = 'file://' + url;
             }
-            /*
-            imageSource = 'file://' + url;
-            console.log( 'image picked : ' + imageSource );
-            imageMedia.source = imageSource;
-            */
         }
     }
     //

@@ -193,12 +193,15 @@ Page {
         console.log( 'PrescriptionPage.setImage : ' + url );
         prescriptionImage.source = 'file://' + url;
         //
+        // update prescription
         //
+        prescription.image = url.substring( url.lastIndexOf('/') + 1 );
         //
-        var prescription = prescriptionsModel.get( prescriptionsView.currentIndex );
-        if ( prescription ) {
-            prescription.image = url.substring( url.lastIndexOf('/') + 1 );
-            prescriptionsModel.update( {id:prescription.id},{image: url.substring( url.lastIndexOf('/') + 1 )} );
+        // update database
+        //
+        var p = prescriptionsModel.get( prescriptionsView.currentIndex );
+        if ( p ) {
+            prescriptionsModel.update( {id:p.id},{image: prescription.image} );
             prescriptionsModel.save();
         }
     }

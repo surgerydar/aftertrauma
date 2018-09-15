@@ -89,6 +89,7 @@ AfterTrauma.Page {
                             if ( held ) {
                                 held = false;
                                 block.y = 0;
+                                syncDatabase();
                             }
                         }
                         drag.target: held ? block : undefined
@@ -130,6 +131,7 @@ AfterTrauma.Page {
                     };
                     blocksModel.model.set(blockIndex,block);
                     contents.forceLayout();
+                    syncDatabase();
                 }, model.type, model.content );
             }
             onRemove: {
@@ -141,8 +143,8 @@ AfterTrauma.Page {
                     //
                     SystemUtils.removeFile( SystemUtils.documentDirectory() + '/' + model.content );
                 }
-
                 blocksModel.model.remove(model.index);
+                syncDatabase();
             }
             onClicked: {
                 console.log( 'block clicked : ' + model.index );
@@ -342,9 +344,41 @@ AfterTrauma.Page {
                     };
                     blocksModel.model.append(block);
                     contents.positionViewAtIndex(blocksModel.model.count-1,ListView.Visible);
+                    syncDatabase();
                 });
             }
         }
+    }
+    //
+    //
+    //
+    function syncDatabase() {
+        //
+        //
+        //
+        var count = blocksModel.count;
+        var blocks = [];
+        for ( var i = 0; i < count; i++ ) {
+            var block = blocksModel.items.get(i).model;
+            if ( block.tags === undefined || block.tags === null || !Array.isArray(block.tags) ) {
+                console.log( 'DiaryEntry.StackView.onDeavtivating : invalid tags : ' + block.tags );
+                block.tags = [];
+            } else {
+                console.log( 'DiaryEntry.StackView.onDeavtivating : tags : ' + JSON.stringify(block.tags) );
+            }
+
+            blocks.push({
+                            type: block.type,
+                            title: block.title,
+                            content: block.content/*,
+                            tags: block.tags // tags*/
+                        });
+        }
+        //
+        //
+        //
+        dailyModel.updateDay( date, { blocks: blocks } );
+        dailyModel.save();
     }
     //
     //
@@ -353,24 +387,34 @@ AfterTrauma.Page {
         //
         //
         //
+        console.log( 'DiaryEntry.StackView.onActivating : finding day : ' + JSON.stringify(date));
         var query = {
             day: date.getDate(),
             month: date.getMonth(),
             year: date.getFullYear()
         };
         var day = dailyModel.findOne(query);
+        if ( day ) {
+            console.log( 'DiaryEntry.StackView.onActivating : found day : ' + JSON.stringify(day));
+        } else {
+            console.log( 'DiaryEntry.StackView.onActivating : unable to find day : ' + JSON.stringify(date));
+        }
+
         //
         //
         //
+        console.log( 'DiaryEntry.StackView.onActivating : clearing models' );
         blocksModel.model.clear();
         challengesModel.model.clear();
         if ( day  ) {
             if ( day.blocks ) {
+                console.log( 'DiaryEntry.StackView.onActivating : bulding blocksModel from : ' + JSON.stringify(day.blocks) );
                 day.blocks.forEach( function(block){
                     blocksModel.model.append(block);
                 });
             }
             if ( day.challenges ) {
+                console.log( 'DiaryEntry.StackView.onActivating : bulding challengesModel from : ' + JSON.stringify(day.challenges) );
                 day.challenges.forEach( function(challenge) {
                     challengesModel.model.append(challenge);
                 });
@@ -378,27 +422,6 @@ AfterTrauma.Page {
         }
     }
     StackView.onDeactivating: {
-        //
-        //
-        //
-        var count = blocksModel.count;
-        var blocks = [];
-        for ( var i = 0; i < count; i++ ) {
-            var block = blocksModel.items.get(i).model;
-           // var tags = block.tags ? JSON.parse(block.tags) : [];
-            blocks.push({
-                            type: block.type,
-                            title: block.title,
-                            content: block.content,
-                            tags: block.tags // tags
-                        });
-        }
-        console.log( 'DiaryEntry StackView.onDeactivating : saving blocks : ' + JSON.stringify(blocks) );
-        //
-        //
-        //
-        dailyModel.updateDay( date, { blocks: blocks } );
-        dailyModel.save();
     }
     //
     //

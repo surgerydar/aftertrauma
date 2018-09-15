@@ -93,6 +93,7 @@ bool showPicker( UIImagePickerControllerSourceType source ) {
                 qWarning() << "Image Picker: Failed to take image";
             } else {
                 QImage chosenQImage = fromUIImage(chosenImage);
+                qDebug() << "Picked image width:" << chosenQImage.width() << " height:" << chosenQImage.height();
                 //data["image"] = QVariant::fromValue<QImage>(chosenQImage);
 
 

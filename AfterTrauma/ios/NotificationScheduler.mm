@@ -29,14 +29,25 @@ static bool _notificationsEnabled = false;
     // TODO: this is called when the app is in the foreground so should present notification in app, possibly add to scrolling list of pending notifications
     // Possibly just rely on system alert system
     // NotificationManager::shared()->display("hello");
-    completionHandler(UNNotificationPresentationOptionAlert);
+    if ( completionHandler ) {
+        completionHandler(UNNotificationPresentationOptionAlert);
+    }
 }
 
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void(^)(void))completionHandler {
     qDebug("receive notification");
     //
-    // TODO: called when user responds to
     //
+    //
+    QString stringId = QString::fromNSString([[[response notification] request] identifier]);
+    int id = stringId.toInt(nullptr,16);
+    QString message = QString::fromNSString([[[[response notification] request] content] body]);
+
+    qDebug() << "NotificationScheduler : received response : " << stringId << " : " << id << " : " << message;
+    NotificationManager::shared()->display(id,message);
+    if ( completionHandler ) {
+        completionHandler();
+    }
 }
 
 @end

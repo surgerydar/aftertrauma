@@ -24,6 +24,11 @@ int DatabaseList::rowCount(const QModelIndex& /*parent*/) const {
 
 QVariant DatabaseList::data(const QModelIndex &index, int role) const {
     if ( index.row() >= 0 && index.row() < rowCount(index.parent()) && role < m_roles.size() ) {
+        /*
+        if ( m_collection == "daily" ) {
+            qDebug() << "DatabaseList::data : " << m_roles[role] << " : " << _activeList()[index.row()][m_roles[role]];
+        }
+        */
         return QVariant(_activeList()[index.row()][m_roles[role]]);
     }
     return QVariant();
@@ -62,6 +67,7 @@ void DatabaseList::load() {
         //
         //
         if ( doc.isArray() ) {
+            QMutexLocker locker(&m_objectGuard);
             qDebug() << "DatabaseList : read database";
             QVariantList objects = doc.array().toVariantList();
             beginResetModel();
@@ -92,7 +98,9 @@ void DatabaseList::save() {
     QString dbPath = _path();
     QFile db(dbPath);
     if (db.open(QIODevice::WriteOnly)) {
+        QMutexLocker locker(&m_objectGuard);
         QVariantList list;
+
         for ( auto& object : m_objects ) {
             list.append(QVariant(object));
         }
@@ -120,6 +128,7 @@ void DatabaseList::clear() {
 }
 
 QVariant DatabaseList::add(QVariant o) {
+    QMutexLocker locker(&m_objectGuard);
     QVariantMap object = o.value<QVariantMap>();
     if ( !object.contains("_id") ) {
         object["_id"] = QUuid::createUuid().toString();
@@ -137,6 +146,7 @@ QVariant DatabaseList::add(QVariant o) {
 }
 
 QVariant DatabaseList::update(QVariant q,QVariant u, bool upsert) {
+    m_objectGuard.lock();
     QVariantMap query = q.value<QVariantMap>();
     QVariantMap update = u.value<QVariantMap>();
     QVariantList matches;
@@ -154,14 +164,16 @@ QVariant DatabaseList::update(QVariant q,QVariant u, bool upsert) {
             m_objects.replace(i,object);
         }
     }
-    //endResetModel();
     _sort();
     _filter();
+    //endResetModel();
     if ( matches.size() > 0 ) {
         qDebug() << "updated from : " << minIndex << " : to : " << maxIndex;
+        m_objectGuard.unlock();
         emit dataChanged(createIndex(minIndex,0),createIndex(maxIndex,0));
 
     } else if ( upsert ) {
+        m_objectGuard.unlock();
         return add(u);
     }
 
@@ -169,6 +181,7 @@ QVariant DatabaseList::update(QVariant q,QVariant u, bool upsert) {
 }
 
 QVariant DatabaseList::remove(QVariant q) {
+    QMutexLocker locker(&m_objectGuard);
     QVariantMap query = q.value<QVariantMap>();
     QVariantList matches;
     beginResetModel();
@@ -192,6 +205,7 @@ QVariant DatabaseList::remove(QVariant q) {
 }
 
 QVariant DatabaseList::find(QVariant q) {
+    QMutexLocker locker(&m_objectGuard);
     QVariantMap query = q.value<QVariantMap>();
     QVariantList matches;
     int count = _activeList().size();
@@ -205,6 +219,7 @@ QVariant DatabaseList::find(QVariant q) {
 }
 
 QVariant DatabaseList::findOne(QVariant q) {
+    QMutexLocker locker(&m_objectGuard);
     QVariantMap query = q.value<QVariantMap>();
     QVariantList matches;
     int count = _activeList().size();
@@ -217,6 +232,7 @@ QVariant DatabaseList::findOne(QVariant q) {
 }
 
 QVariant DatabaseList::get(int i) {
+    QMutexLocker locker(&m_objectGuard);
     if ( i >= 0 && i < _activeList().size() ) {
         return QVariant(_activeList()[i]);
     }
@@ -225,6 +241,7 @@ QVariant DatabaseList::get(int i) {
 
 void DatabaseList::setSort(QVariant s) {
     if ( m_sort != s ) {
+        QMutexLocker locker(&m_objectGuard);
         m_sort = s.value<QVariantMap>();
         beginResetModel();
         _sort();
@@ -235,6 +252,7 @@ void DatabaseList::setSort(QVariant s) {
 
 void DatabaseList::setFilter(QVariant f) {
     if ( m_filter != f ) {
+        QMutexLocker locker(&m_objectGuard);
         m_filter = f.value<QVariantMap>();
         beginResetModel();
         _sort();
@@ -249,6 +267,7 @@ void DatabaseList::beginBatch() {
     beginResetModel();
 }
 QVariant DatabaseList::batchAdd(QVariant o) {
+    QMutexLocker locker(&m_objectGuard);
     QVariantMap object = o.value<QVariantMap>();
     if ( !object.contains("_id") ) {
         object["_id"] = QUuid::createUuid().toString();

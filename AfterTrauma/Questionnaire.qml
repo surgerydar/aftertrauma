@@ -181,6 +181,7 @@ AfterTrauma.Page {
         onCurrentIndexChanged: {
             recomendations.model.clear();
             if ( currentIndex === count - 1 ) {
+                NotificationManager.cancelNotification(notificationModel.questionnaire_base_id);
                 [
                     { category: "emotions" },
                     { category: "confidence" },

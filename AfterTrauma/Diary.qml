@@ -282,16 +282,14 @@ AfterTrauma.Page {
     //
     //
     StackView.onActivated: {
-        //dailyList.forceLayout();
     }
     //
     //
     //
     Connections {
         target: dailyModel
-        onDataChanged : {
-            console.log('dailyModel.onDataChanged');
-            //dailyList.forceLayout();
+        onDataChanged: {
+            console.log( 'Diary : dailyModel data changed');
         }
     }
 }

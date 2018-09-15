@@ -1,5 +1,6 @@
 import QtQuick 2.7
 import SodaControls 1.0
+import "utils.js" as Utils
 
 DatabaseList {
     id: model
@@ -91,7 +92,7 @@ DatabaseList {
         //
         //
         //
-        var identifier = notificationModel.challenge_base_id + parseInt( '0x' + challengeId.substring( challengeId.length - 5 ) );
+        var identifier = createNotificationIdentifier( challengeId );
         var challenge  = challengeModel.findOne({_id:challengeId});
         if ( challenge && challenge.active && challenge.notifications ) {
             /*
@@ -116,5 +117,25 @@ DatabaseList {
         } else {
             NotificationManager.cancelNotification(identifier);
         }
+    }
+    function showChallenge( challengeIdentifier ) {
+        for ( var i = 0; i < count; i++ ) {
+            var challenge = get( i );
+            var identifier = createNotificationIdentifier( challenge._id );
+            if ( identifier === challengeIdentifier ) {
+                var properties = {
+                    title: challenge.name,
+                    activity: Utils.formatChallengeDescription(challenge.activity, challenge.repeats, challenge.frequency),
+                    active: challenge.active,
+                    notifications: challenge.notifications,
+                    challengeId: challenge._id
+                };
+                stack.push( "qrc:///ChallengeViewer.qml", properties );
+                break;
+            }
+        }
+    }
+    function createNotificationIdentifier( challengeId ) {
+        return notificationModel.challenge_base_id + parseInt( '0x' + challengeId.substring( challengeId.length - 5 ) );
     }
 }

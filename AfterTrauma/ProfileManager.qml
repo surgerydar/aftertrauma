@@ -673,6 +673,13 @@ AfterTrauma.Page {
                                  ] );
             }
         }
+        onError: {
+            busyIndicator.hide();
+            errorDialog.show( '<h1>Error</h1><br/>' + error, [
+                                 { label: 'try again', action: function() { if ( !isConnected() ) open(); } },
+                                 { label: 'forget about it', action: function() { stack.pop(); } },
+                             ] );
+        }
 
     }
     //

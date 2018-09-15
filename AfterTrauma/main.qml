@@ -63,6 +63,9 @@ ApplicationWindow {
     Prescriptions {
         id: prescriptionsModel
     }
+    Rehab {
+        id: rehabModel
+    }
     //
     // notifications
     //
@@ -376,7 +379,17 @@ ApplicationWindow {
     Connections {
         target: NotificationManager
         onNotificationReceived: {
-            confirmDialog.show(message);
+            //confirmDialog.show(message);
+            if ( id >= notificationModel.challenge_base_id ) {
+                challengeModel.showChallenge(id);
+                mainMenu.close();
+            } else if ( id >= notificationModel.chat_base_id ) {
+                stack.navigateTo("qrc:///GroupChatManager.qml");
+                mainMenu.close();
+            } else if ( id >= notificationModel.questionnaire_base_id ) {
+                stack.navigateTo("qrc:///Questionnaire.qml");
+                mainMenu.close();
+            }
         }
     }
     //

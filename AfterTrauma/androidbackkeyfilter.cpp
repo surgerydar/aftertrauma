@@ -2,6 +2,7 @@
 #include <QDebug>
 
 #include "androidbackkeyfilter.h"
+#include "notificationmanager.h"
 
 AndroidBackKeyFilter* AndroidBackKeyFilter::s_shared = nullptr;
 
@@ -35,6 +36,7 @@ bool AndroidBackKeyFilter::eventFilter(QObject *obj, QEvent *event) {
         qDebug() << "AndroidBackKeyFilter::eventFilter : ApplicationStateChange : " << stateChangedEvent->applicationState();
         switch( stateChangedEvent->applicationState() ) {
         case Qt::ApplicationActive :
+            NotificationManager::shared()->processActivationNotification();
             emit applicationActivated();
             break;
         case Qt::ApplicationInactive :
@@ -42,6 +44,9 @@ bool AndroidBackKeyFilter::eventFilter(QObject *obj, QEvent *event) {
             break;
         case Qt::ApplicationSuspended :
             emit applicationSuspended();
+            break;
+        case Qt::ApplicationHidden :
+            emit applicationHidden();
             break;
         }
 

@@ -21,7 +21,7 @@ public class NotificationScheduler {
 
     public static void show( int id, String message, int delay, int frequency ) {
         System.out.println("show");
-        scheduleNotification( id, getNotification( message ), delay, frequency );
+        scheduleNotification( id, getNotification( id, message ), delay, frequency );
     }
 
     private static void scheduleNotification( int id, Notification notification, int delay, int frequency) {
@@ -41,8 +41,16 @@ public class NotificationScheduler {
         }
     }
 
-    private static Notification getNotification(String content) {
+    private static Notification getNotification(int id, String content) {
         Context context = QtNative.activity();
+        Intent intent = new Intent(context,context.getClass());
+        intent.putExtra(NotificationPublisher.NOTIFICATION_ID, id);
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        int uniqueId = (int) (System.currentTimeMillis() & 0xfffffff);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, uniqueId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        //
+        //
+        //
         Notification.Builder builder = new Notification.Builder(context);
         //builder.setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE);
         builder.setDefaults(Notification.DEFAULT_SOUND);
@@ -50,6 +58,8 @@ public class NotificationScheduler {
         builder.setContentText(content);
         builder.setSmallIcon(R.drawable.notification_icon);
         builder.setPriority( NotificationManager.IMPORTANCE_HIGH );
+        builder.setContentIntent(pendingIntent);
+
         return builder.build();
     }
 
