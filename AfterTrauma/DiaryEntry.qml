@@ -116,6 +116,15 @@ AfterTrauma.Page {
                         contents.forceLayout();
                     }
                 }
+                MouseArea {
+                    anchors.fill: parent
+                    enabled: !editable
+                    onClicked: {
+                        if( block.type === 'image' ) {
+                            zoomed.show('file://' + SystemUtils.documentDirectory() + '/' + model.content);
+                        }
+                    }
+                }
             }
             //
             //
@@ -240,7 +249,7 @@ AfterTrauma.Page {
                 enabled: true
                 fontSize: 12
                 values: dailyModel.valuesForDate(date)
-                maxValues: prescriptionsModel.getGoalValues(date)
+                maxValues: rehabModel.getGoalValues(date)
                 animated: false
             }
             //
@@ -276,6 +285,7 @@ AfterTrauma.Page {
             anchors.leftMargin: 8
             anchors.verticalCenter: parent.verticalCenter
             text: editable ? "done" : "edit"
+            enabled: blocksModel.count > 0
             onClicked: {
                 editable = !editable;
             }
@@ -348,6 +358,13 @@ AfterTrauma.Page {
                 });
             }
         }
+    }
+    //
+    //
+    //
+    ImageViewer {
+        id: zoomed
+        anchors.fill: parent
     }
     //
     //

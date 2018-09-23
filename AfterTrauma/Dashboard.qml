@@ -38,7 +38,7 @@ AfterTrauma.Page {
             anchors.rightMargin: 32
             onDateChanged: {
                 if ( flowerChart ) {
-                    flowerChart.maxValues = prescriptionsModel.getGoalValues(currentDate.getTime());
+                    flowerChart.maxValues = rehabModel.getGoalValues(currentDate.getTime());
                     flowerChart.values = dailyModel.valuesForDate( currentDate.getTime() );
                 }
             }
@@ -53,7 +53,7 @@ AfterTrauma.Page {
         //scrollTimer.start();
         dateSlider.value = 1;
         flowerChart.enabled = true;
-        flowerChart.maxValues = prescriptionsModel.getGoalValues( dateSlider.currentDate.getTime());
+        flowerChart.maxValues = rehabModel.getGoalValues( dateSlider.currentDate.getTime());
         flowerChart.values = dailyModel.valuesForDate( dateSlider.currentDate.getTime() );
     }
     StackView.onDeactivated: {

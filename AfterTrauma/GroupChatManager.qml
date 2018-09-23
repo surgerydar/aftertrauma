@@ -83,6 +83,19 @@ AfterTrauma.Page {
     //
     //
     //
+    ProfileSearch {
+        id: searchProfiles
+        width: container.width
+        height: container.height - ( footerItem.height * 2 )
+        x: 0
+        onAction: {
+            //
+            // TODO: find existing or start new chat with selected user
+            //
+            //openChat( chatId, true );
+            close();
+        }
+    }
     GroupChatSearch {
         id: searchChats
         width: container.width
@@ -106,13 +119,26 @@ AfterTrauma.Page {
         //
         //
         AfterTrauma.Button {
-            id: searchChat
+            id: searchPeople
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: parent.left
             anchors.leftMargin: 8
             backgroundColour: "transparent"
-            image: "icons/search.png"
+            image: "icons/profile_icon_white.png"
             onClicked: {
+                searchChats.close();
+                searchProfiles.open();
+            }
+        }
+        AfterTrauma.Button {
+            id: searchGroups
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.left: searchPeople.right
+            anchors.leftMargin: 8
+            backgroundColour: "transparent"
+            image: "icons/group_icon_white.png"
+            onClicked: {
+                searchProfiles.close();
                 searchChats.open();
             }
         }

@@ -91,6 +91,7 @@ AfterTrauma.Page {
                             onCurrentDateChanged: {
                                 // TODO: initialisation causes this to fire FIXIT
                                 // dirty = true;
+
                             }
                         }
                     }
@@ -372,10 +373,14 @@ AfterTrauma.Page {
                                 profile.tags.splice(i,1);
                             }
                         }
-                        if ( profile.injuries && profile.injuries[ name ]) {
+                        if ( profile.injuries && profile.injuries[ name ] !== undefined ) {
+                            console.log('profile.injuries : removing : ' + name );
                             delete profile.injuries[ name ];
+                        } else {
+                            console.log('profile.injuries : does not contain name : ' + name );
                         }
                     }
+                    //injuryDescriptionList.model = profile.tags.length;
                 }
             }
         }
@@ -384,7 +389,7 @@ AfterTrauma.Page {
         //
         Page {
             id: injuryDescriptionPage
-            visible: profile && profile.tags && profile.tags.length > 0
+            //visible: injuryDescriptionList.count > 0 //profile && profile.tags && profile.tags.length > 0
             padding: 0
             title: "Describe your injuries"
             ListView {
@@ -394,7 +399,7 @@ AfterTrauma.Page {
                 //
                 //
                 clip: true
-                model: profile.tags
+                model: 0
                 //
                 //
                 //
@@ -443,7 +448,7 @@ AfterTrauma.Page {
             //
             SwipeView.onIsCurrentItemChanged: {
                 if ( SwipeView.isCurrentItem ) {
-                    injuryDescriptionList.model = profile.tags;
+                    injuryDescriptionList.model = profile.tags.length;
                 }
             }
 
@@ -630,14 +635,22 @@ AfterTrauma.Page {
     //
     //
     StackView.onActivated: {
-        dirty = false;
         if ( profile ) {
-            console.log( 'profile:' + profile.username );
-            injuryDate.currentDate = profile.injuryDate ?  new Date( profile.injuryDate ): new Date()
+            console.log( 'profile:' + profile.username + ' injuryDate: ' + ( profile.injuryDate ? new Date( profile.injuryDate ).toString() : 'unknown' ) );
+            injuryDate.currentDate = profile.injuryDate ?  new Date( profile.injuryDate ) : new Date();
+            injuryDate.updateUI();
+            //
+            //
+            //
+            if ( profile.tags ) {
+               injuryDescriptionList.model = profile.tags.length;
+            }
         } else {
             console.log( 'no profile!' );
         }
+
         profileChannel.open();
+        dirty = false;
     }
 
     StackView.onDeactivating: {
@@ -724,6 +737,12 @@ AfterTrauma.Page {
         if ( profile.tags ) {
             console.log( 'profile tags: ' + JSON.stringify(profile.tags));
         }
+        if ( profile.injuries ) {
+            console.log( 'profile injuries: ' + JSON.stringify(profile.injuries));
+        } else {
+            console.log( 'profile injuries : undefined');
+        }
+
         JSONFile.write('user.json',profile);
         busyIndicator.show( 'updating profile' );
         profileChannel.send({command:'updateprofile', token: profile.token, profile:profile, close: closeManager});
@@ -800,6 +819,7 @@ AfterTrauma.Page {
     //
     validate: function() {
         if ( profile ) {
+            console.log( 'ProfileManager.validate : dirty=' + dirty + ' : profile.injuryDate=' + profile.injuryDate + ' : injuryDate.currentDate=' + injuryDate.currentDate.getTime() );
             if ( dirty || profile.injuryDate !== injuryDate.currentDate.getTime() ) {
                 //
                 // serialise profile

@@ -195,5 +195,6 @@
         <file>RehabPage.qml</file>
         <file>RehabManager.qml</file>
         <file>Rehab.qml</file>
+        <file>icons/group_icon_white.png</file>
     </qresource>
 </RCC>

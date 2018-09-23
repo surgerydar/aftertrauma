@@ -38,7 +38,7 @@ AfterTrauma.Page {
         anchors.centerIn: rehabPages
         horizontalAlignment: Label.AlignHCenter
         verticalAlignment: Label.AlignVCenter
-        visible: prescriptionsModel.count === 0
+        visible: rehabModel.count === 0
         font.family: fonts.light
         font.pointSize: 24
         color: Colours.veryDarkSlate

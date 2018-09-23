@@ -119,6 +119,15 @@ Page {
                         syncDatabase();
                     }
                 }
+                MouseArea {
+                    anchors.fill: parent
+                    enabled: !editable
+                    onClicked: {
+                        if( block.type === 'image' ) {
+                            zoomed.show('file://' + SystemUtils.documentDirectory() + '/' + model.content);
+                        }
+                    }
+                }
             }
             //
             //
@@ -179,6 +188,7 @@ Page {
         //
         //
         //
+        /*
         header: Rectangle {
             width: contents.width
             height: 64
@@ -211,6 +221,7 @@ Page {
                 }
             }
         }
+        */
         //
         //
         //
@@ -219,9 +230,64 @@ Page {
             height: childrenRect.height + 16
             width: contents.width
             color: Colours.lightSlate
+            Item {
+                id: editBar
+                anchors.top: parent.top
+                anchors.left: parent.left
+                anchors.right: parent.right
+                height: 64
+                AfterTrauma.Button {
+                    anchors.left: parent.left
+                    anchors.leftMargin: 8
+                    anchors.verticalCenter: parent.verticalCenter
+                    enabled: blocksModel.count > 0
+                    text: editable ? "done" : "edit"
+                    onClicked: {
+                        editable = !editable;
+                    }
+                }
+                AfterTrauma.Button {
+                    id: addButton
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.right: parent.right
+                    anchors.margins: 8
+                    image: "icons/add.png"
+                    backgroundColour: "transparent"
+                    onClicked: {
+                        blockEditor.show( false, function( type, content ) {
+                            //
+                            // append block
+                            //
+                            var block = {
+                                type: type,
+                                title: Date(),
+                                content: content,
+                                tags: []
+                            };
+                            blocksModel.model.append(block);
+                            contents.positionViewAtIndex(blocksModel.model.count-1,ListView.Visible);
+                            //
+                            //
+                            //
+                            plan.blocks.push(block);
+                            syncDatabase();
+                        });
+                    }
+                }
+                Rectangle {
+                    height: 1
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.bottom: parent.bottom
+                    color: Colours.veryDarkSlate
+                }
+            }
+            //
+            //
+            //
             Label {
                 id: goalsHeader
-                anchors.top: parent.top
+                anchors.top: editBar.bottom
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.margins: 8
@@ -274,6 +340,13 @@ Page {
     //
     //
     //
+    ImageViewer {
+        id: zoomed
+        anchors.fill: parent
+    }
+    //
+    //
+    //
     function syncDatabase() {
         rehabModel.update( {id:plan.id},{goals: plan.goals,blocks: plan.blocks} );
         rehabModel.save();
@@ -293,6 +366,6 @@ Page {
     //
     //
     //
-    property bool editable: true
+    property bool editable: false
     property var plan: null
 }

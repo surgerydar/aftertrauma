@@ -7,13 +7,14 @@ Flickable {
     id: container
     contentHeight: textArea.height + ( textArea.padding * 2 ) // TODO: fix binding loop
     clip: true
+    interactive: contentHeight > height
     //
     //
     //
     TextArea {
         id: textArea
         width: container.width
-        height: Math.max(contentHeight+padding*2,container.height)
+        //height: Math.max(contentHeight+padding*2,container.height)
         color: Colours.veryDarkSlate
         padding: 8
         wrapMode: TextArea.Wrap
@@ -27,14 +28,14 @@ Flickable {
 
         Button {
             id: doneButton
-            anchors.bottom: parent.top
+            anchors.top: parent.top
             anchors.right: parent.right
             visible: false
+            opacity: .5
             text: "done"
             onClicked: {
                 Qt.inputMethod.hide();
             }
-
         }
         //
         //
@@ -44,6 +45,9 @@ Flickable {
         }
         onActiveFocusChanged: {
             doneButton.visible = activeFocus;
+        }
+        onContentHeightChanged: {
+           height = Math.max(contentHeight+padding*2,container.height);
         }
     }
     //
@@ -59,6 +63,13 @@ Flickable {
         else if (contentY+height <= r.y+r.height)
             contentY = r.y+r.height-height;
     }
+    //
+    //
+    //
+    Component.onCompleted: {
+        textArea.height = Math.max(textArea.contentHeight+textArea.padding*2,height);
+    }
+
     //
     //
     //

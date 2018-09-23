@@ -86,7 +86,7 @@ ApplicationWindow {
     //
     //
     //
-    property var models: [settingsModel,dailyModel,challengeModel,questionnaireModel,unreadChatsModel,chatModel,categoryModel,documentModel,tagsModel,recomendationModel,bodyPartModel,prescriptionsModel]
+    property var models: [settingsModel,dailyModel,challengeModel,questionnaireModel,unreadChatsModel,chatModel,categoryModel,documentModel,tagsModel,recomendationModel,bodyPartModel,rehabModel,prescriptionsModel]
     function reloadModels() {
         models.forEach( function( model ) {
            model.load();
@@ -107,7 +107,7 @@ ApplicationWindow {
     //
     FlowerChart {
         id: flowerChart
-        height: width
+        height: Math.min(width,parent.height-(112+titleBar.height)) // ensure date slider is on screen
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
@@ -120,8 +120,8 @@ ApplicationWindow {
             update();
         }
         onCategorySelected: {
-            console.log( 'FlowerChart : searching for : ' + category );
-            linkPopup.find([category]);
+            var category = categoryModel.findOne({index:index});
+            stack.push( "qrc:///FactsheetCategory.qml", { title: category.title, colour: Colours.categoryColour(index), category: category.category });
         }
         Behavior on opacity {
             NumberAnimation { duration: 250 }

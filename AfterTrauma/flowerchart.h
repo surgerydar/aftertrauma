@@ -35,7 +35,7 @@ public slots:
     void selectCategoryAt( qreal x, qreal y );
 
 signals:
-    void categorySelected( QString category );
+    void categorySelected( QString title, int index );
     void currentDateChanged( int currentDate );
 protected:
     void timerEvent(QTimerEvent *event) override;

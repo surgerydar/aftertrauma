@@ -169,10 +169,11 @@ AfterTrauma.Page {
                 } else {
                     challengeModel.addChallenge(challenge);
                 }
-                challengeModel.save();
+                //challengeModel.save();
                 //
                 // update notifications
                 //
+                console.log( 'updating challenge notifications' );
                 challengeModel.updateNotification(challenge._id);
                 //
                 //

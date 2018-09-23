@@ -54,7 +54,6 @@ AfterTrauma.EditableListItem {
             anchors.top: nameText.bottom
             anchors.left: parent.left
             anchors.bottom: parent.bottom
-            //anchors.right: active ? countSpinner.left : parent.right
             anchors.right: active ? doneCheckbox.left : parent.right
             anchors.margins: 8
             //
@@ -74,21 +73,15 @@ AfterTrauma.EditableListItem {
         //
         //
         //
-        /*
-        AfterTrauma.SpinBox {
-            id: countSpinner
-            anchors.bottom: parent.bottom
-            anchors.right: parent.right
-            anchors.margins: 8
-            visible: false
-        }
-        */
-        AfterTrauma.CheckBox {
+        AfterTrauma.Button {
             id: doneCheckbox
             anchors.bottom: parent.bottom
             anchors.right: parent.right
             anchors.margins: 8
+            checkable: true
             visible: false
+            text: checked ? "done" : "to do"
+            backgroundColour: checked ? Colours.darkGreen : Colours.red
         }
     }
     //
@@ -96,10 +89,6 @@ AfterTrauma.EditableListItem {
     //
     property alias name: nameText.text
     property alias activity: activityText.text
-    /*
-    property alias count: countSpinner.value
-    property alias active: countSpinner.visible
-    */
     property alias done: doneCheckbox.checked
     property alias active: doneCheckbox.visible
 

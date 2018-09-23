@@ -71,10 +71,10 @@ Rectangle {
         }
         delegate: ProfileSearchItem {
             width: profiles.width
-            userId: model.id
+            userId: model.id || ""
             avatar: ( model.avatar || "qrc://icons/profile_icon.png" ) +  '?width=56&height=56'
-            username: model.username
-            profile: model.profile
+            username: model.username || ""
+            profile: model.profile || ""
             actionLabel: "add"
             onSelectedChanged: {
                 var user = {

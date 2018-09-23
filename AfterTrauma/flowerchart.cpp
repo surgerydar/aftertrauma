@@ -158,6 +158,15 @@ void FlowerChart::selectCategoryAt( qreal x, qreal y ) {
     qreal radius = qMin( width(), height()) / 2.;
     QPointF cp( width()/2., height()/2.);
     //
+    //
+    //
+    QPointF mpd = mp - cp;
+    qreal md = sqrt( mpd.x() * mpd.x() + mpd.y() * mpd.y() );
+    if (  md > radius ) {
+        qDebug() << "FlowerChart::mouseReleaseEvent md=" << md << " radius=" << radius;
+        return;
+    }
+    //
     // draw labels
     //
     angle = sweep / 2;
@@ -184,9 +193,8 @@ void FlowerChart::selectCategoryAt( qreal x, qreal y ) {
         angle += sweep;
     }
     if ( minIndex >= 0 ) {
-        emit categorySelected( labels[ minIndex ] );
+        emit categorySelected( labels[ minIndex ], minIndex );
     }
-
 }
 
 

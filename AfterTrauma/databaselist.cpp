@@ -128,15 +128,16 @@ void DatabaseList::clear() {
 }
 
 QVariant DatabaseList::add(QVariant o) {
-    QMutexLocker locker(&m_objectGuard);
     QVariantMap object = o.value<QVariantMap>();
     if ( !object.contains("_id") ) {
         object["_id"] = QUuid::createUuid().toString();
     }
     beginResetModel();
+    m_objectGuard.lock();
     m_objects.append(object);
     _sort();
     _filter();
+    m_objectGuard.unlock();
     endResetModel();
     //emit dataChanged(createIndex(0,0),createIndex(m_objects.size()-1,0));
     //emit countChanged();

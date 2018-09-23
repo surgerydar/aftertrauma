@@ -48,19 +48,11 @@ AfterTrauma.Page {
         //
         //
         delegate: ChallengeManagerItem {
-            //anchors.left: parent.left
-            //anchors.right: parent.right
             width: challenges.width
             name: model.name
             activity: model.activity
             swipeEnabled: editable
             active: model.active
-            /*
-            count: model.count || 0
-            onCountChanged: {
-                challengeModel.updateCount( model.index, count );
-            }
-            */
             done: model.count >= parseInt( model.repeats ) || false
             onDoneChanged: {
                 challengeModel.updateCount( model.index, done ? model.repeats : 0 );
@@ -163,7 +155,7 @@ AfterTrauma.Page {
     //
     //
     StackView.onActivated: {
-        challengeModel.load();
+        //challengeModel.load();
         //editable = false;
     }
     function formatDescription( activity, repeats, frequency ) {
