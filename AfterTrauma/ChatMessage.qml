@@ -3,6 +3,7 @@ import QtQuick.Controls 2.1
 
 import "controls" as AfterTrauma
 import "colours.js" as Colours
+import "styles.js" as Styles
 
 Item {
     id: container
@@ -63,7 +64,16 @@ Item {
             verticalAlignment: Text.AlignVCenter
             wrapMode: Text.WordWrap
             font.family: fonts.light
-            font.pixelSize: 24
+            font.pointSize: 18
+            //
+            //
+            //
+            onLinkActivated: {
+                processLink(link);
+            }
+            onTextChanged: {
+                messageText.text = Styles.style(text,"global");
+            }
         }
         //
         //

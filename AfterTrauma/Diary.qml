@@ -61,7 +61,7 @@ AfterTrauma.Page {
         */
         delegate: Item {
             width: dailyList.width;
-            height: width / 4.
+            height: width / 5.
             //
             //
             //
@@ -137,6 +137,19 @@ AfterTrauma.Page {
                     anchors.fill: parent
                     color: Colours.lightSlate
                 }
+            }
+            //
+            //
+            //
+            Image {
+                id: challengeIndicator
+                anchors.top: parent.top
+                anchors.left: notesIndicator.right
+                anchors.bottom: parent.bottom
+                anchors.margins: 4
+                fillMode: Image.PreserveAspectFit
+                visible: dailyModel.dayHasChallenge(new Date( model.date ))
+                source: "icons/challenge.png"
             }
             //
             //

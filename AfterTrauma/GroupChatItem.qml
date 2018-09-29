@@ -119,7 +119,7 @@ AfterTrauma.EditableListItem {
                 //
                 onStatusChanged: {
                     if ( status === Image.Error ) {
-                        console.log( 'error loading avatar icon : ' + source );
+                        //console.log( 'error loading avatar icon : ' + source );
                         source = "icons/profile_icon.png";
                     }
                 }

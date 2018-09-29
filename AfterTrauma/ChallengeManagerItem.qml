@@ -75,11 +75,13 @@ AfterTrauma.EditableListItem {
         //
         AfterTrauma.Button {
             id: doneCheckbox
+            height: 24
             anchors.bottom: parent.bottom
             anchors.right: parent.right
             anchors.margins: 8
             checkable: true
             visible: false
+            textSize: 18
             text: checked ? "done" : "to do"
             backgroundColour: checked ? Colours.darkGreen : Colours.red
         }

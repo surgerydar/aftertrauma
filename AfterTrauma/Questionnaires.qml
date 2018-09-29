@@ -78,10 +78,13 @@ DatabaseList {
             save();
         }
     }
-
+    //
+    //
+    //
     Component.onDestruction: {
         saveScores();
     }
+
     //
     //
     //
@@ -124,12 +127,12 @@ DatabaseList {
                 break;
             }
         }
-
     }
     //
     //
     //
     function dailyCompleted() {
+        if ( count === 0 ) return false;
         //
         // check for incomplete quesionnaires
         //
@@ -159,6 +162,7 @@ DatabaseList {
             }
             saveScores();
         }
+        scoresChanged();
     }
     function saveScores() {
         if ( scores.length > 0 ) {

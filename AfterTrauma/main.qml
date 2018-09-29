@@ -32,12 +32,29 @@ ApplicationWindow {
     }
     Daily {
         id: dailyModel
+        onDataChanged: {
+            //flowerChart.values = dailyModel.valuesForDate( dateSlider.currentDate.getTime() );
+            globalMinimumDate = dailyModel.minimumDate();
+            globalMaximumDate = dailyModel.maximumDate();
+            flowerChart.update();
+            if ( questionnaireModel.dailyCompleted() && flowerChartAnimator.running ) flowerChartAnimator.stop()
+        }
     }
     Challenges {
         id: challengeModel
     }
     Questionnaires {
         id: questionnaireModel
+        onDataChanged: {
+            //
+            // set global date to today to ensure flower chart displays updated values
+            //
+            setGlobalDate(new Date());
+            //
+            //
+            //
+            if ( dailyCompleted() && flowerChartAnimator.running ) flowerChartAnimator.stop()
+        }
     }
     UnreadChats {
         id: unreadChatsModel
@@ -65,6 +82,10 @@ ApplicationWindow {
     }
     Rehab {
         id: rehabModel
+        onDataChanged: {
+            //flowerChart.maxValues = rehabModel.getGoalValues( dateSlider.currentDate.getTime());
+            flowerChart.update();
+        }
     }
     //
     // notifications
@@ -127,6 +148,23 @@ ApplicationWindow {
             NumberAnimation { duration: 250 }
         }
     }
+    FlowerChartAnimator {
+        id: flowerChartAnimator
+        height: titleBar.height
+        anchors.top: titleBar.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
+        interval: 1000
+        count: 5
+        onNewValues: {
+            var values = [];
+            for ( var i = 0 ; i < count; i++ ) {
+                values.push(value(i));
+            }
+            flowerChart.values = values;
+            flowerChart.update();
+        }
+    }
     //
     //
     //
@@ -174,6 +212,18 @@ ApplicationWindow {
     //
     //
     //
+    function setGlobalDate( date ) {
+        globalDate = date;
+        flowerChart.maxValues = rehabModel.getGoalValues( globalDate.getTime() );
+        flowerChart.values = dailyModel.valuesForDate( globalDate.getTime() );
+        flowerChart.update();
+    }
+    function globalTimeSpan() {
+
+    }
+    //
+    //
+    //
     NavigationBar {
         id: navigationBar
         //
@@ -208,6 +258,16 @@ ApplicationWindow {
     }
     MainMenu {
         id: mainMenu
+    }
+    property var popups: [shortcut,blockEditor,chatEditor,profileViewer,dateRangePicker,mainMenu]
+    function closePopUps() {
+        popups.forEach( function(popup) {
+            try {
+                popup.close();
+            } catch( e ) {
+
+            }
+        });
     }
     //
     // dialogs
@@ -252,49 +312,6 @@ ApplicationWindow {
     //
     //
     //
-    /*
-    Text {
-        anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.margins: 2
-        text: "(" + parent.width + "," + parent.height + ")"
-    }
-    */
-    /* notification tests
-    Button {
-        id: notify1
-        anchors.top: parent.top
-        anchors.right: parent.right
-        text: notify ? "notify" : "clear"
-        onClicked: {
-            if ( notify ) {
-                NotificationManager.scheduleNotification(101, "testing 101", 0, 60000);
-            } else {
-                NotificationManager.cancelNotification(101);
-            }
-            notify = !notify;
-        }
-        property bool notify: true
-    }
-    Button {
-        id: notify2
-        anchors.top: notify1.bottom
-        anchors.right: parent.right
-        text: notify ? "notify" : "clear"
-        onClicked: {
-            if ( notify ) {
-                NotificationManager.scheduleNotification(104, "testing 104", 0, 30000);
-            } else {
-                NotificationManager.cancelNotification(104);
-            }
-            notify = !notify;
-        }
-        property bool notify: true
-    }
-    */
-    //
-    //
-    //
     Component.onCompleted: {
         //
         // TODO: check settings for first use
@@ -318,8 +335,24 @@ ApplicationWindow {
                 chatChannel.open();
             }
         }
+        //
+        //
+        //
+        setGlobalDate(new Date());
+        globalMinimumDate = dailyModel.minimumDate();
+        globalMaximumDate = dailyModel.maximumDate();
+        //
+        //
+        //
         stack.push("qrc:///Dashboard.qml");
         flowerChart.enabled = true;
+        //
+        // animate flower chart if no data
+        //
+        console.log( 'start animator ? count=' + dailyModel.count + ' questionnaire complete=' + questionnaireModel.dailyCompleted() );
+        if ( dailyModel.count < 1 && !questionnaireModel.dailyCompleted() ) {
+            flowerChartAnimator.start();
+        }
     }
     //
     //
@@ -332,11 +365,14 @@ ApplicationWindow {
         onInstallComplete: {
             stack.push("qrc:///Dashboard.qml");
             flowerChart.enabled = true;
+            if ( dailyModel.count <= 1 && !questionnaireModel.dailyCompleted() ) {
+                flowerChartAnimator.start();
+            }
         }
     }
-    function testUser() {
-        return { id:"{5f9ba729-6a16-48c6-81a2-2de6d3db69ca}", username: "justTestin" };
-    }
+    //
+    //
+    //
     Shortcut {
         sequence: StandardKey.Back
         onActivated: {
@@ -354,6 +390,7 @@ ApplicationWindow {
             if ( !busyIndicator.running ) {
                 if ( Qt.platform.os === 'android' ) {
                     console.log( 'BackKeyFilter.BackKeyPressed' );
+                    closePopUps();
                     if ( stack.depth <= 1 ) {
                         Qt.quit();
                     } else {
@@ -382,13 +419,13 @@ ApplicationWindow {
             //confirmDialog.show(message);
             if ( id >= notificationModel.challenge_base_id ) {
                 challengeModel.showChallenge(id);
-                mainMenu.close();
+                closePopUps();
             } else if ( id >= notificationModel.chat_base_id ) {
                 stack.navigateTo("qrc:///GroupChatManager.qml");
-                mainMenu.close();
+                closePopUps();
             } else if ( id >= notificationModel.questionnaire_base_id ) {
                 stack.navigateTo("qrc:///Questionnaire.qml");
-                mainMenu.close();
+                closePopUps();
             }
         }
     }
@@ -427,7 +464,6 @@ ApplicationWindow {
             Qt.openUrlExternally(url);
         }
     }
-
     //
     // global properties
     //
@@ -435,4 +471,7 @@ ApplicationWindow {
     property var userProfile: null //testUser()
     property string baseURL: "https://aftertrauma.uk:4000"
     property string baseWS: "wss://aftertrauma.uk:4000"
+    property date globalDate: new Date()
+    property date globalMinimumDate: new Date()
+    property date globalMaximumDate: new Date()
 }

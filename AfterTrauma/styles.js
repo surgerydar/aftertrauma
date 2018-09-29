@@ -1,7 +1,8 @@
 .pragma library
 
 var styles = {
-    recomendations : "a { display: inline-block; text-decoration: none; color: black; background-color: white; padding: 4px;}"
+    global : "a { display: inline-block; text-decoration: none; color: #EB5E28; background-color: #F5F7FA; padding: 2px;}",
+    recomendations : "a { display: inline-block; text-decoration: none; color: #EB5E28; background-color: #F5F7FA; padding: 4px;}"
 }
 
 function style(text,style) {

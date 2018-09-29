@@ -87,6 +87,25 @@ Rectangle {
                 duration: 250
             }
         }
+        onCountChanged: {
+            console.log( 'group chat count : ' + count + ' search attempted : ' + attemptedSearch );
+        }
+    }
+    //
+    //
+    //
+    Label {
+        anchors.verticalCenter: chats.verticalCenter
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.margins: 8
+        visible: attemptedSearch && chats.count === 0
+        font.family: fonts.light
+        font.pointSize: 18
+        color: Colours.almostWhite
+        wrapMode: Label.WordWrap
+        horizontalAlignment: Label.AlignHCenter
+        text: "no groups match your search"
     }
     //
     //
@@ -139,6 +158,7 @@ Rectangle {
     //
     //
     function updateSearch( text ) {
+        attemptedSearch = true;
         console.log( 'searching for text : ' + text );
         var exclude = [userProfile.id]; // TODO: exclude users currenly
         //var regex = { $regex: '^' + text, $options:'i'};
@@ -156,6 +176,7 @@ Rectangle {
         container.state = "open";
         console.log('GroupChatSearch.open');
         chats.model.open();
+        attemptedSearch = false;
     }
     function close() {
         container.state = "closed";
@@ -163,4 +184,5 @@ Rectangle {
         chats.model.close();
         //container.closed();
     }
+    property bool attemptedSearch: false
 }

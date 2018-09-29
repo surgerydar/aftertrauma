@@ -48,17 +48,53 @@ AfterTrauma.Page {
                 //
                 //padding: 16
                 spacing: 4
-                flow: Flow.TopToBottom
+                flow: Flow.LeftToRight
                 //
                 //
                 //
                 Repeater {
                     model: lineChart.legend
+                    //
+                    //
+                    //
+                    AfterTrauma.Button {
+                        height: 24
+                        backgroundColour: lineChart.legend[index].colour
+                        textSize: 18
+                        text: lineChart.legend[index].label
+                        checkable: true
+                        checked: true
+                        opacity: checked ? 1. : .5
+                        onClicked: {
+                            lineChart.toggleDataSet( lineChart.legend[index].label );
+                        }
+                    }
+                    /*
+                    Text {
+                        id: label
+                        padding: 8
+                        horizontalAlignment: Text.AlignLeft
+                        verticalAlignment: Text.AlignVCenter
+                        font.weight: Font.Light
+                        font.family: fonts.light
+                        font.pointSize: 18
+                        color: lineChart.legend[index].colour
+                        text: lineChart.legend[index].label
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                lineChart.toggleDataSet( lineChart.legend[index].label );
+                            }
+                        }
+                    }
+                    */
+                    /*
                     Item {
                         id: legendItem
                         height: 32
                         width: swatch.width + label.contentWidth + 12
                         opacity: lineChart.datasetActive[lineChart.legend[index].label] ? 1. : .5
+
                         Rectangle {
                             id: swatch
                             height: 2
@@ -90,6 +126,7 @@ AfterTrauma.Page {
                             }
                         }
                     }
+                    */
                 }
             }
         }
@@ -110,7 +147,7 @@ AfterTrauma.Page {
             LineChartData {
                 id: data
                 font: fonts.light;
-                title: 'My Progess';
+                title: 'My Progress';
                 subtitle: lineChart.startDate.toDateString() + ' to ' + lineChart.endDate.toDateString();
                 showLegend: true
             }

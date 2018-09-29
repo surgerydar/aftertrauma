@@ -1,7 +1,11 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.1
+
+import SodaControls 1.0
+
 import "../colours.js" as Colours
 import "../utils.js" as Utils
+
 Item {
     id: container
     //
@@ -47,6 +51,12 @@ Item {
                     updateDate();
                 }
             }
+            //
+            //
+            //
+            function currentValue() {
+                return currentIndex;
+            }
         }
         Tumbler {
             id: month
@@ -86,6 +96,12 @@ Item {
                     updateDate();
                 }
             }
+            //
+            //
+            //
+            function currentValue() {
+                return currentIndex;
+            }
         }
         Tumbler {
             id: year
@@ -96,6 +112,11 @@ Item {
             //
             //
             //model: 3000
+            /*model: RangeModel {
+                min: 2016
+                max: new Date().getFullYear() + 1
+            }
+            */
             //
             //
             //
@@ -115,7 +136,8 @@ Item {
                 color: Colours.almostWhite
                 font.family: fonts.light
                 font.pointSize: 18
-                text: index
+                //text: value
+                text: index >= minimumDate.getFullYear() ? index <= maximumDate.getFullYear() ? index : "" : ""
             }
             //
             //
@@ -124,6 +146,13 @@ Item {
                 if ( currentIndex > -1 ) {
                     updateDate();
                 }
+            }
+            //
+            //
+            //
+            function currentValue() {
+                //return model.get(currentIndex);
+                return currentIndex;
             }
         }
     }
@@ -137,26 +166,51 @@ Item {
     }
     */
     Component.onCompleted: {
-        console.log('DatePicker.Component.onCompleted() : currentDate=' + currentDate.toDateString() );
+        //console.log('DatePicker.Component.onCompleted() : currentDate=' + currentDate.toDateString() );
         updateUI();
     }
-
+    //
+    //
+    //
+    onMinimumDateChanged: {
+        if ( currentDate < minimumDate ) {
+            currentDate = new Date(minimumDate);
+            updateUI();
+        }
+    }
+    onMaximumDateChanged: {
+        if ( currentDate > maximumDate ) {
+            currentDate = new Date(maximumDate);
+            updateUI();
+        }
+    }
+    //
+    //
+    //
     function daysInMonth( _year, _month ) {
         return new Date(_year, _month+1, 0).getDate();
     }
 
     function updateDate() {
         if ( !blockUpdate ) {
-            var maxDays = daysInMonth(year.currentIndex,month.currentIndex);
-            console.log( 'updateDate() : maxDays=' + maxDays + ' day.model=' + day.model );
+            var maxDays = daysInMonth(year.currentValue(),month.currentValue());
+            //console.log( 'updateDate() : maxDays=' + maxDays + ' day.model=' + day.model );
             if ( maxDays != day.model ) {
-                var dayIndex        = Math.min(day.currentIndex,maxDays-1);
+                var dayIndex        = Math.min(day.currentValue(),maxDays-1);
                 day.model           = maxDays;
                 day.currentIndex    = dayIndex;
             }
             var date = new Date();
-            date.setFullYear(year.currentIndex, month.currentIndex, day.currentIndex+1);
-            currentDate = date;
+            date.setFullYear(year.currentValue(), month.currentValue(), day.currentValue()+1);
+            if ( date < minimumDate ) {
+                currentDate = new Date( minimumDate );
+                updateUI();
+            } else if ( date > maximumDate ) {
+                currentDate = new Date( maximumDate );
+                updateUI();
+            } else {
+                currentDate = date;
+            }
         }
     }
 
@@ -164,6 +218,7 @@ Item {
         blockUpdate         = true;
         currentDate.setHours(0,0,0,0); // standardise time
         year.model          = 30000;
+        //year.currentIndex   = currentDate.getFullYear() - year.model.min;
         year.currentIndex   = currentDate.getFullYear();
         month.model         = 12;
         month.currentIndex  = currentDate.getMonth();
@@ -172,17 +227,17 @@ Item {
         //
         //
         //
-        console.log( 'DatePicker.updateUI : ' + currentDate );
-        console.log('DatePicker.updateUI : ' + currentDate.getDate() + '/' + currentDate.getMonth() + '/' + currentDate.getFullYear() );
-        console.log('DatePicker.updateUI : ' + day.currentIndex + '/' + month.currentIndex + '/' + year.currentIndex );
+        //console.log( 'DatePicker.updateUI : ' + currentDate );
+        //console.log('DatePicker.updateUI : ' + currentDate.getDate() + '/' + currentDate.getMonth() + '/' + currentDate.getFullYear() );
+        //console.log('DatePicker.updateUI : ' + day.currentValue() + '/' + month.currentValue() + '/' + year.currentValue() );
         blockUpdate = false;
     }
-
-    onCurrentDateChanged: {
-        //updateUI();
-    }
-
+    //
+    //
+    //
     property bool blockUpdate: false
     property bool textMonth: false
     property date currentDate: new Date()
+    property date minimumDate: globalMinimumDate || new Date()
+    property date maximumDate: globalMaximumDate || new Date()
 }

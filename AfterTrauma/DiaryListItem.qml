@@ -13,7 +13,7 @@ Item {
     //
     //
     //height: 86 //Math.max( 108, Math.min(5,values?values.length:0) * 8 * 2 )
-    height: width / 4.
+    height: width / 5.
     //
     //
     //
@@ -117,6 +117,18 @@ Item {
     //
     //
     //
+    Image {
+        id: challengeIndicator
+        anchors.top: parent.top
+        anchors.left: notesIndicator.right
+        anchors.bottom: parent.bottom
+        anchors.margins: 4
+        fillMode: Image.PreserveAspectFit
+        source: "icons/challenge.png"
+    }
+    //
+    //
+    //
     FlowerChart {
         id: flowerChart
         width: height
@@ -146,4 +158,5 @@ Item {
     property var date: 0
     property var values: []
     property var blocks: []
+    property alias hasChallenges: challengeIndicator.visibles
 }

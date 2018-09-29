@@ -216,29 +216,6 @@ Rectangle {
             chart.legend = legend;
         }
     }
-    Text {
-        id: fromDate
-        color: Colours.veryDarkSlate
-        font.weight: Font.Light
-        font.family: fonts.light
-        font.pointSize: 14
-        //anchors.left: parent.left
-        anchors.left: yScale.right
-        anchors.bottom: parent.bottom
-        text: "< " + startDate.toDateString()
-    }
-
-    Text {
-        id: toDate
-        color: Colours.veryDarkSlate
-        font.weight: Font.Light
-        font.family: fonts.light
-        font.pointSize: 14
-        anchors.right: parent.right
-        anchors.rightMargin: canvas.tickMargin
-        anchors.bottom: parent.bottom
-        text: endDate.toDateString() + " >"
-    }
     //
     //
     //
@@ -266,7 +243,9 @@ Rectangle {
             //newStartTime = Math.max( dateRange.min, Math.min( dateRange.max, newStartTime) );
             newStartTime = Math.max( dateRange.min, Math.min( dateRange.max - newPeriod / 2, newStartTime ) );
             startDate.setTime( newStartTime );
-            endDate.setTime( newStartTime + newPeriod );
+            if ( startDate < globalMinimumDate ) startDate = globalMinimumDate;
+            endDate.setTime( startDate.getTime() + newPeriod );
+            if ( endDate > globalMaximumDate ) endDate = globalMaximumDate;
             fromDate.text = '< ' + startDate.toDateString();
             toDate.text = endDate.toDateString() + ' >';
             canvas.requestPaint();
@@ -289,7 +268,12 @@ Rectangle {
                 var newStartTime = pinchArea.startMs - ( dX * pinchArea.msPerPixel );
                 newStartTime = Math.max( pinchArea.dateRange.min, Math.min( pinchArea.dateRange.max - pinchArea.startPeriod / 2, newStartTime ) );
                 startDate.setTime( newStartTime );
-                endDate.setTime( newStartTime + pinchArea.startPeriod );
+                if ( startDate < globalMinimumDate ) startDate = globalMinimumDate;
+                endDate.setTime( startDate.getTime() + pinchArea.startPeriod );
+                if ( endDate > globalMaximumDate ) {
+                    endDate = globalMaximumDate;
+                    startDate.setTime( endDate.getTime() - pinchArea.startPeriod );
+                }
                 fromDate.text = '< ' + startDate.toDateString();
                 toDate.text = endDate.toDateString() + ' >';
                 canvas.requestPaint();
@@ -306,6 +290,66 @@ Rectangle {
         property real week: 1000 * 60 * 60 * 24 * 7
         property real year: 1000 * 60 * 60 * 24 * 7 * 52
 
+    }
+    //
+    //
+    //
+    Label {
+        id: fromDate
+        anchors.left: yScale.right
+        anchors.bottom: parent.bottom
+        anchors.right: parent.horizontalCenter
+        //anchors.rightMargin: ( yScale.x + yScale.width + 8 )
+        color: Colours.veryDarkSlate
+        fontSizeMode: Label.HorizontalFit
+        horizontalAlignment: Label.AlignLeft
+        verticalAlignment: Label.AlignBottom
+        font.weight: Font.Light
+        font.family: fonts.light
+        font.pointSize: 32
+        text: "< " + startDate.toDateString()
+        //
+        //
+        //
+        MouseArea {
+            anchors.fill: parent
+            onClicked: {
+                dateRangePicker.show( function( from, to ) {
+                    startDate = from;
+                    endDate = to;
+                    canvas.requestPaint();
+                }, "progress dates", startDate, endDate );
+            }
+        }
+    }
+
+    Label {
+        id: toDate
+        width: fromDate.width
+        anchors.right: parent.right
+        anchors.rightMargin: canvas.tickMargin
+        anchors.bottom: parent.bottom
+        color: Colours.veryDarkSlate
+        fontSizeMode: Label.HorizontalFit
+        horizontalAlignment: Label.AlignRight
+        verticalAlignment: Label.AlignBottom
+        font.weight: Font.Light
+        font.family: fonts.light
+        font.pointSize: 32
+        text: endDate.toDateString() + " >"
+        //
+        //
+        //
+        MouseArea {
+            anchors.fill: parent
+            onClicked: {
+                dateRangePicker.show( function( from, to ) {
+                    startDate = from;
+                    endDate = to;
+                    canvas.requestPaint();
+                }, "pogress dates", startDate, endDate );
+            }
+        }
     }
     //
     //
@@ -344,11 +388,17 @@ Rectangle {
 
         }
         //
-        // adjust to fix
+        // adjust to fit
         //
         var dateRange = dailyModel.dateRange();
         var newPeriod = endDate.getTime() - startDate.getTime();
         startDate.setTime(Math.max( dateRange.min, Math.min( dateRange.max - newPeriod / 2, startDate.getTime() ) ));
+        //
+        // clamp date
+        // TODO: allow for selected period
+        //
+        if ( startDate < globalMinimumDate ) endDate = globalMinimumDate;
+        if ( endDate > globalMaximumDate ) endDate = globalMaximumDate;
         //
         //
         //

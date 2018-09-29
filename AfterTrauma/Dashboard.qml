@@ -3,6 +3,7 @@ import QtQuick.Controls 2.1
 
 import "controls" as AfterTrauma
 import "colours.js" as Colours
+import "utils.js" as Utils
 
 AfterTrauma.Page {
     colour: "transparent"
@@ -36,13 +37,37 @@ AfterTrauma.Page {
             anchors.right: parent.right
             anchors.leftMargin: 32
             anchors.rightMargin: 32
+            visible: !flowerChartAnimator.running
+            showSlider: Utils.daysBetweenDates( globalMinimumDate, globalMaximumDate ) > 1
             onDateChanged: {
-                if ( flowerChart ) {
-                    flowerChart.maxValues = rehabModel.getGoalValues(currentDate.getTime());
-                    flowerChart.values = dailyModel.valuesForDate( currentDate.getTime() );
+                setGlobalDate(currentDate);
+            }
+        }
+        Item {
+            height: label.contentHeight + 16
+            anchors.top: dateSlider.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+            visible: flowerChartAnimator.running
+            Rectangle {
+                anchors.fill: parent
+                color: Colours.darkOrange
+            }
+            AfterTrauma.Label {
+                id: label
+                anchors.fill: parent
+                color: Colours.almostWhite
+                wrapMode: Label.WordWrap
+                text: "The flower tracker petals grow or shrink to help you track your <a href='link://recovery'>Recovery</a>"
+            }
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                    stack.navigateTo("qrc:///Questionnaire.qml");
                 }
             }
         }
+
     }
     //
     //
@@ -51,10 +76,11 @@ AfterTrauma.Page {
     //
     StackView.onActivated: {
         //scrollTimer.start();
+        dateSlider.showSlider = Utils.daysBetweenDates( globalMinimumDate, globalMaximumDate ) > 1;
         dateSlider.value = 1;
+        dateSlider.updateDisplay(1);
         flowerChart.enabled = true;
-        flowerChart.maxValues = rehabModel.getGoalValues( dateSlider.currentDate.getTime());
-        flowerChart.values = dailyModel.valuesForDate( dateSlider.currentDate.getTime() );
+        setGlobalDate(dateSlider.currentDate);
     }
     StackView.onDeactivated: {
         flowerChart.enabled = false;

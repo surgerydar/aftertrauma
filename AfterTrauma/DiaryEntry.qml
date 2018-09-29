@@ -175,7 +175,7 @@ AfterTrauma.Page {
         model: ListModel {}
         delegate: Item {
             width: contents.width
-            height: 32
+            height: 48
             //
             //
             //
@@ -193,12 +193,14 @@ AfterTrauma.Page {
             //
             //
             Text {
-                anchors.verticalCenter: parent.verticalCenter
+                anchors.top: parent.top
                 anchors.left: challengeIcon.right
+                anchors.bottom: parent.bottom
                 anchors.right: parent.right
                 anchors.margins: 4
                 horizontalAlignment: Label.AlignLeft
-                verticalAlignment: Label.AlignVCenter
+                verticalAlignment: Label.AlignTop
+                wrapMode: Text.WordWrap
                 elide: Text.ElideRight
                 minimumPointSize: 12
                 fontSizeMode: Text.Fit
@@ -207,6 +209,22 @@ AfterTrauma.Page {
                 font.pointSize: 18
                 color: Colours.almostWhite
                 text: model.name
+            }
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                    var challenge = challengeModel.findOne({_id:model._id});
+                    if ( challenge ) {
+                        var properties = {
+                            title: challenge.name,
+                            activity: Utils.formatChallengeDescription(challenge.activity, challenge.repeats, challenge.frequency),
+                            active: challenge.active,
+                            notifications: challenge.notifications,
+                            challengeId: model._id
+                        };
+                        stack.push( "qrc:///ChallengeViewer.qml", properties );
+                    }
+                }
             }
         }
     }
@@ -258,11 +276,12 @@ AfterTrauma.Page {
             ListView {
                 id: challenges
                 width: parent.width
-                height: Math.min( model.count, 3 ) * 32
+                height: model.count * 50 //Math.min( model.count, 3 ) * 48
                 anchors.top: flowerChart.bottom
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.margins: 8
+                spacing: 2
                 clip: true
                 visible: model.count > 0
                 model: challengesModel

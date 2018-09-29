@@ -76,6 +76,7 @@ Rectangle {
             username: model.username || ""
             profile: model.profile || ""
             actionLabel: "add"
+            selectionEnabled: container.selectionEnabled
             onSelectedChanged: {
                 var user = {
                     _id: model._id,
@@ -184,8 +185,9 @@ Rectangle {
     //
     //
     //
-    function open() {
+    function open( enableSelection ) {
         attemptedSearch = false;
+        selectionEnabled = enableSelection;
         container.state = "open";
         console.log('ProfileSearch.open');
         profiles.model.open();
@@ -197,4 +199,5 @@ Rectangle {
         container.closed();
     }
     property bool attemptedSearch: false
+    property bool selectionEnabled: true
 }

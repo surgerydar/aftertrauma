@@ -267,28 +267,34 @@ Rectangle {
             //drawScales(ctx, highestPrice, lowestPrice, highestVolume);
         }
     }
-    Text {
+    Label {
         id: fromDate
         color: Colours.veryDarkSlate
         font.weight: Font.Light
         font.family: fonts.light
-        font.pointSize: 12
+        font.pointSize: 18
         //anchors.left: parent.left
         anchors.left: yScale.right
         anchors.bottom: parent.bottom
         text: "< " + startDate.toDateString()
     }
 
-    Text {
+    Label {
         id: toDate
         color: Colours.veryDarkSlate
         font.weight: Font.Light
         font.family: fonts.light
-        font.pointSize: 12
+        font.pointSize: 18
         anchors.right: parent.right
         anchors.rightMargin: canvas.tickMargin
         anchors.bottom: parent.bottom
         text: endDate.toDateString() + " >"
+        MouseArea {
+            anchors.fill: parent
+            onClicked: {
+
+            }
+        }
     }
     //
     //

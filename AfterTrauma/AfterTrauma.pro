@@ -33,7 +33,9 @@ SOURCES += main.cpp \
     colours.cpp \
     flowerchartpainter.cpp \
     diarywriter.cpp \
-    asyncdiarywriter.cpp
+    asyncdiarywriter.cpp \
+    rangemodel.cpp \
+    flowerchartanimator.cpp
 
 HEADERS += \
     imagepicker.h \
@@ -70,7 +72,9 @@ HEADERS += \
     flowerchartpainter.h \
     diarywriter.h \
     asyncdiarywriter.h \
-    asyncdiarywriterworker.h
+    asyncdiarywriterworker.h \
+    rangemodel.h \
+    flowerchartanimator.h
 
 
 RESOURCES += qml.qrc

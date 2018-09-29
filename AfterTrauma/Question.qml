@@ -81,8 +81,7 @@ Item {
         height: 4
         anchors.bottom: parent.bottom
         color: Colours.red
-        visible: container.score > 0
-
+        visible: container.score > 0        
         Behavior on x {
             PropertyAnimation {}
         }
@@ -91,12 +90,6 @@ Item {
     //
     //
     MouseArea {
-        /*
-        anchors.top: ticks.top
-        anchors.left: parent.left
-        anchors.bottom: parent.bottom
-        anchors.right: parent.right
-        */
         anchors.fill: ticks
         preventStealing: true
         //
@@ -118,20 +111,24 @@ Item {
             //
             //
             //
-            container.score = Math.max( Math.min( ( mouseX - x ) / width, 0.9999999999 ), 0.00000000001 );
+            var xStep = ticks.childrenRect.width / 4;
+            var scoreStep = 1. / 4;
+            for ( var i = 3; i >= 0; i-- ) {
+                if ( i * xStep <= mouseX ) {
+                    container.score = ( i + 1 ) * scoreStep;
+                    break;
+                }
+            }
         }
     }
     //
     //
     //
     function indicatorPosition( score ) {
-        //var offset = score * container.width;
-        var offset = score * ticks.width;
-        var starWidth = ticks.width / 4.;
-        var index = Math.max( 0, Math.min( 4., Math.floor( offset / starWidth ) ) );
-        var indicatorPosn = ( index * starWidth ) + ( starWidth / 2. );
-        //indicator.x = ticks.x + ( indicatorPosn - ( indicator.width / 2. ) );
-        return ticks.x + ( indicatorPosn - ( indicator.width / 2. ) );
+        var index = Math.floor( ( 4 - 1 ) * score );
+        var offset = ticks.children[ index ].x + ( ticks.children[ index ].width - indicator.width ) / 2.;
+        //console.log( 'ticks.children.length=' + ticks.children.length + 'score=' + score + ' index=' + index + ' offset=' + offset );
+        return ticks.x + offset;
     }
     //
     //

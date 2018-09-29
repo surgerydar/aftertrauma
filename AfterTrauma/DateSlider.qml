@@ -48,8 +48,13 @@ Item {
     //
     //
     function updateDisplay(value) {
+        /*
         var range = dailyModel.getDateRange();
         var current = Math.round((range.max-range.min)*value+range.min);
+        */
+        var min = globalMinimumDate.getTime();
+        var max = globalMaximumDate.getTime();
+        var current = Math.round((max-min)*value+min);
         currentDate.setTime(current);
         display.text = currentDate.toDateString();
         control.dateChanged();
@@ -63,4 +68,5 @@ Item {
     //
     property var currentDate: new Date()
     property alias value: slider.value
+    property alias showSlider: slider.visible
 }

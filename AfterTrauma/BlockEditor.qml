@@ -41,6 +41,7 @@ Rectangle {
         container.state = "open";
     }
     function close() {
+        Qt.inputMethod.hide();
         container.state = "closed";
     }
     //

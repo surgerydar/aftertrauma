@@ -24,6 +24,15 @@ DatabaseList {
         }
         return -1;
     }
+    function findPrivateChatWithUser( id ) {
+        console.log( 'GroupChats.findPrivateChatWithUser(' + id + ')')
+        for ( var i = 0; i < count; i++ ) {
+            var chat = get(i);
+            console.log( 'GroupChats.findPrivateChatWithUser : testing chat : ' + chat.id + ' public=' + chat['public'] + ' members=' + JSON.stringify(chat.members) );
+            if ( !chat['public'] && chat.members.length <= 2 && chat.members.indexOf(id) >= 0 ) return chat;
+        }
+        return undefined;
+    }
     //
     //
     //

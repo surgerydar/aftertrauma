@@ -114,26 +114,36 @@ Rectangle {
             anchors.rightMargin: 16
             image: "icons/chat.png"
             onClicked: {
-                //
-                // create new chat
-                //
-                var chat = {
-                    id: GuidGenerator.generate(),
-                    owner: userProfile.id,
-                    subject: "Chat with " + title.text,
-                    "public": false,
-                    members: [userId],
-                    messages: []
-                };
-                chatEditor.show(chat, function(edited,showChat) {
-                    var command = {
-                        command: 'groupcreatechat',
-                        token: userProfile.token,
-                        chat: edited,
-                        show: showChat
+                var chat = chatModel.findPrivateChatWithUser(userId);
+                if ( chat ) {
+                    var properties = {
+                        chatId:chat.id,
+                        messages:chatModel.getMessageModel(chat.id),
+                        subject: chat.subject
                     };
-                    chatChannel.send(command);
-                });
+                    stack.push( "qrc:///GroupChat.qml", properties);
+                } else {
+                    //
+                    // create new chat
+                    //
+                    chat = {
+                        id: GuidGenerator.generate(),
+                        owner: userProfile.id,
+                        subject: "Chat with " + title.text,
+                        "public": false,
+                        members: [userId],
+                        messages: []
+                    };
+                    chatEditor.show(chat, function(edited,showChat) {
+                        var command = {
+                            command: 'groupcreatechat',
+                            token: userProfile.token,
+                            chat: edited,
+                            show: showChat
+                        };
+                        chatChannel.send(command);
+                    });
+                }
                 close();
             }
         }

@@ -26,6 +26,7 @@ void DiaryWriter::write( QPdfWriter* writer ) {
     //
     //
     //
+    m_pageNumber = 1;
     m_painter.begin( writer );
     _paintPageBackground();
     //
@@ -122,7 +123,6 @@ void DiaryWriter::_paintEntryHeader( const QVariantMap& entry, QPdfWriter* write
         //
         // paint chart into offscreen image
         //
-
         QRect flowerBounds(m_adjustedPadding/2,m_adjustedPadding/2, headerRect.width()-m_adjustedPadding, headerRect.height()-m_adjustedPadding);
         FlowerChartPainter flowerChartPainter;
         QVector< qreal > maxValues  = { .25, .5, .75, 1., 1. };
@@ -219,6 +219,7 @@ void DiaryWriter::_requestSpace( QRect& requested, QPdfWriter* writer, const QRe
             // request new page and reset cp
             //
             if (writer->newPage()) {
+                m_pageNumber++;
                 _paintPageBackground();
             } else {
                 qDebug() << "DiaryWriter::_requestSpace : unable to create new page";
@@ -248,5 +249,24 @@ void DiaryWriter::_paintPageBackground() {
     //
     m_painter.fillRect(left,Colours::shared()->colour("veryLightSlate"));
     m_painter.fillRect(right,Colours::shared()->colour("veryLightSlate"));
+    //
+    //
+    //
+    m_painter.save();
+    QFont titleFont = m_font;
+    titleFont.setPointSize(24);
+    m_painter.setFont(titleFont);
+    m_painter.setPen(Colours::shared()->colour("lightSlate"));
+    QString title( "AfterTrauma - Diary" );
+    m_painter.drawText( left.x(), left.y() - m_painter.fontMetrics().descent(), title );
+    //
+    // page number
+    //
+    titleFont.setPointSize(10);
+    m_painter.setFont(titleFont);
+    int offset = m_painter.fontMetrics().height();
+    QString pageNumber = QString( "page %1" ).arg(m_pageNumber);
+    m_painter.drawText( left.x(), left.bottom()+offset, pageNumber );
+    m_painter.restore();
 }
 

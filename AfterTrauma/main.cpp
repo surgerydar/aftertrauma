@@ -12,6 +12,7 @@
 #include "jsonfile.h"
 #include "database.h"
 #include "databaselist.h"
+#include "rangemodel.h"
 #include "websocketchannel.h"
 #include "guidgenerator.h"
 #include "imageutils.h"
@@ -28,6 +29,7 @@
 #include "downloader.h"
 #include "diarywriter.h"
 #include "asyncdiarywriter.h"
+#include "flowerchartanimator.h"
 //
 // TODO: find a better way of doing this
 //
@@ -71,6 +73,7 @@ int main(int argc, char *argv[])
     //
     qDebug() << "Registering controls";
     qmlRegisterType<DatabaseList>("SodaControls", 1, 0, "DatabaseList");
+    qmlRegisterType<RangeModel>("SodaControls", 1, 0, "RangeModel");
     qmlRegisterType<WebSocketChannel>("SodaControls", 1, 0, "WebSocketChannel");
     qmlRegisterType<WebSocketList>("SodaControls", 1, 0, "WebSocketList");
     qmlRegisterType<FlowerChart>("SodaControls", 1, 0, "FlowerChart");
@@ -78,6 +81,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<LineChartData>("SodaControls", 1, 0, "LineChartData");
     qmlRegisterType<DiaryWriter>("SodaControls", 1, 0, "DiaryWriter");
     qmlRegisterType<AsyncDiaryWriter>("SodaControls", 1, 0, "AsyncDiaryWriter");
+    qmlRegisterType<FlowerChartAnimator>("SodaControls", 1, 0, "FlowerChartAnimator");
     //
     //
     //

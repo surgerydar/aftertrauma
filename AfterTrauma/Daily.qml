@@ -10,7 +10,7 @@ DatabaseList {
     //
     //
     Component.onCompleted: {
-        if ( count <= 0 ) {
+        if ( false ) {//count <= 0 ) {
             //
             // generate test data if database is empty
             //
@@ -328,5 +328,32 @@ DatabaseList {
                 }
             }
         }
+    }
+    function dayHasChallenge( date ) {
+        var query = {
+            day: date.getDate(),
+            month: date.getMonth(),
+            year: date.getFullYear()
+        };
+        var day = findOne( query );
+        console.log( "dayHasChallenge: " + JSON.stringify(day) );
+        return ( day && day.challenges !== undefined && day.challenges.length > 0 );
+    }
+    //
+    //
+    //
+    function minimumDate() {
+        if ( count === 0 ) {
+            return new Date();
+        }
+        var day = get(count-1);
+        return new Date(day.date)
+    }
+    function maximumDate() {
+        if ( count === 0 ) {
+            return new Date();
+        }
+        var day = get(0);
+        return new Date(day.date)
     }
 }

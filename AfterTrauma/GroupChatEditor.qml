@@ -47,6 +47,7 @@ Rectangle {
         container.state = "closed";
         //profileChannel.close();
         membersList.model.close();
+        Qt.inputMethod.hide();
     }
     //
     // titlebar
@@ -197,7 +198,7 @@ Rectangle {
             backgroundColour: "transparent"
             text: "add people"
             onClicked: {
-                profileSearch.open();
+                profileSearch.open(true);
             }
         }
     }

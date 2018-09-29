@@ -25,14 +25,18 @@ Flickable {
             color: Colours.veryLightSlate
             border.color: "transparent"
         }
-
+        //
+        //
+        //
         Button {
             id: doneButton
+            width: 16
+            height: 16
             anchors.top: parent.top
             anchors.right: parent.right
             visible: false
-            opacity: .5
-            text: "done"
+            font.pointSize: 10
+            text: "v"
             onClicked: {
                 Qt.inputMethod.hide();
             }

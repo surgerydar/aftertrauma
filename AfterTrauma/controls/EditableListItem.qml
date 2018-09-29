@@ -37,6 +37,7 @@ SwipeDelegate {
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
+                    swipe.close();
                     container.edit();
                 }
             }

@@ -28,13 +28,18 @@ TextArea {
         font.pointSize: 24
         text: container.placeholderText
     }
-
+    //
+    //
+    //
     Button {
         id: doneButton
-        anchors.bottom: parent.top
+        width: 16
+        height: 16
+        anchors.top: parent.top
         anchors.right: parent.right
         visible: false
-        text: "done"
+        font.pointSize: 10
+        text: "v"
         onClicked: {
             Qt.inputMethod.hide();
         }

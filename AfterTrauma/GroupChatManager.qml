@@ -127,7 +127,7 @@ AfterTrauma.Page {
             image: "icons/profile_icon_white.png"
             onClicked: {
                 searchChats.close();
-                searchProfiles.open();
+                searchProfiles.open(false);
             }
         }
         AfterTrauma.Button {

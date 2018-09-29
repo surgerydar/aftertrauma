@@ -164,10 +164,10 @@ Popup {
     Component.onCompleted: {
         pages.model.clear();
         var filter = {section: 'introduction'};
-        console.log( 'Introduction : filtering by : ' + JSON.stringify( filter ) );
+        //console.log( 'Introduction : filtering by : ' + JSON.stringify( filter ) );
         documentModel.setFilter(filter);
         var count = documentModel.count;
-        console.log( 'Introduction : appending : ' + count + ' documents' );
+        //console.log( 'Introduction : appending : ' + count + ' documents' );
         if ( count <= 0 ) {
             //
             // install default
@@ -179,7 +179,7 @@ Popup {
         }
         for ( var i = 0; i < count; i++ ) {
             var document = documentModel.get(i);
-            console.log( 'Introduction : appending document : ' + JSON.stringify(document));
+            //console.log( 'Introduction : appending document : ' + JSON.stringify(document));
             pages.model.append(document);
         }
     }

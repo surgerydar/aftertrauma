@@ -101,4 +101,5 @@ Rectangle {
     property alias profile: profileText.text
     property alias selected: select.checked
     property alias actionLabel: select.text
+    property alias selectionEnabled: select.visible
 }

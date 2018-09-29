@@ -2,6 +2,7 @@ import QtQuick 2.6
 import QtQuick.Controls 2.1
 
 import "../colours.js" as Colours
+import "../styles.js" as Styles
 
 Item {
     id: container
@@ -50,6 +51,9 @@ Item {
         //
         onLinkActivated: {
             processLink(link);
+        }
+        onTextChanged: {
+            content.text = Styles.style(text,"global");
         }
     }
     //

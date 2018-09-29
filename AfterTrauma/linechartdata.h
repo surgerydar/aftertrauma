@@ -102,7 +102,7 @@ private:
     void drawAxis( QPainter* painter, const AxisData& axis, const QRect& r );
     void drawData( QPainter* painter, const DataSet& data, const QRect& r );
     void drawGridLines( QPainter* painter, const AxisOrientation& orientation, const int steps, const QRect& r );
-    void drawTitle( QPainter* painter, const QRect& r );
+    double drawTitle( QPainter* painter, const QRect& r );
     void drawLegend( QPainter* painter, const QRect& r );
 };
 

@@ -56,15 +56,8 @@ Popup {
             height: 128
             width: container.width - 8
             anchors.horizontalCenter: parent.horizontalCenter
-            onCurrentDateChanged: {
-                /*
-                if ( !blockUpdates ) {
-                    if ( currentDate.getTime() > to.currentDate.getTime() ) {
-                        to.currentDate = currentDate;
-                    }
-                }
-                */
-            }
+            minimumDate: container.minimumDate
+            maximumDate: to.currentDate
         }
         //
         //
@@ -86,15 +79,8 @@ Popup {
             height: 128
             width: container.width - 8
             anchors.horizontalCenter: parent.horizontalCenter
-            onCurrentDateChanged: {
-                /*
-                if ( !blockUpdates ) {
-                    if ( currentDate.getTime() < from.currentDate.getTime() ) {
-                        from.currentDate = currentDate;
-                    }
-                }
-                */
-            }
+            minimumDate: from.currentDate
+            maximumDate: container.maximumDate
         }
         //
         //
@@ -164,4 +150,6 @@ Popup {
     //
     property bool blockUpdates: false
     property var callback: null
+    property date minimumDate: globalMinimumDate
+    property date maximumDate: globalMaximumDate
 }

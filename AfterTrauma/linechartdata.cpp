@@ -129,6 +129,11 @@ void LineChartData::paint( QPainter* painter, const QRect& r ) {
     QBrush white( Qt::white );
     painter->fillRect(safe,white);
     //
+    // title
+    //
+    double titleOffset = drawTitle(painter,safe);
+    safe.setTop(titleOffset);
+    //
     // axis
     //
     if ( m_axis.size() > 0 ) {
@@ -146,10 +151,6 @@ void LineChartData::paint( QPainter* painter, const QRect& r ) {
             drawData(painter,m_dataset[dataKey],safe);
         }
     }
-    //
-    // title
-    //
-    drawTitle(painter,safe);
     //
     // legend
     //
@@ -416,7 +417,7 @@ void LineChartData::drawGridLines( QPainter* painter, const AxisOrientation& ori
     painter->restore();
 }
 
-void LineChartData::drawTitle( QPainter* painter, const QRect& r ) {
+double LineChartData::drawTitle( QPainter* painter, const QRect& r ) {
     painter->save();
     QPen darkGray( Qt::darkGray );
     painter->setPen(darkGray);
@@ -425,17 +426,26 @@ void LineChartData::drawTitle( QPainter* painter, const QRect& r ) {
         QFont titleFont = m_font;
         titleFont.setPointSize(24);
         painter->setFont(titleFont);
-        offset += ( double ) painter->fontMetrics().height() * 1.5;
-        painter->drawText( r.x() + 40, r.y() + offset, m_title ); // TODO: calculate offset
+        //offset += ( double ) painter->fontMetrics().height() * 1.5;
+        offset += ( double ) painter->fontMetrics().height();
+        QString title( "AfterTrauma - " );
+        title.append(m_title);
+        painter->drawText( r.x() + 40, r.y() + offset, title );
+        //offset += ( double ) painter->fontMetrics().height() * .5;
     }
     if ( m_subtitle.length() > 0 ) {
         QFont titleFont = m_font;
         titleFont.setPointSize(18);
         painter->setFont(titleFont);
-        offset += ( double ) painter->fontMetrics().height() * 1.5;
+        //offset += ( double ) painter->fontMetrics().height() * 1.5;
+        offset += ( double ) painter->fontMetrics().height();
         painter->drawText( r.x() + 40, r.y()+ offset, m_subtitle );
+        offset += ( double ) painter->fontMetrics().height() * .5;
+    } else {
+        offset += ( double ) painter->fontMetrics().height() * .5;
     }
     painter->restore();
+    return r.y() + offset;
 }
 
 void LineChartData::drawLegend( QPainter* painter, const QRect& r ) {
@@ -449,24 +459,32 @@ void LineChartData::drawLegend( QPainter* painter, const QRect& r ) {
     QList< QString > keys = m_dataset.keys();
     QFont font = m_font;
     font.setPointSize(12);
+    painter->setFont(font);
     QFontMetrics metrics = painter->fontMetrics();
-    int height = metrics.height();
-    QRect indicatorRect( r.x(), r.y(), height, height );
-    painter->setPen(Qt::darkGray);
+    QPoint p( r.x(), r.y());
+    QPen whitePen(Qt::white);
+    painter->setPen(whitePen);
     for ( auto& key : keys ) {
         QBrush brush(m_dataset[key].m_colour);
-        painter->setBrush(brush);
-        painter->drawEllipse(indicatorRect);
         //
         //
         //
         QRect textBounds = metrics.boundingRect(m_dataset[key].m_label);
-        textBounds.moveTo( indicatorRect.right() + height / 4, indicatorRect.top() );
-        painter->drawText(textBounds,m_dataset[key].m_label);
+        textBounds.setWidth(textBounds.width()+textBounds.height());
+        textBounds.setHeight(textBounds.height()+textBounds.height());
+        textBounds.moveTo( p.x(), p.y() );
         //
         //
         //
-        indicatorRect.moveLeft( textBounds.right() + height / 2 );
+        painter->fillRect(textBounds,brush);
+        //
+        //
+        //
+        painter->drawText(textBounds, Qt::AlignCenter, m_dataset[key].m_label);
+        //
+        //
+        //
+        p.setX(p.x()+textBounds.width()+textBounds.height()/2);
     }
     //
     //

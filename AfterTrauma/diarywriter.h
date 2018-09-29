@@ -48,6 +48,7 @@ private:
     qreal           m_adjustedPadding;
     qreal           m_adjustedSpacing;
     QPainter        m_painter;
+    int             m_pageNumber;
     //
     //
     //

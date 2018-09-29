@@ -138,7 +138,7 @@ Item {
                 color: Colours.almostWhite
                 font.weight: Font.Light
                 font.family: fonts.light
-                font.pixelSize: 24
+                font.pointSize: 18
                 text: model.label
                 //
                 //
