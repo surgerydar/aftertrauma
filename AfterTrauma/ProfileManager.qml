@@ -382,6 +382,7 @@ AfterTrauma.Page {
                     }
                     //injuryDescriptionList.model = profile.tags.length;
                 }
+                prompt: "add more detail on the next screen"
             }
         }
         //
@@ -431,7 +432,7 @@ AfterTrauma.Page {
                         anchors.left: parent.left
                         anchors.right: parent.right
                         anchors.margins: 8
-                        placeholderText: "Tell us a little about your " + profile.tags[ index ] + " injury"
+                        placeholderText: "Tell us a little about your\n" + profile.tags[ index ] + " injury"
                         text: profile.injuries && profile.injuries[ profile.tags[ index ] ] ? profile.injuries[ profile.tags[ index ] ] : ""
                         onTextChanged: {
                             if ( !profile.injuries ) {
@@ -453,146 +454,9 @@ AfterTrauma.Page {
             }
 
         }
-        Page {
-            padding: 0
-            title: "Settings"
-            background: Rectangle {
-                anchors.fill: parent
-                color: "transparent"
-            }
-            //
-            //
-            //
-            Flickable {
-                id: settingsContainer
-                anchors.fill: parent
-                clip: true
-                contentHeight: settingsItems.childrenRect.height + 16
-                //
-                //
-                //
-                Column {
-                    id: settingsItems
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    spacing: 4
-                    //
-                    //
-                    //
-                    Rectangle {
-                        id: stayLoggedInBlock
-                        width: profileContainer.width
-                        height: childrenRect.height + 16
-                        color: Colours.almostWhite
-                        AfterTrauma.CheckBox {
-                            id: stayLoggedIn
-                            anchors.top: parent.top
-                            anchors.right: parent.right
-                            anchors.margins: 8
-                            text: "Stay logged in"
-                            checked: profile && profile.stayLoggedIn
-                            direction: "Right"
-                            onCheckedChanged: {
-                                profile.stayLoggedIn = checked;
-                                dirty = true;
-                            }
-                        }
-                    }
-                    Rectangle {
-                        id: changePasswordBlock
-                        width: profileContainer.width
-                        height: childrenRect.height + 16
-                        color: Colours.almostWhite
-                        AfterTrauma.TextField {
-                            id: currentPassword
-                            anchors.top: parent.top
-                            anchors.left: parent.left
-                            anchors.right: parent.right
-                            anchors.margins: 8
-                            echoMode: TextField.Password
-                            placeholderText: "current password"
-                        }
-                        AfterTrauma.TextField {
-                            id: newPassword
-                            anchors.top: currentPassword.bottom
-                            anchors.left: parent.left
-                            anchors.right: parent.right
-                            anchors.margins: 8
-                            echoMode: TextField.Password
-                            placeholderText: "new password"
-                        }
-                        AfterTrauma.Button {
-                            anchors.top: newPassword.bottom
-                            anchors.right: parent.right
-                            anchors.margins: 8
-                            backgroundColour: Colours.slate
-                            textColour: Colours.almostWhite
-                            text: "reset password"
-                            onClicked: {
-                                profileChannel.send({
-                                                        command : 'changepassword',
-                                                        token : profile.token,
-                                                        username: profile.username,
-                                                        oldpass : currentPassword.text,
-                                                        newpass : newPassword.text
-                                                    });
-                            }
-                        }
-                    }
-                    Rectangle {
-                        id: archiveBlock
-                        width: profileContainer.width
-                        height: childrenRect.height + 16
-                        color: Colours.almostWhite
-                        AfterTrauma.Button {
-                            id: archiveButton
-                            anchors.top: parent.top
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            anchors.topMargin: 8
-                            backgroundColour: Colours.slate
-                            textColour: Colours.almostWhite
-                            text: "archive personal data"
-                            onClicked: {
-                                var source = SystemUtils.documentDirectory();
-                                var archive = source + archivePath();
-                                busyIndicator.show( 'archiving personal data' );
-                                Archive.archive(source,archive);
-                                enabled = false;
-                                unarchiveButton.enabled = false;
-                            }
-                            function reset() {
-                                text = "archive personal data";
-                                enabled = true;
-                            }
-                        }
-                        AfterTrauma.Button {
-                            id: unarchiveButton
-                            anchors.top:archiveButton.bottom
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            anchors.topMargin: 8
-                            backgroundColour: Colours.slate
-                            textColour: Colours.almostWhite
-                            text: "restore personal data"
-                            enabled: profile.hasarchive === undefined ? false : profile.hasarchive
-                            onClicked: {
-                                console.log( 'ProfileManager : restoring archive' );
-                                var path = archivePath()
-                                var url = baseURL + path;
-                                var target = SystemUtils.documentDirectory() + path;
-                                busyIndicator.show( 'downloading personal data' );
-                                Downloader.download(url,target);
-                                enabled = false;
-                                archiveButton.enabled = false;
-                            }
-                            function reset() {
-                                text = "restore personal data";
-                                enabled = profile.hasarchive === undefined ? false : profile.hasarchive;
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        //
+        //
+        //
         onCurrentItemChanged: {
             container.title = currentItem.title || "Your Profile"
         }
@@ -654,7 +518,6 @@ AfterTrauma.Page {
     }
 
     StackView.onDeactivating: {
-
     }
 
     StackView.onDeactivated: {
@@ -674,10 +537,6 @@ AfterTrauma.Page {
             if( command.status === "OK" ) {
                 if ( command.command === 'updateprofile' && command.close ) {
                     stack.pop()
-                } else if ( command.command === 'changepassword' ) {
-                    confirmDialog.show( '<h1>Password Changed</h1>' );
-                    currentPassword.text = "";
-                    newPassword.text = "";
                 }
             } else {
                 errorDialog.show( '<h1>Server says</h1><br/>' + ( typeof command.error === 'string' ? command.error : command.error.error ), [
@@ -747,73 +606,6 @@ AfterTrauma.Page {
         busyIndicator.show( 'updating profile' );
         profileChannel.send({command:'updateprofile', token: profile.token, profile:profile, close: closeManager});
     }
-    function archivePath() {
-        return '/media/' + profile.id.replace( /[{}]/g, '') + '.archive';
-    }
-    //
-    //
-    //
-    Connections {
-        target: Archive
-        onDone: {
-            console.log( 'Archiver : done : ' + operation + ' : ' + source + ' > ' + target );
-            if ( operation === "archive" ) {
-                busyIndicator.show( 'uploading personal data' );
-                Uploader.upload( target, baseWS );
-            } else {
-                archiveButton.reset();
-                unarchiveButton.reset();
-                reloadModels();
-                busyIndicator.hide();
-            }
-        }
-        onError: {
-            console.log( 'Archiver : error : ' + source + ' > ' + target + ' : ' + message );
-            busyIndicator.hide();
-            errorDialog.show(message);
-        }
-        onProgress: {
-            if ( operation === 'archive' ) {
-                busyIndicator.show( 'archiving files ' + Math.floor(( ( current / total ) * 100 )) + '%' );
-            } else {
-                busyIndicator.show( 'extracting files ' + Math.floor(( ( current / total ) * 100 )) + '%' );
-            }
-        }
-    }
-    Connections {
-        target: Uploader
-        onDone: {
-            console.log( 'Uploader : done : ' + source + ' > ' + destination );
-            profile.hasarchive = true;
-            archiveButton.reset();
-            unarchiveButton.reset();
-            saveProfile(false);
-            busyIndicator.hide();
-        }
-        onError: {
-            console.log( 'Uploader : error : ' + source + ' > ' + destination + ' : ' + message );
-            archiveButton.reset();
-            busyIndicator.hide();
-            errorDialog.show(message);
-        }
-        onProgress: {
-            busyIndicator.show( 'archiving ' + Math.floor(( ( current / total ) * 100 )) + '%' );
-            console.log( 'Uploader : progress : ' + source + ' > ' + destination + ' : ' + current + ' of ' + total + ' : ' + message );
-        }
-    }
-    Connections {
-        target: Downloader
-        onDone: {
-            console.log( 'Downloader : done : ' + source + ' > ' + destination );
-            var target = SystemUtils.documentDirectory();
-            Archive.unarchive(destination,target);
-            busyIndicator.show( 'extracting files' );
-        }
-        onProgress: {
-            busyIndicator.show( 'downloading ' + Math.floor(( ( current / total ) * 100 )) + '%' );
-        }
-    }
-
     //
     //
     //

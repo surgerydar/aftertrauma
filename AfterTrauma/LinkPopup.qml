@@ -37,20 +37,38 @@ Popup {
             anchors.right: parent.right
             title: model.title
             summary: model.summary
-            colour: Colours.darkOrange
             //
             //
             //
             onClicked: {
-                var category = categoryModel.findOne({category:model.category});
-                stack.push( "qrc:///DocumentViewer.qml", { title: ( category && category.title ? category.title : 'LINK' ), subtitle: model.title, colour: colour, document: model.document });
-                container.close();
+                if ( model.section === "resources" ) {
+                    var category = categoryModel.findOne({category:model.category});
+                    stack.push( "qrc:///DocumentViewer.qml", { title: ( category && category.title ? category.title : container.title ), subtitle: model.title, colour: colour, document: model.document });
+                } else {
+                    var challenge = challengeModel.findOne( {_id:model.document} );
+                    if ( challenge ) {
+                        var properties = {
+                            title: challenge.name,
+                            activity: Utils.formatChallengeDescription(challenge.activity, challenge.repeats, challenge.frequency),
+                            active: challenge.active,
+                            notifications: challenge.notifications,
+                            challengeId: challenge._id
+                        };
+                        stack.push( "qrc:///ChallengeViewer.qml", properties );
+                    } else {
+                        console.log( 'unable to find challenge : ' + model.document);
+                    }
+                }
             }
             //
             //
             //
             Component.onCompleted: {
-                setColour(model.category);
+                if (  model.section === "resources" ) {
+                    setColour(model.category);
+                } else {
+                    colour = Colours.lightGreen;
+                }
             }
         }
     }
@@ -66,23 +84,30 @@ Popup {
             var frequency = {};
             searchResults.forEach( function( result ) {
                 result.documents.forEach( function( document ) {
-                    if ( frequency[ document ] ) {
-                        frequency[ document ]++;
+                    if ( frequency[ document.document ] ) {
+                        frequency[ document.document ].frequency++;
                     } else {
-                        frequency[ document ] = 1;
+                        frequency[ document.document ] = { section: document.section, frequency: 1 };
                     }
                 });
             });
             console.log( 'find frequency : ' + JSON.stringify(frequency) );
-            var ids = [];
+            var document_ids = [];
+            var challenge_ids = [];
             for ( var id in frequency ) {
-                if ( frequency[ id ] >= searchResults.length ) {
-                    ids.push(id);
+                if ( frequency[ id ].frequency >= searchResults.length ) { // matches all tags
+                    if ( frequency[ id ].section ==='challenges' ) {
+                        challenge_ids.push(id);
+                    } else {
+                        document_ids.push(id);
+                    }
                 }
             }
-            console.log( 'find documents : ' + JSON.stringify(ids) );
-            var documents = documentModel.find( { document: { $in: ids } } );
-            console.log(  documents.length + ' documents found' );
+            //
+            //
+            //
+            var documents = documentModel.find( { document: { $in: document_ids } } );
+            console.log( 'find documents : ' + documents.length );
             documents.forEach( function( document ) {
                 //
                 // find first text block
@@ -94,13 +119,23 @@ Popup {
                         break;
                     }
                 }
-                console.log( 'appending : ' + document.title);
-                links.model.append( {
-                                       category: document.category,
-                                       document: document.document,
-                                       title: document.title,
-                                       summary: summary
-                                   });
+
+                results.model.append( {
+                                         document: document.document,
+                                         title: document.title,
+                                         summary: summary,
+                                         category: document.category,
+                                         section: "resources"
+                                     });
+            });
+            var challenges = challengeModel.find( { _id : { $in: challenge_ids } } );
+            challenges.forEach( function( challenge ) {
+                results.model.append( {
+                                         document: challenge._id,
+                                         title: challenge.name,
+                                         summary: challenge.activity,
+                                         section: "challenges"
+                                     });
             });
             //links.height = Math.min( parent.height, links.model.count * ( 64 + 4 ) );
             open();

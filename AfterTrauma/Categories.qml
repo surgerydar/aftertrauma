@@ -10,15 +10,5 @@ DatabaseList {
     //
     //
     Component.onCompleted: {
-        //
-        // test data
-        //
-        if ( count <= 0 ) {
-            beginBatch();
-            for ( var i = 0; i < 6; i++ ) {
-            }
-            endBatch();
-            save();
-        }
     }
 }

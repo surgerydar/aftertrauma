@@ -69,4 +69,11 @@ DatabaseList {
         update({canonical:canonical},{selected:selected});
         save();
     }
+    function hasSelected() {
+        for ( var i = 0; i < count; i++ ) {
+            var part = get( i );
+            if ( part.selected ) return true;
+        }
+        return false;
+    }
 }

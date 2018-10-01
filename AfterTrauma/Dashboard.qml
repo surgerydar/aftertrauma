@@ -45,9 +45,10 @@ AfterTrauma.Page {
         }
         Item {
             height: label.contentHeight + 16
-            anchors.top: dateSlider.top
+            anchors.bottom: parent.bottom
             anchors.left: parent.left
             anchors.right: parent.right
+            anchors.bottomMargin: 4
             visible: flowerChartAnimator.running
             Rectangle {
                 anchors.fill: parent
@@ -68,6 +69,9 @@ AfterTrauma.Page {
             }
         }
 
+    }
+    footer: Item {
+        height: 0
     }
     //
     //

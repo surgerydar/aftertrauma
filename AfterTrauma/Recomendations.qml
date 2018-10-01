@@ -15,165 +15,115 @@ DatabaseList {
         if ( count <= 0 ) {
             console.log( 'generating recomentation test data');
             var data = [
+                        // body
                         {
                             category: "body",
                             minimum: 0.0,
-                            maximum: 0.25,
+                            maximum: 0.34,
                             recomendation: "Some difficulties. Need some help?",
-                            links: [
-                            ]
+                            tag: "body-1"
                         },
                         {
                             category: "body",
-                            minimum: 0.25,
-                            maximum: 0.5,
-                            recomendation: "Some difficulties. Need some help?",
-                            links: [
-                            ]
+                            minimum: 0.34,
+                            maximum: 0.67,
+                            recomendation: "You’re making good progress! Keep it up!",
+                            tag: "body-2"
                         },
                         {
                             category: "body",
-                            minimum: 0.5,
-                            maximum: 0.75,
-                            recomendation: "You’re making good progress! Keep it up!",
-                            links: [
-                            ]
-                        },
-                        {
-                            category: "body",
-                            minimum: 0.75,
+                            minimum: 0.67,
                             maximum: 1.0,
                             recomendation: "You’re making good progress! Keep it up!",
-                            links: [
-                            ]
+                            tag: "body-3"
                         },
+                        // emotions
                         {
                             category: "emotions",
                             minimum: 0.0,
-                            maximum: 0.25,
+                            maximum: 0.34,
                             recomendation: "Some difficulties. Need some help?",
-                            links: [
-                            ]
+                            tag: "emotions-1"
                         },
                         {
                             category: "emotions",
-                            minimum: 0.25,
-                            maximum: 0.5,
+                            minimum: 0.34,
+                            maximum: 0.67,
                             recomendation: "Some difficulties. Need some help?",
-                            links: [
-                            ]
+                            tag: "emotions-2"
                         },
                         {
                             category: "emotions",
-                            minimum: 0.5,
-                            maximum: 0.75,
-                            recomendation: "You’re making good progress! Keep it up!",
-                            links: [
-                            ]
-                        },
-                        {
-                            category: "emotions",
-                            minimum: 0.75,
+                            minimum: 0.67,
                             maximum: 1.0,
                             recomendation: "You’re making good progress! Keep it up!",
-                            links: [
-                            ]
+                            tag: "emotions-3"
                         },
+                        // relationships
                         {
                             category: "relationships",
                             minimum: 0.0,
-                            maximum: 0.25,
+                            maximum: 0.34,
                             recomendation: "Some difficulties. Need some help?",
-                            links: [
-                            ]
+                            tag: "relationships-1"
                         },
                         {
                             category: "relationships",
-                            minimum: 0.25,
-                            maximum: 0.5,
+                            minimum: 0.34,
+                            maximum: 0.67,
                             recomendation: "Some difficulties. Need some help?",
-                            links: [
-                            ]
+                            tag: "relationships-2"
                         },
                         {
                             category: "relationships",
-                            minimum: 0.5,
-                            maximum: 0.75,
-                            recomendation: "You’re making good progress! Keep it up!",
-                            links: [
-                            ]
-                        },
-                        {
-                            category: "relationships",
-                            minimum: 0.75,
+                            minimum: 0.67,
                             maximum: 1.0,
                             recomendation: "You’re making good progress! Keep it up!",
-                            links: [
-                            ]
+                            tag: "relationships-3"
                         },
+                        // life
                         {
                             category: "life",
                             minimum: 0.0,
-                            maximum: 0.25,
+                            maximum: 0.34,
                             recomendation: "Some difficulties. Need some help?",
-                            links: [
-                            ]
+                            tag: "life-1"
                         },
                         {
                             category: "life",
-                            minimum: 0.25,
-                            maximum: 0.5,
+                            minimum: 0.34,
+                            maximum: 0.67,
                             recomendation: "Some difficulties. Need some help?",
-                            links: [
-                            ]
+                            tag: "life-2"
                         },
                         {
                             category: "life",
-                            minimum: 0.5,
-                            maximum: 0.75,
-                            recomendation: "You’re making good progress! Keep it up!",
-                            links: [
-                            ]
-                        },
-                        {
-                            category: "life",
-                            minimum: 0.75,
+                            minimum: 0.67,
                             maximum: 1.0,
                             recomendation: "You’re making good progress! Keep it up!",
-                            links: [
-                            ]
+                            tag: "life-3"
                         },
+                        // confidence
                         {
                             category: "confidence",
                             minimum: 0.0,
-                            maximum: 0.25,
+                            maximum: 0.34,
                             recomendation: "Some difficulties. Need some help?",
-                            links: [
-                            ]
+                            tag: "confidence-1"
                         },
                         {
                             category: "confidence",
-                            minimum: 0.25,
-                            maximum: 0.5,
+                            minimum: 0.34,
+                            maximum: 0.67,
                             recomendation: "Some difficulties. Need some help?",
-                            links: [
-                            ]
+                            tag: "confidence-2"
                         },
                         {
                             category: "confidence",
-                            minimum: 0.5,
-                            maximum: 0.75,
-                            recomendation: "You’re making good progress! Keep it up!",
-                            links: [
-                            ]
-                        },
-                        {
-                            category: "confidence",
-                            minimum: 0.75,
+                            minimum: 0.67,
                             maximum: 1.0,
                             recomendation: "You’re making good progress! Keep it up!",
-                            links: [
-                            ]
+                            tag: "confidence-3"
                         }
                    ];
             beginBatch();
@@ -215,8 +165,8 @@ DatabaseList {
         var text;
         if ( recomendation ) {
             text = recomendation.recomendation;
-            if ( value < .5 ) {
-                text += '<br/><a class="recommendation" href="link://' + c + '">' + c + ' resources</a>';
+            if ( recomendation.tag && recomendation.tag.length > 0 ) {
+                text += '<br/><a class="recommendation" href="link://' + recomendation.tag + '">' + c + ' resources</a>';
             }
         } else {
             text = 'Insufficient information to assess : ' + c;

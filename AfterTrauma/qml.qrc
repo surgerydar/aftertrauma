@@ -196,5 +196,9 @@
         <file>RehabManager.qml</file>
         <file>Rehab.qml</file>
         <file>icons/group_icon_white.png</file>
+        <file>SettingsManager.qml</file>
+        <file>icons/settings.png</file>
+        <file>UtilityWindow.qml</file>
+        <file>data/aftertrauma.at</file>
     </qresource>
 </RCC>

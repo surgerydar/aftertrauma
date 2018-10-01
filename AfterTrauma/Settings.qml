@@ -17,7 +17,7 @@ DatabaseList {
             var data  = [
                         {
                             name: "firstrun",
-                            value: false
+                            value: true
                         },
                         {
                             name: "registered",

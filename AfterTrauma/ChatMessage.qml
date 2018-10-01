@@ -65,6 +65,7 @@ Item {
             wrapMode: Text.WordWrap
             font.family: fonts.light
             font.pointSize: 18
+            textFormat: Text.RichText
             //
             //
             //

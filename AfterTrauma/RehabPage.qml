@@ -285,7 +285,7 @@ Page {
             //
             //
             //
-            Label {
+            AfterTrauma.Label {
                 id: goalsHeader
                 anchors.top: editBar.bottom
                 anchors.left: parent.left
@@ -295,10 +295,24 @@ Page {
                 fontSizeMode: Label.Fit
                 font.family: fonts.light
                 font.pointSize: 24
+                horizontalAlignment: Label.AlignLeft
                 text: "Goals"
             }
-            Column {
+            AfterTrauma.Label {
+                id: goalsSubHeader
                 anchors.top: goalsHeader.bottom
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.margins: 8
+                color: Colours.veryDarkSlate
+                fontSizeMode: Label.Fit
+                font.family: fonts.light
+                font.pointSize: 18
+                horizontalAlignment: Label.AlignLeft
+                text: "Move the sliders to set realistic goals for this rehab plan"
+            }
+            Column {
+                anchors.top: goalsSubHeader.bottom
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.topMargin: 4
                 width: parent.width

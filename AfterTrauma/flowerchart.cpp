@@ -44,7 +44,7 @@ QString categoryColour( int index ) {
 }
 
 const QVector<QString> labels = {
-    "emotions", "confidence", "body", "life", "relationships"
+    "Emotions", "Confidence", "Body", "Life", "Relationships"
 };
 
 FlowerChart::FlowerChart( QQuickItem* parent ) : QQuickPaintedItem( parent ), m_painter( this ) {
@@ -193,7 +193,7 @@ void FlowerChart::selectCategoryAt( qreal x, qreal y ) {
         angle += sweep;
     }
     if ( minIndex >= 0 ) {
-        emit categorySelected( labels[ minIndex ], minIndex );
+        emit categorySelected( labels[ minIndex ].toLower(), minIndex );
     }
 }
 

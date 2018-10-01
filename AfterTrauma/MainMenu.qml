@@ -181,5 +181,20 @@ Rectangle {
                 container.close();
             }
         }
+        AfterTrauma.Button {
+            //anchors.left: parent.left
+            textHorizontalAlignment: Text.AlignLeft
+            textVerticalAlignment: Text.AlignVCenter
+            textSize: 32
+            text: "Settings"
+            image: "icons/settings.png"
+            direction: "Left"
+            spacing: 8
+            enabled: userProfile ? true : false
+            onClicked: {
+                stack.push("qrc:///SettingsManager.qml", { profile: userProfile } );
+                container.close();
+            }
+        }
     }
 }

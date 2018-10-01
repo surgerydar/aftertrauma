@@ -29,7 +29,7 @@ signals:
     void error( const QString& operation, const QString& source, const QString& target, const QString& message );
 
 public slots:
-    void archive( const QString& source, const QString& archive );
+    void archive( const QString& source, const QString& archive, const bool recursive );
     void unarchive( const QString& archive, const QString& target );
 
 private:

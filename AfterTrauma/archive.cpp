@@ -18,13 +18,14 @@ Archive* Archive::shared() {
     return s_shared;
 }
 
-void Archive::archive( const QString& source, const QString& archive ) {
+void Archive::archive( const QString& source, const QString& archive, bool recursive ) {
     //
     // initialise Archiver
     //
     Archiver *archiver = new Archiver(this);
     archiver->setSource(source);
     archiver->setArchive(archive);
+    archiver->setRecursive(recursive);
     //
     // connect signals
     //

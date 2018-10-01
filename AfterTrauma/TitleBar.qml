@@ -25,6 +25,9 @@ Item {
             onClicked: {
                 stack.pop(null);
             }
+            onPressAndHold: {
+                utilityWindow.open();
+            }
         }
     }
 }

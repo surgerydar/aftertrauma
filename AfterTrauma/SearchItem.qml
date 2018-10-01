@@ -21,7 +21,7 @@ Item {
     //
     //
     //
-    Text {
+    Label {
         id: titleText
         anchors.top: parent.top
         anchors.left: parent.left
@@ -40,7 +40,7 @@ Item {
         //
         horizontalAlignment: Text.AlignLeft
     }
-    Text {
+    Label {
         id: summaryText
         anchors.top: titleText.bottom
         anchors.left: parent.left

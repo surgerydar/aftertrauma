@@ -326,11 +326,16 @@ var rest = {
             // TODO: save user
         } else if( type === 'challenge' ) {
             save.onclick = function() {
+                var tags = d.querySelector('#tags').value.split(',');
+                for ( var t = 0; t < tags.length; t++ ) {
+                    tags[ t ] = tags[ t ].trim();
+                }
                 var challenge = {
                     activity: d.querySelector('#activity').value,
                     frequency: d.querySelector('#frequency').value,
                     name: d.querySelector('#name').value,
-                    repeats: d.querySelector('#repeats').value
+                    repeats: d.querySelector('#repeats').value,
+                    tags: tags
                 };
                 rest.put('/admin/challenges/' + save.getAttribute('data-challenge'), challenge, {
                     onloadend: function(evt) {

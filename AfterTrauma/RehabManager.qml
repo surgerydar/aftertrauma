@@ -33,17 +33,14 @@ AfterTrauma.Page {
     //
     //
     //
-    Label {
+    AfterTrauma.Label {
         id: addPrompt
-        anchors.centerIn: rehabPages
-        horizontalAlignment: Label.AlignHCenter
-        verticalAlignment: Label.AlignVCenter
+        anchors.fill: rehabPages
         visible: rehabModel.count === 0
         font.family: fonts.light
         font.pointSize: 24
-        color: Colours.veryDarkSlate
-        wrapMode: Label.WordWrap
-        text: "rehab plan here"
+        color: Colours.almostWhite
+        text: "add your rehab plan here"
     }
     //
     //

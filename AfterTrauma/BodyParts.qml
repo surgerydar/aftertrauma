@@ -8,7 +8,7 @@ import "colours.js" as Colours
 
 Item {
     id: container
-    implicitHeight: parts.contentHeight
+    implicitHeight: parts.contentHeight + 64
     //
     //
     //
@@ -21,7 +21,11 @@ Item {
     //
     GridView {
         id: parts
-        anchors.fill: parent
+        //anchors.fill: parent
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.bottom: bodyPrompt.top
+        anchors.right: parent.right
         cellWidth: width / 3
         cellHeight: ( cellWidth * 1.359805510534846 ) + 64
         clip: true
@@ -47,5 +51,36 @@ Item {
     //
     //
     //
+    AfterTrauma.Label {
+        id: bodyPrompt
+        height: calculateHeight()
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        clip: true
+        Behavior on height {
+            NumberAnimation { duration: 250 }
+        }
+        background: Rectangle {
+            color: Colours.veryLightSlate
+        }
+        function calculateHeight() {
+            return bodyPartModel.hasSelected() ? 64 : 0;
+        }
+    }
+    Connections {
+        target: bodyPartModel
+        onDataChanged: {
+            bodyPrompt.height = bodyPrompt.calculateHeight();
+        }
+    }
+
+    //
+    //
+    //
     signal partSelected( string name, bool selected )
+    //
+    //
+    //
+    property alias prompt: bodyPrompt.text
 }

@@ -22,5 +22,6 @@ html
             .inputwithlabel
                 label( for='repeats' ) repeats
                 input#repeats( name='repeats' type='number' value= challenge.repeats min='1' )
-
+            - var tags = challenge.tags ? challenge.tags.join() : '';
+            input#tags(type='text' value= tags placeholder='tags')   
         script(src='/scripts/aftertrauma.js')

@@ -75,6 +75,10 @@ QString SystemUtils::mediaPath( const QString& filename ) {
 //
 //
 //
+bool SystemUtils::fileExists( const QString& path ) {
+    return QFile::exists(path);
+}
+
 bool SystemUtils::copyFile( const QString& from, const QString& to, bool force ) {
     if ( force ) {
         if ( QFile::exists(to) ) {

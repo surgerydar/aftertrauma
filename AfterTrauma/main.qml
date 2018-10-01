@@ -157,12 +157,14 @@ ApplicationWindow {
         interval: 1000
         count: 5
         onNewValues: {
-            var values = [];
-            for ( var i = 0 ; i < count; i++ ) {
-                values.push(value(i));
+            if ( flowerChart.enabled ) {
+                var values = [];
+                for ( var i = 0 ; i < count; i++ ) {
+                    values.push(value(i));
+                }
+                flowerChart.values = values;
+                flowerChart.update();
             }
-            flowerChart.values = values;
-            flowerChart.update();
         }
     }
     //
@@ -180,6 +182,7 @@ ApplicationWindow {
         //visible: depth > 1
         anchors.topMargin: depth > 1 ? 0 : titleBar.height
         anchors.bottomMargin: depth > 1 ? 0 : navigationBar.height
+        //anchors.bottomMargin: navigationBar.height // JONS: persistant navbar experiment perhaps just add screen height <= 720
         transitions: Transition {
             AnchorAnimation { duration: 100 }
         }
@@ -230,6 +233,7 @@ ApplicationWindow {
         //
         //
         state: stack.depth > 1 ? "closed" : "open"
+        //state: "open" // JONS: persistant navbar experiment
     }
 
     //
@@ -285,6 +289,9 @@ ApplicationWindow {
     TermsAndConditions {
         id: terms
     }
+    UtilityWindow {
+        id: utilityWindow
+    }
     AfterTrauma.ConfirmDialog {
         id: confirmDialog
         x: 0
@@ -318,7 +325,13 @@ ApplicationWindow {
         //
         userProfile = JSONFile.read('user.json') || null;
         if ( !userProfile ) {
-            console.log( 'installing' );
+            var firstRun = settingsModel.findOne({name:'firstrun'});
+            if (  !firstRun || firstRun.value ) {
+                settingsModel.update({name:'firstrun'},{value:false},true);
+                settingsModel.save();
+                console.log( 'installing' );
+                Archive.unarchive(":/data/aftertrauma.at",SystemUtils.documentDirectory());
+            }
             intro.open();
         } else {
             //
@@ -352,6 +365,22 @@ ApplicationWindow {
         console.log( 'start animator ? count=' + dailyModel.count + ' questionnaire complete=' + questionnaireModel.dailyCompleted() );
         if ( dailyModel.count < 1 && !questionnaireModel.dailyCompleted() ) {
             flowerChartAnimator.start();
+        }
+    }
+    Connections {
+        target: Archive
+        enabled: stack.depth <= 1
+        onDone: {
+            busyIndicator.hide();
+            categoryModel.load();
+            documentModel.load();
+        }
+        onError: {
+            busyIndicator.hide();
+            errorDialog.show(message);
+        }
+        onProgress: {
+            busyIndicator.show( 'preparing content ' + Math.floor(( ( current / total ) * 100 )) + '%' );
         }
     }
     //

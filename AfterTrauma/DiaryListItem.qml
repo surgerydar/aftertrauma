@@ -147,7 +147,17 @@ Item {
         //console.log( 'firstBlockContent : ' + type );
         //var blocks = dailyModel.blocksForDate(date);
         for ( var i = 0; i < container.blocks.length; i++ ) {
-            if ( blocks[ i ].type === type ) return ( type === 'image' ? 'file://' + SystemUtils.documentDirectory() + '/' : "" ) + blocks[ i ].content;
+            if ( blocks[ i ].type === type ) {
+                if ( type === "image" ) {
+                    var path = SystemUtils.documentDirectory() + '/' + blocks[ i ].content;
+                    if ( !SystemUtils.fileExists(path) ) {
+                        path = SystemUtils.mediaPath(blocks[ i ].content);
+                    }
+                    return 'file://' + path;
+                } else {
+                    return blocks[ i ].content;
+                }
+            }
         }
         return "";
     }

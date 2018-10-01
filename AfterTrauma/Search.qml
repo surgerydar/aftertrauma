@@ -3,6 +3,7 @@ import QtQuick.Controls 2.1
 
 import "controls" as AfterTrauma
 import "colours.js" as Colours
+import "utils.js" as Utils
 
 AfterTrauma.Page {
     id: container
@@ -38,14 +39,34 @@ AfterTrauma.Page {
             //
             //
             onClicked: {
-                var category = categoryModel.findOne({category:model.category});
-                stack.push( "qrc:///DocumentViewer.qml", { title: ( category && category.title ? category.title : container.title ), subtitle: model.title, colour: colour, document: model.document });
+                if ( model.section === "resources" ) {
+                    var category = categoryModel.findOne({category:model.category});
+                    stack.push( "qrc:///DocumentViewer.qml", { title: ( category && category.title ? category.title : container.title ), subtitle: model.title, colour: colour, document: model.document });
+                } else {
+                    var challenge = challengeModel.findOne( {_id:model.document} );
+                    if ( challenge ) {
+                        var properties = {
+                            title: challenge.name,
+                            activity: Utils.formatChallengeDescription(challenge.activity, challenge.repeats, challenge.frequency),
+                            active: challenge.active,
+                            notifications: challenge.notifications,
+                            challengeId: challenge._id
+                        };
+                        stack.push( "qrc:///ChallengeViewer.qml", properties );
+                    } else {
+                        console.log( 'unable to find challenge : ' + model.document);
+                    }
+                }
             }
             //
             //
             //
             Component.onCompleted: {
-                setColour(model.category);
+                if (  model.section === "resources" ) {
+                    setColour(model.category);
+                } else {
+                    colour = Colours.lightGreen;
+                }
             }
         }
         add: Transition {
@@ -127,21 +148,29 @@ AfterTrauma.Page {
                 var frequency = {};
                 searchResults.forEach( function( result ) {
                     result.documents.forEach( function( document ) {
-                        if ( frequency[ document ] ) {
-                            frequency[ document ]++;
+                        if ( frequency[ document.document ] ) {
+                            frequency[ document.document ].frequency++;
                         } else {
-                            frequency[ document ] = 1;
+                            frequency[ document.document ] = { section: document.section, frequency: 1 };
                         }
                     });
                 });
                 console.log( 'find frequency : ' + JSON.stringify(frequency) );
-                var ids = [];
+                var document_ids = [];
+                var challenge_ids = [];
                 for ( var id in frequency ) {
-                    if ( frequency[ id ] >= searchResults.length ) {
-                        ids.push(id);
+                    if ( frequency[ id ].frequency >= searchResults.length ) { // matches all tags
+                        if ( frequency[ id ].section ==='challenges' ) {
+                            challenge_ids.push(id);
+                        } else {
+                            document_ids.push(id);
+                        }
                     }
                 }
-                var documents = documentModel.find( { document: { $in: ids } } );
+                //
+                //
+                //
+                var documents = documentModel.find( { document: { $in: document_ids } } );
                 console.log( 'find documents : ' + documents.length );
                 documents.forEach( function( document ) {
                     //
@@ -159,7 +188,17 @@ AfterTrauma.Page {
                                              document: document.document,
                                              title: document.title,
                                              summary: summary,
-                                             category: document.category
+                                             category: document.category,
+                                             section: "resources"
+                                         });
+                });
+                var challenges = challengeModel.find( { _id : { $in: challenge_ids } } );
+                challenges.forEach( function( challenge ) {
+                    results.model.append( {
+                                             document: challenge._id,
+                                             title: challenge.name,
+                                             summary: challenge.activity,
+                                             section: "challenges"
                                          });
                 });
             }

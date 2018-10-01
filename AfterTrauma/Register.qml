@@ -676,7 +676,7 @@ Popup {
                         console.log( 'extracting tags : ' + JSON.stringify(block.tags) );
                         block.tags.forEach( function( tag ) {
                             if ( tag.length > 0 ) {
-                                tagsModel.updateTag( tag.toLowerCase(), document._id || result._id );
+                                tagsModel.updateTag( tag.toLowerCase(), { section: category.section, document: document._id || result._id } );
                             }
                         });
                     });
@@ -699,7 +699,16 @@ Popup {
             challenge.active = false;
             var result = challengeModel.update( {_id: challenge._id}, challenge, true );
             console.log( 'updated challenges : ' + JSON.stringify(result) );
+            if ( challenge.tags ) {
+                challenge.tags.forEach( function( tag ) {
+                    tag.trim();
+                    if ( tag.length > 0 ) {
+                        tagsModel.updateTag( tag.toLowerCase(), { section: "challenges", document: challenge._id || result._id } );
+                    }
+                });
+            }
         });
+        tagsModel.save();
         challengeModel.save();
     }
     property bool termsViewed: false

@@ -169,13 +169,15 @@ Popup {
         var count = documentModel.count;
         //console.log( 'Introduction : appending : ' + count + ' documents' );
         if ( count <= 0 ) {
+
             //
             // install default
             //
             installDefault();
             documentModel.setFilter(filter);
-            documentModel.save();
+            //documentModel.save();
             count = documentModel.count;
+
         }
         for ( var i = 0; i < count; i++ ) {
             var document = documentModel.get(i);
