@@ -4,7 +4,12 @@
 #include "pdfgenerator.h"
 
 LineChartData::LineChartData(QObject *parent) : QObject(parent) {
-
+    const QString faceTemplate(":/icons/face%1.png");
+    m_faces.resize(4);
+    for ( int i = 0; i < 4; ++i ) {
+        QString filePath = faceTemplate.arg(3-i);
+        m_faces[ i ].load(filePath);
+    }
 }
 
 QString LineChartData::addDataSet( QString label, QColor colour, QVariant data ) {
@@ -225,7 +230,7 @@ void LineChartData::drawAxis( QPainter* painter, const AxisData& axis, const QRe
     //
     //
     if ( axis.m_steps > 0 ) {
-        drawGridLines(painter,axis.m_orientation,axis.m_steps,r);
+        //drawGridLines(painter,axis.m_orientation,axis.m_steps,r);
     }
     //
     // TODO: ticks and labels
@@ -243,6 +248,7 @@ void LineChartData::drawAxis( QPainter* painter, const AxisData& axis, const QRe
     double axisOrientation = 0.;
     switch ( axis.m_orientation ) {
     case XAxis :
+
         labelRect.setX(r.x());
         labelRect.setWidth(r.width());
         switch ( axis.m_alignment ) {
@@ -264,8 +270,13 @@ void LineChartData::drawAxis( QPainter* painter, const AxisData& axis, const QRe
             labelRect.moveTop(r.bottom());
             break;
         }
+        //
+        //
+        //
+        painter->drawLine(r.bottomLeft(),r.bottomRight());
         break;
     case YAxis :
+        /*
         labelRect.moveTop( r.y() + ( r.height()/2 - labelHeight/2 ) );
         labelRect.setWidth(r.height());
         axisOrientation = -90.;
@@ -289,7 +300,30 @@ void LineChartData::drawAxis( QPainter* painter, const AxisData& axis, const QRe
             break;
         }
         break;
+        */
+
+        //
+        //
+        //
+        painter->drawLine(r.bottomLeft(),r.topLeft());
+        painter->save();
+        painter->setOpacity(.75);
+        const qreal faceScale = .5;
+        int faceHeight = r.height() / m_faces.size();
+        int faceX = r.x();
+        int faceY = r.y();
+        for( auto& face : m_faces ) {
+            qreal aspect = (qreal) face.width() / (qreal) face.height();
+            int faceWidth = (qreal)faceHeight * aspect;
+            qreal offset = ( (qreal) faceHeight - ( (qreal) faceHeight * faceScale ) ) / 2.;
+            QRectF faceRect( (qreal)faceX - (qreal)faceWidth * faceScale, (qreal)faceY + offset, (qreal)faceWidth * faceScale, (qreal)faceHeight * faceScale );
+            painter->drawImage(faceRect,face);
+            faceY += faceHeight;
+        }
+        painter->restore();
+        break;
     }
+
     //
     // label
     //
@@ -309,6 +343,7 @@ void LineChartData::drawAxis( QPainter* painter, const AxisData& axis, const QRe
     rangeFont.setPointSize(12);
     painter->setFont(rangeFont);
     const QString dateFormat = "ddd MMM d yyyy"; // TODO: make this a property
+    QRect labelTextRect;
     if ( !axis.m_min.isNull() ) {
         QString text;
         if ( axis.m_min.canConvert<QDate>() ) {
@@ -317,8 +352,12 @@ void LineChartData::drawAxis( QPainter* painter, const AxisData& axis, const QRe
         } else {
             text = axis.m_min.toString();
         }
+        labelTextRect = labelRect;
+        if ( axis.m_orientation == XAxis ) {
+            labelTextRect.moveLeft(labelTextRect.x()+painter->fontMetrics().averageCharWidth());
+        }
         painter->drawLine( labelRect.topLeft(), labelRect.bottomLeft() );
-        painter->drawText( labelRect, Qt::AlignLeft|Qt::AlignVCenter, text );
+        painter->drawText( labelTextRect, Qt::AlignLeft|Qt::AlignVCenter, text );
     }
     if ( !axis.m_max.isNull() ) {
         QString text;
@@ -328,8 +367,12 @@ void LineChartData::drawAxis( QPainter* painter, const AxisData& axis, const QRe
         } else {
             text = axis.m_max.toString();
         }
+        labelTextRect = labelRect;
+        if ( axis.m_orientation == XAxis ) {
+            labelTextRect.moveLeft(labelTextRect.x()-painter->fontMetrics().averageCharWidth());
+        }
         painter->drawLine( labelRect.topRight(), labelRect.bottomRight() );
-        painter->drawText( labelRect, Qt::AlignRight|Qt::AlignVCenter, text );
+        painter->drawText( labelTextRect, Qt::AlignRight|Qt::AlignVCenter, text );
     }
     //
     //

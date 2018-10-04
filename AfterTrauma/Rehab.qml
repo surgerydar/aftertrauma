@@ -61,5 +61,18 @@ DatabaseList {
         }
         return [ 1.,1.,1.,1.,1.];
     }
+    function getIndexForDate( date ) {
+        var day = date.getDate();
+        var month = date.getMonth();
+        var year = date.getFullYear();
+        for ( var i = 0; i < count; i++ ) {
+            var plan = get(i);
+            var planDate = new Date( plan.date );
+            if ( planDate.getFullYear() === year && planDate.getMonth() === month && planDate.getDate() === day ) {
+                return i;
+            }
+        }
+        return -1;
+    }
 
 }

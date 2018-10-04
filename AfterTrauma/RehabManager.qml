@@ -91,22 +91,29 @@ AfterTrauma.Page {
             anchors.margins: 8
             image: "icons/add.png"
             backgroundColour: "transparent"
+            visible: rehabModel.getIndexForDate( new Date() ) < 0
             onClicked: {
-                var plan = {
-                    id: GuidGenerator.generate(),
-                    date: Date.now(),
-                    blocks: [],
-                    goals: [
-                        { name: 'emotions', value: 1.0 },
-                        { name: 'confidence', value: 1.0 },
-                        { name: 'body', value: 1.0 },
-                        { name: 'life', value: 1.0 },
-                        { name: 'relationships', value: 1.0 }
-                    ]
-                };
-                rehabModel.add(plan);
-                rehabRepeater.model = rehabModel.count;
-                addPrompt.visible = rehabModel.count === 0;
+                var planIndex = rehabModel.getIndexForDate( new Date() );
+                if ( planIndex >= 0 ) {
+                    rehabPages.currentIndex = planIndex;
+                    rehabPages.itemAt(planIndex).openEditor();
+                } else {
+                    var plan = {
+                        id: GuidGenerator.generate(),
+                        date: Date.now(),
+                        blocks: [],
+                        goals: [
+                            { name: 'emotions', value: 1.0 },
+                            { name: 'confidence', value: 1.0 },
+                            { name: 'body', value: 1.0 },
+                            { name: 'life', value: 1.0 },
+                            { name: 'relationships', value: 1.0 }
+                        ]
+                    };
+                    rehabModel.add(plan);
+                    rehabRepeater.model = rehabModel.count;
+                    addPrompt.visible = rehabModel.count === 0;
+                }
             }
         }
     }
@@ -118,4 +125,7 @@ AfterTrauma.Page {
     }
     StackView.onDeactivating: {
     }
+    //
+    //
+    //
 }

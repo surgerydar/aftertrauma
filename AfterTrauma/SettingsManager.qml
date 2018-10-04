@@ -104,6 +104,7 @@ AfterTrauma.Page {
                             }
                         }
                     }
+                    /*
                     Rectangle {
                         id: archiveBlock
                         width: settingsContainer.width
@@ -155,6 +156,7 @@ AfterTrauma.Page {
                             }
                         }
                     }
+                    */
                 }
             }
         }

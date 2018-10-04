@@ -254,24 +254,7 @@ Page {
                     image: "icons/add.png"
                     backgroundColour: "transparent"
                     onClicked: {
-                        blockEditor.show( false, function( type, content ) {
-                            //
-                            // append block
-                            //
-                            var block = {
-                                type: type,
-                                title: Date(),
-                                content: content,
-                                tags: []
-                            };
-                            blocksModel.model.append(block);
-                            contents.positionViewAtIndex(blocksModel.model.count-1,ListView.Visible);
-                            //
-                            //
-                            //
-                            plan.blocks.push(block);
-                            syncDatabase();
-                        });
+                        openEditor();
                     }
                 }
                 Rectangle {
@@ -365,7 +348,6 @@ Page {
         rehabModel.update( {id:plan.id},{goals: plan.goals,blocks: plan.blocks} );
         rehabModel.save();
     }
-
     //
     //
     //
@@ -376,6 +358,30 @@ Page {
                 blocksModel.model.append(block);
             });
         }
+    }
+    //
+    //
+    //
+    function openEditor() {
+        blockEditor.show( false, function( type, content ) {
+            //
+            // append block
+            //
+            var block = {
+                type: type,
+                title: Date(),
+                content: content,
+                tags: []
+            };
+            blocksModel.model.append(block);
+            contents.positionViewAtIndex(blocksModel.model.count-1,ListView.Visible);
+            //
+            //
+            //
+            plan.blocks.push(block);
+            syncDatabase();
+        });
+
     }
     //
     //

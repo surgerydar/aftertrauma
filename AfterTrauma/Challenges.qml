@@ -78,15 +78,22 @@ DatabaseList {
     function findChallenge(name) {
         return findOne({name:name});
     }
-    function updateCount(index,count) {
+    function updateCount(id,count) {
         //
         // TODO: update daily count
         //
+        /*
         var challenge = get(index);
         if ( challenge && challenge.count !== count ) {
             update({_id:challenge._id},{count:count});
             save();
         }
+        */
+        console.log('Challenges.updateCount : ' + id + ' : count : ' + count );
+        var updated  = update({_id:id},{count:count});
+        console.log('Challenges.updateCount : updated : ' + updated );
+
+        save();
     }
     function updateNotification(challengeId) {
         //
@@ -118,24 +125,31 @@ DatabaseList {
             NotificationManager.cancelNotification(identifier);
         }
     }
-    function showChallenge( challengeIdentifier ) {
+    function showNotifiedChallenge( challengeIdentifier ) {
         for ( var i = 0; i < count; i++ ) {
             var challenge = get( i );
             var identifier = createNotificationIdentifier( challenge._id );
             if ( identifier === challengeIdentifier ) {
-                var properties = {
-                    title: challenge.name,
-                    activity: Utils.formatChallengeDescription(challenge.activity, challenge.repeats, challenge.frequency),
-                    active: challenge.active,
-                    notifications: challenge.notifications,
-                    challengeId: challenge._id
-                };
-                stack.push( "qrc:///ChallengeViewer.qml", properties );
+                viewChallenge(id);
                 break;
             }
         }
     }
     function createNotificationIdentifier( challengeId ) {
         return notificationModel.challenge_base_id + parseInt( '0x' + challengeId.substring( challengeId.length - 5 ) );
+    }
+    function viewChallenge( id ) {
+        var challenge  = findOne({_id:id});
+        if ( challenge ) {
+            var properties = {
+                title: challenge.name,
+                activity: Utils.formatChallengeDescription(challenge.activity, challenge.repeats, challenge.frequency),
+                active: challenge.active,
+                notifications: challenge.notifications,
+                challengeId: challenge._id,
+                repeats: challenge.repeats
+            };
+            stack.push( "qrc:///ChallengeViewer.qml", properties );
+        }
     }
 }

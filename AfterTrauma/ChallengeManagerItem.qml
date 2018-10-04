@@ -84,14 +84,25 @@ AfterTrauma.EditableListItem {
             textSize: 18
             text: checked ? "done" : "to do"
             backgroundColour: checked ? Colours.darkGreen : Colours.red
+            onCheckedChanged: {
+                updateDone(checked);
+            }
         }
     }
+    onDoneChanged: {
+        doneCheckbox.checked = done;
+    }
+
+    //
+    //
+    //
+    signal updateDone( bool isDone )
     //
     //
     //
     property alias name: nameText.text
     property alias activity: activityText.text
-    property alias done: doneCheckbox.checked
+    property bool done: false
     property alias active: doneCheckbox.visible
 
 }

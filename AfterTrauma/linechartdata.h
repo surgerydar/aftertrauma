@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QMap>
 #include <QVector>
+#include <QImage>
 #include <QPointF>
 #include <QPainter>
 #include <QVariant>
@@ -88,6 +89,10 @@ private:
         QVariant            m_max;
     };
     QMap< QString, AxisData > m_axis;
+    //
+    //
+    //
+    QVector< QImage >       m_faces;
     //
     //
     //

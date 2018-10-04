@@ -79,6 +79,7 @@ TextField {
         spacing: 4
         verticalLayoutDirection: ListView.BottomToTop
         model: ListModel {}
+        visible: model.count > 0
         delegate: Rectangle {
             height: 48
             width: container.width

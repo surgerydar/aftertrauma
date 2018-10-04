@@ -88,6 +88,7 @@ AfterTrauma.Page {
                             anchors.horizontalCenter: parent.horizontalCenter
                             anchors.topMargin: 4
                             textMonth: true
+                            minimumDate: new Date(0)
                             onCurrentDateChanged: {
                                 // TODO: initialisation causes this to fire FIXIT
                                 // dirty = true;

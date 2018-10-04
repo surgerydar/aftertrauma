@@ -17,28 +17,69 @@ AfterTrauma.Page {
     //
     //
     //
-    Text {
-        id: activityText
+    Flickable {
         anchors.fill: parent
-        anchors.margins: 4
+        contentHeight: activityText.contentHeight + 32
         //
         //
         //
-        color: Colours.almostWhite
+        AfterTrauma.Button {
+            id: doneCheckbox
+            height: 24
+            anchors.top: parent.top
+            anchors.right: parent.right
+            anchors.margins: 16
+            visible: active
+            checkable: true
+            textSize: 18
+            text: checked ? "done" : "to do"
+            backgroundColour: checked ? Colours.darkGreen : Colours.red
+            onCheckedChanged: {
+                challengeModel.updateCount( challengeId, checked ? repeats : 0 );
+                var challenge = {
+                    _id: challengeId,
+                    name: title
+                };
+                var date = new Date();
+                if ( checked ) {
+                    dailyModel.addChallenge( date, challenge );
+                } else {
+                    dailyModel.removeChallenge( date, challenge );
+                }
+            }
+        }
         //
         //
         //
-        fontSizeMode: Text.Fit
-        wrapMode: Text.WordWrap
-        textFormat: Text.RichText
-        //
-        //
-        //
-        minimumPointSize: 12
-        font.weight: Font.Light
-        font.family: fonts.light
-        font.pointSize: 24
+        Text {
+            id: activityText
+            //anchors.fill: parent
+            anchors.top: active ? doneCheckbox.bottom : parent.top
+            width: parent.width
+            anchors.margins: 4
+            //
+            //
+            //
+            color: Colours.almostWhite
+            //
+            //
+            //
+            padding: 8
+            fontSizeMode: Text.Fit
+            wrapMode: Text.WordWrap
+            textFormat: Text.RichText
+            //
+            //
+            //
+            minimumPointSize: 12
+            font.weight: Font.Light
+            font.family: fonts.light
+            font.pointSize: 24
+        }
     }
+    //
+    //
+    //
     footer: Rectangle {
         height: 64
         anchors.left: parent.left
@@ -105,5 +146,6 @@ AfterTrauma.Page {
     property alias activity: activityText.text
     property alias active: activeSwitch.checked
     property alias notifications: notificationsSwitch.checked
+    property int repeats: 0
     property string challengeId: ""
 }

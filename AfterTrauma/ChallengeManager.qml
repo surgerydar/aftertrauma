@@ -49,13 +49,14 @@ AfterTrauma.Page {
         //
         delegate: ChallengeManagerItem {
             width: challenges.width
-            name: model.name
+            name: model.count + ":" + model.repeats //model.name
             activity: model.activity
             swipeEnabled: editable
             active: model.active
-            done: model.count >= parseInt( model.repeats ) || false
-            onDoneChanged: {
-                challengeModel.updateCount( model.index, done ? model.repeats : 0 );
+            done: model.count >= model.repeats
+            onUpdateDone: {
+                done = isDone;
+                challengeModel.updateCount( model._id, done ? model.repeats : 0 );
                 var challenge = {
                     _id: model._id,
                     name: model.name
@@ -76,14 +77,7 @@ AfterTrauma.Page {
             }
             onClicked: {
                 if ( !editable ) {
-                    var properties = {
-                        title: model.name,
-                        activity: Utils.formatChallengeDescription(model.activity, model.repeats, model.frequency),
-                        active: model.active,
-                        notifications: model.notifications,
-                        challengeId: challengeModel.get(index)._id
-                    };
-                    stack.push( "qrc:///ChallengeViewer.qml", properties );
+                    challengeModel.viewChallenge( model._id );
                 }
             }
         }

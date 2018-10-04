@@ -39,23 +39,12 @@ AfterTrauma.Page {
             //
             //
             onClicked: {
+                console.log( 'SearchItem.onClicked' )
                 if ( model.section === "resources" ) {
                     var category = categoryModel.findOne({category:model.category});
                     stack.push( "qrc:///DocumentViewer.qml", { title: ( category && category.title ? category.title : container.title ), subtitle: model.title, colour: colour, document: model.document });
                 } else {
-                    var challenge = challengeModel.findOne( {_id:model.document} );
-                    if ( challenge ) {
-                        var properties = {
-                            title: challenge.name,
-                            activity: Utils.formatChallengeDescription(challenge.activity, challenge.repeats, challenge.frequency),
-                            active: challenge.active,
-                            notifications: challenge.notifications,
-                            challengeId: challenge._id
-                        };
-                        stack.push( "qrc:///ChallengeViewer.qml", properties );
-                    } else {
-                        console.log( 'unable to find challenge : ' + model.document);
-                    }
+                    challengeModel.viewChallenge(model.document);
                 }
             }
             //
@@ -69,9 +58,11 @@ AfterTrauma.Page {
                 }
             }
         }
+        /*
         add: Transition {
             NumberAnimation { properties: "y"; from: results.height; duration: 250 }
         }
+        */
     }
     footer: Item {
         height: 64

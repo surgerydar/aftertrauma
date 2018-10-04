@@ -247,6 +247,7 @@ DatabaseList {
             day.challenges.push( challenge );
             update(query,{challenges:day.challenges});
         }
+        save();
     }
     function removeChallenge( date, challenge ) {
         var query = {
@@ -265,6 +266,7 @@ DatabaseList {
                 }
             }
         }
+        save();
     }
     function dayHasChallenge( date ) {
         var query = {
@@ -354,5 +356,12 @@ DatabaseList {
         }
         endBatch();
         save();
+        //
+        //
+        //
+        globalMinimumDate = dailyModel.minimumDate();
+        globalMaximumDate = dailyModel.maximumDate();
+        flowerChart.update();
+        if ( questionnaireModel.dailyCompleted() && flowerChartAnimator.running ) flowerChartAnimator.stop()
     }
 }

@@ -447,7 +447,7 @@ ApplicationWindow {
         onNotificationReceived: {
             //confirmDialog.show(message);
             if ( id >= notificationModel.challenge_base_id ) {
-                challengeModel.showChallenge(id);
+                challengeModel.showNotifiedChallenge(id);
                 closePopUps();
             } else if ( id >= notificationModel.chat_base_id ) {
                 stack.navigateTo("qrc:///GroupChatManager.qml");

@@ -5,6 +5,7 @@
 #include <QVariantList>
 #include <QPdfWriter>
 #include <QFont>
+#include <QImage>
 #include "paintable.h"
 
 class DiaryWriter : public QObject, public Paintable
@@ -49,6 +50,7 @@ private:
     qreal           m_adjustedSpacing;
     QPainter        m_painter;
     int             m_pageNumber;
+    QImage          m_challengeIcon;
     //
     //
     //

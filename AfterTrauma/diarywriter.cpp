@@ -9,6 +9,7 @@
 DiaryWriter::DiaryWriter(QObject *parent) : QObject(parent) {
     m_padding = .25;
     m_spacing = .5;
+    m_challengeIcon.load(":/icons/challenge.png");
 }
 //
 //
@@ -134,9 +135,66 @@ void DiaryWriter::_paintEntryHeader( const QVariantMap& entry, QPdfWriter* write
         m_painter.drawImage(headerRect.x(),headerRect.y(),flowerImage);
     }
     //
-    // advance cp
+    // append challenges
     //
-    cp.setY( cp.y() + bounds.height() );
+    if ( entry.contains("challenges") ) {
+        const qreal challengeHeightInches = .5;
+        const qreal kChallengePaddingInches = .1;
+        //
+        //
+        //
+        cp.setY( cp.y() + headerRect.height() );
+        //
+        //
+        //
+        int challengeHeight = _inchesToPixels(challengeHeightInches,writer);
+        int challengeIconOffset = _inchesToPixels(kChallengePaddingInches,writer);
+        int challengeIconHeight = challengeHeight - _inchesToPixels(kChallengePaddingInches*2.,writer);
+        int challengeIconWidth = ( (qreal)m_challengeIcon.width() / (qreal)m_challengeIcon.height() ) * (qreal) challengeIconHeight;
+        //
+        //
+        //
+        QFont challengeFont = m_font;
+        challengeFont.setPointSize(9);
+        m_painter.setFont(challengeFont);
+        //
+        //
+        //
+        QVariantList challenges = entry["challenges"].value<QVariantList>();
+        for ( auto& challenge : challenges ) {
+            QVariantMap challengeMap = challenge.value<QVariantMap>();
+            //
+            //
+            //
+            QRect challengeRect( cp.x(), cp.y(), r.width() / 2, challengeHeight );
+            _requestSpace( challengeRect, writer, r, cp);
+            QRect challengeBounds = challengeRect.adjusted(m_adjustedPadding,0,-m_adjustedPadding,0);
+            //
+            // fill background
+            //
+            m_painter.fillRect( challengeBounds, Colours::shared()->colour("slate") );
+            //
+            // draw icon
+            //
+            QRect iconRect(challengeBounds.x()+challengeIconOffset,challengeBounds.y()+challengeIconOffset,challengeIconWidth,challengeIconHeight);
+            m_painter.drawImage(iconRect,m_challengeIcon);
+            //
+            // draw text
+            //
+            QRect textRect( iconRect.right()+challengeIconOffset, iconRect.top(),
+                            challengeBounds.width()-(iconRect.width()+challengeIconOffset*3), iconRect.height());
+            m_painter.drawText(textRect,Qt::TextWordWrap|Qt::AlignTop|Qt::AlignLeft,challengeMap["name"].toString());
+            //
+            // update cp
+            //
+            cp.setY( cp.y() + challengeRect.height() );
+        }
+    } else {
+        //
+        // advance cp
+        //
+        cp.setY( cp.y() + bounds.height() );
+    }
 }
 
 void DiaryWriter::_paintEntryBlocks( const QVariant& blocks, QPdfWriter* writer, const QRect& r, QPoint& cp ) {
