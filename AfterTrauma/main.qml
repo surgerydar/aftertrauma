@@ -88,23 +88,6 @@ ApplicationWindow {
         }
     }
     //
-    // notifications
-    //
-    Timer {
-        id: notificationTimer
-        interval: 60 * 1000
-        repeat: true
-        onTriggered: {
-            notificationModel.update();
-        }
-    }
-    Notifications {
-        id: notificationModel
-        //
-        //
-        //
-    }
-    //
     //
     //
     property var models: [settingsModel,dailyModel,challengeModel,questionnaireModel,unreadChatsModel,chatModel,categoryModel,documentModel,tagsModel,recomendationModel,bodyPartModel,rehabModel,prescriptionsModel]
@@ -141,7 +124,7 @@ ApplicationWindow {
             update();
         }
         onCategorySelected: {
-            var category = categoryModel.findOne({index:index});
+            var category = categoryModel.findOne({index:index,section:"resources"});
             stack.push( "qrc:///FactsheetCategory.qml", { title: category.title, colour: Colours.categoryColour(index), category: category.category });
         }
         Behavior on opacity {
@@ -331,6 +314,10 @@ ApplicationWindow {
                 settingsModel.save();
                 console.log( 'installing' );
                 Archive.unarchive(":/data/aftertrauma.at",SystemUtils.documentDirectory());
+                //
+                // initial daily questionnaire notification
+                //
+                questionnaireModel.scheduleNotification(true);
             }
             intro.open();
         } else {
@@ -374,6 +361,8 @@ ApplicationWindow {
             busyIndicator.hide();
             categoryModel.load();
             documentModel.load();
+            challengeModel.load();
+            tagsModel.load();
         }
         onError: {
             busyIndicator.hide();
@@ -446,13 +435,17 @@ ApplicationWindow {
         target: NotificationManager
         onNotificationReceived: {
             //confirmDialog.show(message);
-            if ( id >= notificationModel.challenge_base_id ) {
-                challengeModel.showNotifiedChallenge(id);
+            var type = NotificationManager.typeFromId(id);
+            var subject = NotificationManager.subjectFromId(id);
+            var hour = NotificationManager.hourFromId(id);
+            console.log( 'NotificationManager.onNotificationReceived : type=' + type + ' subject=' + subject + ' hour=' + hour );
+            if ( type === challengeModel.notificationType ) {
+                challengeModel.showNotifiedChallenge(subject);
                 closePopUps();
-            } else if ( id >= notificationModel.chat_base_id ) {
+            } else if ( type === chatModel.notificationType ) {
                 stack.navigateTo("qrc:///GroupChatManager.qml");
                 closePopUps();
-            } else if ( id >= notificationModel.questionnaire_base_id ) {
+            } else if ( type === questionnaireModel.notificationType ) {
                 stack.navigateTo("qrc:///Questionnaire.qml");
                 closePopUps();
             }

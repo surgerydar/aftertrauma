@@ -200,5 +200,6 @@
         <file>icons/settings.png</file>
         <file>UtilityWindow.qml</file>
         <file>data/aftertrauma.at</file>
+        <file>UpdateDialog.qml</file>
     </qresource>
 </RCC>

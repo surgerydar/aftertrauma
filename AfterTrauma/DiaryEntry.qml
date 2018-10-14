@@ -344,8 +344,8 @@ AfterTrauma.Page {
                 if ( day ) {
                     busyIndicator.prompt = "preparing diary for sharing";
                     busyIndicator.running = true;
-                    console.log( 'sharing diary entry: ' + JSON.stringify(day) );
-                    var pdfPath = SystemUtils.documentDirectory() + '/diary-' + day.day + '-' + day.month + '-' + day.year + '.pdf';
+                    console.log( 'sharing diary entry: ' + day.day + '-' + day.month + '-' + day.year );
+                    var pdfPath = SystemUtils.documentDirectory() + '/diary-' + day.day + '-' + ( day.month + 1 ) + '-' + day.year + '.pdf';
                     writer.save([day], pdfPath);
                 }
             }

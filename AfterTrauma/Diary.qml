@@ -262,7 +262,7 @@ AfterTrauma.Page {
                     if ( entries.length > 0 ) {
                         busyIndicator.show( 'preparing diary for sharing' );
                         var lastIndex = entries.length - 1;
-                        var rangeText = entries[ 0 ].day + '-' + entries[ 0 ].month + '-' + entries[ 0 ].year + '-to-' + entries[ lastIndex ].day + '-' + entries[ lastIndex ].month + '-' + entries[ lastIndex ].year;
+                        var rangeText = entries[ 0 ].day + '-' + ( entries[ 0 ].month + 1 )+ '-' + entries[ 0 ].year + '-to-' + entries[ lastIndex ].day + '-' + ( entries[ lastIndex ].month + 1 ) + '-' + entries[ lastIndex ].year;
                         var pdfPath = SystemUtils.documentDirectory() + '/diary-' +  rangeText + '.pdf';
                         writer.save(entries,pdfPath);
                     }

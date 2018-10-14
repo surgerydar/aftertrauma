@@ -3,6 +3,7 @@ import QtQuick.Controls 2.1
 
 import "controls" as AfterTrauma
 import "colours.js" as Colours
+import "utils.js" as Utils
 
 AfterTrauma.Page {
     id: container
@@ -46,13 +47,13 @@ AfterTrauma.Page {
             //
             //
             //
-            label: !( model.type === "number" || model.type === "switch" ) && source  ? source[ model.field ] : model.label
+            label: !( model.type === "number" || model.type === "switch" ) && source  ? challenge[ model.field ] : model.label
             type: model.type
             options: model.options || undefined
             radius: model.index === 0 ? [16,16,0,0] : model.index === builder.model.count - 1 ? [0,0,16,16] : [0]
-            on: model.type === "switch"  && source ? source[ model.field ] || false : false
-            value: model.type === "number" && source ? source[ model.field ] || 1 : 1
-            sourceText: ( model.field === "name" || model.field === "activity" ) && source ? source[model.field] || "" : ""
+            on: model.type === "switch"  && source ? challenge[ model.field ] || false : false
+            value: model.type === "number" && source ? challenge[ model.field ] || 1 : 1
+            sourceText: ( model.field === "name" || model.field === "activity" ) && source ? challenge[model.field] || "" : ""
 
             onSelected: {
                 container.closeall(index);
@@ -88,11 +89,25 @@ AfterTrauma.Page {
     //
     //
     StackView.onActivated: {
+        //
+        //
+        //
+        challenge = {
+            name: ( source ? source.name : undefined ),
+            activity: ( source ? source.activity : undefined ),
+            repeats: ( source ? source.repeats : 1 ),
+            frequency: ( source ? Utils.challengeFrequencyLabel(source.frequency,true) : undefined ),
+            active: source ? source.active : false,
+            notifications: source ? source.notifications : false
+        };
+        //
+        //
+        //
         var data = [
                     { label: "Challenge name", type: "name", field: "name" },
                     { label: "Challenge activity", type: "description", field: "activity" },
                     { label: "Repeats", type: "number", field: "repeats" },
-                    { label: "How often", type: "options", options: [ { label: "Every hour" }, { label: "Four times daily" }, { label: "Morning and evening" }, { label: "Daily" }, { label: "Weekly" } ], field: "frequency"  },
+                    { label: "How often", type: "options", options: [ { label: "Hourly" }, { label: "Four times daily" }, { label: "Morning and evening" }, { label: "Daily" }, { label: "Weekly" } ], field: "frequency"  },
                     { label: "Active", type: "switch", field: "active" },
                     { label: "Notifications", type: "switch", field: "notifications"  }
                 ];
@@ -100,14 +115,6 @@ AfterTrauma.Page {
         data.forEach(function(datum){
             builder.model.append(datum);
         });
-        challenge = {
-            name: ( source ? source.name : undefined ),
-            activity: ( source ? source.activity : undefined ),
-            repeats: ( source ? source.repeats : 1 ),
-            frequency: ( source ? source.frequency : undefined ),
-            active: source ? source.active : false,
-            notifications: source ? source.notifications : false
-        };
     }
     StackView.onDeactivated: {
         source = null;
@@ -163,6 +170,7 @@ AfterTrauma.Page {
                 // add challenge
                 //
                 console.log( 'saving challenge : ' + JSON.stringify(challenge));
+                challenge.frequency = Utils.challengeFrequencyCanonical(challenge.frequency);
                 if ( source ) {
                     challenge._id = source._id;
                     challengeModel.updateChallenge(challenge);

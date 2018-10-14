@@ -318,7 +318,7 @@ Rectangle {
                     startDate = from;
                     endDate = to;
                     canvas.requestPaint();
-                }, "progress dates", startDate, endDate );
+                }, "Progress Dates", startDate, endDate );
             }
         }
     }
@@ -347,7 +347,7 @@ Rectangle {
                     startDate = from;
                     endDate = to;
                     canvas.requestPaint();
-                }, "pogress dates", startDate, endDate );
+                }, "Progress Dates", startDate, endDate );
             }
         }
     }

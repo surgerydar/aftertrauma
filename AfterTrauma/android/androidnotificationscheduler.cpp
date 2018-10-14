@@ -20,6 +20,19 @@ void _scheduleNotification( int id, QString message, unsigned int delay, unsigne
                                               (jint) frequency);
 }
 
+void _scheduleNotificationByPattern( int id, QString message, int pattern ) {
+    QAndroidJniEnvironment env;
+    qDebug() << "scheduling notification : " << message;
+    QAndroidJniObject jni_message = QAndroidJniObject::fromString(message);
+
+    QAndroidJniObject::callStaticMethod<void>("uk/co/soda/NotificationScheduler",
+                                              "show",
+                                              "(ILjava/lang/String;II)V",
+                                              (jint) id,
+                                              jni_message.object<jstring>(),
+                                              (jint) pattern);
+}
+
 void _cancelNotification( int id ) {
     QAndroidJniObject::callStaticMethod<void>("uk/co/soda/NotificationScheduler",
                                               "hide",

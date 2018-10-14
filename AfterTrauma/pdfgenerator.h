@@ -31,6 +31,7 @@ public slots:
         QString id = QUuid::createUuid().toString();
         m_documents[ id ] = std::make_shared<PDFDocument>();
         if ( m_documents[ id ]->isOpen() ) {
+            m_documents[ id ]->m_writer->setResolution(150);
             m_documents[ id ]->m_writer->setPageOrientation(QPageLayout::Landscape);
             m_documents[ id ]->m_writer->setPageSize(QPdfWriter::A4);
             QPdfWriter::Margins margins = {30,30,30,30};

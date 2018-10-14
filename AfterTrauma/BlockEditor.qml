@@ -71,7 +71,7 @@ Rectangle {
             enabled: ( type === "text" && textMedia.text.length > 0 ) || ( type === "image" && imageMedia.status === Image.Ready )
             onClicked: {
                 if ( callback ) {
-                    callback( type, type === "text" ? textMedia.text : imageSource, date.currentDate );
+                    callback( type, type === "text" ? textMedia.text.replace(/(?:\r\n|\r|\n)/g, '<br>') : imageSource, date.currentDate );
                 }
                 container.close();
             }

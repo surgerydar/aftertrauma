@@ -153,4 +153,5 @@ DatabaseList {
     //
     property Component messageModel:null
     property var messageModels:[]
+    property int notificationType: 0x4
 }

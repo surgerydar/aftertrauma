@@ -439,6 +439,8 @@ inline bool DatabaseList::_matchValue( QVariant& value, QVariant& condition ) {
             return value > _condition.value("$gt");
         } else if ( _condition.contains("$gte") ) {
             return value >= _condition.value("$gte");
+        } else if ( _condition.contains("$ne") ) {
+            return value != _condition.value("$ne");
         }
         return false;
     } else if ( condition.canConvert<QRegExp>() ) {

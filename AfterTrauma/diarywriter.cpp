@@ -1,5 +1,7 @@
 #include <QDate>
 #include <QDebug>
+#include <QTextDocument>
+#include <QAbstractTextDocumentLayout>
 #include "diarywriter.h"
 #include "pdfgenerator.h"
 #include "colours.h"
@@ -90,7 +92,7 @@ void DiaryWriter::_paintEntryHeader( const QVariantMap& entry, QPdfWriter* write
     // paint date
     //
     m_painter.setPen(Colours::shared()->colour("almostWhite"));
-    QDate date( entry["year"].toInt(),entry["month"].toInt(),entry["day"].toInt());
+    QDate date( entry["year"].toInt(),entry["month"].toInt()+1,entry["day"].toInt());
     QString titleText = date.toString("d, MMM, yyyy");
     QFont titleFont = m_font;
     titleFont.setPointSize(24);
@@ -217,6 +219,13 @@ void DiaryWriter::_paintEntryBlock( const QVariantMap& block, QPdfWriter* writer
         // load image
         //
         QString imagePath = SystemUtils::shared()->documentDirectory().append("/").append(content);
+        if ( !QFile::exists(imagePath) ) {
+            imagePath = SystemUtils::shared()->mediaPath(content);
+            if ( !QFile::exists(imagePath) ) {
+                qDebug() << "DiaryWriter::_paintEntryBlock : unable to load image : " << content;
+                return;
+            }
+        }
         QImage image;
         if ( image.load(imagePath) ) {
             //
@@ -241,6 +250,7 @@ void DiaryWriter::_paintEntryBlock( const QVariantMap& block, QPdfWriter* writer
         blockFont.setPointSize(12);
         m_painter.setFont(blockFont);
         m_painter.setPen(Colours::shared()->colour("veryDarkSlate"));
+        /*
         //
         // adjust bounds height to fit text
         //
@@ -261,6 +271,34 @@ void DiaryWriter::_paintEntryBlock( const QVariantMap& block, QPdfWriter* writer
         //
         m_painter.fillRect( textBox, Colours::shared()->colour("almostWhite"));
         m_painter.drawText( textBounds, Qt::AlignLeft | Qt::AlignTop | Qt::TextWordWrap, content );
+        */
+        QTextDocument doc;
+        doc.documentLayout()->setPaintDevice(m_painter.device());
+        doc.setDefaultFont(blockFont);
+        doc.setTextWidth(bounds.width()-m_adjustedPadding*3);
+        doc.setHtml(content);
+        int textHeight = doc.size().height();
+        bounds.setHeight( textHeight + m_adjustedPadding * 3 );
+        //
+        //
+        //
+        _requestSpace(bounds,writer,r,cp);
+        //
+        //
+        //
+        QRect textBox = _padRectangle(bounds);
+        QRect textBounds = textBox.adjusted(m_adjustedPadding/2,m_adjustedPadding/2,-m_adjustedPadding/2,-m_adjustedPadding/2);
+        //
+        //
+        //
+        m_painter.fillRect( textBox, Colours::shared()->colour("almostWhite"));
+        //
+        //
+        //
+        m_painter.save();
+        m_painter.translate(QPointF(textBounds.x(), textBounds.y()));
+        doc.drawContents(&m_painter);
+        m_painter.restore();
     } else {
         qDebug() << "DiaryWriter::_paintEntryBlock : unknown block type : " << type;
     }

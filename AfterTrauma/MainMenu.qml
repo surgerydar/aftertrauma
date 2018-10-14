@@ -125,7 +125,7 @@ Rectangle {
                 onClicked: {
                     if ( loggedIn ) {
                         //stack.push("qrc:///PrescriptionManager.qml" );
-                        stack.push("qrc:///RehabManager.qml" );
+                        stack.navigateTo("qrc:///RehabManager.qml" );
                     } else {
                         register.open();
                     }

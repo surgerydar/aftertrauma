@@ -237,7 +237,7 @@ Item {
                                     // TODO: need to store usernames in chat so we can add from???
                                     //
                                     var notification = 'New chat message, you have ' + unreadChatsModel.totalUnread + ' new messages';
-                                    NotificationManager.scheduleNotification(notificationModel.chat_base_id,notification,0,0);
+                                    NotificationManager.scheduleNotificationByPattern(notificationType,0,notification,-1);
                                 }
                             }
                         }
@@ -319,4 +319,5 @@ Item {
     //
     //
     property bool connected: false
+    property int notificationType: 0x4
 }

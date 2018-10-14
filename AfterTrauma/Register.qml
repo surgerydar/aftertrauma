@@ -472,7 +472,7 @@ Popup {
                         //console.log( 'documents : ' + JSON.stringify(command.response[0]) );
                         installDocuments(command.response);
                     }
-                    authenticationChannel.send({command:'challenges',date:0});
+                    send({command:'challenges',date:0});
                 } else if ( command.command === 'challenges' ) {
                     if ( command.response.length > 0 ) {
                         installChallenges(command.response);
@@ -493,7 +493,6 @@ Popup {
             } else {
                 console.log( 'unknown message: ' + message );
             }
-
         }
         onError: {
             busyIndicator.running = false;

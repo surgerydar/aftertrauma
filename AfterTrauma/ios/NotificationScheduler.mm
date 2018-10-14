@@ -109,7 +109,7 @@ void _scheduleNotification( int id, QString message, unsigned int delay, unsigne
         [center addNotificationRequest:request withCompletionHandler:^(NSError *error) {
             qDebug( "notification scheduled");
             if ( error ) {
-                NSLog( [error localizedDescription] );
+                NSLog( @"_scheduleNotification : error scheduling notification : %@", [error localizedDescription] );
             }
         }];
     } else {
@@ -125,11 +125,20 @@ void _scheduleNotification( int id, QString message, unsigned int delay, unsigne
     }
 }
 
+void _scheduleNotificationByPattern( int id, QString message, int pattern ) {
+    qDebug("_scheduleNotificationByPattern : 1");
+
+}
+
 void _cancelNotification( int id ) {
     qDebug( "_cancelNotification" );
     UNUserNotificationCenter* center = [UNUserNotificationCenter currentNotificationCenter];
     NSString* _id = [NSString stringWithFormat:@"0x%X",id];
     [center removePendingNotificationRequestsWithIdentifiers:[NSArray arrayWithObjects: _id, nil] ];
+    int badgeNumber = [[UIApplication sharedApplication] applicationIconBadgeNumber];
+    if ( badgeNumber > 0 ) {
+        [[UIApplication sharedApplication] setApplicationIconBadgeNumber: badgeNumber - 1];
+    }
 }
 
 void _cancelAllNotifications() {

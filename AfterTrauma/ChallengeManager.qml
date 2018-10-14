@@ -49,7 +49,7 @@ AfterTrauma.Page {
         //
         delegate: ChallengeManagerItem {
             width: challenges.width
-            name: model.count + ":" + model.repeats //model.name
+            name: model.name
             activity: model.activity
             swipeEnabled: editable
             active: model.active

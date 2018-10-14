@@ -67,5 +67,26 @@ function formatAgeAndGender( profile ) {
 }
 
 function formatChallengeDescription( activity, repeats, frequency ) {
-    return activity + '<p><b>' + 'repeat ' + repeats + ' time' + ( repeats > 1 ? 's ' : ' ' ) + ', ' + frequency + '</b></p>';
+    return activity + '<p><b>' + 'repeat ' + repeats + ' time' + ( repeats > 1 ? 's ' : ' ' ) + ', ' + challengeFrequencyLabel( frequency ) + '</b></p>';
+}
+
+function challengeFrequencyLabel( canonical, capitalise ) {
+    var labels = {
+        hourly : "hourly",
+        fourtimesdaily : "four times daily",
+        morningandevening : "morning and evening",
+        daily : "daily",
+        weekly : "weekly"
+    };
+    if ( labels[ canonical ] ) {
+        if ( capitalise ) {
+            return labels[ canonical ].charAt(0).toUpperCase() + labels[ canonical ].slice(1);
+        }
+        return labels[ canonical ];
+    }
+    return canonical;
+}
+
+function challengeFrequencyCanonical( label ) {
+    return label.replace(/\s+/g, '').toLowerCase();
 }

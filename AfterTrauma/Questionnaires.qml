@@ -55,7 +55,7 @@ DatabaseList {
                                  { question: "Walking" },
                                  { question: "Carrying out my daily routine" },
                                  { question: "Lifting and carrying objects" },
-                                 { question: "Looking after financese" }
+                                 { question: "Looking after finances" }
                              ]
                          },
                          {
@@ -127,6 +127,15 @@ DatabaseList {
                 break;
             }
         }
+        //
+        // check if completed
+        //
+        if ( dailyCompleted() ) {
+            //
+            // schedule notification for a week hence
+            //
+            scheduleNotification();
+        }
     }
     //
     //
@@ -172,5 +181,13 @@ DatabaseList {
     //
     //
     //
+    function scheduleNotification( daily ) {
+        NotificationManager.scheduleNotificationByPattern(0x1,0,"Don't forget to complete your Recovery Questionnaire",daily ? 3 : 4);
+    }
+
+    //
+    //
+    //
     property var scores: []
+    property int notificationType: 0x1
 }

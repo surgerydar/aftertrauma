@@ -95,49 +95,62 @@ DatabaseList {
 
         save();
     }
-    function updateNotification(challengeId) {
+    function updateNotification(id) {
         //
         //
         //
-        var identifier = createNotificationIdentifier( challengeId );
-        var challenge  = challengeModel.findOne({_id:challengeId});
+        var challenge  = challengeModel.findOne({_id:id});
         if ( challenge && challenge.active && challenge.notifications ) {
-            /*
-            var intervals = {
-                "everyhour": 60 * 60 * 1000,
-                "fourtimesdaily": 3 * 60 * 60 * 1000,
-                "morningandevening": 6 * 60 * 60 * 1000,
-                "daily": 12 * 60 * 60 * 1000,
-                "weekly": 7 * 12 * 60 * 60 * 1000
-            };
-            */
-            var intervals = {
-                "everyhour": 60 * 1000,
-                "fourtimesdaily": 3 * 60 * 1000,
-                "morningandevening": 6 * 60 * 1000,
-                "daily": 12 * 60 * 1000,
-                "weekly": 7 * 12 * 60 * 1000
+            if ( !challenge.notificationId ) {
+                challenge.notificationId = generateNotificationId(id);
+                challengeModel.update({_id:id},{notificationId:challenge.notificationId});
+                challengeModel.save();
+            }
+            var patterns = {
+                "hourly": 0,
+                "fourtimesdaily": 1,
+                "morningandevening": 2,
+                "daily": 3,
+                "weekly": 4
             };
             var frequency = challenge.frequency.replace(/\s+/g, '').toLowerCase();
-            var interval = intervals[ frequency ] || 0;
-            NotificationManager.scheduleNotification(identifier,challenge.name,0,interval);
+            var pattern = patterns[ frequency ] === undefined ? 5 : patterns[ frequency ];
+            NotificationManager.scheduleNotificationByPattern(notificationType,challenge.notificationId,challenge.name,pattern);
+        } else if( challenge.notificationId ) {
+            NotificationManager.cancelNotificationByPattern(notificationType,challenge.notificationId);
+            challengeModel.update({_id:id},{notificationId:0});
+            challengeModel.save();
+        }
+    }
+    function showNotifiedChallenge( notificationId ) {
+        console.log( 'Challenges.showNotifiedChallenge : ' + notificationId );
+        var challenge = findOne({notificationId:notificationId});
+        if ( challenge ) {
+            var properties = {
+                title: challenge.name,
+                activity: Utils.formatChallengeDescription(challenge.activity, challenge.repeats, challenge.frequency),
+                active: challenge.active,
+                notifications: challenge.notifications,
+                challengeId: challenge._id,
+                repeats: challenge.repeats
+            };
+            stack.push( "qrc:///ChallengeViewer.qml", properties );
         } else {
-            NotificationManager.cancelNotification(identifier);
+            stack.navigateTo( "qrc:///ChallengeManager.qml" );
         }
     }
-    function showNotifiedChallenge( challengeIdentifier ) {
-        for ( var i = 0; i < count; i++ ) {
-            var challenge = get( i );
-            var identifier = createNotificationIdentifier( challenge._id );
-            if ( identifier === challengeIdentifier ) {
-                viewChallenge(id);
-                break;
-            }
-        }
+    function generateNotificationId(id) {
+        var notificationId = 0;
+        var challenge;
+        do {
+            notificationId++;
+            challenge = findOne( { $and: [ { _id: { $ne: id } }, { notificationId: notificationId } ] } );
+        } while( challenge !== undefined );
+        return notificationId;
     }
-    function createNotificationIdentifier( challengeId ) {
-        return notificationModel.challenge_base_id + parseInt( '0x' + challengeId.substring( challengeId.length - 5 ) );
-    }
+    //
+    //
+    //
     function viewChallenge( id ) {
         var challenge  = findOne({_id:id});
         if ( challenge ) {
@@ -152,4 +165,8 @@ DatabaseList {
             stack.push( "qrc:///ChallengeViewer.qml", properties );
         }
     }
+    //
+    //
+    //
+    property int notificationType: 0x2
 }
