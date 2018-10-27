@@ -76,4 +76,11 @@ DatabaseList {
         }
         return false;
     }
+    function nameToCanonical(name) {
+        var part = findOne({name:name});
+        if ( part ) {
+            return part.canonical;
+        }
+        return "unknown";
+    }
 }

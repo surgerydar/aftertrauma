@@ -134,9 +134,6 @@ AfterTrauma.Page {
     //
     //
     function updateNotification() {
-        //
-        //
-        //
         challengeModel.updateNotification( challengeId );
         return true;
     }

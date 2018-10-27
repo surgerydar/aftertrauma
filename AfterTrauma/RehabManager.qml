@@ -56,6 +56,7 @@ AfterTrauma.Page {
             anchors.left: parent.left
             anchors.bottom: parent.bottom
             anchors.right: addButton.left
+            visible: rehabPages.count > 1
             AfterTrauma.Button {
                 anchors.left: parent.left
                 anchors.leftMargin: 4

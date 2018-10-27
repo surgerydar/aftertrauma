@@ -446,38 +446,23 @@ Popup {
                     //
                     userProfile.stayLoggedIn = ( command.command === 'login' && loginStayLoggedIn.checked ) || ( command.command === 'register' && stayLoggedIn.checked )
                     JSONFile.write('user.json',userProfile);
-                    //container.close();
                     //
-                    // TODO: move all update logic to single module
-                    // sync content
+                    // sync with tags BodyPartList
                     //
-                    send({command:'categories',date:0});
-                } else if ( command.command === 'categories' ) {
-                    if ( command.response.length > 0 ) {
-                        processCategories(command.response);
+                    if ( userProfile.tags ) {
+                        userProfile.tags.forEach( function(tag) {
+                            var canonical = bodyPartModel.nameToCanonical(tag);
+                            if ( canonical ) {
+                                bodyPartModel.setSelected(canonical,true);
+                            }
+                        });
                     }
-                    send({command:'manifest',date:0});
-                } else if ( command.command === 'manifest' ) {
-                    //console.log( 'manifest : ' + JSON.stringify(command.response) );
-                    if ( command.response.length > 0 ) {
-                        confirmDialog.show('<h1>Updates Available</h1>Do you want to download and install now?', [
-                                           { label: 'yes', action: function() { processUpdate(command.response) } },
-                                           { label: 'no', action: function() { container.close(); } }
-                                           ] );
-                    } else {
+                    //
+                    // check for updates
+                    //
+                    updateDialog.checkForUpdates(function() {
                         container.close();
-                    }
-                } else if ( command.command === 'documents' ) {
-                    if ( command.response.length > 0 ) {
-                        //console.log( 'documents : ' + JSON.stringify(command.response[0]) );
-                        installDocuments(command.response);
-                    }
-                    send({command:'challenges',date:0});
-                } else if ( command.command === 'challenges' ) {
-                    if ( command.response.length > 0 ) {
-                        installChallenges(command.response);
-                    }
-                    container.close();
+                    });
                 } else if ( command.command === 'resetpassword' ) {
                     confirmDialog.show('<h1>Password Reset</h1>' + command.response );
                 }
@@ -593,122 +578,8 @@ Popup {
     function testUsername( name ) {
 
     }
-    function processCategories( categories ) {
-        categories.forEach( function( category ) {
-            console.log( 'updating category : ' + JSON.stringify(category) );
-            var entry = {
-                section:    category.section,
-                category:   category._id,
-                title:      category.title,
-                date:       category.date,
-                index:      category.index
-            };
-            categoryModel.update({category: category._id},entry,true);
-        });
-        categoryModel.save();
-    }
-    function processUpdate( manifest ) {
-        //
-        // delete removed
-        //
-        var filter = documentModel.filter;
-        documentModel.filter = {};
-        manifest.forEach( function( delta ) {
-            if ( delta.operation === 'remove' ) {
-                //
-                // TODO: delete file, possibly delete associated media
-                //
-                if ( delta.category ) {
-                    var category = categoryModel.findOne({category:delta.category});
-                    if ( category && category.section ) {
-                        var path = category.section + '/' + delta.category + '.' + delta.document + '.json';
-                        console.log( 'removing:' + path );
-                        documentModel.remove( {document: delta.document} );
-                    } else {
-                        console.log( 'remove : unable to find catgegory : ' + delta.category );
-                    }
-                } else if ( delta.challenge ) {
-                    challengeModel.remove({_id: delta.challenge});
-                }
-            }
-        });
-        documentModel.save();
-        documentModel.filter = filter;
-        //
-        // request updated
-        //
-        authenticationChannel.send({command:'documents',date:0});
-    }
-    function installDocuments( documents ) {
-        var filter = documentModel.filter;
-        documentModel.filter = {};
-        documents.forEach( function( document ) {
-            var category = categoryModel.findOne({category:document.category});
-            if ( category && category.section ) {
-                var path = category.section + '/' + document.category + '.' + document._id;
-                console.log( 'installing:' + path + ' : ' + document.title + ' : ' + document.index );
-                var entry = {
-                    document: document._id,
-                    category: document.category,
-                    section: category.section,
-                    title: document.title,
-                    blocks: document.blocks,
-                    date: document.date,
-                    index: document.index
-                };
-                //
-                // TODO: extract tags
-                //
-                var result = documentModel.update( {document: document._id}, entry, true );
-                console.log( 'updated document : ' + JSON.stringify(result) );
-                if ( result ) {
-                    //
-                    // add category title as tag
-                    //
-                    if ( category.section === "resources" ) {
-                        tagsModel.updateTag( category.title.toLowerCase(), document._id || result._id );
-                    }
-                    //
-                    //
-                    //
-                    document.blocks.forEach( function( block ) {
-                        console.log( 'extracting tags : ' + JSON.stringify(block.tags) );
-                        block.tags.forEach( function( tag ) {
-                            if ( tag.length > 0 ) {
-                                tagsModel.updateTag( tag.toLowerCase(), { section: category.section, document: document._id || result._id } );
-                            }
-                        });
-                    });
-                    //
-                    //
-                    //
-
-                    tagsModel.save();
-                }
-            } else {
-                console.log( 'install : unable to find catgegory : ' + document.category );
-            }
-        });
-        documentModel.save();
-        documentModel.filter = filter;
-    }
-    function installChallenges( challenges ) {
-        challenges.forEach( function( challenge ) {
-            console.log( 'updating challenge : ' + challenge._id );
-            challenge.active = false;
-            var result = challengeModel.update( {_id: challenge._id}, challenge, true );
-            console.log( 'updated challenges : ' + JSON.stringify(result) );
-            if ( challenge.tags ) {
-                challenge.tags.forEach( function( tag ) {
-                    tag.trim();
-                    if ( tag.length > 0 ) {
-                        tagsModel.updateTag( tag.toLowerCase(), { section: "challenges", document: challenge._id || result._id } );
-                    }
-                });
-            }
-        });
-        tagsModel.save();
-        challengeModel.save();
-    }
+    //
+    //
+    //
     property bool termsViewed: false
 }

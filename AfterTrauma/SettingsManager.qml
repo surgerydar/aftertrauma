@@ -88,7 +88,7 @@ AfterTrauma.Page {
                         }
                         AfterTrauma.Button {
                             anchors.top: newPassword.bottom
-                            anchors.right: parent.right
+                            anchors.horizontalCenter: parent.horizontalCenter
                             anchors.margins: 8
                             backgroundColour: Colours.slate
                             textColour: Colours.almostWhite
@@ -157,6 +157,42 @@ AfterTrauma.Page {
                         }
                     }
                     */
+                    Rectangle {
+                        id: updateBlock
+                        width: settingsContainer.width
+                        height: childrenRect.height + 16
+                        color: Colours.almostWhite
+                        AfterTrauma.Button {
+                            id: updateButton
+                            anchors.top: parent.top
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.margins: 8
+                            backgroundColour: Colours.slate
+                            textColour: Colours.almostWhite
+                            text: "check for updates"
+                            onClicked: {
+                                updateDialog.open();
+                            }
+                        }
+                    }
+                    Rectangle {
+                        id: termsBlock
+                        width: settingsContainer.width
+                        height: childrenRect.height + 16
+                        color: Colours.almostWhite
+                        AfterTrauma.Button {
+                            id: termsButton
+                            anchors.top: parent.top
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.margins: 8
+                            backgroundColour: Colours.slate
+                            textColour: Colours.almostWhite
+                            text: "view terms & conditions"
+                            onClicked: {
+                                terms.open();
+                            }
+                        }
+                    }
                 }
             }
         }

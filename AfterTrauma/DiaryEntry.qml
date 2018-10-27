@@ -76,7 +76,7 @@ AfterTrauma.Page {
                     height: 48
                     fillMode: Image.PreserveAspectFit
                     visible: editable
-                    source: "icons/reorder.png"
+                    source: "icons/up_down.png"
                     //
                     //
                     //

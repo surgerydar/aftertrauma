@@ -74,7 +74,6 @@ Button {
     property alias borderWidth: background.lineWidth
     property alias image: icon.source
     property alias backgroundColour: background.fill
-    //property alias textSize: label.font.pixelSize
     property alias textSize: label.font.pointSize
     property alias textColour: label.color
     property alias textVerticalAlignment: label.verticalAlignment

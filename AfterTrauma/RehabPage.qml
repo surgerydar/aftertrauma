@@ -294,8 +294,37 @@ Page {
                 horizontalAlignment: Label.AlignLeft
                 text: "Move the sliders to set realistic goals for this rehab plan"
             }
-            Column {
+            Item {
+                id: goalsColumnHeader
+                width: ( goalsBlock.width / 3 ) * 2
+                height: 24
                 anchors.top: goalsSubHeader.bottom
+                anchors.right: parent.right
+                Label {
+                    anchors.left: parent.left
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.right: parent.horizontalCenter
+                    anchors.leftMargin: 16
+                    font.family: fonts.light
+                    font.pointSize: 12
+                    verticalAlignment: Label.AlignBottom
+                    horizontalAlignment: Label.AlignLeft
+                    text: "not important"
+                }
+                Label {
+                    anchors.left: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.right: parent.right
+                    anchors.rightMargin: 16
+                    font.family: fonts.light
+                    font.pointSize: 12
+                    verticalAlignment: Label.AlignBottom
+                    horizontalAlignment: Label.AlignRight
+                    text: "very important"
+                }
+            }
+            Column {
+                anchors.top: goalsColumnHeader.bottom
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.topMargin: 4
                 width: parent.width

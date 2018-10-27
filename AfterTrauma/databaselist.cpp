@@ -139,7 +139,7 @@ QVariant DatabaseList::add(QVariant o) {
     _filter();
     m_objectGuard.unlock();
     endResetModel();
-    //emit dataChanged(createIndex(0,0),createIndex(m_objects.size()-1,0));
+    emit dataChanged(createIndex(0,0),createIndex(m_objects.size()-1,0));
     //emit countChanged();
     QVariantMap id;
     id["_id"] = object["_id"];
@@ -171,7 +171,8 @@ QVariant DatabaseList::update(QVariant q,QVariant u, bool upsert) {
     if ( matches.size() > 0 ) {
         qDebug() << "updated from : " << minIndex << " : to : " << maxIndex;
         m_objectGuard.unlock();
-        emit dataChanged(createIndex(minIndex,0),createIndex(maxIndex,0));
+        //emit dataChanged(createIndex(minIndex,0),createIndex(maxIndex,0));
+        emit dataChanged(createIndex(0,0),createIndex(m_objects.size()-1,0)); // JONS: I suspect sort is causing refresh issues
 
     } else if ( upsert ) {
         m_objectGuard.unlock();

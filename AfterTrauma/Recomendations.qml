@@ -165,7 +165,7 @@ DatabaseList {
         var text;
         if ( recomendation ) {
             text = recomendation.recomendation;
-            if ( recomendation.tag && recomendation.tag.length > 0 ) {
+            if ( recomendation.tag && recomendation.tag.length > 0 && linkPopup.getFrequency([recomendation.tag]) ) {
                 text += '<br/><a class="recommendation" href="link://' + recomendation.tag + '">' + c + ' resources</a>';
             }
         } else {

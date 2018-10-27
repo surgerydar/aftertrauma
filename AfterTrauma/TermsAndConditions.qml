@@ -133,5 +133,9 @@ Popup {
         blocks.forEach(function(block) {
             content.model.append( block );
         });
+
+    }
+    onClosed: {
+        content.positionViewAtBeginning();
     }
 }

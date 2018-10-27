@@ -272,6 +272,12 @@ ApplicationWindow {
     TermsAndConditions {
         id: terms
     }
+    UpdateDialog {
+        id: updateDialog
+        width: appWindow.width
+        height: appWindow.height
+    }
+
     UtilityWindow {
         id: utilityWindow
     }
