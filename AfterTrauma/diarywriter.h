@@ -6,6 +6,7 @@
 #include <QPdfWriter>
 #include <QFont>
 #include <QImage>
+#include "pagedpng.h"
 #include "paintable.h"
 
 class DiaryWriter : public QObject, public Paintable
@@ -20,7 +21,8 @@ public:
     //
     //
     void paint( QPainter* painter, const QRect& r ) override;
-    void write( QPdfWriter* painter ) override;
+    void write( QPdfWriter* writer ) override;
+    void write( PagedPNG* writer ) override;
     //
     //
     //
@@ -59,12 +61,24 @@ private:
     void _paintEntryBlocks( const QVariant& blocks, QPdfWriter* writer, const QRect& r, QPoint& cp );
     void _paintEntryBlock( const QVariantMap& block, QPdfWriter* writer, const QRect& r, QPoint& cp );
     void _requestSpace( QRect& requested, QPdfWriter* writer, const QRect& r, QPoint& cp);
-    void _paintPageBackground();
+    //
+    //
+    //
+    void _paintEntry( const QVariantMap& entry, PagedPNG* writer, const QRect& r, QPoint& cp );
+    void _paintEntryHeader( const QVariantMap& entry, PagedPNG* writer, const QRect& r, QPoint& cp );
+    void _paintEntryBlocks( const QVariant& blocks, PagedPNG* writer, const QRect& r, QPoint& cp );
+    void _paintEntryBlock( const QVariantMap& block, PagedPNG* writer, const QRect& r, QPoint& cp );
+    void _requestSpace( QRect& requested, PagedPNG* writer, const QRect& r, QPoint& cp);
+    //
+    //
+    //
+    void _paintPageBackground(const QRect& bounds);
     QRect _padRectangle( QRect& rectangle ) { return rectangle.adjusted(m_adjustedPadding,m_adjustedPadding/2,-m_adjustedPadding,-m_adjustedPadding/2); }
     //
     //
     //
     qreal _inchesToPixels( qreal inches, QPdfWriter* writer ) { return ( qreal ) writer->resolution() * inches; }
+    qreal _inchesToPixels( qreal inches, PagedPNG* writer ) { return ( qreal ) writer->resolution() * inches; }
 };
 
 #endif // DIARYPAINTER_H

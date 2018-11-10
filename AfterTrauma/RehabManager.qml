@@ -27,6 +27,14 @@ AfterTrauma.Page {
             id: rehabRepeater
             delegate: RehabPage {
                 plan: rehabModel.get(index)
+                onEditableChanged: {
+                    rehabPages.interactive = !editable;
+                }
+                SwipeView.onIsCurrentItemChanged: {
+                    if ( !SwipeView.isCurrentItem ) {
+                        editable = false;
+                    }
+                }
             }
         }
     }
@@ -114,6 +122,7 @@ AfterTrauma.Page {
                     rehabModel.add(plan);
                     rehabRepeater.model = rehabModel.count;
                     addPrompt.visible = rehabModel.count === 0;
+                    usageModel.add('rehab', 'add', 'plan' );
                 }
             }
         }
@@ -121,10 +130,19 @@ AfterTrauma.Page {
     //
     //
     //
+    property bool onStack: false
     StackView.onActivated: {
         rehabRepeater.model = rehabModel.count;
+        if ( !onStack ) {
+            onStack = true;
+            usageModel.add('rehab', 'open' );
+        }
     }
     StackView.onDeactivating: {
+    }
+    StackView.onRemoved: {
+        onStack = false;
+        usageModel.add('rehab', 'close' );
     }
     //
     //

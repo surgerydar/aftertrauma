@@ -65,6 +65,10 @@ AfterTrauma.Page {
                                 show: showChat
                             };
                             chatChannel.send(command);
+                            //
+                            //
+                            //
+                            usageModel.add('chat', 'edit', 'chat' );
                         });
                     });
                     item.remove.connect(function() {
@@ -75,6 +79,10 @@ AfterTrauma.Page {
                             chatid: model.id
                         };
                         chatChannel.send(command);
+                        //
+                        //
+                        //
+                        usageModel.add('chat', 'remove', 'chat' );
                     });
                 }
             }
@@ -170,17 +178,32 @@ AfterTrauma.Page {
                     };
                     chatChannel.send(command);
                 });
-
+                //
+                //
+                //
+                usageModel.add('chat', 'add', 'chat' );
             }
         }
     }
     //
     //
     //
+    property bool onStack: false
+    //
+    //
+    //
     StackView.onActivated: {
         chatModel.load();
+        if ( !onStack ) {
+            onStack = true;
+            usageModel.add('chat', 'open' );
+        }
     }
     StackView.onDeactivated: {
+    }
+    StackView.onRemoved: {
+        onStack = false;
+        usageModel.add('chat', 'close' );
     }
     //
     //

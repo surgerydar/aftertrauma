@@ -141,6 +141,10 @@ AfterTrauma.Page {
                     blocksModel.model.set(blockIndex,block);
                     contents.forceLayout();
                     syncDatabase();
+                    //
+                    //
+                    //
+                    usageModel.add('diary','edit','diaryentryblock',{date:date.getTime(),type:type});
                 }, model.type, model.content );
             }
             onRemove: {
@@ -154,6 +158,10 @@ AfterTrauma.Page {
                 }
                 blocksModel.model.remove(model.index);
                 syncDatabase();
+                //
+                //
+                //
+                usageModel.add('diary','remove','diaryentryblock',{date:date.getTime(),type:model.type});
             }
             onClicked: {
                 console.log( 'block clicked : ' + model.index );
@@ -345,8 +353,13 @@ AfterTrauma.Page {
                     busyIndicator.prompt = "preparing diary for sharing";
                     busyIndicator.running = true;
                     console.log( 'sharing diary entry: ' + day.day + '-' + day.month + '-' + day.year );
+                    /*
                     var pdfPath = SystemUtils.documentDirectory() + '/diary-' + day.day + '-' + ( day.month + 1 ) + '-' + day.year + '.pdf';
                     writer.save([day], pdfPath);
+                    */
+                    var pngPath = SystemUtils.documentDirectory() + '/diary-' + day.day + '-' + ( day.month + 1 ) + '-' + day.year + '.png';
+                    writer.save([day], pngPath);
+                    usageModel.add('diary','share','diaryentry',{date:date.getTime()});
                 }
             }
         }
@@ -374,6 +387,10 @@ AfterTrauma.Page {
                     blocksModel.model.append(block);
                     contents.positionViewAtIndex(blocksModel.model.count-1,ListView.Visible);
                     syncDatabase();
+                    //
+                    //
+                    //
+                    usageModel.add('diary','add','diaryentryblock',{date:date.getTime(),type:type});
                 });
             }
         }
@@ -457,7 +474,20 @@ AfterTrauma.Page {
             }
         }
     }
+
+    property bool onStack: false
+    StackView.onActivated: {
+        if ( !onStack ) {
+            onStack = true;
+            usageModel.add('diary','open','diaryentry',{date:date.getTime()});
+        }
+    }
     StackView.onDeactivating: {
+
+    }
+    StackView.onRemoved: {
+        onStack = false;
+        usageModel.add('diary','close','diaryentry',{date:date.getTime()});
     }
     //
     //

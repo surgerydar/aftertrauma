@@ -16,6 +16,14 @@ static bool _notificationsEnabled = false;
 //
 //
 //
+const unsigned int kSecondDelay = 1000;
+const unsigned int kMinuteDelay = kSecondDelay * 60;
+const unsigned int kHourDelay = kMinuteDelay * 60;
+const unsigned int kDayDelay = kHourDelay * 24;
+const unsigned int kWeekDelay = kDayDelay * 7;
+//
+//
+//
 @interface NotificationDelegate : NSObject<UNUserNotificationCenterDelegate> {
 }
 
@@ -114,14 +122,54 @@ void _scheduleNotification( int id, QString message, unsigned int delay, unsigne
         }];
     } else {
         qDebug("_scheduleNotification : 3.1");
+
         UILocalNotification* localNotification = [[UILocalNotification alloc] init];
-        localNotification.fireDate = nil;//[NSDate dateWithTim];
+        if ( delay > 0 ) {
+            localNotification.fireDate = [NSDate dateWithTimeIntervalSinceNow: delay / 1000];
+        }
+        if ( frequency > 0 ) {
+            if ( frequency <= kHourDelay ) {
+                localNotification.repeatInterval = NSCalendarUnitHour;
+            } else if ( localNotification.repeatInterval <= kDayDelay ) {
+                localNotification.repeatInterval = NSCalendarUnitDay;
+            } else if ( localNotification.repeatInterval <= kWeekDelay ) {
+                localNotification.repeatInterval = NSCalendarUnitWeekOfYear;
+            }
+        }
         localNotification.alertBody = message.toNSString();
-        localNotification.alertAction = @"Show me the item";
-        localNotification.timeZone = nil;//[NSTimeZone dateWithTimeIntervalSinceNow:5];
-        localNotification.applicationIconBadgeNumber = [[UIApplication sharedApplication] applicationIconBadgeNumber] + 1;
         qDebug("_scheduleNotification : 3.2");
         [[UIApplication sharedApplication] scheduleLocalNotification:localNotification];
+    }
+}
+
+void _scheduleNotificationByDate( int id, QString message, int weekday, int hour ) {
+    if ( @available(iOS 10, * ) ) {
+        qDebug( "notification id=%d, message=%s", id, message.toStdString().c_str());
+        qDebug("_scheduleNotificationByDate : 2.1");
+        UNMutableNotificationContent* content = [[UNMutableNotificationContent alloc] init];
+        content.title = [NSString localizedUserNotificationStringForKey:@"AfterTrauma" arguments:nil];
+        content.body = [NSString localizedUserNotificationStringForKey:message.toNSString()
+                    arguments:nil];
+        content.sound = [UNNotificationSound defaultSound];
+        qDebug("_scheduleNotificationByDate : 2.2");
+        NSDateComponents *date = [[NSDateComponents alloc] init];
+        if ( weekday > 0 ) {
+            date.weekday = weekday;
+        }
+        date.hour = hour;
+        UNCalendarNotificationTrigger* trigger = [UNCalendarNotificationTrigger triggerWithDateMatchingComponents:date repeats:YES];
+        qDebug("_scheduleNotificationByDate : 2.3");
+        UNNotificationRequest* request = [UNNotificationRequest requestWithIdentifier:[NSString stringWithFormat:@"0x%X",id]
+                    content:content trigger:trigger];
+        // Schedule the notification.
+        qDebug("_scheduleNotificationByDate : 2.4");
+        UNUserNotificationCenter* center = [UNUserNotificationCenter currentNotificationCenter];
+        [center addNotificationRequest:request withCompletionHandler:^(NSError *error) {
+            qDebug( "notification scheduled");
+            if ( error ) {
+                NSLog( @"_scheduleNotificationByDate : error scheduling notification : %@", [error localizedDescription] );
+            }
+        }];
     }
 }
 

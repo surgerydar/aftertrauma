@@ -88,6 +88,7 @@ AfterTrauma.Page {
     //
     //
     //
+    property bool onStack: false
     StackView.onActivated: {
         //
         //
@@ -115,10 +116,23 @@ AfterTrauma.Page {
         data.forEach(function(datum){
             builder.model.append(datum);
         });
+        //
+        //
+        //
+        if ( !onStack ) {
+            onStack = true;
+            usageModel.add('challenges', source ? 'edit' : 'build', 'challenge' );
+        }
+
     }
     StackView.onDeactivated: {
         source = null;
     }
+    StackView.onRemoved: {
+        onStack = false;
+        usageModel.add('challenges', 'close', 'challenge' );
+    }
+
     //
     //
     //
@@ -183,6 +197,10 @@ AfterTrauma.Page {
                 //
                 console.log( 'updating challenge notifications' );
                 challengeModel.updateNotification(challenge._id);
+                //
+                //
+                //
+                usageModel.add('challenges', source ? 'update' : 'add', 'challenge', { challenge: challenge } );
                 //
                 //
                 //

@@ -57,9 +57,19 @@ AfterTrauma.Page {
     //
     //
     //
+    property bool onStack: false
     StackView.onActivating: {
         documentModel.setFilter({ category: category });
+        if ( !onStack ) {
+            onStack = true;
+            usageModel.add('information', 'open', 'category', { category: container.title } );
+        }
     }
+    StackView.onRemoved: {
+        onStack = false;
+        usageModel.add('information', 'close', 'category', { category: container.title } );
+    }
+
     property string category: ""
 
 }

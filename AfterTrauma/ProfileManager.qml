@@ -338,7 +338,13 @@ AfterTrauma.Page {
                             textColour: Colours.almostWhite
                             text: "preview public profile"
                             onClicked: {
-                                stack.navigateTo("qrc:///ProfilePreview.qml",{ profile: profile });
+                                var previewProfile = profile;
+                                previewProfile.injuryDate = injuryDate.currentDate.getTime();
+                                previewProfile.role = getRole();
+                                previewProfile.gender = getGender();
+                                previewProfile.age = getAge();
+                                previewProfile.profile = profileText.text;
+                                stack.navigateTo("qrc:///ProfilePreview.qml",{ profile: previewProfile });
                             }
                         }
                     }
@@ -499,6 +505,10 @@ AfterTrauma.Page {
     //
     //
     //
+    property bool onStack: false
+    //
+    //
+    //
     StackView.onActivated: {
         if ( profile ) {
             console.log( 'profile:' + profile.username + ' injuryDate: ' + ( profile.injuryDate ? new Date( profile.injuryDate ).toString() : 'unknown' ) );
@@ -516,12 +526,23 @@ AfterTrauma.Page {
 
         profileChannel.open();
         dirty = false;
+        //
+        //
+        //
+        if ( !onStack ) {
+            onStack = true;
+            usageModel.add('profile', 'open' );
+        }
     }
 
     StackView.onDeactivating: {
     }
 
     StackView.onDeactivated: {
+    }
+    StackView.onRemoved: {
+        onStack = false;
+        usageModel.add('profile', 'close' );
     }
     //
     //
@@ -576,23 +597,9 @@ AfterTrauma.Page {
     //
     function saveProfile(closeManager) {
         profile.injuryDate = injuryDate.currentDate.getTime();
-        if ( patient.checked ) {
-            profile.role = "patient";
-        } else if ( carer.checked ) {
-            profile.role = "carer";
-        }
-        if ( female.checked ) {
-            profile.gender = "female";
-        } else if ( male.checked ) {
-            profile.gender = "male";
-        } else {
-            profile.gender = "notspecified";
-        }
-        if ( age.text.length > 0 && age.acceptableInput ) {
-            profile.age = parseInt(age.text);
-        } else {
-            profile.age = undefined;
-        }
+        profile.role = getRole();
+        profile.gender = getGender();
+        profile.age = getAge();
         profile.profile = profileText.text;
         if ( profile.tags ) {
             console.log( 'profile tags: ' + JSON.stringify(profile.tags));
@@ -602,10 +609,45 @@ AfterTrauma.Page {
         } else {
             console.log( 'profile injuries : undefined');
         }
-
         JSONFile.write('user.json',profile);
         busyIndicator.show( 'updating profile' );
         profileChannel.send({command:'updateprofile', token: profile.token, profile:profile, close: closeManager});
+        //
+        //
+        //
+        usageModel.add('profile', 'update', undefined, {
+                           role: getRole(),
+                           gender: getGender(),
+                           age: getAge(),
+                           tags: profile.tags || [],
+                           injuries: profile.injuries || {}
+                       });
+
+    }
+    //
+    //
+    //
+    function getRole() {
+        if ( patient.checked ) {
+            return "patient";
+        } else if ( carer.checked ) {
+            return "carer";
+        }
+        return "notspecified";
+    }
+    function getGender() {
+        if ( female.checked ) {
+            return"female";
+        } else if ( male.checked ) {
+            return "male";
+        }
+        return "notspecified";
+    }
+    function getAge() {
+        if ( age.text.length > 0 && age.acceptableInput ) {
+            return parseInt(age.text);
+        }
+        return undefined;
     }
     //
     //
@@ -628,6 +670,8 @@ AfterTrauma.Page {
             return true;
         }
     }
+
+
     //
     //
     //

@@ -6,6 +6,7 @@
 extern void _requestNotificationPermision();
 extern void _scheduleNotification( int id, QString message, unsigned int delay, unsigned int frequency );
 extern void _scheduleNotificationByPattern( int id, QString message, int pattern );
+extern void _scheduleNotificationByDate( int id, QString message, int weekday, int hour );
 extern void _cancelNotification( int id );
 extern void _cancelAllNotifications();
 #if defined(Q_OS_ANDROID)
@@ -35,7 +36,7 @@ NotificationManager* NotificationManager::shared() {
     return s_shared;
 }
 
-#if defined(Q_OS_IOS) || defined(Q_OS_ANDROID)
+#if defined(Q_OS_ANDROID)
 void NotificationManager::scheduleNotification( int id, QString message, unsigned int delay, unsigned int frequency ) {
     _scheduleNotification( id, message, delay, frequency );
 }
@@ -173,39 +174,59 @@ int NotificationManager::compositeId( int type, int subject, int hour ) {
 void NotificationManager::scheduleHourly( int type, int subject, QString message ) {
     qDebug() << "NotificationManager::scheduleHourly : type=" << type << " subject=" << subject << " message=" << message;
     for ( int i = 0; i < 12; i++ ) {
-        unsigned int delay = delayToNextHourInDay(kBaseHour+i);
         int notificationId = compositeId( type, subject, i );
+#if defined(Q_OS_IOS) || defined(Q_OS_ANDROID)
+        _scheduleNotificationByDate(notificationId,message,0,kBaseHour+i);
+#else
+        unsigned int delay = delayToNextHourInDay(kBaseHour+i);
         scheduleNotification(notificationId,message,delay,kDayDelay);
+#endif
         qDebug() << "NotificationManager::scheduleHourly : encoded type=" << typeFromId(notificationId) << " encodedsubject=" << subjectFromId(notificationId);
     }
 }
 
 void NotificationManager::scheduleFourTimesDaily( int type, int subject, QString message ) {
     for ( int i = 0; i < 12; i += 3) {
-        unsigned int delay = delayToNextHourInDay(kBaseHour+i);
         int notificationId = compositeId( type, subject, i );
+#if defined(Q_OS_IOS) || defined(Q_OS_ANDROID)
+        _scheduleNotificationByDate(notificationId,message,0,kBaseHour+i);
+#else
+        unsigned int delay = delayToNextHourInDay(kBaseHour+i);
         scheduleNotification(notificationId,message,delay,kDayDelay);
+#endif
     }
 }
 
 void NotificationManager::scheduleMorningAndEvening( int type, int subject, QString message ) {
     for ( int i = 0; i < 12; i += 12) {
-        unsigned int delay = delayToNextHourInDay(kBaseHour+i);
         int notificationId = compositeId( type, subject, i );
+#if defined(Q_OS_IOS) || defined(Q_OS_ANDROID)
+        _scheduleNotificationByDate(notificationId,message,0,kBaseHour+i);
+#else
+        unsigned int delay = delayToNextHourInDay(kBaseHour+i);
         scheduleNotification(notificationId,message,delay,kDayDelay);
+#endif
     }
 }
 
 void NotificationManager::scheduleDaily( int type, int subject, QString message ) {
-    unsigned int delay = delayToNextHourInDay(kBaseHour);
     int notificationId = compositeId( type, subject, 0);
+#if defined(Q_OS_IOS) || defined(Q_OS_ANDROID)
+     _scheduleNotificationByDate(notificationId,message,0,kBaseHour);
+#else
+    unsigned int delay = delayToNextHourInDay(kBaseHour);
     scheduleNotification(notificationId,message,delay,kDayDelay);
+#endif
 }
 
 void NotificationManager::scheduleWeekly( int type, int subject, QString message ) {
-    unsigned int delay = delayToNextHourInDay(kBaseHour) + kWeekDelay; // one week ahead
     int notificationId = compositeId( type, subject, 0);
+#if defined(Q_OS_IOS) || defined(Q_OS_ANDROID)
+     _scheduleNotificationByDate(notificationId,message,2,kBaseHour);
+#else
+    unsigned int delay = delayToNextHourInDay(kBaseHour) + kWeekDelay; // one week ahead
     scheduleNotification(notificationId,message,delay,kWeekDelay);
+#endif
 }
 
 void NotificationManager::cancelHourly( int type, int subject ) {

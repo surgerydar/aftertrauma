@@ -7,7 +7,10 @@ import "colours.js" as Colours
 Rectangle {
     id: container
     height: 64
-    color: Colours.almostWhite
+    color: Colours.veryLightSlate
+    //
+    //
+    //
     Image {
         id: avatarImage
         width: height
@@ -32,16 +35,6 @@ Rectangle {
                 source = "icons/profile_icon.png";
             }
         }
-        //
-        //
-        //
-        MouseArea {
-            anchors.fill: parent
-            onClicked: {
-                //stack.push( "qrc:///ProfileViewer.qml", { userId: userId } );
-                profileViewer.open(userId);
-            }
-        }
     }
     //
     //
@@ -51,7 +44,7 @@ Rectangle {
         height: 32
         anchors.top: parent.top
         anchors.left: avatarImage.right
-        anchors.right: select.left
+        anchors.right: selectionEnabled ? select.left : parent.right
         anchors.bottom: parent.verticalCenter
         anchors.margins: 8
         //
@@ -70,8 +63,11 @@ Rectangle {
         anchors.top: parent.verticalCenter
         anchors.left: avatarImage.right
         anchors.bottom: parent.bottom
-        anchors.right: select.left
-        anchors.margins: 4
+        anchors.right: selectionEnabled ? select.left : parent.right
+        anchors.topMargin: 4
+        anchors.leftMargin: 8
+        anchors.rightMargin: 8
+        anchors.bottomMargin: 8
         //
         //
         //
@@ -85,12 +81,69 @@ Rectangle {
     //
     //
     //
+    MouseArea {
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.bottom: parent.bottom
+        anchors.right: select.left//selectionEnabled ? select.left : parent.right
+        anchors.margins: 4
+        onClicked: {
+            profileViewer.open(userId);
+        }
+    }
+    //
+    //
+    //
     AfterTrauma.CheckBox {
         id: select
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
         anchors.rightMargin: 8
         text: "select"
+    }
+    //
+    //
+    //
+    AfterTrauma.Button {
+        id: chatButton
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.right: parent.right
+        anchors.rightMargin: 16
+        image: "icons/chat.png"
+        visible: !selectionEnabled
+        onClicked: {
+            var chat = chatModel.findPrivateChatWithUser(userId);
+            if ( chat ) {
+                var properties = {
+                    chatId:chat.id,
+                    messages:chatModel.getMessageModel(chat.id),
+                    subject: chat.subject
+                };
+                stack.push( "qrc:///GroupChat.qml", properties);
+            } else {
+                //
+                // create new chat
+                //
+                chat = {
+                    id: GuidGenerator.generate(),
+                    owner: userProfile.id,
+                    subject: "Chat with " + usernameText.text,
+                    "public": false,
+                    members: [userId],
+                    messages: []
+                };
+                chatEditor.show(chat, function(edited,showChat) {
+                    var command = {
+                        command: 'groupcreatechat',
+                        token: userProfile.token,
+                        chat: edited,
+                        show: showChat
+                    };
+                    chatChannel.send(command);
+                });
+            }
+            close();
+        }
     }
     //
     //

@@ -138,9 +138,9 @@ Rectangle {
             //
             //
             numDays = Utils.daysBetweenDates(chart.startDate,chart.endDate);
-            if ( numDays === 0 ) return;
+
             if (chart.gridSize == 0)
-                chart.gridSize = numDays
+                chart.gridSize = Math.max(1,numDays);
 
             var startIndex = dailyModel.indexOfFirstDayBefore( chart.startDate );
             var endIndex = dailyModel.indexOfFirstDayAfter( chart.endDate );
@@ -161,39 +161,60 @@ Rectangle {
             var maxTime = chart.endDate.getTime();
             var dTime = maxTime - minTime;
             var dIndex = 1;// TODO: skip
-            for (var i = startIndex; i >= endIndex; i -= dIndex ) {
-                //
-                // get daily
-                //
-                var day = dailyModel.get(i);
-                //
-                // increment x by diference between samples
-                //
-                x = Utils.daysBetweenMs(chart.startDate.getTime(),day.date) * xGridStep;
-                if ( x == 0 || Math.abs( x - previousX ) >= 1 ) {
-                    previousX = x;
+            var day, point, value;
+            if ( startIndex === endIndex ) {
+                day = dailyModel.get(startIndex);
+                for ( var j = 0; j < day.values.length; j++ ) {
+                    value = day.values[j];
+                    if ( points[value.label] === undefined ) {
+                        points[value.label] = [];
+                    }
+                    points[value.label].push({ x: 0, y: h - ( h * value.value ) });
+                    points[value.label].push({ x: width, y: h - ( h * value.value ) });
                     //
-                    // calculate points for each value
                     //
-                    var t = ( day.date - minTime ) / dTime;
-                    for ( var j = 0; j < day.values.length; j++ ) {
-                        var value = day.values[j];
-                        if ( points[value.label] === undefined ) {
-                            points[value.label] = [];
-                        }
-                        var point = {
-                            x: x,
-                            y: h - ( h * value.value )
-                        };
-                        points[value.label].push(point);
+                    //
+                    if ( values[value.label] === undefined ) {
+                        values[value.label] = [];
+                    }
+                    values[value.label].push( Qt.point(0.,value.value) );
+                    values[value.label].push( Qt.point(1.,value.value) );
+                }
+            } else {
+                for (var i = startIndex; i >= endIndex; i -= dIndex ) {
+                    //
+                    // get daily
+                    //
+                    day = dailyModel.get(i);
+                    //
+                    // increment x by diference between samples
+                    //
+                    x = Utils.daysBetweenMs(chart.startDate.getTime(),day.date) * xGridStep;
+                    if ( x == 0 || Math.abs( x - previousX ) >= 1 ) {
+                        previousX = x;
+                        //
+                        // calculate points for each value
+                        //
+                        var t = ( day.date - minTime ) / dTime;
+                        for ( var j = 0; j < day.values.length; j++ ) {
+                            value = day.values[j];
+                            if ( points[value.label] === undefined ) {
+                                points[value.label] = [];
+                            }
+                            point = {
+                                x: x,
+                                y: h - ( h * value.value )
+                            };
+                            points[value.label].push(point);
 
-                        //
-                        //
-                        //
-                        if ( values[value.label] === undefined ) {
-                            values[value.label] = [];
+                            //
+                            //
+                            //
+                            if ( values[value.label] === undefined ) {
+                                values[value.label] = [];
+                            }
+                            values[value.label].push( Qt.point(t,value.value) );
                         }
-                        values[value.label].push( Qt.point(t,value.value) );
                     }
                 }
             }

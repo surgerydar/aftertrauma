@@ -181,6 +181,10 @@ Rectangle {
             filter: {$and:[{id:{$nin:exclude}},{ $or:[{username: regex},{tags: regex}]}]}
         };
         profiles.model.refresh();
+        //
+        //
+        //
+        usageModel.add('chat', 'search', 'people', { searchterm: text } );
     }
     //
     //

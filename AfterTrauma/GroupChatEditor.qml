@@ -97,7 +97,7 @@ Rectangle {
         anchors.top: subjectField.bottom
         anchors.topMargin: 8
         anchors.horizontalCenter: parent.horizontalCenter
-        placeholderText: "tag,tag,tag"
+        placeholderText: "topics"
     }
     AfterTrauma.CheckBox {
         id: publicCheckBox

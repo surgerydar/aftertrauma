@@ -40,6 +40,7 @@ AfterTrauma.Page {
     //
     //
     //
+    property bool onStack: false
     StackView.onActivating: {
         contents.model.clear();
         var doc = documentModel.findOne( { document: document } );
@@ -48,6 +49,14 @@ AfterTrauma.Page {
                 contents.model.append( block );
             });
         }
+        if( !onStack ) {
+            onStack = true;
+            usageModel.add('documentviewer', 'open', 'document', { category: container.title, title: container.subtitle } );
+        }
+    }
+    StackView.onRemoved: {
+        onStack = true;
+        usageModel.add('documentviewer', 'close', 'document', { category: container.title, title: container.subtitle } );
     }
     //
     //

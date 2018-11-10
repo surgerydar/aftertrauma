@@ -16,6 +16,7 @@ import android.os.Bundle;
 
 // java
 import java.lang.String;
+import java.util.Calendar;
 
 public class NotificationScheduler {
     /*
@@ -32,6 +33,39 @@ public class NotificationScheduler {
     public static void show( int id, String message, int delay, int frequency ) {
         System.out.println("show");
         scheduleNotification( id, getNotification( id, message ), delay, frequency );
+    }
+
+    public static void showByDate( int id, String message, int weekday, int hour ) {
+        System.out.println("showByDate");
+        Context context = QtNative.activity();
+
+        Intent notificationIntent = new Intent(context, NotificationPublisher.class);
+        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ID, id);
+        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION, getNotification( id, message ));
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, id, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Calendar now = Calendar.getInstance();
+        now.setTimeInMillis(System.currentTimeMillis());
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(System.currentTimeMillis());
+        cal.set(Calendar.HOUR_OF_DAY, hour);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        if ( weekday > 0 ) {
+            cal.set(Calendar.DAY_OF_WEEK, weekday);
+            if (now.after(cal)) {
+                cal.add(Calendar.WEEK_OF_YEAR, 1);
+            }
+        } else {
+            if (now.after(cal)) {
+                cal.add(Calendar.DAY_OF_MONTH, 1);
+            }
+        }
+
+        AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), AlarmManager.INTERVAL_DAY * ( weekday > 0 ? 7 : 1 ), pendingIntent);
+
+        //show( id, message, 0, 0 );
     }
 
     private static void scheduleNotification( int id, Notification notification, int delay, int frequency) {

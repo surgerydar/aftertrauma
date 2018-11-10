@@ -263,8 +263,17 @@ AfterTrauma.Page {
                         busyIndicator.show( 'preparing diary for sharing' );
                         var lastIndex = entries.length - 1;
                         var rangeText = entries[ 0 ].day + '-' + ( entries[ 0 ].month + 1 )+ '-' + entries[ 0 ].year + '-to-' + entries[ lastIndex ].day + '-' + ( entries[ lastIndex ].month + 1 ) + '-' + entries[ lastIndex ].year;
+                        /*
                         var pdfPath = SystemUtils.documentDirectory() + '/diary-' +  rangeText + '.pdf';
                         writer.save(entries,pdfPath);
+                        */
+                        var pngPath = SystemUtils.documentDirectory() + '/diary-' +  rangeText + '.png';
+                        writer.save(entries,pngPath);
+                        //
+                        //
+                        //
+                        usageModel.add('diary','share','diary',{fromdate:fromDate.getTime(),todate:toDate.getTime()});
+
                     }
                 }, 'Share Diary' );
             }
@@ -297,6 +306,7 @@ AfterTrauma.Page {
                         if ( dayIndex >= 0 ) {
                             dailyList.list.positionViewAtIndex(dayIndex, ListView.Visible);
                         }
+                        usageModel.add('diary','add','diaryentryblock',{date:date.getTime(),type:type});
                     }
                 });
             }
@@ -305,7 +315,20 @@ AfterTrauma.Page {
     //
     //
     //
-    StackView.onActivated: {
+    property bool onStack: false
+    //
+    //
+    //
+    StackView.onActivating: {
+        console.log( 'StackView.onActivating : stack.depth=' + stack.depth );
+        if ( !onStack ) {
+            onStack = true;
+            usageModel.add('diary','open' );
+        }
+    }
+    StackView.onRemoved: {
+        onStack = false;
+        usageModel.add('diary','close' );
     }
     //
     //

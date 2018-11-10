@@ -74,10 +74,12 @@ AfterTrauma.Page {
             }
             onRemove: {
                 challengeModel.remove({_id:challengeModel.get(index)._id});
+                usageModel.add('challenges', 'remove', 'challenge' );
             }
             onClicked: {
                 if ( !editable ) {
                     challengeModel.viewChallenge( model._id );
+                    usageModel.add('challenges', 'view', 'challenge' );
                 }
             }
         }
@@ -145,13 +147,27 @@ AfterTrauma.Page {
     //
     //
     //
+    property bool onStack: false
     //
     //
     //
     StackView.onActivated: {
         //challengeModel.load();
         //editable = false;
+        if ( !onStack ) {
+            onStack = true;
+            usageModel.add('challenges', 'open' );
+        }
     }
+    StackView.onRemoved: {
+        //
+        //
+        //
+        onStack = false;
+        usageModel.add('challenges', 'close' );
+
+    }
+
     function formatDescription( activity, repeats, frequency ) {
         return activity + '<p>' + 'repeat ' + repeats + ' time' + ( repeats > 1 ? 's ' : ' ' ) + ', ' + frequency;
     }

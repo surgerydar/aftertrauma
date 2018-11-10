@@ -168,6 +168,10 @@ Rectangle {
             filter: { $and: [{ "public": true },{ $or:[{subject: regex},{tags: regex}]}]}
         };
         chats.model.refresh();
+        //
+        //
+        //
+        usageModel.add('chat', 'search', 'groups', { searchterm: text } );
     }
     //
     //

@@ -100,6 +100,7 @@ Item {
         }
         onReleased: {
             updateScore();
+            usageModel.add('recovery','update', 'question', { question: question, score: score } );
         }
         onPositionChanged: {
             updateScore();

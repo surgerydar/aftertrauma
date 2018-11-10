@@ -97,6 +97,10 @@ AfterTrauma.Page {
                     };
                     chatChannel.send(command);
                     pendingMessages.push( command );
+                    //
+                    //
+                    //
+                    usageModel.add( 'chat', 'add', 'chatmessage' );
                 }
             }
         }
@@ -109,12 +113,25 @@ AfterTrauma.Page {
     //
     //
     //
+    property bool onStack: false
     StackView.onActivated: {
         messageList.positionViewAtEnd();
         unreadChatsModel.markAsRead(chatId);
+        //
+        //
+        //
+        if ( !onStack ) {
+            onStack = true;
+            usageModel.add('chat', 'open', 'chat' );
+        }
     }
     StackView.onDeactivated: {
         chatModel.releaseMessageModel(chatId);
+        //
+        //
+        //
+        onStack = false;
+        usageModel.add('chat', 'close', 'chat' );
     }
     //
     //

@@ -145,6 +145,10 @@ Page {
                     contents.forceLayout();
                     plan.blocks[blockIndex] = block;
                     syncDatabase();
+                    //
+                    //
+                    //
+                    usageModel.add('rehab', 'edit', 'entry', { type: type } );
                 }, model.type, model.content );
             }
             onRemove: {
@@ -159,6 +163,10 @@ Page {
                 blocksModel.model.remove(model.index);
                 plan.blocks.splice(model.index,1);
                 updateDatabase();
+                //
+                //
+                //
+                usageModel.add('rehab', 'remove', 'entry', { type: model.type } );
             }
             onClicked: {
                 console.log( 'block clicked : ' + model.index );
@@ -409,6 +417,7 @@ Page {
             //
             plan.blocks.push(block);
             syncDatabase();
+            usageModel.add('rehab', 'add', 'entry', { type: type } );
         });
 
     }

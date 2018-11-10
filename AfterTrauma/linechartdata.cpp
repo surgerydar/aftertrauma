@@ -2,6 +2,7 @@
 #include <QUuid>
 #include <QDate>
 #include "pdfgenerator.h"
+#include "pnggenerator.h"
 
 LineChartData::LineChartData(QObject *parent) : QObject(parent) {
     const QString faceTemplate(":/icons/face%1.png");
@@ -106,6 +107,24 @@ void LineChartData::write( QPdfWriter* writer ) {
     paint(&painter,r);
 }
 
+void LineChartData::write( PagedPNG* writer ) {
+    /*
+#ifdef Q_OS_IOS
+    QPainter painter( writer->imageptr() );
+#else
+    QPainter painter( writer );
+#endif
+    //painter.setTransform(writer->printTransform());
+    painter.setViewport(writer->paintRect());
+    QRect r = painter.viewport();
+    r.moveTo(0,0);
+    */
+
+    QPainter painter( writer->imageptr() );
+    QRect r = writer->paintRect();
+    paint(&painter,r);
+}
+
 void LineChartData::paint( QPainter* painter, const QRect& r ) {
     painter->save();
     //
@@ -172,12 +191,22 @@ void LineChartData::paint( QPainter* painter, const QRect& r ) {
 //
 //
 void LineChartData::save( QString filePath ) {
-    QString documentId = PDFGenerator::shared()->openDocument();
-    if ( documentId.length() > 0 ) {
-        PDFGenerator::shared()->paint(documentId,this);
-        PDFGenerator::shared()->closeDocument(documentId);
-        SystemUtils::shared()->moveFile(PDFGenerator::shared()->documentPath(documentId),filePath,true);
-        PDFGenerator::shared()->removeDocument(documentId);
+    if ( filePath.endsWith("png") ) {
+        QString documentId = PNGGenerator::shared()->openDocument();
+        if ( documentId.length() > 0 ) {
+            PNGGenerator::shared()->paint(documentId,this);
+            PNGGenerator::shared()->closeDocument(documentId);
+            SystemUtils::shared()->moveFile(PNGGenerator::shared()->documentPath(documentId),filePath,true);
+            PDFGenerator::shared()->removeDocument(documentId);
+        }
+    } else {
+        QString documentId = PDFGenerator::shared()->openDocument();
+        if ( documentId.length() > 0 ) {
+            PDFGenerator::shared()->paint(documentId,this);
+            PDFGenerator::shared()->closeDocument(documentId);
+            SystemUtils::shared()->moveFile(PDFGenerator::shared()->documentPath(documentId),filePath,true);
+            PDFGenerator::shared()->removeDocument(documentId);
+        }
     }
 }
 //

@@ -67,9 +67,11 @@ AfterTrauma.Page {
                         score: questionnaireModel.getScore(ListView.view.questionnaireIndex,index)
                         onScoreChanged: {
                             var category = questionnaireModel.get(ListView.view.questionnaireIndex).category;
-                            console.log( 'category:' + category + ' questionnaire:' + ListView.view.questionnaireIndex + ' question:' + questionIndex + ' score:' + score);
                             questionnaireModel.putScore( category, ListView.view.questionnaireIndex, questionIndex, score );
                             recomendations.forceLayout();
+                            //
+                            //
+                            //
                         }
                     }
                     //
@@ -142,6 +144,10 @@ AfterTrauma.Page {
                         text: recomendationModel.getRecomendation(model.category)
                         onLinkActivated: {
                             processLink(link);
+                            //
+                            //
+                            //
+                            usageModel.add('recovery', 'navigate', 'link', { link: link } );
                         }
                         onTextChanged: {
                             recomendation.text = Styles.style(text,"recomendations");
@@ -181,12 +187,23 @@ AfterTrauma.Page {
         onCurrentIndexChanged: {
             recomendations.model.clear();
             if ( currentIndex === count - 1 ) {
+                /*
                 [
                     { category: "emotions" },
                     { category: "confidence" },
                     { category: "body" },
                     { category: "life" },
                     { category: "relationships" }
+                ].forEach( function( category ) {
+                    recomendations.model.append(category);
+                });
+                */
+                [
+                    { category: "body" },
+                    { category: "emotions" },
+                    { category: "relationships" },
+                    { category: "life" },
+                    { category: "confidence" }
                 ].forEach( function( category ) {
                     recomendations.model.append(category);
                 });
@@ -238,13 +255,29 @@ AfterTrauma.Page {
     //
     //
     //
+    property bool onStack: false
+    //
+    //
+    //
     StackView.onActivated: {
         //questionnaires.currentIndex = 0;
         questionnaireModel.loadScores();
+        //
+        //
+        //
+        if ( !onStack ) {
+            onStack = true;
+            usageModel.add('recovery','open' );
+        }
     }
     StackView.onDeactivated: {
         questionnaireModel.saveScores();
         dailyModel.save();
+    }
+    StackView.onRemoved: {
+        onStack = false;
+        usageModel.add('recovery','close', undefined, { complete: questionnaireModel.dailyCompleted() } );
+
     }
     //
     //

@@ -102,7 +102,7 @@ Item {
             try {
                 var command = JSON.parse(message);
 
-                console.log( 'ChatChannel : received : ' + message );
+                //console.log( 'ChatChannel : received : ' + message );
                 if ( command.command === 'welcome' ) {
                     refresh();
                 } else if ( command.status === 'OK' ) {
@@ -132,7 +132,7 @@ Item {
                             //
                             // TODO: update rather than replace, store ids for future delete
                             //
-                            console.log( 'adding user chat: ' + JSON.stringify( chat ) );
+                            //console.log( 'adding user chat: ' + JSON.stringify( chat ) );
                             chatModel.batchAdd(chat);
                         });
                         chatModel.endBatch();

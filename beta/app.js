@@ -148,6 +148,12 @@ db.connect(
         let fileuploader = require('./fileuploader');
         fileuploader.setup(wsr);
         //
+        // connect usage
+        //
+        console.log('usage');
+        let usage = require('./usage');
+        usage.setup(wsr,db);
+        //
         // create server
         //
         console.log('creating server');

@@ -155,6 +155,7 @@ AfterTrauma.Page {
             //
             //
             onClicked: {
+                /*
                 var day = new Date();
                 var pdfPath = SystemUtils.documentDirectory() + '/myprogress-' + day.getDate() + '-' + day.getMonth() + '-' + day.getFullYear() + '.pdf';
                 data.clearDataSets();
@@ -172,18 +173,51 @@ AfterTrauma.Page {
                 data.setAxisSteps( yAxis, 5 );
                 data.save( pdfPath );
                 ShareDialog.shareFile('Shared from AfterTrauma', pdfPath);
+                */
+                var day = new Date();
+                var pngPath = SystemUtils.documentDirectory() + '/myprogress-' + day.getDate() + '-' + day.getMonth() + '-' + day.getFullYear() + '.png';
+                data.clearDataSets();
+                var categoryIndex = 0;
+                for ( var category in lineChart.values ) {
+                    data.addDataSet(category,Colours.categoryColour(categoryIndex),lineChart.values[ category ]);
+                    categoryIndex++;
+                }
+
+                data.clearAxis();
+                var xAxis = data.addAxis('days',LineChartData.XAxis,LineChartData.AlignEnd);
+                data.setAxisSteps(xAxis, lineChart.period === "year" ? 12 : lineChart.period === "month" ? 4 : 7);
+                data.setAxisRange( xAxis, lineChart.startDate, lineChart.endDate);
+                var yAxis = data.addAxis('value',LineChartData.YAxis,LineChartData.AlignStart);
+                data.setAxisSteps( yAxis, 5 );
+                data.save( pngPath );
+                ShareDialog.shareFile('Shared from AfterTrauma', pngPath);
+                //
+                //
+                //
+                usageModel.add('progress', 'share', { fromdate:lineChart.startDate.getTime(),todate: lineChart.endDate.getTime() } );
             }
         }
     }
     //
     //
     //
+    property bool onStack: false
     StackView.onActivated: {
         console.log('period: ' + period );
         lineChart.period = container.period;
         lineChart.setup();
+        //
+        //
+        //
+        if ( !onStack ) {
+            onStack = true;
+            usageModel.add('progress', 'open' );
+        }
     }
-
+    StackView.onRemoved: {
+        onStack = false;
+        usageModel.add('progress', 'close' );
+    }
     //
     //
     //

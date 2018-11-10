@@ -9,6 +9,7 @@
 #include <QPainter>
 #include <QVariant>
 #include "paintable.h"
+#include "pagedpng.h"
 
 class LineChartData : public QObject, public Paintable
 {
@@ -60,6 +61,7 @@ public slots:
     //
     void paint( QPainter* painter, const QRect& r ) override;
     void write( QPdfWriter* writer ) override;
+    void write( PagedPNG* writer ) override;
     //
     //
     //

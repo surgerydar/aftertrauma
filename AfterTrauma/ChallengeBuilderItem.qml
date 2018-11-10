@@ -26,7 +26,13 @@ Item {
         onClicked: {
             if ( !( container.type === "number" || container.type === "switch" ) ) {
                 open = !open;
-                if ( open ) container.selected();
+                if ( open ) {
+                    container.selected();
+                } else {
+                    if ( container.type === "name" || container.type === "description" ) {
+                        Qt.inputMethod.hide();
+                    }
+                }
             }
         }
     }

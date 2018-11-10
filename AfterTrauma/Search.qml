@@ -113,8 +113,20 @@ AfterTrauma.Page {
     //
     //
     //
+    property bool onStack: false
+    //
+    //
+    //
     StackView.onActivated: {
         documentModel.filter = {};
+        if ( !onStack ) {
+            onStack = true;
+            usageModel.add('search', 'open' );
+        }
+    }
+    StackView.onRemoved: {
+        onStack = false;
+        usageModel.add('search', 'close' );
     }
     //
     //
@@ -193,6 +205,10 @@ AfterTrauma.Page {
                                          });
                 });
             }
+            //
+            //
+            //
+            usageModel.add('search', 'search', undefined, {tags: tags} );
         }
     }
 }

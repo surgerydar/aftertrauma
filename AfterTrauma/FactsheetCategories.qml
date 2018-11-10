@@ -61,10 +61,25 @@ AfterTrauma.Page {
     //
     //
     //
+    property bool onStack: false
+    //
+    //
+    //
     StackView.onActivating:  {
         //
         // initialisation
         //
         categoryModel.setFilter( { section : "resources" } );
+        //
+        //
+        //
+        if ( !onStack ) {
+            onStack = true;
+            usageModel.add('information', 'open' );
+        }
+    }
+    StackView.onRemoved:  {
+        onStack = false;
+        usageModel.add('information', 'close' );
     }
 }

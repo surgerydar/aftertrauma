@@ -87,6 +87,9 @@ ApplicationWindow {
             flowerChart.update();
         }
     }
+    Usage {
+        id: usageModel
+    }
     //
     //
     //

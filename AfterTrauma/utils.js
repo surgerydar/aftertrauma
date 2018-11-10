@@ -63,6 +63,7 @@ function getEndOfWeek( start ) {
 }
 
 function formatAgeAndGender( profile ) {
+    console.log( 'Utils.formatAgeAndGender(' + JSON.stringify(profile) + ')' );
     return ( profile.age ?  profile.age + ' ' : '' ) + ( profile.gender === 'male' || profile.gender === 'female' ? profile.gender : '' );
 }
 
