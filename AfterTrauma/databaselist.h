@@ -97,6 +97,7 @@ private:
     void _update( QVariantMap& object, QVariantMap& update );
     inline bool _matchValue( QVariant& value, QVariant& condition );
     QString _path();
+    int _indexOfItem( const QString& _id );
     QList<QVariantMap>& _activeList() { return m_filter.isEmpty() ? m_objects : m_filtered; }
     const QList<QVariantMap>& _activeList() const { return m_filter.isEmpty() ? m_objects : m_filtered; }
 };

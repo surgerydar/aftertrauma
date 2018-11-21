@@ -34,7 +34,7 @@ AfterTrauma.EditableListItem {
             anchors.top: parent.top
             anchors.left: parent.left
             anchors.bottom: parent.verticalCenter
-            anchors.right: parent.right
+            anchors.right: active ? doneCheckbox.left : parent.right
             anchors.margins: 8
             //
             //
@@ -42,11 +42,11 @@ AfterTrauma.EditableListItem {
             horizontalAlignment: Text.AlignLeft
             verticalAlignment: Text.AlignVCenter
             elide: Text.ElideRight
-            minimumPixelSize: 18
+            minimumPointSize: 12
             fontSizeMode: Text.Fit
             font.weight: Font.Light
             font.family: fonts.light
-            font.pixelSize: 32
+            font.pointSize: 32
             color: Colours.almostWhite
         }
         Text {
@@ -54,7 +54,7 @@ AfterTrauma.EditableListItem {
             anchors.top: nameText.bottom
             anchors.left: parent.left
             anchors.bottom: parent.bottom
-            anchors.right: active ? doneCheckbox.left : parent.right
+            anchors.right: parent.right
             anchors.margins: 8
             //
             //
@@ -73,26 +73,28 @@ AfterTrauma.EditableListItem {
         //
         //
         //
-        AfterTrauma.Button {
+        Label {
             id: doneCheckbox
-            height: 24
-            anchors.bottom: parent.bottom
+            anchors.top: parent.top
             anchors.right: parent.right
             anchors.margins: 8
-            checkable: true
             visible: false
-            textSize: 18
-            text: checked ? "done" : "to do"
-            backgroundColour: checked ? Colours.darkGreen : Colours.red
-            onCheckedChanged: {
-                updateDone(checked);
+            padding: 4
+            font.pointSize: 18
+            text: done ? "done" : "to do"
+            color: Colours.almostWhite
+            background: Rectangle {
+                radius: 4
+                color: done ? Colours.darkGreen : Colours.red
+            }
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                    updateDone(done?false:true);
+                }
             }
         }
     }
-    onDoneChanged: {
-        doneCheckbox.checked = done;
-    }
-
     //
     //
     //

@@ -5,12 +5,14 @@ import "utils.js" as Utils
 DatabaseList {
     id: model
     collection: "challenges"
-    roles: [ "_id", "name", "activity", "repeats", "frequency", "values", "notes", "images", "notifications", "active", "date", "count" ]
-    sort: { "active": -1 }//, "name": 1 }
+    roles: [ "_id", "name", "activity", "repeats", "frequency", "notifications", "active", "date", "count" ]
+    //sort: { "active": -1, "name": 1 }
+    sort: { "active": -1 }
     //
     //
     //
     Component.onCompleted: {
+        /*
         if ( false ) {//count <= 0 ) {
             console.log( 'generating challenge test data');
             //
@@ -53,6 +55,11 @@ DatabaseList {
             endBatch();
             save();
         }
+        */
+        //
+        // reset expired
+        //
+        resetExpiredCounts();
     }
     //
     //
@@ -65,20 +72,24 @@ DatabaseList {
         challenge._id = add(challenge)._id;
         save();
     }
+
     function updateChallenge(challenge) {
         var query = {_id:challenge._id};
         console.log( 'updating challenge : ' + JSON.stringify(query) );
         update(query,challenge);
         save();
     }
+
     function removeChallenge(challenge) {
         remove({_id:challenge._id});
         save();
     }
+
     function findChallenge(name) {
         return findOne({name:name});
     }
-    function updateCount(id,count) {
+
+    function updateCount(challengeId,count,done) {
         //
         // TODO: update daily count
         //
@@ -89,12 +100,57 @@ DatabaseList {
             save();
         }
         */
-        console.log('Challenges.updateCount : ' + id + ' : count : ' + count );
-        var updated  = update({_id:id},{count:count});
+        var data = {count:count};
+        if ( done ) { // only reset date if done, date is used for count reset, TODO: add dateCompleted to model ????
+            data.date = Date.now();
+        }
+
+        console.log('Challenges.updateCount : ' + challengeId + ' : count : ' + count );
+        var updated  = update({_id:challengeId},data);
         console.log('Challenges.updateCount : updated : ' + updated );
 
         save();
     }
+
+    function resetExpiredCounts() {
+        var now = Date.now();
+        var active = find({active:true});
+        var updated = false;
+        active.forEach( function( challenge ) {
+            var period = periodFromFrequency( challenge.frequency );
+            var elapsed = now - challenge.date;
+            console.log( 'challenge id=' + challenge._id + ' name=' + challenge.name + ' period=' + period + ' elapsed=' + elapsed );
+            if ( elapsed > period ) {
+                //
+                // period has expired reset count
+                //
+                update({_id:challenge._id},{count:0});
+                updated = true;
+            }
+        });
+        if ( updated ) {
+            save();
+        }
+    }
+
+    function periodFromFrequency( frequency ) {
+        var hourly = 60 * 60 * 1000;
+        switch( frequency ) {
+        case 'hourly' :
+            return hourly;
+        case 'fourtimesdaily' :
+            return 3 * hourly;
+        case 'morningandevening' :
+            return 12 * hourly;
+        case 'daily' :
+            return 24 * hourly;
+        case 'weekly' :
+            return 7 * 24 * hourly;
+        }
+
+        return hourly;
+    }
+
     function updateNotification(id) {
         //
         //
@@ -122,6 +178,7 @@ DatabaseList {
             challengeModel.save();
         }
     }
+
     function showNotifiedChallenge( notificationId ) {
         console.log( 'Challenges.showNotifiedChallenge : ' + notificationId );
         var challenge = findOne({notificationId:notificationId});
@@ -132,7 +189,8 @@ DatabaseList {
                 active: challenge.active,
                 notifications: challenge.notifications,
                 challengeId: challenge._id,
-                repeats: challenge.repeats
+                repeats: challenge.repeats,
+                count: challenge.count || 0
             };
             stack.push( "qrc:///ChallengeViewer.qml", properties );
         } else {
@@ -160,7 +218,8 @@ DatabaseList {
                 active: challenge.active,
                 notifications: challenge.notifications,
                 challengeId: challenge._id,
-                repeats: challenge.repeats
+                repeats: challenge.repeats,
+                count: challenge.count || 0
             };
             stack.push( "qrc:///ChallengeViewer.qml", properties );
         }

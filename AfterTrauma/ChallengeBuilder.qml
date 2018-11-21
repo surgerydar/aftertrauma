@@ -22,18 +22,14 @@ AfterTrauma.Page {
         //
         //
         //
-        //anchors.fill: parent
-        height: Math.min( parent.height, contentHeight )
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.margins: 16
+        anchors.fill: parent
+        anchors.bottomMargin: 4
         //
         //
         //
         interactive: contentHeight >= parent.height
         clip: true
-        spacing: 8
+        spacing: 4
         //
         //
         //
@@ -50,7 +46,7 @@ AfterTrauma.Page {
             label: !( model.type === "number" || model.type === "switch" ) && source  ? challenge[ model.field ] : model.label
             type: model.type
             options: model.options || undefined
-            radius: model.index === 0 ? [16,16,0,0] : model.index === builder.model.count - 1 ? [0,0,16,16] : [0]
+            //radius: model.index === 0 ? [16,16,0,0] : model.index === builder.model.count - 1 ? [0,0,16,16] : [0]
             on: model.type === "switch"  && source ? challenge[ model.field ] || false : false
             value: model.type === "number" && source ? challenge[ model.field ] || 1 : 1
             sourceText: ( model.field === "name" || model.field === "activity" ) && source ? challenge[model.field] || "" : ""
@@ -61,6 +57,7 @@ AfterTrauma.Page {
             onLabelChanged: {
                 if ( !( model.type === "switch" || model.type === "number" ) ) {
                     challenge[ model.field ] = label;
+                    sourceText = label;
                 }
             }
             onOnChanged: {
@@ -74,9 +71,6 @@ AfterTrauma.Page {
                     challenge[ model.field ] = value;
                 }
             }
-        }
-        add: Transition {
-            NumberAnimation { properties: "y"; from: builder.height; duration: 250 }
         }
     }
     //

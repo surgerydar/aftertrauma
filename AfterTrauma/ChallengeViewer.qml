@@ -35,7 +35,7 @@ AfterTrauma.Page {
             text: checked ? "done" : "to do"
             backgroundColour: checked ? Colours.darkGreen : Colours.red
             onCheckedChanged: {
-                challengeModel.updateCount( challengeId, checked ? repeats : 0 );
+                challengeModel.updateCount( challengeId, checked ? repeats : 0, checked );
                 var challenge = {
                     _id: challengeId,
                     name: title
@@ -133,6 +133,12 @@ AfterTrauma.Page {
     //
     //
     //
+    StackView.onActivated: {
+        doneCheckbox.checked = count >= repeats;
+    }
+    //
+    //
+    //
     function updateNotification() {
         challengeModel.updateNotification( challengeId );
         return true;
@@ -144,5 +150,6 @@ AfterTrauma.Page {
     property alias active: activeSwitch.checked
     property alias notifications: notificationsSwitch.checked
     property int repeats: 0
+    property int count: 0
     property string challengeId: ""
 }

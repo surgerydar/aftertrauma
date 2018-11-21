@@ -39,7 +39,7 @@ TextArea {
         anchors.right: parent.right
         visible: false
         font.pointSize: 10
-        text: "v"
+        text: "x"
         onClicked: {
             Qt.inputMethod.hide();
         }

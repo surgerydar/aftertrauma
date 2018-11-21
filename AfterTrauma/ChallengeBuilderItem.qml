@@ -30,6 +30,8 @@ Item {
                     container.selected();
                 } else {
                     if ( container.type === "name" || container.type === "description" ) {
+                        nameEditor.focus = false;
+                        descriptionEditor.focus = false;
                         Qt.inputMethod.hide();
                     }
                 }

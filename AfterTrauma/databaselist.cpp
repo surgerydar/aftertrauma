@@ -139,7 +139,7 @@ QVariant DatabaseList::add(QVariant o) {
     _filter();
     m_objectGuard.unlock();
     endResetModel();
-    emit dataChanged(createIndex(0,0),createIndex(m_objects.size()-1,0));
+    //emit dataChanged(createIndex(0,0),createIndex(m_objects.size()-1,0));
     //emit countChanged();
     QVariantMap id;
     id["_id"] = object["_id"];
@@ -151,29 +151,38 @@ QVariant DatabaseList::update(QVariant q,QVariant u, bool upsert) {
     QVariantMap query = q.value<QVariantMap>();
     QVariantMap update = u.value<QVariantMap>();
     QVariantList matches;
+    //QStringList ids;
     int count = m_objects.size();
     int minIndex = std::numeric_limits<int>::max();
     int maxIndex = std::numeric_limits<int>::min();
-    //beginResetModel();
-    for ( int i = 0; i < count; i++ ) {
+
+    for ( int i = 0; i < count; ++i ) {
         if ( _match(m_objects[i],query) ) {
             if ( i < minIndex ) minIndex = i;
             if ( i > maxIndex ) maxIndex = i;
             QVariantMap object = m_objects[i];
             matches.append(QVariantMap({{"_id",object["_id"]}}));
+            //ids.append(object["_id"].toString());
             _update(object,update);
             m_objects.replace(i,object);
         }
     }
     _sort();
     _filter();
-    //endResetModel();
     if ( matches.size() > 0 ) {
         qDebug() << "updated from : " << minIndex << " : to : " << maxIndex;
         m_objectGuard.unlock();
+        /*
+        count = matches.size();
+        for ( int i = 0; i < count; ++i ) {
+            int objectIndex = _indexOfItem(ids[i]);
+            if ( objectIndex >= 0 ) {
+                emit dataChanged(createIndex(minIndex,objectIndex),createIndex(maxIndex,objectIndex));
+            }
+        }
+        */
         //emit dataChanged(createIndex(minIndex,0),createIndex(maxIndex,0));
-        emit dataChanged(createIndex(0,0),createIndex(m_objects.size()-1,0)); // JONS: I suspect sort is causing refresh issues
-
+        emit dataChanged(createIndex(0,0),createIndex(m_objects.size()-1,0)); // JONS: I suspect sort is causing refresh issues so update entire list
     } else if ( upsert ) {
         m_objectGuard.unlock();
         return add(u);
@@ -314,7 +323,8 @@ inline bool compare( const QVariantMap& a, const QVariantMap& b, const QString& 
 //
 void DatabaseList::_sort() {
     if ( !m_sort.empty() ) {
-        std::sort(m_objects.begin(),m_objects.end(),[this](const QVariantMap& a, const QVariantMap& b) -> bool {
+        std::stable_sort(m_objects.begin(),m_objects.end(),[this](const QVariantMap& a, const QVariantMap& b) -> bool {
+            //std::sort(m_objects.begin(),m_objects.end(),[this](const QVariantMap& a, const QVariantMap& b) -> bool {
             QVariantMap::const_iterator it = this->m_sort.constBegin();
             while (it != this->m_sort.constEnd()) {
                 if ( !compare(a,b,it.key(),it.value().toInt() ) ) return false;
@@ -466,4 +476,15 @@ void DatabaseList::_update( QVariantMap& object, QVariantMap& update ) {
 }
 QString DatabaseList::_path() {
     return SystemUtils::shared()->documentDirectory().append("/").append(m_collection).append(".json");
+}
+int DatabaseList::_indexOfItem( const QString& _id ) {
+    int count = _activeList().size();
+    for ( int i = 0; i < count; ++i ) {
+        if ( _activeList()[i].contains("_id") ) {
+            if ( _activeList()[i][ "_id" ].toString() == _id ) {
+                return i;
+            }
+        }
+    }
+    return -1;
 }

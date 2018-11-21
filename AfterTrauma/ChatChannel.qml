@@ -167,6 +167,7 @@ Item {
                         //
                         // remove from database
                         //
+                        unreadChatsModel.markAsRead(command.chatid);
                         chatModel.remove({id:command.chatid});
                         chatModel.save();
                         //

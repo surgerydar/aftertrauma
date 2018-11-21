@@ -49,31 +49,33 @@ AfterTrauma.Page {
         //
         delegate: ChallengeManagerItem {
             width: challenges.width
-            name: model.name
+            name: /*'(' + model.count + '/' + model.repeats + ') ' + */model.name
             activity: model.activity
             swipeEnabled: editable
             active: model.active
-            done: model.count >= model.repeats
+            done: model.count !== undefined && model.count >= model.repeats
             onUpdateDone: {
-                done = isDone;
-                challengeModel.updateCount( model._id, done ? model.repeats : 0 );
+                //done = isDone;
+                challengeModel.updateCount( model._id, isDone ? model.repeats : 0, isDone );
                 var challenge = {
                     _id: model._id,
                     name: model.name
                 };
                 var date = new Date();
-                if ( done ) {
+                if ( isDone ) {
                     dailyModel.addChallenge( date, challenge );
                 } else {
                     dailyModel.removeChallenge( date, challenge );
                 }
             }
-
             onEdit: {
-                stack.push( "qrc:///ChallengeBuilder.qml", {source: challengeModel.get(index)});
+                var challenge = challengeModel.findOne({_id:model._id});
+                if ( challenge ) {
+                    stack.push( "qrc:///ChallengeBuilder.qml", {source: challenge});
+                }
             }
             onRemove: {
-                challengeModel.remove({_id:challengeModel.get(index)._id});
+                challengeModel.remove({_id:model._id});
                 usageModel.add('challenges', 'remove', 'challenge' );
             }
             onClicked: {
@@ -82,9 +84,6 @@ AfterTrauma.Page {
                     usageModel.add('challenges', 'view', 'challenge' );
                 }
             }
-        }
-        add: Transition {
-            NumberAnimation { properties: "y"; from: challenges.height; duration: 250 }
         }
     }
     //
@@ -154,6 +153,13 @@ AfterTrauma.Page {
     StackView.onActivated: {
         //challengeModel.load();
         //editable = false;
+        //
+        // update notifications
+        //
+        challengeModel.resetExpiredCounts();
+        //
+        //
+        //
         if ( !onStack ) {
             onStack = true;
             usageModel.add('challenges', 'open' );
@@ -165,7 +171,6 @@ AfterTrauma.Page {
         //
         onStack = false;
         usageModel.add('challenges', 'close' );
-
     }
 
     function formatDescription( activity, repeats, frequency ) {
