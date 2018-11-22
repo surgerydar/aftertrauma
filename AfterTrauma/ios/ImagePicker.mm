@@ -6,6 +6,7 @@
 #include <QDebug>
 #include <QStandardPaths>
 #include <QFile>
+#include <QDateTime>
 #include "../imagepicker.h"
 
 @interface ImagePickerDelegate : NSObject<UIImagePickerControllerDelegate,UINavigationControllerDelegate> {
@@ -96,7 +97,7 @@ bool showPicker( UIImagePickerControllerSourceType source ) {
                 qDebug() << "Picked image width:" << chosenQImage.width() << " height:" << chosenQImage.height();
                 //data["image"] = QVariant::fromValue<QImage>(chosenQImage);
 
-
+                /*
                 QString pathTemplate = QStandardPaths::writableLocation(QStandardPaths::HomeLocation).append("/Documents/aftertrauma/image%1.jpg");
                 int i = 0;
                 QString path;
@@ -105,6 +106,8 @@ bool showPicker( UIImagePickerControllerSourceType source ) {
                     qDebug() << "attempting to save image to : " << path;
                 } while( QFile::exists(path) );
                 qDebug() << "saving image to : " << path;
+                */
+                QString path = QStandardPaths::writableLocation(QStandardPaths::HomeLocation).append("/Documents/aftertrauma/image-%1.jpg").arg(QDateTime::currentDateTime().toString("yyyy-MM-dd-HH-mm-ss"));
                 chosenQImage.save(path);
                 qDebug() << "image saved to to : " << path;
                 ImagePicker::shared()->imagePicked(path);

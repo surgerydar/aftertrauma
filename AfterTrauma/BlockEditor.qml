@@ -88,6 +88,7 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         visible: showDate
         textMonth: true
+        maximumDate: new Date()
     }
     //
     //

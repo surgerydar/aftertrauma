@@ -3,6 +3,7 @@
 #include <QAndroidActivityResultReceiver>
 #include <QAndroidJniEnvironment>
 #include <QDebug>
+#include <QDateTime>
 #include <QFile>
 #include <QCoreApplication>
 
@@ -43,13 +44,17 @@ public:
     }
 
     QString uniquePath() {
+        /*
         QString pathTemplate = SystemUtils::shared()->documentDirectory().append("/image%1.jpg");
         int i = 0;
         QString path;
         do {
             path = pathTemplate.arg(i++);
         } while( QFile::exists(path) );
+
         return path;
+        */
+        return SystemUtils::shared()->documentDirectory().append("/image-%1.jpg").arg(QDateTime::currentDateTime().toString("yyyy-MM-dd-HH-mm-ss"));
     }
 
     void showGallery() {
