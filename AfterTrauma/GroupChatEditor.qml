@@ -182,6 +182,7 @@ Rectangle {
             anchors.left: parent.left
             anchors.leftMargin: 16
             image: "icons/chat.png"
+            enabled: subjectField.text.length > 0 && ( membersList.count > 0 || publicCheckBox.checked )
             onClicked: {
                 save( true );
                 container.close();
@@ -210,6 +211,7 @@ Rectangle {
         width: container.width
         height: container.height
         x: 0
+        enableDirectChat: false
         onAction: {
             console.log( "ProfileSearch : " + (selected?"selected":"deselected") + " : " + user.id );
             var temp = members;
@@ -264,9 +266,8 @@ Rectangle {
 
     function save( viewChat ) {
         if ( callback ) {
-
             chat.subject = subjectField.text;
-            var tags = tagsField.text.split();
+            var tags = tagsField.text.split(",");
             chat.tags = [];
             tags.forEach( function(tag) {
                 var trimmedTag = tag.trim().toLowerCase();

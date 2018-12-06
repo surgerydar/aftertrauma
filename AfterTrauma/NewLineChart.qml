@@ -66,6 +66,7 @@ Rectangle {
         //
         //
         //
+        /*
         function drawScales(ctx, high, low, vol) {
             ctx.save();
             ctx.strokeStyle = "#888888";
@@ -92,6 +93,7 @@ Rectangle {
             ctx.stroke();
             ctx.restore();
         }
+        */
         //
         //
         //
@@ -112,7 +114,7 @@ Rectangle {
             ctx.stroke();
             ctx.restore();
         }
-
+        /*
         function drawError(ctx, msg) {
             ctx.save();
             ctx.strokeStyle = "#888888";
@@ -130,6 +132,7 @@ Rectangle {
             ctx.stroke();
             ctx.restore();
         }
+        */
         //
         //
         //
@@ -156,12 +159,14 @@ Rectangle {
             var points = {};
             var x = 0;
             var previousX = 0;
-            var h = 9 * yGridStep;
+            //var h = 9 * yGridStep;
+            var h = height;
             var minTime = chart.startDate.getTime();
             var maxTime = chart.endDate.getTime();
             var dTime = maxTime - minTime;
             var dIndex = 1;// TODO: skip
             var day, point, value;
+            var relativeValue = 0.0;
             if ( startIndex === endIndex ) {
                 day = dailyModel.get(startIndex);
                 for ( var j = 0; j < day.values.length; j++ ) {
@@ -169,8 +174,9 @@ Rectangle {
                     if ( points[value.label] === undefined ) {
                         points[value.label] = [];
                     }
-                    points[value.label].push({ x: 0, y: h - ( h * value.value ) });
-                    points[value.label].push({ x: width, y: h - ( h * value.value ) });
+                    relativeValue = Math.max( 0.0, Utils.map(value.value, 0.25, 1.0, 0.125, 0.875 ) );
+                    points[value.label].push({ x: 0, y: h - ( h * relativeValue) });
+                    points[value.label].push({ x: width, y: h - ( h * relativeValue ) });
                     //
                     //
                     //
@@ -201,9 +207,10 @@ Rectangle {
                             if ( points[value.label] === undefined ) {
                                 points[value.label] = [];
                             }
+                            relativeValue = Math.max( 0.0, Utils.map(value.value, 0.25, 1.0, 0.125, 0.875 ) );
                             point = {
                                 x: x,
-                                y: h - ( h * value.value )
+                                y: h - ( h * relativeValue )
                             };
                             points[value.label].push(point);
 

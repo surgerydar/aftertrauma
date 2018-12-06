@@ -109,33 +109,45 @@ Item {
                     switch( command.command ) {
                     case 'groupgetuserchats':
                         //
-                        // update unread count
-                        //
-                        command.response.forEach(function(chat) {
-                            var delta = 0;
-                            var existing = chatModel.findOne({id:chat.id});
-                            if ( existing ) {
-                                delta = chat.messages && existing.messages ? chat.messages.length - existing.messages.length : 0;
-                            } else {
-                                delta = chat.messages ? chat.messages.length : 0;
-                            }
-                            for ( var i = 0; i < delta; i++ ) {
-                                unreadChatsModel.addMessage(chat.id);
-                            }
-                        });
-                        //
                         // update model
                         //
-                        chatModel.clear();
+                        //chatModel.clear();
+                        var activeChats = [];
                         chatModel.beginBatch();
                         command.response.forEach(function(chat) {
                             //
                             // TODO: update rather than replace, store ids for future delete
                             //
                             //console.log( 'adding user chat: ' + JSON.stringify( chat ) );
-                            chatModel.batchAdd(chat);
+                            //
+                            // update tag database
+                            //
+                            chatModel.updateTagDatabase(chat);
+                            //
+                            // update unread count
+                            //
+                            if ( userProfile && isMember( userProfile.id, chat ) ) {
+                                var delta = 0;
+                                var existing = chatModel.findOne({id:chat.id});
+                                if ( existing ) {
+                                    delta = chat.messages && existing.messages ? chat.messages.length - existing.messages.length : 0;
+                                } else {
+                                    delta = chat.messages ? chat.messages.length : 0;
+                                }
+                                for ( var i = 0; i < delta; i++ ) {
+                                    unreadChatsModel.addMessage(chat.id);
+                                }
+                            } else {
+                                unreadChatsModel.markAsRead(chat.id);
+                            }
+                            activeChats.push({id: chat.id});
+                            chatModel.batchUpdate({id: chat.id}, chat, true);
                         });
                         chatModel.endBatch();
+                        //
+                        //
+                        //
+                        chatModel.remove({$nin:activeChats});
                         //
                         // TODO: refresh all active message models
                         //
@@ -251,10 +263,10 @@ Item {
                     }
                 } else {
                     // TODO: handle error
-                    console.log( 'ChatChannel : error : ' + command.error );
+                    console.log( 'ChatChannel : error : ' + JSON.stringify(command.error) );
                 }
             } catch( error ) {
-                console.log('ChatChannel : unable to parse message : ' );
+                console.log('ChatChannel : unable to parse message : ' + message + ' : error : ' + error );
             }
 
         }
@@ -306,6 +318,13 @@ Item {
                  id: userProfile.id
              });
     }
+    function isMember( userId, chat ) {
+        if ( userId && chat ) {
+            return chat.owner === userId || chat.members.indexOf(userId) >= 0;
+        }
+        return false;
+    }
+
     //
     //
     //

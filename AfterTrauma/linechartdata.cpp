@@ -409,6 +409,11 @@ void LineChartData::drawAxis( QPainter* painter, const AxisData& axis, const QRe
     painter->restore();
 }
 
+// JONS: this is to align with faces
+qreal mapData( qreal value, qreal valueMin, qreal valueMax, qreal targetMin, qreal targetMax ) {
+    return ( ( value - valueMin ) / ( valueMax - valueMin ) ) * ( targetMax - targetMin ) + targetMin;
+}
+
 void LineChartData::drawData( QPainter* painter, const DataSet& data, const QRect& r ) {
     if ( data.m_data.size() > 0 ) {
         //
@@ -424,14 +429,18 @@ void LineChartData::drawData( QPainter* painter, const DataSet& data, const QRec
         //
         QPen pen( data.m_colour );
         QPainterPath path;
+
+        qreal outputMin = ( 1.0 / m_faces.size() ) / 2.;
+        qreal outputMax = 1.0 - outputMin;
+
         path.moveTo(
                     r.x()+data.m_data[ 0 ].x()*(double)r.width(),
-                    r.y()+((double)r.height()-data.m_data[ 0 ].y()*(double)r.height())
+                    r.y()+((double)r.height()-mapData( data.m_data[ 0 ].y(), .25, 1., outputMin, outputMax ) *(double)r.height())
                 );
         for ( int i = 1; i < data.m_data.size(); ++i ) {
             path.lineTo(
                         r.x()+data.m_data[ i ].x()*(double)r.width(),
-                        r.y()+((double)r.height()-data.m_data[ i ].y()*(double)r.height())
+                        r.y()+((double)r.height()-mapData( data.m_data[ i ].y(), .25, 1., outputMin, outputMax )*(double)r.height())
                     );
         }
         painter->strokePath(path,pen);

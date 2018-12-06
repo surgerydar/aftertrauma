@@ -69,6 +69,7 @@ public slots:
     //
     void beginBatch();
     QVariant batchAdd(QVariant o);
+    QVariant batchUpdate(QVariant q,QVariant u,bool upsert = false);
     void endBatch();
     //
     //

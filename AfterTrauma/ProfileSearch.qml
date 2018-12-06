@@ -85,7 +85,10 @@ Rectangle {
                     username: model.username,
                     profile:  model.profile
                 };
-                action(user,selected);
+                container.action(user,selected);
+            }
+            onAction: {
+                profileViewer.open(id,container.enableDirectChat);
             }
         }
         //
@@ -204,4 +207,5 @@ Rectangle {
     }
     property bool attemptedSearch: false
     property bool selectionEnabled: true
+    property bool enableDirectChat: true
 }

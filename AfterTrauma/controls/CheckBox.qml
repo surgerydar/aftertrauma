@@ -12,6 +12,7 @@ CheckBox {
     //
     //
     indicator: Rectangle {
+        id: indicatorBox
         width: control.height - 8
         anchors.top: control.top
         anchors.bottom: control.bottom
@@ -48,6 +49,7 @@ CheckBox {
     //
     //
     //
+    property alias indicatorColour: indicatorBox.color
     property alias textColour: label.color
     property alias textSize: label.font.pointSize
     property string direction: "Left"

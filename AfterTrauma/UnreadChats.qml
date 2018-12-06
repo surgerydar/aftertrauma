@@ -41,9 +41,13 @@ DatabaseList {
     //
     //
     function markAsRead( chatId ) {
-        remove({id:chatId});
-        save();
-        updateTotalCount();
+        if ( remove({id:chatId}).length > 0 ) {
+            console.log( 'UnreadChats.markAsRead : removed : ' + chatId );
+            save();
+            updateTotalCount();
+        } else {
+            console.log( 'UnreadChats.markAsRead : unable to find : ' + chatId );
+        }
     }
     //
     //

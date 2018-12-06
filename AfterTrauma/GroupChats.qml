@@ -29,7 +29,7 @@ DatabaseList {
         for ( var i = 0; i < count; i++ ) {
             var chat = get(i);
             //console.log( 'GroupChats.findPrivateChatWithUser : testing chat : ' + chat.id + ' public=' + chat['public'] + ' members=' + JSON.stringify(chat.members) );
-            if ( !chat['public'] && chat.members.length <= 2 && chat.members.indexOf(id) >= 0 ) return chat;
+            if ( !chat['public'] && chat.members.length === 1 && chat.members.indexOf(id) >= 0 ) return chat;
         }
         return undefined;
     }
@@ -147,6 +147,85 @@ DatabaseList {
             }
         }
         return undefined;
+    }
+    //
+    //
+    //
+    function openChat( chatId, join ) {
+        var chat = chatModel.findOne({id:chatId});
+        var command;
+        if ( chat ) {
+            if ( chat.owner !== userProfile.id ) {
+                //
+                // check if we have accepted invite
+                //
+                if ( chat.active === undefined || chat.active.indexOf(userProfile.id) < 0 ) { // TODO: remove legacy chat support
+
+                    if ( chat.invited !== undefined && chat.invited.indexOf(userProfile.id) >= 0 ) { // TODO: remove legacy chat support
+                        //
+                        // invited so accept
+                        //
+                        command = {
+                            command: 'groupacceptinvite',
+                            token: userProfile.token,
+                            chatid: chat.id,
+                            userid: userProfile.id
+                        };
+
+                    } else if ( chat["public"] ) {
+                        console.log( 'GroupChatManager.openChat : joining public chat : ' + chat.id );
+                        //
+                        // public so join
+                        //
+                        command = {
+                            command: 'groupjoinchat',
+                            token: userProfile.token,
+                            chatid: chat.id,
+                            userid: userProfile.id
+                        };
+                    }
+                    if ( command ) {
+                        chatChannel.send(command);
+                    } else {
+                        console.log( 'GroupChatManager.openChat : unable to load chat ' + JSON.stringify(chat ) );
+                        return;
+                    }
+                }
+            }
+            console.log( 'GroupChatManager.openChat : loading chat : ' + chat.subject );
+            var properties = {
+                chatId:chat.id,
+                messages:chatModel.getMessageModel(chat.id),
+                subject: chat.subject + ( chat["public"] ?  ' ( public )' : '' )
+            };
+            stack.push( "qrc:///GroupChat.qml", properties);
+        } else if ( join ) {
+            //
+            // join chat
+            //
+            command = {
+                command: 'groupjoinchat',
+                token: userProfile.token,
+                chatid: chatId,
+                userid: userProfile.id,
+                show: true
+            };
+            chatChannel.send(command);
+        }
+    }
+    //
+    //
+    //
+    function updateTagDatabase( chat ) {
+        //
+        // update tag database
+        //
+        if ( chat.tags ) {
+            chat.tags.forEach( function(tag) {
+                tagsModel.updateTag( tag.toLowerCase(), { section: "chats", document: chat.id } );
+            });
+            tagsModel.save();
+        }
     }
     //
     //

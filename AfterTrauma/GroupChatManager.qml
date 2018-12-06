@@ -19,6 +19,10 @@ AfterTrauma.Page {
         //
         //
         //
+        visible: false
+        //
+        //
+        //
         clip: true
         spacing: 4
         //
@@ -51,10 +55,10 @@ AfterTrauma.Page {
                     // connect to signals
                     //
                     item.chat.connect(function() {
-                        openChat(model.id);
+                        chatModel.openChat(model.id);
                     });
                     item.edit.connect(function() {
-                        var chat = chatModel.get( index );
+                        var chat = chatModel.findOne( {id:model.id} );
                         console.log( 'editing chat : ' + JSON.stringify(chat) );
                         chatEditor.show(chat, function(edited,showChat) {
                             delete chat._id; // JONS: fudge to prevent update conflict on mongo update
@@ -64,6 +68,13 @@ AfterTrauma.Page {
                                 chat: edited,
                                 show: showChat
                             };
+                            //
+                            //
+                            //
+                            chatModel.updateTagDatabase(edited);
+                            //
+                            //
+                            //
                             chatChannel.send(command);
                             //
                             //
@@ -96,6 +107,7 @@ AfterTrauma.Page {
         width: container.width
         height: container.height - ( footerItem.height * 2 )
         x: 0
+        enableDirectChat: true
         onAction: {
             //
             // TODO: find existing or start new chat with selected user
@@ -110,7 +122,7 @@ AfterTrauma.Page {
         height: container.height - ( footerItem.height * 2 )
         x: 0
         onAction: {
-            openChat( chatId, true );
+            chatModel.openChat( chatId, true );
             close();
         }
     }
@@ -176,6 +188,13 @@ AfterTrauma.Page {
                         chat: edited,
                         show: showChat
                     };
+                    //
+                    //
+                    //
+                    chatModel.updateTagDatabase(edited);
+                    //
+                    //
+                    //
                     chatChannel.send(command);
                 });
                 //
@@ -193,13 +212,23 @@ AfterTrauma.Page {
     //
     //
     StackView.onActivated: {
-        chatModel.load();
-        if ( !onStack ) {
+
+        if ( userProfile ) {
+            chatModel.filter = { $or: [ { owner: userProfile.id }, { members: userProfile.id } ] };
+        } else {
+            chatModel.filter = {};
+        }
+
+        chatModel.load(); // ????
+         if ( !onStack ) {
             onStack = true;
             usageModel.add('chat', 'open' );
         }
+        chats.visible = true;
     }
     StackView.onDeactivated: {
+        chats.visible = false;
+        chatModel.filter = {};
     }
     StackView.onRemoved: {
         onStack = false;
@@ -217,7 +246,7 @@ AfterTrauma.Page {
         onCreateChat:{
             console.log( 'ChatManager : create chat');
             if ( command.show ) {
-                openChat( command.chat.id );
+                chatModel.openChat( command.chat.id );
             }
             /* JONS: these have been moved to ChatChannel
             chatModel.add(command.chat);
@@ -227,7 +256,7 @@ AfterTrauma.Page {
         onUpdateChat:{
             console.log( 'ChatManager : update chat : ' + JSON.stringify(command.chat) );
             if ( command.show ) {
-                openChat( command.chat.id );
+                chatModel.openChat( command.chat.id );
             }
             /* JONS: these have been moved to ChatChannel
             chatModel.update({id: command.chat.id}, command.chat);
@@ -244,73 +273,8 @@ AfterTrauma.Page {
         onJoinChat: {
             console.log( 'ChatManager : join chat : ' + JSON.stringify(command.chatid) );
             if ( command.show ) {
-                openChat( command.chatid );
+                chatModel.openChat( command.chatid );
             }
-        }
-    }
-    //
-    //
-    //
-    function openChat( chatId, join ) {
-        var chat = chatModel.findOne({id:chatId});
-        var command;
-        if ( chat ) {
-            if ( chat.owner !== userProfile.id ) {
-                //
-                // check if we have accepted invite
-                //
-                if ( chat.active === undefined || chat.active.indexOf(userProfile.id) < 0 ) { // TODO: remove legacy chat support
-
-                    if ( chat.invited !== undefined && chat.invited.indexOf(userProfile.id) >= 0 ) { // TODO: remove legacy chat support
-                        //
-                        // invited so accept
-                        //
-                        command = {
-                            command: 'groupacceptinvite',
-                            token: userProfile.token,
-                            chatid: chat.id,
-                            userid: userProfile.id
-                        };
-
-                    } else if ( chat["public"] ) {
-                        console.log( 'GroupChatManager.openChat : joining public chat : ' + chat.id );
-                        //
-                        // public so join
-                        //
-                        command = {
-                            command: 'groupjoinchat',
-                            token: userProfile.token,
-                            chatid: chat.id,
-                            userid: userProfile.id
-                        };
-                    }
-                    if ( command ) {
-                        chatChannel.send(command);
-                    } else {
-                        console.log( 'GroupChatManager.openChat : unable to load chat ' + JSON.stringify(chat ) );
-                        return;
-                    }
-                }
-            }
-            console.log( 'GroupChatManager.openChat : loading chat : ' + chat.subject );
-            var properties = {
-                chatId:chat.id,
-                messages:chatModel.getMessageModel(chat.id),
-                subject: chat.subject
-            };
-            stack.push( "qrc:///GroupChat.qml", properties);
-        } else if ( join ) {
-            //
-            // join chat
-            //
-            command = {
-                command: 'groupjoinchat',
-                token: userProfile.token,
-                chatid: chatId,
-                userid: userProfile.id,
-                show: true
-            };
-            chatChannel.send(command);
         }
     }
 }

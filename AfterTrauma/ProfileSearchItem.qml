@@ -63,7 +63,7 @@ Rectangle {
         anchors.top: parent.verticalCenter
         anchors.left: avatarImage.right
         anchors.bottom: parent.bottom
-        anchors.right: selectionEnabled ? select.left : parent.right
+        anchors.right: selectionEnabled ? select.left : chatButton.left
         anchors.topMargin: 4
         anchors.leftMargin: 8
         anchors.rightMargin: 8
@@ -88,7 +88,8 @@ Rectangle {
         anchors.right: select.left//selectionEnabled ? select.left : parent.right
         anchors.margins: 4
         onClicked: {
-            profileViewer.open(userId);
+            action(userId);
+            //profileViewer.open(userId);
         }
     }
     //
@@ -99,6 +100,7 @@ Rectangle {
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
         anchors.rightMargin: 8
+        indicatorColour: Colours.lightSlate
         text: "select"
     }
     //
@@ -145,6 +147,10 @@ Rectangle {
             close();
         }
     }
+    //
+    //
+    //
+    signal action(string id);
     //
     //
     //

@@ -91,3 +91,7 @@ function challengeFrequencyLabel( canonical, capitalise ) {
 function challengeFrequencyCanonical( label ) {
     return label.replace(/\s+/g, '').toLowerCase();
 }
+
+function map( value, valueMin, valueMax, targetMin, targetMax ) {
+    return ( ( value - valueMin ) / ( valueMax - valueMin ) ) * ( targetMax - targetMin ) + targetMin;
+}

@@ -40,21 +40,37 @@ AfterTrauma.Page {
             //
             onClicked: {
                 console.log( 'SearchItem.onClicked' )
-                if ( model.section === "resources" ) {
+                switch( model.section ) {
+                case "resources" :
                     var category = categoryModel.findOne({category:model.category});
                     stack.push( "qrc:///DocumentViewer.qml", { title: ( category && category.title ? category.title : container.title ), subtitle: model.title, colour: colour, document: model.document });
-                } else {
+                    break;
+                case "challenges" :
                     challengeModel.viewChallenge(model.document);
+                    break;
+                case "chats" :
+                    chatModel.openChat(model.document);
+                    break;
+                default:
+                    colour = Colours.red;
                 }
             }
             //
             //
             //
             Component.onCompleted: {
-                if (  model.section === "resources" ) {
+                switch( model.section ) {
+                case "resources" :
                     setColour(model.category);
-                } else {
+                    break;
+                case "challenges" :
                     colour = Colours.lightGreen;
+                    break;
+                case "chats" :
+                    colour = Colours.darkPurple;
+                    break;
+                default:
+                    colour = Colours.red;
                 }
             }
         }
@@ -161,10 +177,13 @@ AfterTrauma.Page {
                 console.log( 'find frequency : ' + JSON.stringify(frequency) );
                 var document_ids = [];
                 var challenge_ids = [];
+                var chat_ids = [];
                 for ( var id in frequency ) {
                     if ( frequency[ id ].frequency >= searchResults.length ) { // matches all tags
                         if ( frequency[ id ].section ==='challenges' ) {
                             challenge_ids.push(id);
+                        } else if ( frequency[ id ].section ==='chats' ) {
+                            chat_ids.push(id);
                         } else {
                             document_ids.push(id);
                         }
@@ -204,11 +223,75 @@ AfterTrauma.Page {
                                              section: "challenges"
                                          });
                 });
+                if ( chatChannel.connected ) {
+                    var chats = chatModel.find( { id : { $in: chat_ids } } );
+                    chats.forEach( function( chat ) {
+                        results.model.append( {
+                                                 document: chat.id,
+                                                 title: chat.subject,
+                                                 summary: "",
+                                                 section: "chats"
+                                             });
+                    });
+                }
             }
             //
             //
             //
             usageModel.add('search', 'search', undefined, {tags: tags} );
+        }
+    }
+    //
+    // TODO: centralise this
+    //
+    function openChat( chatId ) {
+        var chat = chatModel.findOne({id:chatId});
+        var command;
+        if ( chat ) {
+            if ( chat.owner !== userProfile.id ) {
+                //
+                // check if we have accepted invite
+                //
+                if ( chat.active === undefined || chat.active.indexOf(userProfile.id) < 0 ) { // TODO: remove legacy chat support
+
+                    if ( chat.invited !== undefined && chat.invited.indexOf(userProfile.id) >= 0 ) { // TODO: remove legacy chat support
+                        //
+                        // invited so accept
+                        //
+                        command = {
+                            command: 'groupacceptinvite',
+                            token: userProfile.token,
+                            chatid: chat.id,
+                            userid: userProfile.id
+                        };
+
+                    } else if ( chat["public"] ) {
+                        console.log( 'GroupChatManager.openChat : joining public chat : ' + chat.id );
+                        //
+                        // public so join
+                        //
+                        command = {
+                            command: 'groupjoinchat',
+                            token: userProfile.token,
+                            chatid: chat.id,
+                            userid: userProfile.id
+                        };
+                    }
+                    if ( command ) {
+                        chatChannel.send(command);
+                    } else {
+                        console.log( 'GroupChatManager.openChat : unable to load chat ' + JSON.stringify(chat ) );
+                        return;
+                    }
+                }
+            }
+            console.log( 'GroupChatManager.openChat : loading chat : ' + chat.subject );
+            var properties = {
+                chatId:chat.id,
+                messages:chatModel.getMessageModel(chat.id),
+                subject: chat.subject
+            };
+            stack.push( "qrc:///GroupChat.qml", properties);
         }
     }
 }

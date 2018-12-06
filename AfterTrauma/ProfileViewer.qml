@@ -113,6 +113,7 @@ Rectangle {
             anchors.right: parent.right
             anchors.rightMargin: 16
             image: "icons/chat.png"
+            visible: directChatEnabled
             onClicked: {
                 var chat = chatModel.findPrivateChatWithUser(userId);
                 if ( chat ) {
@@ -132,6 +133,7 @@ Rectangle {
                         subject: "Chat with " + title.text,
                         "public": false,
                         members: [userId],
+                        active: [userId],
                         messages: []
                     };
                     chatEditor.show(chat, function(edited,showChat) {
@@ -232,7 +234,8 @@ Rectangle {
     //
     //
     //
-    function open( _userId ) {
+    function open( _userId, enableDirectChat ) {
+        directChatEnabled = enableDirectChat || false;
         userId = _userId;
         container.state = "open";
         contents.model.clear();
@@ -246,4 +249,5 @@ Rectangle {
     //
     //
     property string userId: ""
+    property bool directChatEnabled: false
 }

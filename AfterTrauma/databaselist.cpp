@@ -288,6 +288,36 @@ QVariant DatabaseList::batchAdd(QVariant o) {
     id["_id"] = object["_id"];
     return QVariant(id);
 }
+
+QVariant DatabaseList::batchUpdate(QVariant q,QVariant u, bool upsert) {
+    QVariantMap query = q.value<QVariantMap>();
+    QVariantMap update = u.value<QVariantMap>();
+    QVariantList matches;
+    //QStringList ids;
+    int count = m_objects.size();
+    int minIndex = std::numeric_limits<int>::max();
+    int maxIndex = std::numeric_limits<int>::min();
+
+    for ( int i = 0; i < count; ++i ) {
+        if ( _match(m_objects[i],query) ) {
+            if ( i < minIndex ) minIndex = i;
+            if ( i > maxIndex ) maxIndex = i;
+            QVariantMap object = m_objects[i];
+            matches.append(QVariantMap({{"_id",object["_id"]}}));
+            //ids.append(object["_id"].toString());
+            _update(object,update);
+            m_objects.replace(i,object);
+        }
+    }
+    if ( matches.length() > 0 ) {
+        return QVariant(matches);
+    } else if ( upsert ) {
+        qDebug() << "DatabaseList::batchUpdate : upserting : " << update;
+        return batchAdd(u);
+    }
+    return QVariant();
+}
+
 void DatabaseList::endBatch() {
     _sort();
     _filter();
@@ -336,7 +366,7 @@ void DatabaseList::_sort() {
 }
 void DatabaseList::_filter() {
     if ( !m_filter.isEmpty() ) {
-        //qDebug() << "filtering " << m_objects.size() << " items by : " << m_filter;
+        qDebug() << "filtering " << m_objects.size() << " items by : " << m_filter;
         m_filtered.clear();
         int count = m_objects.size();
         for ( int i = 0; i < count; i++ ) {
@@ -366,7 +396,7 @@ bool DatabaseList::_match( QVariantMap& object, QVariantMap& query ) {
             }
             if ( !_current.contains(_keys.last()) || !_matchValue( _current[ _keys.last() ], query[ key ] ) ) return false;
         } else if ( key.startsWith('$') ) { // complex ( aggregate ) condition TODO: rethink this
-            if ( key == "$or" ) {
+            if ( key == "$or" || key == "$in") {
                 QVariantList _conditions = query[key].toList();
                 for ( auto& _condition : _conditions ) {
                     QVariantMap _conditionMap = _condition.toMap();
@@ -383,9 +413,17 @@ bool DatabaseList::_match( QVariantMap& object, QVariantMap& query ) {
                     if ( !object.contains(conditionKey) || !_matchValue(object[conditionKey],_conditionMap[conditionKey]) ) return false;
                 }
                 return true;
-            }
-            qDebug() << "DatabaseList::_match : unsupported operation : " << key;
-            return false;
+            } else if ( key == "$nin" ) {
+                QVariantList _conditions = query[key].toList();
+                for ( auto& _condition : _conditions ) {
+                    QVariantMap _conditionMap = _condition.toMap();
+                    QString conditionKey = _conditionMap.firstKey();
+                    if ( object.contains(conditionKey) && _matchValue(object[conditionKey],_conditionMap[conditionKey])) return false;
+                }
+                return true;
+           }
+           qDebug() << "DatabaseList::_match : unsupported operation : " << key;
+           return false;
         } else { // simple condiion
             if ( !object.contains(key) || !_matchValue( object[ key ], query[ key ] ) ) return false;
         }
@@ -395,6 +433,7 @@ bool DatabaseList::_match( QVariantMap& object, QVariantMap& query ) {
 inline bool DatabaseList::_matchValue( QVariant& value, QVariant& condition ) {
     if ( value.canConvert<QVariantList>() ) { // value is array
         // TODO: array of documents
+        qDebug() << "DatabaseList::_matchValue : matching array";
         QVariantList _value = value.value<QVariantList>();
         for ( auto& _current : _value ) {
             if ( _matchValue( _current, condition ) ) {
@@ -417,6 +456,16 @@ inline bool DatabaseList::_matchValue( QVariant& value, QVariant& condition ) {
                 //if ( value == _value ) return true;
                 if ( _matchValue(value, _value) ) return true; // allow complex conditions
             }
+            return false;
+        } else if ( _condition.contains("$nin") ) {
+            //qDebug() << "matching $nin";
+            QVariantList _values = _condition.value( "$in" ).toList();
+            for ( auto& _value : _values ) {
+                //qDebug() << "matching : " << value << " : " << _value;
+                //if ( value == _value ) return true;
+                if ( _matchValue(value, _value) ) return false; // allow complex conditions
+            }
+            return true;
         } else if ( _condition.contains("$or") ) {
             //qDebug() << "matching $or";
             QVariantList _values = _condition.value( "$or" ).toList();

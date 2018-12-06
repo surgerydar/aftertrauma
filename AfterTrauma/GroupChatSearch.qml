@@ -36,7 +36,7 @@ Rectangle {
             font.pixelSize: 36
             font.weight: Font.Light
             font.family: fonts.light
-            text: "FIND GROUPS"
+            text: "FIND GROUPS AND TOPICS"
         }
         //
         //

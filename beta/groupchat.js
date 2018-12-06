@@ -128,7 +128,7 @@ GroupChat.prototype.groupgetuserchats = function( wss, ws, command ) {
     process.nextTick(function(){   
         if ( access.verifyCommand( ws, command ) ) {
             // get all group chats user is a member of
-            _db.find('groupchats',{$or:[{members: command.id},{owner: command.id}/*,{public:true}*/]},{},{date:-1}).then(function( response ) {
+            _db.find('groupchats',{$or:[{members: command.id},{owner: command.id},{public:true}]},{},{date:-1}).then(function( response ) {
                 command.status = 'OK';
                 command.response = response;
                 ws.send(JSON.stringify(command));

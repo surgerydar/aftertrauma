@@ -113,8 +113,8 @@ DatabaseList {
     }
 
     function resetExpiredCounts() {
+        /*
         var now = Date.now();
-        var active = find({active:true});
         var updated = false;
         active.forEach( function( challenge ) {
             var period = periodFromFrequency( challenge.frequency );
@@ -128,6 +128,27 @@ DatabaseList {
                 updated = true;
             }
         });
+        */
+        var now = Date.now();
+        var updated = false;
+        for ( var i = 0; i < count; i++ ) {
+            var challenge = get(i);
+            if ( challenge.count >= challenge.repeats ) {
+                var period = periodFromFrequency( challenge.frequency );
+                var elapsed = now - challenge.date;
+                console.log( 'challenge id=' + challenge._id + ' name=' + challenge.name + ' period=' + period + ' elapsed=' + elapsed );
+                if ( !challenge.active || elapsed > period ) {
+                    //
+                    // period has expired reset count
+                    //
+                    update({_id:challenge._id},{count:0});
+                    updated = true;
+                }
+            }
+        }
+        //
+        // save if updated
+        //
         if ( updated ) {
             save();
         }
