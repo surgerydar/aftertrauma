@@ -26,7 +26,7 @@ Item {
                 stack.pop(null);
             }
             onPressAndHold: {
-                utilityWindow.open();
+                //utilityWindow.open();
             }
         }
     }

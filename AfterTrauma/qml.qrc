@@ -204,5 +204,6 @@
         <file>icons/up_down.png</file>
         <file>UsageModel.qml</file>
         <file>Usage.qml</file>
+        <file>controls/TextEntryDialog.qml</file>
     </qresource>
 </RCC>

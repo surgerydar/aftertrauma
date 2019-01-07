@@ -71,8 +71,8 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             label: "chat"
             icon: "icons/chat.png"
-            enabled: userProfile && loggedIn && chatChannel.connected
-            badge: unreadChatsModel.totalUnread > 0 ? unreadChatsModel.totalUnread : ""
+            enabled: userProfile && !userProfile.blocked && loggedIn && chatChannel.connected
+            badge: ( userProfile && userProfile.blocked ) ? "blocked" : unreadChatsModel.totalUnread > 0 ? unreadChatsModel.totalUnread : ""
             onClicked:{
                 stack.navigateTo("qrc:///GroupChatManager.qml");
                 mainMenu.close();

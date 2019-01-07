@@ -44,113 +44,35 @@ public:
     }
 
     QString uniquePath() {
-        /*
-        QString pathTemplate = SystemUtils::shared()->documentDirectory().append("/image%1.jpg");
-        int i = 0;
-        QString path;
-        do {
-            path = pathTemplate.arg(i++);
-        } while( QFile::exists(path) );
-
-        return path;
-        */
         return SystemUtils::shared()->documentDirectory().append("/image-%1.jpg").arg(QDateTime::currentDateTime().toString("yyyy-MM-dd-HH-mm-ss"));
     }
 
     void showGallery() {
-
-        QAndroidJniObject GET_CONTENT = QAndroidJniObject::fromString("android.intent.action.GET_CONTENT");
-        QAndroidJniObject intent("android/content/Intent");
-        if (GET_CONTENT.isValid() && intent.isValid()) {
-            intent.callObjectMethod("setAction", "(Ljava/lang/String;)Landroid/content/Intent;", GET_CONTENT.object<jstring>());
-            intent.callObjectMethod("setType", "(Ljava/lang/String;)Landroid/content/Intent;", QAndroidJniObject::fromString("image/*").object<jstring>());
-            QtAndroid::startActivity(intent.object<jobject>(), SOURCE_GALLERY, this);
-        }
-        /*
-        QAndroidJniObject intent = QAndroidJniObject::callStaticObjectMethod("uk/co/soda/ImagePicker",
+        QAndroidJniObject intent = QAndroidJniObject::callStaticObjectMethod("uk/co/soda/aftertrauma/ImagePicker",
                                                   "openGallery",
                                                   "()Landroid/content/Intent;");
         if ( intent.isValid() ) {
             QtAndroid::startActivity(intent, SOURCE_GALLERY, this);
         }
-        */
+
     }
 
     void showCamera() {
-
-        QAndroidJniObject IMAGE_CAPTURE = QAndroidJniObject::fromString("android.media.action.IMAGE_CAPTURE");
-        QAndroidJniObject intent=QAndroidJniObject("android/content/Intent");
-        if ( IMAGE_CAPTURE.isValid() && intent.isValid() ) {
-            intent.callObjectMethod("setAction", "(Ljava/lang/String;)Landroid/content/Intent;", IMAGE_CAPTURE.object<jstring>());
-            //
-            // set target file
-            //
-            QAndroidJniEnvironment env;
-            QAndroidJniObject context = QtAndroid::androidContext();
-            QAndroidJniObject EXTRA_OUTPUT = QAndroidJniObject::getStaticObjectField( "android/provider/MediaStore", "EXTRA_OUTPUT", "Ljava/lang/String;");
-
-            //cameraPath = uniquePath();
-            //QAndroidJniObject filename = QAndroidJniObject::fromString(cameraPath);
-            QAndroidJniObject mediaDir = QAndroidJniObject::callStaticObjectMethod("android/os/Environment", "getExternalStorageDirectory", "()Ljava/io/File;");
-            QAndroidJniObject filename = QAndroidJniObject::fromString("temp.jpg");
-            QAndroidJniObject file = QAndroidJniObject("java/io/File","(Ljava/io/File;Ljava/lang/String;)V", mediaDir.object<jstring>(), filename.object<jstring>());
-            QAndroidJniObject auth = QAndroidJniObject::fromString("uk.co.soda.aftertrauma");
-            QAndroidJniObject uri =  QAndroidJniObject::callStaticObjectMethod(
-                        "android/net/Uri", "fromFile", "(Ljava/io/File;)Landroid/net/Uri;", file.object<jobject>());
-            qDebug() << "Capturing image to : " << uri.toString();
-
-            cameraPath = uri.toString();
-            //cameraPath.remove(0,QString("file://").length());
-            intent.callObjectMethod( "putExtra","(Ljava/lang/String;Landroid/os/Parcelable;)Landroid/content/Intent;", EXTRA_OUTPUT.object<jstring>(), uri.object<jobject>());
-            //
-            // open camera
-            //
-            QtAndroid::startActivity(intent, SOURCE_CAMERA, this);
-        }
-        /*
-        QAndroidJniObject intent = QAndroidJniObject::callStaticObjectMethod("uk/co/soda/ImagePicker",
+        qDebug() << "AndroidImagePicker::showCamera : creating intent";
+        QAndroidJniObject intent = QAndroidJniObject::callStaticObjectMethod("uk/co/soda/aftertrauma/ImagePicker",
                                                   "openCamera",
                                                   "()Landroid/content/Intent;");
         if ( intent.isValid() ) {
+            qDebug() << "AndroidImagePicker::showCamera : starting intent";
+            QAndroidJniObject imageUri = QAndroidJniObject::getStaticObjectField( "uk/co/soda/aftertrauma/ImagePicker", "mCurrentPhotoPath", "Ljava/lang/String;" );
+            cameraPath = imageUri.toString();
+            qDebug() << "AndroidImagePicker::showCamera : Capturing image to : " << cameraPath;
             QtAndroid::startActivity(intent, SOURCE_CAMERA, this);
+        } else {
+            qDebug() << "AndroidImagePicker::showCamera : invalid intent";
         }
-        */
-    }
-    /*
-    void showGallery() {
-        selectedFileName = "#";
-        QAndroidJniObject::callStaticMethod<void>("uk/co/soda/ImagePicker",
-                                                  "openGallery",
-                                                  "()V");
-        while(selectedFileName == "#")
-            QCoreApplication::instance()->processEvents();
 
-        if(QFile(selectedFileName).exists()) {
-            QAndroidJniObject path = QAndroidJniObject::fromString(selectedFileName);
-            QAndroidJniObject uri = QAndroidJniObject::callStaticObjectMethod("android/net/Uri", "parse", "(Ljava/lang/String;)Landroid/net/Uri;", path.object<jstring>());
-            if ( uri.isValid() ) {
-                pickFile(uri,false);
-            }
-        }
     }
-
-    void showCamera() {
-        selectedFileName = "#";
-        QAndroidJniObject::callStaticMethod<void>("uk/co/soda/ImagePicker",
-                                                  "openCamera",
-                                                  "()V");
-        while(selectedFileName == "#")
-            QCoreApplication::instance()->processEvents();
-
-        if(QFile(selectedFileName).exists()) {
-            QAndroidJniObject path = QAndroidJniObject::fromString(selectedFileName);
-            QAndroidJniObject uri = QAndroidJniObject::callStaticObjectMethod("android/net/Uri", "parse", "(Ljava/lang/String;)Landroid/net/Uri;", path.object<jstring>());
-            if ( uri.isValid() ) {
-                pickFile(uri,true);
-            }
-        }
-    }
-    */
 
     virtual void handleActivityResult(int receiverRequestCode, int resultCode, const QAndroidJniObject & data) override {
         jint RESULT_OK = QAndroidJniObject::getStaticField<jint>("android/app/Activity", "RESULT_OK");
@@ -171,20 +93,22 @@ public:
                 //
                 pickFile(uri);
             } else if ( receiverRequestCode == SOURCE_CAMERA ) {
-                qDebug() << "image from camera saved to : " << cameraPath;
+                //qDebug() << "image from camera saved to : " << cameraPath;
                 QAndroidJniObject path = QAndroidJniObject::fromString(cameraPath);
                 QAndroidJniObject uri = QAndroidJniObject::callStaticObjectMethod("android/net/Uri", "parse", "(Ljava/lang/String;)Landroid/net/Uri;", path.object<jstring>());
+                //QAndroidJniObject uri = data.callObjectMethod("getData", "()Landroid/net/Uri;");
                 if ( uri.isValid() ) {
+                    qDebug() << "AndroidImagePicker : camera : uri : " << uri.toString();
                     //
                     // copy file to app storage
                     //
                     pickFile(uri,true);
                 } else {
-                   qDebug() << "Invalid uri";
+                   qDebug() << "AndroidImagePicker : camera : Invalid uri";
                 }
             }
         } else {
-            qDebug() << "error";
+            qDebug() << "AndroidImagePicker : error : " << resultCode;
         }
     }
 
@@ -273,12 +197,10 @@ public:
 AndroidImagePicker* AndroidImagePicker::s_shared = nullptr;
 
 void _openGallery() {
-    //showPicker( UIImagePickerControllerSourceTypePhotoLibrary );
     AndroidImagePicker::shared()->showGallery();
 }
 
 void _openCamera() {
-    //showPicker( UIImagePickerControllerSourceTypeCamera );
     AndroidImagePicker::shared()->showCamera();
 }
 

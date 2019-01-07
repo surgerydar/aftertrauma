@@ -25,15 +25,15 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>41.0</string>
+	<string>44.0</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>${PRODUCT_NAME} Wants to use your camera</string>
+	<string>${PRODUCT_NAME} wants to use your camera. This will enable you to add pictures to your diary and record your rehabilitation documents</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>${PRODUCT_NAME} Wants to add an image to your photos</string>
+	<string>${PRODUCT_NAME} wants to use your camera. This will enable you to add pictures to your diary and record your rehabilitation documents</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>${PRODUCT_NAME} Wants access to your photos</string>
+	<string>${PRODUCT_NAME} wants to use your camera. This will enable you to add pictures to your diary and record your rehabilitation documents</string>
 	<key>UILaunchStoryboardName</key>
 	<string>Launch</string>
 	<key>UISupportedInterfaceOrientations</key>

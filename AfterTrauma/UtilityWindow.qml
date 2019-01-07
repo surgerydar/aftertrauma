@@ -42,6 +42,16 @@ Popup {
                 Archive.archive(source,archive,true);
             }
         }
+        //
+        //
+        //
+        AfterTrauma.Button {
+            anchors.horizontalCenter: parent.horizontalCenter
+            backgroundColour: Colours.slate
+            text: "prefetch images"
+            onClicked: {
+            }
+        }
 
     }
     Connections {

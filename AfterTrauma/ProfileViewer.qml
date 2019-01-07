@@ -108,6 +108,32 @@ Rectangle {
         //
         //
         AfterTrauma.Button {
+            id: abuseButton
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.left: parent.left
+            anchors.leftMargin: 16
+            text: "report abuse"
+            visible: userProfile.id !== userId
+            onClicked: {
+                abuseDialog.show("Report Abuse", [
+                    {label:"Cancel", action: function() {} },
+                    {label:"Ok", action: function() {
+                            var command = {
+                                command: 'blockprofile',
+                                token: userProfile.token,
+                                id: userId,
+                                complaint: abuseDialog.content
+                            };
+                            profileChannel.send( command );
+                        }
+                    }
+                ]);
+            }
+        }
+        //
+        //
+        //
+        AfterTrauma.Button {
             id: chatButton
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
@@ -149,6 +175,13 @@ Rectangle {
                 close();
             }
         }
+    }
+    //
+    //
+    //
+    AfterTrauma.TextEntryDialog {
+        id: abuseDialog
+        placeholder: "describe abuse"
     }
 
     //

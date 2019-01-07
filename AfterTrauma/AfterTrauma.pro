@@ -109,10 +109,15 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 DISTFILES += \
     android/src/uk/co/soda/NotificationScheduler.java \
-    android/src/uk/co/soda/FileShareDialog.java \
     android/src/uk/co/soda/NotificationPublisher.java \
     android/src/uk/co/soda/ImagePicker.java \
-    android/src/uk/co/soda/NotificationHandler.java
+    android/src/uk/co/soda/NotificationHandler.java \
+    android/src/uk/co/soda/aftertrauma/FileShareDialog.java \
+    android/src/uk/co/soda/aftertrauma/ImagePicker.java \
+    android/src/uk/co/soda/aftertrauma/NotificationHandler.java \
+    android/src/uk/co/soda/aftertrauma/NotificationPublisher.java \
+    android/src/uk/co/soda/aftertrauma/NotificationScheduler.java \
+    android/src/uk/co/soda/aftertrauma/Permissions.java
 
 ios {
     OBJECTIVE_SOURCES += ios/ImagePicker.mm

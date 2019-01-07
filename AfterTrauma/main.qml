@@ -362,7 +362,7 @@ ApplicationWindow {
         if ( dailyModel.count < 1 && !questionnaireModel.dailyCompleted() ) {
             flowerChartAnimator.start();
         }
-    }
+     }
     Connections {
         target: Archive
         enabled: stack.depth <= 1

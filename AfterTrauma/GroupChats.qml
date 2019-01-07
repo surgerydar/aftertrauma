@@ -79,7 +79,7 @@ DatabaseList {
                 //
                 if ( chat.messages ) {
                     chat.messages.forEach( function( message ) {
-                        console.log( 'GroupChats.getMessageModel : appending : ' + message + ' : to model : ' + cached.model );
+                        console.log( 'GroupChats.getMessageModel : appending : ' + JSON.stringify(message) + ' : to model : ' + cached.model );
                         //cached.model.append(message);
                         cached.model.add(message);
                     });

@@ -35,7 +35,7 @@ AfterTrauma.Page {
             anchors.left: parent.left
             anchors.right: parent.right
             from: model.from
-            message: model.message
+            message: model.blocked ? "<span style='color: #BA274A; fontWeight: bold;'><p>This user has been reported, their messages will be blocked until a thorough review is complete</p></span>" : model.message
             date: new Date( model.date ).toLocaleString()
         }
         //

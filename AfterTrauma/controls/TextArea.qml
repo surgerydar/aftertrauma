@@ -18,7 +18,6 @@ TextArea {
         color: Colours.veryLightSlate
         border.color: "transparent"
     }
-
     Label {
         anchors.centerIn: parent
         visible: showPlaceholderPrompt && container.text.length === 0 && !container.activeFocus

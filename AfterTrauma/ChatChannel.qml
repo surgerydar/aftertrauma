@@ -68,7 +68,7 @@ Item {
         //
         onOpened: {
             console.log( 'ChatChannel : open' );
-            if ( userProfile ) {
+            if ( userProfile && !userProfile.blocked ) {
                 //
                 // go live
                 //
@@ -105,6 +105,17 @@ Item {
                 //console.log( 'ChatChannel : received : ' + message );
                 if ( command.command === 'welcome' ) {
                     refresh();
+                } else if ( command.command === 'groupgolive') {
+                    if ( userProfile ) {
+                        if ( command.status === 'ERROR'  ) {
+                            if ( command.error === 'blocked' ) {
+                                userProfile.blocked = true;
+                            }
+                        } else {
+                            userProfile.blocked = false;
+                        }
+                        JSONFile.write('user.json',userProfile);
+                    }
                 } else if ( command.status === 'OK' ) {
                     switch( command.command ) {
                     case 'groupgetuserchats':

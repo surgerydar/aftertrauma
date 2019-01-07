@@ -5,11 +5,23 @@ extern void _openGallery();
 extern void _openCamera();
 #endif
 
+#if defined(Q_OS_ANDROID)
+    #include <QtAndroid>
+#endif
+
 ImagePicker* ImagePicker::s_shared = nullptr;
 
-ImagePicker::ImagePicker(QObject *parent) : QObject(parent)
-{
-
+ImagePicker::ImagePicker(QObject *parent) : QObject(parent) {
+#if defined(Q_OS_ANDROID)
+    //
+    //
+    //
+    if ( QtAndroid::androidSdkVersion() >= 23 ) {
+        QAndroidJniObject::callStaticMethod<void>("uk/co/soda/aftertrauma/Permissions",
+                                                  "request",
+                                                  "()V");
+    }
+#endif
 }
 
 ImagePicker* ImagePicker::shared() {
