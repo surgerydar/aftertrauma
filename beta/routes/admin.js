@@ -1,6 +1,20 @@
 var express = require('express')
-var router = express.Router()
-var fs = require('fs')
+var router  = express.Router()
+var fs      = require('fs')
+var ws      = require('ws');
+var access  = require('../access')
+
+var _ws = new ws( 'wss://aftertrauma.uk:4000');
+_ws.on('message', function( message ) {
+    try {
+        var command = JSON.parse( message );
+        if ( command ) {
+            console.log('admin recieved command : ' + command.command + ' : status : ' + command.status + ( command.status === 'ERROR' ? ' : ' + JSON.stringify( command.error ) : '' ) ); 
+        }
+    } catch( error ) {
+        
+    }
+});
 
 module.exports = function( authentication, db ) {
     console.log('loading delta');
@@ -96,7 +110,7 @@ module.exports = function( authentication, db ) {
             res.render('error', {title:'AfterTrauma Admin', error: error});
         });
     });
-    router.post('/users', authentication, function (req, res) { // new category
+    router.post('/users', authentication, function (req, res) { // new user
         var user        = req.body;
         user.joined     = Date.now();
         user.date       = user.joined;
@@ -106,7 +120,7 @@ module.exports = function( authentication, db ) {
             res.json({ status: 'ERROR', error: error});
         });
     });
-    router.put('/users/:user', authentication, function (req, res) { // update category
+    router.put('/users/:user', authentication, function (req, res) { // update user
         var user	= req.body;
         user.date	= Date.now();
         var _id     = db.ObjectId(req.params.user);
@@ -126,6 +140,58 @@ module.exports = function( authentication, db ) {
         }).catch( function( error ) {
             console.log( 'delete user : error : ' + error );
             res.json({ status: 'ERROR', error: error});
+        });
+    });
+    //
+    //
+    //
+    router.put('/users/block/:user', authentication, function (req, res) { // block user
+        console.log('blocking user : ' + req.params.user );
+        var _id = db.ObjectId(req.params.user);
+        db.findOne( 'users', { _id: _id } ).then( function( user ) {
+            let command = {
+                command: 'blockprofile',
+                token: access.sign({ user: req.user.username }),
+                id: user.id
+            };
+            _ws.send(JSON.stringify(command));
+        }).catch( function( error ) {
+            res.render('error', {title:'AfterTrauma Admin', error: error});
+        });
+    });
+    router.put('/users/unblock/:user', authentication, function (req, res) { // unblock user
+        console.log('unblocking user : ' + req.params.user );
+        var _id = db.ObjectId(req.params.user);
+        db.findOne( 'users', { _id: _id } ).then( function( user ) {
+            let command = {
+                command: 'unblockprofile',
+                token: access.sign({ user: req.user.username }),
+                id: user.id
+            };
+            _ws.send(JSON.stringify(command));
+        }).catch( function( error ) {
+            res.render('error', {title:'AfterTrauma Admin', error: error});
+        });
+    });
+    //
+    //
+    //
+    router.put('/users/admin/:user', authentication, function (req, res) { // admin user
+        console.log('admining user : ' + req.params.user );
+        var _id = db.ObjectId(req.params.user);
+         db.updateOne( 'users', { _id: _id }, { $set: { admin: false } } ).then( function( user ) {
+            res.json({ status: 'OK', response: response });
+         }).catch( function( error ) {
+            res.json({ status: 'ERROR', error: error });
+         });
+    });
+    router.put('/users/unadmin/:user', authentication, function (req, res) { // unadmin user
+        console.log('unadmining user : ' + req.params.user );
+        var _id = db.ObjectId(req.params.user);
+        db.updateOne( 'users', { _id: _id }, { $set: { admin: false } } ).then( function( user ) {
+            res.json({ status: 'OK', response: response });
+        }).catch( function( error ) {
+            res.json({ status: 'ERROR', error: error });
         });
     });
 	//

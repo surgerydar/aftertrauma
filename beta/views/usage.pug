@@ -1,0 +1,71 @@
+html
+    head
+        title= title
+        link(rel='stylesheet', href='/style/aftertrauma.css')
+        meta( name='viewport' content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0' )
+    body
+        .container#container( style='width: 90vw; height: 90vh; padding: 5vw;' )
+            if error
+                h1#error= error
+            else if usage
+            
+            else
+                h1 Usage Report
+                label#startdatelabel( for= 'startdate') Start date
+                input#startdate(type= 'range' name= 'startdate')
+                label#enddatelabel( for= 'enddate') End date
+                input#enddate(type= 'range' name= 'enddatedate')
+                button#report( value= 'get report') Get Report
+        script.
+            var stepSize = 60 * 60 * 24;
+            var minDate = new Date(2018,10,1).getTime();
+            var maxDate = Date.now();
+            var range = {
+                start: minDate,
+                end: maxDate
+            };
+            var startDate = document.querySelector('#startdate');
+            var startDateLabel = document.querySelector('#startdatelabel');
+            startDate.addEventListener('change',function() {
+                var d = new Date(parseInt(startDate.value));
+                range.start = d.getTime();
+                if ( startDate.value > endDate.value ) {
+                    endDate.setAttribute('value', startDate.value);
+                }
+                startDateLabel.innerHTML = d.toLocaleDateString();
+            });
+            startDate.setAttribute('min', minDate );
+            startDate.setAttribute('max', maxDate );
+            startDate.setAttribute('value',minDate);
+            startDate.setAttribute('step',stepSize);
+            startDateLabel.innerHTML = 'from ' + new Date(minDate).toLocaleDateString();
+            
+            var endDate = document.querySelector('#enddate');
+            var endDateLabel = document.querySelector('#enddatelabel');
+            endDate.addEventListener('change',function() {
+                var d = new Date(parseInt(endDate.value));
+                range.end = d.getTime();
+                if ( endDate.value < startDate.value ) {
+                    startDate.setAttribute('value', endDate.value);
+                }
+                endDateLabel.innerHTML = d.toLocaleDateString();
+            });
+            endDate.setAttribute('min', minDate );
+            endDate.setAttribute('max', maxDate );
+            endDate.setAttribute('value', maxDate);
+            endDate.setAttribute('step',stepSize);
+            endDateLabel.innerHTML = 'to ' + new Date(maxDate).toLocaleDateString();
+            
+            var reportButton = document.querySelector('#report');
+            reportButton.addEventListener('click',function() {
+                if ( isFinite(range.start) && isFinite(range.end) ) {
+                    if ( range.start <= range.end ) {
+                        location = 'https://aftertrauma.uk:4000/usage/report?startdate=' + range.start + '&enddate=' + range.end + '&format=csv';
+                        return;
+                    } else {
+                        alert( 'Invalid date range' );
+                    }
+                } else {
+                    alert( 'Invalid date format' );
+                }
+            });

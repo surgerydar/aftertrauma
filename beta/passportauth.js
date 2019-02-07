@@ -29,11 +29,15 @@ module.exports = function( app, db ) {
 
     passport.deserializeUser(function(id, callback) {
          console.log( 'deserialising user');
-         db.findOne('users', { _id:db.ObjectId(id) }, { username: 1, password: 1 } ).then( function(user) {
-              callback(null, user);
-          }).catch( function( error ) {
-              callback( error );
-          });
+        try {
+            db.findOne('users', { _id:db.ObjectId(id) }, { username: 1, password: 1 } ).then( function(user) {
+                callback(null, user);
+            }).catch( function( error ) {
+                callback( error );
+            });
+        } catch( error ) {
+            callback( error );
+        }
     });
     //
     // TODO: move these out of here, perhaps

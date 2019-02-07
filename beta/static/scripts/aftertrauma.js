@@ -494,28 +494,30 @@ var rest = {
             for ( var i = 0; i < listItems.length; ++i ) {
                 ( function( item ) {
                     var id = item.getAttribute('data-id') || item.getAttribute('data-index');
-                    item.onclick = function() {
-                        if ( id ) {
-                            w.location = w.location + '/' + id;
-                        }
-                    };
-                    var del = item.querySelector('.delete');
-                    if ( del ) {
-                        del.onclick = function(evt) {
-                            if ( confirm('Are you sure you want to delete this item?') ) {
-                                var endpoint = w.location + '/' + id;
-                                rest.delete(endpoint,{
-                                    onloadend: function(evt) {
-                                        //
-                                        // return to document
-                                        //
-                                        w.location.reload();
-                                    },
-                                    onerror: function(error) {
-                                        alert( error );
-                                    }
-                                });
-                                evt.stopPropagation();
+                    if ( item.getAttribute('data-type') !== 'user' ) {
+                        item.onclick = function() {
+                            if ( id ) {
+                                w.location = w.location + '/' + id;
+                            }
+                        };
+                        var del = item.querySelector('.delete');
+                        if ( del ) {
+                            del.onclick = function(evt) {
+                                if ( confirm('Are you sure you want to delete this item?') ) {
+                                    var endpoint = w.location + '/' + id;
+                                    rest.delete(endpoint,{
+                                        onloadend: function(evt) {
+                                            //
+                                            // return to document
+                                            //
+                                            w.location.reload();
+                                        },
+                                        onerror: function(error) {
+                                            alert( error );
+                                        }
+                                    });
+                                    evt.stopPropagation();
+                                }
                             }
                         }
                     }
@@ -567,6 +569,56 @@ var rest = {
             });
         }
     }
+    //
+    // user controls
+    //
+    var adminControls = d.querySelectorAll('input[name="admin"]');
+    adminControls.forEach( function(control) {
+        control.addEventListener('click', function(e) {
+            
+        }, true);
+        control.addEventListener('change', function(e) {
+            e.preventDefault();
+            var user = control.getAttribute('data-id');
+            if ( user ) {
+                var endpoint = w.location + '/' + (control.checked ? 'admin' : 'unadmin' ) + '/' + user;
+                rest.put(endpoint,{
+                    onloadend: function(evt) {
+                        //
+                        // return to document
+                        //
+                        w.location.reload();
+                    },
+                    onerror: function(error) {
+                        alert( error );
+                    }
+                });
+            }
+        });
+    });
+    var blockControls = d.querySelectorAll('input[name="block"]')
+    blockControls.forEach( function(control) {
+        control.addEventListener('click', function(e) {
+            
+        }, true);
+        control.addEventListener('change', function(e) {
+            var user = control.getAttribute('data-id');
+            if ( user ) {
+                var endpoint = w.location + '/' + (control.checked ? 'block' : 'unblock' ) + '/' + user;
+                rest.put(endpoint,{
+                    onloadend: function(evt) {
+                        //
+                        // return to document
+                        //
+                        w.location.reload();
+                    },
+                    onerror: function(error) {
+                        alert( error );
+                    }
+                });
+            }
+        });
+    });
     //
     // drag and drop
     //

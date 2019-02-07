@@ -72,9 +72,11 @@ function sendToAllLive( message ) {
 
 function sendToMembers( chat, command, exclude ) {
     if ( chat.owner !== exclude ) sendToLive( chat.owner, command );
-    chat.members.forEach( function( member ) {
-        if( member !== exclude ) sendToLive( member, command );
-    });
+    if ( chat.members ) {
+        chat.members.forEach( function( member ) {
+            if( member !== exclude ) sendToLive( member, command );
+        });
+    }
 }
 
 function sendToActiveMembers( chat, command, exclude ) {
@@ -164,7 +166,9 @@ GroupChat.prototype.groupcreatechat = function( wss, ws, command ) {
                     //
                     // alert members
                     //
-                    sendToMembers( chat, command, chat.owner );
+                    if ( chat.members ) {
+                        sendToMembers( chat, command, chat.owner );
+                    }
                     //
                     // respond to caller
                     //
@@ -198,12 +202,16 @@ GroupChat.prototype.groupupdatechat = function( wss, ws, command ) {
                 //
                 //
                 command.status = 'OK';
-                //command.response = response;
-                //ws.send(JSON.stringify(command));
                 //
                 //
                 //
-                sendToMembers(chat,command);
+                if ( response.members ) {
+                    command.chat = response;
+                    sendToMembers(response,command);
+                } else {
+                    command.response = response;
+                    ws.send(JSON.stringify(command));
+                }
             }).catch( function( error ) {
                 command.status = 'ERROR';
                 command.error = error;
@@ -450,9 +458,12 @@ GroupChat.prototype.groupremovechat = function( wss, ws, command ) {
             _db.findOne('groupchats', { id: command.chatid }).then(function( chat ) {
                 _db.remove('groupchats', { id: command.chatid, owner: command.userid }).then(function( response ) {
                     command.status = 'OK';
-                    //command.response = response;
-                    //ws.send(JSON.stringify(command));
-                    sendToMembers( chat, command );
+                    if ( chat.members ) {
+                        sendToMembers(chat,command);
+                    } else {
+                        command.response = response;
+                        ws.send(JSON.stringify(command));
+                    }
                 }).catch( function( error ) {
                     command.status = 'ERROR';
                     command.error = error;
@@ -572,10 +583,32 @@ GroupChat.prototype.groupgolive = function( wss, ws, command ) {
     //
     //
     //
-    addToLive( command.id, command.username, ws );
+    
     process.nextTick(function(){
-        command.status = 'OK';
-        
+        //
+        // check if user is blocked
+        //
+        try {
+            _db.findOne('users', { id: command.id } ).then( function( user ) {
+                if ( user.blocked ) {
+                    command.status = 'ERROR';
+                    command.error = 'blocked';
+                    ws.send(JSON.stringify(command));
+                } else {
+                    addToLive( command.id, command.username, ws );
+                    command.status = 'OK';
+                    ws.send(JSON.stringify(command));
+                }
+            }).catch( function( error ) {
+                command.status = 'ERROR';
+                command.error = error;
+                ws.send(JSON.stringify(command));
+            });
+        } catch( error ) {
+            command.status = 'ERROR';
+            command.error = error;
+            ws.send(JSON.stringify(command));
+        }
     });
 }
 

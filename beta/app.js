@@ -77,8 +77,14 @@ db.connect(
         //
         // admin
         //
-        let admin = require('./routes/admin')( pasportAuth, db );
-        app.use( '/admin', admin );
+        let adminRoutes = require('./routes/admin')( pasportAuth, db );
+        app.use( '/admin', adminRoutes );
+        //
+        // usage
+        //
+        let usageRoutes = require('./routes/usage')( pasportAuth, db );
+        app.use( '/usage', usageRoutes );
+        /*
         //
         // remove these in production
         //
@@ -89,6 +95,7 @@ db.connect(
                 res.json( {status: 'ERROR', message: JSON.stringify( error ) } );
             });
         });
+        */
         //
         // configure websockets
         //

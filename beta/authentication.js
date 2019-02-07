@@ -83,12 +83,17 @@ Authentication.prototype.login = function( wss, ws, command ) {
                 command.status = 'ERROR';
                 command.error = 'username or password incorrect';
             } else {
-                //
-                //
-                //
-                command.status = 'OK';
-                response.token = access.sign({ user: command.username });
-                command.response = response;
+                if ( false ) { // JONS: disabled for this release response.blocked ) {
+                    command.status = 'ERROR';
+                    command.error = 'you have been blocked, please contact administrator';
+                } else {
+                    //
+                    //
+                    //
+                    command.status = 'OK';
+                    response.token = access.sign({ user: command.username });
+                    command.response = response;
+                }
             }
             //console.log('authentications response : ' + JSON.stringify( command ) );
             ws.send(JSON.stringify(command));

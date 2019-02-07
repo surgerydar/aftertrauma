@@ -15,10 +15,9 @@ Mailer.prototype.send = function( address, subject, html ) {
                 secure: true, // use SSL
                 auth: {
                     user: 'aftertraumaapp@gmail.com',
-                    pass: 'TraumaAfterAdmin101'
+                    pass: 'TraumaAfterAdmin102'
                 }
             });
-            
             // setup e-mail data
             var mailOptions = {
                 from: '"AfterTrauma Admin" <aftertraumaapp@gmail.com>', // sender address (who sends)
