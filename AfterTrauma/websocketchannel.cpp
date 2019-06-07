@@ -77,7 +77,7 @@ void WebSocketChannel::disconnected() {
 }
 
 void WebSocketChannel::textMessageReceived(const QString& message) {
-    qDebug() << "WebSocketChannel:textMessageReceived : ";
+    //qDebug() << "WebSocketChannel:textMessageReceived : " << message;
     emit received(message);
 }
 

@@ -1,7 +1,9 @@
+/* eslint-env node, mongodb, es6 */
+/* eslint-disable no-console */
 //
 // 
 //
-var _db;
+let _db;
 
 function Day() {
 }
@@ -21,9 +23,9 @@ Day.prototype.updateday = function( wss, ws, command ) {
     //
     // update day
     //
-    process.nextTick(function(){   
+    process.nextTick(()=>{   
         //console.log('updating user : ' + JSON.stringify(command.Day));
-        _db.updateUser(command.Day.id,command.Day).then(function( response ) {
+        _db.updateUser(command.Day.id,command.Day).then( ( response )=>{
             command.status = 'OK';
             command.response = response;
             ws.send(JSON.stringify(command));

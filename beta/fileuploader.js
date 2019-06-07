@@ -1,4 +1,5 @@
-'use strict';
+/* eslint-env node, mongodb, es6 */
+/* eslint-disable no-console */
 const fs = require('fs');
 let uploads = [];
 //
@@ -33,7 +34,7 @@ FileWriter.prototype.writeChunk = function( ws, data ) {
         let destination = './static/media/' + this.filename;
         this.file.once('close', function() {
             if ( !fs.copyFile ) {
-                function copyFile( source, destination ) {
+                let copyFile = ( source, destination )=>{
                     return new Promise( function( resolve, reject ) {
                         var rd = fs.createReadStream(source);
                         rd.on('error', rejectCleanup);
@@ -97,7 +98,7 @@ FileUploader.prototype.upld = function( wss, ws, command ) {
             let guid    = command.toString('ascii',4,4+16);
             let stage   = command.toString('ascii',20,20+4);
             switch( stage ) {
-                case 'head' :
+                case 'head' : {
                     //
                     // read header
                     // NN|AAAAA ...|NNNN
@@ -115,8 +116,9 @@ FileUploader.prototype.upld = function( wss, ws, command ) {
                     // request first chunk
                     //
                     ws.send( JSON.stringify({status:"READY", guid: guid, progress:0.}) );
-                    break;
-                case 'chnk' :
+                }
+                break;
+                case 'chnk' : {
                     //
                     // write chunk
                     //
@@ -131,7 +133,8 @@ FileUploader.prototype.upld = function( wss, ws, command ) {
                         }
                     }
                     //respond('ok  ');
-                    break;
+                }
+                break;
                 default :
                     console.log( 'unknown stage : ' + stage );
                     //respond('unkn');
@@ -140,7 +143,7 @@ FileUploader.prototype.upld = function( wss, ws, command ) {
             console.log( 'fileupload : error : ' + error );
             respond('err ');
         }
-        function respond( status ) {
+        let respond = ( status )=>{
             //
             // TODO: change to JSON based status reporting
             //

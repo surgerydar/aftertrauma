@@ -1,11 +1,12 @@
-var nodemailer = require('nodemailer');
-
+/* eslint-env node, mongodb, es6 */
+/* eslint-disable no-console */
+const nodemailer = require('nodemailer');
 function Mailer() {   
     
 }
 // TODO: error reporting
 Mailer.prototype.send = function( address, subject, html ) {
-    return new Promise( function( resolve, reject ) {
+    return new Promise( ( resolve, reject )=>{
         try {
             // Create the transporter with the required configuration for Gmail
             // change the user and pass !

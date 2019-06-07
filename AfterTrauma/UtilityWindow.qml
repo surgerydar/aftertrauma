@@ -50,6 +50,19 @@ Popup {
             backgroundColour: Colours.slate
             text: "prefetch images"
             onClicked: {
+                let documents = JSONFile.read('documents.json');
+                if ( documents ) {
+                    documents.forEach(function(document) {
+                        document.blocks.forEach(function(block) {
+                            if ( block.type === 'image' ) {
+                                let url = block.content;
+                                let localPath = SystemUtils.documentDirectory() + '/media' + url.substring(url.lastIndexOf('/'));
+                                console.log( 'downloading : ' + url + ' to ' + localPath );
+                                Downloader.download(url,localPath);
+                            }
+                        });
+                    });
+                }
             }
         }
 

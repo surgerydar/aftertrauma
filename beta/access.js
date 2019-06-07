@@ -1,7 +1,9 @@
+/* eslint-env node, mongodb, es6 */
+/* eslint-disable no-console */
 //
 //
 //
-var jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 //
 //
 //

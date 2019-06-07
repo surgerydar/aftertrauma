@@ -26,7 +26,7 @@ void Downloader::download(const QString &url, const QString &filepath) {
     // delete existing
     //
     if ( QFile::exists(temporaryPath) ) {
-        qDebug() << "Downloader::download : removing existing temporary archive : " << temporaryPath;
+        qDebug() << "Downloader::download : removing existing temporary file : " << temporaryPath;
         QFile::remove(temporaryPath);
     }
     //

@@ -113,7 +113,7 @@ Rectangle {
             anchors.left: parent.left
             anchors.leftMargin: 16
             text: "report abuse"
-            visible: userProfile.id !== userId
+            visible: userProfile && userProfile.id !== userId
             onClicked: {
                 abuseDialog.show("Report Abuse", [
                     {label:"Cancel", action: function() {} },

@@ -1,3 +1,5 @@
+/* eslint-env node, mongodb, es6 */
+/* eslint-disable no-console */
 module.exports = function( db ) {
     //
     //
@@ -10,16 +12,16 @@ module.exports = function( db ) {
             update.title = title;
         }
         console.log( 'updating document delta : ' + JSON.stringify( update ) );
-        return new Promise( function( resolve, reject ) {
+        return new Promise( ( resolve, reject )=> {
             try {
                 db.findAndModify( 'delta', 
                                  query, // query
                                  [], // sort
                                  { $set: update }, // update
                                  { upsert: true, new: true } // options
-                                ).then( function( response ) {
+                                ).then( ( response )=>{
                     resolve( response );
-                }).catch( function( error ) {
+                }).catch( ( error )=>{
                     reject( error );
                 });
             } catch( error ) {
@@ -31,16 +33,16 @@ module.exports = function( db ) {
         let query = { challenge: challenge };
         let update = { date: Date.now(), operation: operation };
         console.log( 'updating challenge delta : ' + JSON.stringify( update ) );
-        return new Promise( function( resolve, reject ) {
+        return new Promise( ( resolve, reject )=>{
             try {
                 db.findAndModify( 'delta', 
                                  query, // query
                                  [], // sort
                                  { $set: update }, // update
                                  { upsert: true, new: true } // options
-                                ).then( function( response ) {
+                                ).then( ( response )=>{
                     resolve( response );
-                }).catch( function( error ) {
+                }).catch( ( error )=>{
                     reject( error );
                 });
             } catch( error ) {
@@ -53,33 +55,33 @@ module.exports = function( db ) {
     //
     console.log( 'initialising delta object' );
     return {
-        addDocument: function( section, category, document, title ) {
+        addDocument: ( section, category, document, title )=>{
             return updateDocument( section, category, document, title, 'add' );
         },
-        updateDocument: function( section, category, document, title ) {
+        updateDocument: ( section, category, document, title )=>{
             return updateDocument( section, category, document, title, 'edit' );
         },
-        removeDocument: function( section, category, document ) {
+        removeDocument: ( section, category, document )=>{
             return updateDocument( section, category, document, undefined, 'remove' );
         },
-        addChallenge: function( challenge ) {
+        addChallenge: ( challenge )=>{
             return updateChallenge( challenge, 'add' );
         },
-        updateChallenge: function( challenge ) {
+        updateChallenge: ( challenge )=>{
             return updateChallenge( challenge, 'edit' );
         },
-        removeChallenge: function( challenge ) {
+        removeChallenge: ( challenge )=>{
             return updateChallenge( challenge, 'remove' );
         },
-        getManifest: function( afterDate ) {
+        getManifest: ( afterDate )=>{
             let query = {
                 date: { $lt: ( afterDate > 0 ? afterDate : Date.now() ) }
             };
-            return new Promise( function( resolve, reject ) {
+            return new Promise( ( resolve, reject )=>{
                 try {
-                    db.find( 'delta', query ).then( function( response ) {
+                    db.find( 'delta', query ).then( ( response )=>{
                         resolve( response );
-                    }).catch( function ( error ) {
+                    }).catch( ( error )=>{
                         reject( error );
                     });
                 } catch( error ) {

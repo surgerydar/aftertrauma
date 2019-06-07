@@ -45,7 +45,7 @@ Item {
         //
         font.weight: Font.Light
         font.family: fonts.light
-        font.pointSize: 18
+        font.pointSize: ( userProfile && userProfile.textSize ) ? userProfile.textSize : 18
         //
         //
         //

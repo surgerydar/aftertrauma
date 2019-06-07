@@ -90,7 +90,7 @@ Popup {
                     if ( command.response.length > 0 ) {
                         installChallenges(command.response);
                     }
-                    settingsModel.update({name:'lastupdate'},{value:Date.now()},true);
+                    settingsModel.update({name:'lastupdate'},{name:'lastupdate',value:Date.now()},true);
                     settingsModel.save();
                     container.close();
                 }
@@ -246,7 +246,6 @@ Popup {
                     //
                     //
                     //
-
                     tagsModel.save();
                 }
             } else {
@@ -254,7 +253,7 @@ Popup {
             }
         });
         documentModel.save();
-        documentModel.filter = filter;
+        documentModel.setFilter(filter);
     }
     function installChallenges( challenges ) {
         challenges.forEach( function( challenge ) {

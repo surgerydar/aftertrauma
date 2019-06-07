@@ -126,6 +126,10 @@ ios {
 
     QMAKE_INFO_PLIST = ios/Info.plist
 
+    QMAKE_TARGET_BUNDLE_PREFIX = "uk.co.soda"
+    QMAKE_INFO_PLIST = ios/Info.plist
+    QMAKE_ASSET_CATALOGS += $$PWD/ios/Images.xcassets
+
     LIBS += -framework UserNotifications
 
     # factsheet.files = ./factsheets
@@ -167,8 +171,8 @@ android {
     SOURCES += ./android/androidsharedialog.cpp
     SOURCES += ./android/androidnotificationscheduler.cpp
 
-    ANDROID_EXTRA_LIBS += $$PWD/android/OpenSSL/armeabi-v7a/libcrypto.so
-    ANDROID_EXTRA_LIBS += $$PWD/android/OpenSSL/armeabi-v7a/libssl.so
+    ANDROID_EXTRA_LIBS += /Users/jonathanjones-morris/Documents/Developer/OpenSSL-for-Android-Prebuilt-master/openssl-1.0.2/armeabi-v7a/lib/libcrypto.so
+    ANDROID_EXTRA_LIBS += /Users/jonathanjones-morris/Documents/Developer/OpenSSL-for-Android-Prebuilt-master/openssl-1.0.2/armeabi-v7a/lib/libssl.so
     ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
 
     # factsheet.files = ./factsheets

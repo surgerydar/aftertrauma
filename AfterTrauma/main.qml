@@ -186,7 +186,6 @@ ApplicationWindow {
                 //console.log( 'item url:' + current);
                 return current.qmlSource === qmlSource;
             });
-
             if ( item ) {
                 pop(item);
             } else {
@@ -319,7 +318,7 @@ ApplicationWindow {
         if ( !userProfile ) {
             var firstRun = settingsModel.findOne({name:'firstrun'});
             if (  !firstRun || firstRun.value ) {
-                settingsModel.update({name:'firstrun'},{value:false},true);
+                settingsModel.update({name:'firstrun'},{name:'firstrun',value:false},true);
                 settingsModel.save();
                 console.log( 'installing' );
                 Archive.unarchive(":/data/aftertrauma.at",SystemUtils.documentDirectory());

@@ -1,9 +1,11 @@
+/* eslint-env node, mongodb, es6 */
+/* eslint-disable no-console */
 //
 // 
 //
-var _db;
-var _live = [];
-var jwt = require('jsonwebtoken');
+let _db;
+let _live = [];
+const jwt = require('jsonwebtoken');
 //
 //
 //
@@ -65,9 +67,9 @@ Chat.prototype.getuserchats = function( wss, ws, command ) {
     //
     // add chat to db
     //
-    process.nextTick(function(){   
+    process.nextTick(()=>{   
         if ( jwt.verify( command.token, 'afterparty' ) ) {
-            _db.find('chats',{$or:[{to: command.id},{from: command.id}]}).then(function( response ) {
+            _db.find('chats',{$or:[{to: command.id},{from: command.id}]}).then( ( response )=>{
                 command.status = 'OK';
                 command.response = response;
                 ws.send(JSON.stringify(command));
@@ -89,7 +91,7 @@ Chat.prototype.sendinvite = function( wss, ws, command ) {
     //
     // add chat to db
     //
-    process.nextTick(function(){   
+    process.nextTick(()=>{   
         //console.log('updating user : ' + JSON.stringify(command.Chat));
         if ( jwt.verify( command.token, 'afterparty' ) ) {
             var chat = {
@@ -100,7 +102,7 @@ Chat.prototype.sendinvite = function( wss, ws, command ) {
                 toUsername: command.toUsername,
                 status: "invite"
             };
-            _db.putChat(chat).then(function( response ) {
+            _db.putChat(chat).then( ( response )=>{
                 command.status = 'OK';
                 command.response = response;
                 ws.send(JSON.stringify(command));
@@ -108,7 +110,7 @@ Chat.prototype.sendinvite = function( wss, ws, command ) {
                 //
                 //
                 sendToLive(command.to,command);
-            }).catch( function( error ) {
+            }).catch( ( error )=>{
                 command.status = 'ERROR';
                 command.error = error;
                 ws.send(JSON.stringify(command));
@@ -126,14 +128,14 @@ Chat.prototype.acceptinvite = function( wss, ws, command ) {
     //
     // update chat status
     //
-    process.nextTick(function(){   
+    process.nextTick(()=>{   
         if ( jwt.verify( command.token, 'afterparty' ) ) {
-            _db.updateOne('chats', { id: command.id }, {$set:{status:"active"}}).then(function( response ) {
+            _db.updateOne('chats', { id: command.id }, {$set:{status:"active"}}).then( ( response )=>{
                 command.status = 'OK';
                 command.response = response;
                 ws.send(JSON.stringify(command));
                 sendToLive( command.from, command );
-            }).catch( function( error ) {
+            }).catch( ( error )=>{
                 command.status = 'ERROR';
                 command.error = error;
                 ws.send(JSON.stringify(command));
@@ -151,13 +153,13 @@ Chat.prototype.removechat = function( wss, ws, command ) {
     //
     // remove chat
     //
-    process.nextTick(function(){   
+    process.nextTick(()=>{   
         if ( jwt.verify( command.token, 'afterparty' ) ) {
-            _db.remove('chats', { id: command.id }).then(function( response ) {
+            _db.remove('chats', { id: command.id }).then( ( response )=>{
                 command.status = 'OK';
                 command.response = response;
                 ws.send(JSON.stringify(command));
-            }).catch( function( error ) {
+            }).catch( ( error )=>{
                 command.status = 'ERROR';
                 command.error = error;
                 ws.send(JSON.stringify(command));
@@ -175,14 +177,14 @@ Chat.prototype.sendmessage = function( wss, ws, command ) {
     //
     // update chat status
     //
-    process.nextTick(function(){   
+    process.nextTick(()=>{   
         if ( jwt.verify( command.token, 'afterparty' ) ) {
-            _db.updateOne('chats', { id: command.id }, {$push: { messages: { from: command.from, message: command.message } } }).then(function( response ) {
+            _db.updateOne('chats', { id: command.id }, {$push: { messages: { from: command.from, message: command.message } } }).then( ( response )=>{
                 command.status = 'OK';
                 command.response = response;
                 ws.send(JSON.stringify(command));
                 sendToLive( command.to, command );
-            }).catch( function( error ) {
+            }).catch( ( error )=>{
                 command.status = 'ERROR';
                 command.error = error;
                 ws.send(JSON.stringify(command));
@@ -202,7 +204,7 @@ Chat.prototype.golive = function( wss, ws, command ) {
     //
     //
     addToLive( command.id, command.username, ws );
-    process.nextTick(function(){
+    process.nextTick(()=>{
         command.status = 'OK';
         
     });

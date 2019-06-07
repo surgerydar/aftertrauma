@@ -1,36 +1,52 @@
+/* eslint-env node, mongodb, es6 */
+/* eslint-disable no-console */
 //
 // passport authentication 
 //
-var passport = require('passport');
-var LocalStrategy = require('passport-local').Strategy;
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+const bcrypt = require('bcrypt');
 
 module.exports = function( app, db ) {
     //
     //
     //
-    passport.use('login',new LocalStrategy({ passReqToCallback : true },
-        function(req, username, password, callback) {
+    passport.use('login', new LocalStrategy({ passReqToCallback : true },
+        (req, username, password, callback)=>{
             console.log( 'authenticating : ' + username );
-            db.findOne( 'users', { username: username }, { username: 1, password: 1, admin: 1 } ).then( function(user) {
+            db.findOne( 'users', { username: username }, { username: 1, password: 1, admin: 1 } ).then( (user) => {
                 console.log( 'found user : ' + JSON.stringify(user) );
                 if (!user) callback(null, false);
-                if (user.password !== password) callback(null, false);
                 if (user.admin !== 1) callback(null, false);
+                if ( !bcrypt.compareSync(password, user.password) ) {
+                    //
+                    // update password
+                    //
+                    if (user.password !== password) {
+                        callback(null, false);
+                    } else {
+                        db.updateOne('users',{username:username},{$set: { password: bcrypt.hashSync(password, 12)} } ).then( () => {
+                            callback(null, user);
+                        }).catch( () => {
+                            callback(null, false);
+                        })
+                    }
+                }
                 callback(null, user);
-            }).catch( function( error ) {
+            }).catch( ( error )=>{
                 callback(error);
             });
         }));
 
-    passport.serializeUser(function(user, callback) {
+    passport.serializeUser((user, callback)=>{
         console.log( 'serialising user');
         callback(null, user._id);
     });
 
-    passport.deserializeUser(function(id, callback) {
+    passport.deserializeUser((id, callback)=>{
          console.log( 'deserialising user');
         try {
-            db.findOne('users', { _id:db.ObjectId(id) }, { username: 1, password: 1 } ).then( function(user) {
+            db.findOne('users', { _id:db.ObjectId(id) }, { username: 1, password: 1 } ).then( (user) => {
                 callback(null, user);
             }).catch( function( error ) {
                 callback( error );
@@ -52,20 +68,20 @@ module.exports = function( app, db ) {
     //
     // routes
     //
-    app.get('/login', function(req, res){
+    app.get('/login', (req, res)=>{
         res.render('login');
     });
-    app.post('/login', passport.authenticate('login', { failureRedirect: '/login', successRedirect: '/admin', }),  function(req, res) {
+    app.post('/login', passport.authenticate('login', { failureRedirect: '/login', successRedirect: '/admin', }), (req, res)=>{
         res.redirect('/admin');
     });
-    app.get('/logout', function(req, res){
+    app.get('/logout', (req, res)=>{
         req.logout();
         res.redirect('/login');
     });
     //
     //
     //
-    return function(req, res, next) {
+    return (req, res, next)=>{
         if ( req.user && req.isAuthenticated() ) {
             return next();
         } else {

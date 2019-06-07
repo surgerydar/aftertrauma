@@ -143,12 +143,10 @@ Rectangle {
             direction: "Left"
             spacing: 8
             onClicked: {
-                onClicked: {
-                    if ( loggedIn ) {
-                        stack.push("qrc:///ProfileManager.qml", { profile: userProfile } );
-                    } else {
-                        register.open();
-                    }
+                if ( loggedIn ) {
+                    stack.push("qrc:///ProfileManager.qml", { profile: userProfile } );
+                } else {
+                    register.open();
                 }
                 container.close();
             }

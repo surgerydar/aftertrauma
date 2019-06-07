@@ -1,9 +1,12 @@
+/* eslint-env node, mongodb, es6 */
+/* eslint-disable no-console */
 //
 // 
 //
-var _db;
-var access = require('./access');
-var mailer = require('./mailer');
+let _db = null;
+const access = require('./access');
+const mailer = require('./mailer');
+const bcrypt = require('bcrypt');
 //
 //
 //
@@ -29,16 +32,16 @@ Authentication.prototype.register = function( wss, ws, command ) {
         id: command.id,
         username: command.username,
         email: command.email,
-        password: command.password,
+        password: bcrypt.hashSync(command.password,12),
         avatar: "",
         profile: "",
         tags: []
     };
-    process.nextTick(function(){ 
+    process.nextTick(()=>{ 
         console.log('registering user : ' + JSON.stringify(user));
-        _db.findOne('users', { $or: [{username: user.username},{email:user.email}] } ).then( function( response ) {
+        _db.findOne('users', { $or: [{username: user.username},{email:user.email}] } ).then( ( response )=> {
             if ( response === null ) {
-                _db.insert('users', user ).then(function( response ) {
+                _db.insert('users', user ).then( ( response )=>{
                     //
                     //
                     //
@@ -55,7 +58,7 @@ Authentication.prototype.register = function( wss, ws, command ) {
                         token: access.sign({ user: command.username })
                     };
                     ws.send(JSON.stringify(command));
-                }).catch(function(error){
+                }).catch((error)=>{
                     command.status = 'ERROR';
                     command.error = error;
                     ws.send(JSON.stringify(command));
@@ -65,7 +68,7 @@ Authentication.prototype.register = function( wss, ws, command ) {
                 command.error  = 'A user with that name or email already exists';
                 ws.send(JSON.stringify(command));
             }
-        }).catch( function( error ) {
+        }).catch( ( error )=>{
             command.status = 'ERROR';
             command.error = error;
             ws.send(JSON.stringify(command));
@@ -77,9 +80,9 @@ Authentication.prototype.login = function( wss, ws, command ) {
     //
     // find user
     //
-    process.nextTick(function(){   
-        _db.findOne('users', {$and: [ { username:command.username }, { password:command.password } ]}, { password: 0, _id: 0 } ).then(function( response ) {
-            if ( response === null ) {
+    process.nextTick(()=>{   
+        _db.findOne('users', { username:command.username }/*{$and: [ { username:command.username }, { password:command.password } ]}*/, { _id: 0 } ).then(( response )=>{
+            if ( response === null || !bcrypt.compareSync(password, response.password) ) {
                 command.status = 'ERROR';
                 command.error = 'username or password incorrect';
             } else {
@@ -92,12 +95,13 @@ Authentication.prototype.login = function( wss, ws, command ) {
                     //
                     command.status = 'OK';
                     response.token = access.sign({ user: command.username });
+                    response.password = undefined;
                     command.response = response;
                 }
             }
             //console.log('authentications response : ' + JSON.stringify( command ) );
             ws.send(JSON.stringify(command));
-        }).catch( function( error ) {
+        }).catch( ( error )=>{
             command.status = 'ERROR';
             command.error = error;
             ws.send(JSON.stringify(command));
@@ -109,29 +113,35 @@ Authentication.prototype.changepassword = function( wss, ws, command ) {
     //
     // 
     //
-    console.log( 'Authentication.changepassword : username:' + command.username + ' old:' + command.oldpass + ' new:' + command.newpass );
+    console.log( 'Authentication.changepassword : username:' + command.username );//+ ' old:' + command.oldpass + ' new:' + command.newpass );
     //
     // find and update user
     //
-    process.nextTick(function(){
+    process.nextTick(()=>{
         if ( access.verifyCommand(ws,command) ) {
-            _db.updateOne('users', {$and: [ { username:command.username }, { password:command.oldpass } ]}, { $set: { password: command.newpass } } ).then(function( response ) {
-                if ( response === null || response.value === null ) {
+            _db.findOne('users', { username:command.username } ).then( ( response )=>{
+                if ( response === null || !bcrypt.compareSync(command.oldpass, response.password) ) {
                     command.status = 'ERROR';
                     command.error = 'username or password incorrect';
                     ws.send(JSON.stringify(command));
                 } else {
-                    //
-                    // create new command to avoid sending both passwords back
-                    //
-                    console.log( 'Authentication.prototype.changepassword : response : ' + JSON.stringify( response ) );
-                    ws.send(JSON.stringify({
-                        command : 'changepassword',
-                        status : 'OK'
-                    }));
+                    _db.updateOne( 'users' , { username:command.username }, { $set: { password: bcrypt.hashSync( command.newpass, 12) } } ).then( (response) => {
+                        //
+                        // create new command to avoid sending both passwords back
+                        //
+                        console.log( 'Authentication.prototype.changepassword : response : ' + JSON.stringify( response ) );
+                        ws.send(JSON.stringify({
+                            command : 'changepassword',
+                            status : 'OK'
+                        }));
+                    }).catch((error)=>{
+                        command.status = 'ERROR';
+                        command.error = error;
+                        ws.send(JSON.stringify(command));
+                    });
                 }
                 
-            }).catch( function( error ) {
+            }).catch(( error )=>{
                 command.status = 'ERROR';
                 command.error = error;
                 ws.send(JSON.stringify(command));
@@ -148,7 +158,7 @@ Authentication.prototype.resetpassword = function( wss, ws, command ) {
     //
     // find user
     //
-    process.nextTick(function(){
+    process.nextTick(()=>{
         //
         // TODO: replace this and move to somewhere more sensible
         //
@@ -165,7 +175,7 @@ Authentication.prototype.resetpassword = function( wss, ws, command ) {
         //
         //
         let password = randomPassword( 8 );
-        _db.updateOne( 'users', { $or: [ { username: command.identifier }, { email: command.identifier } ] }, { $set: { password: password } } ).then( function( response ) {
+        _db.updateOne( 'users', { $or: [ { username: command.identifier }, { email: command.identifier } ] }, { $set: { password: bcrypt.hashSync( password, 12) } } ).then( ( response )=>{
             if ( response ) {
                 let username = response.username || response.value.username;
                 let address = response.email || response.value.email;
@@ -184,11 +194,11 @@ Authentication.prototype.resetpassword = function( wss, ws, command ) {
                 command.error = 'unable to find user with name or email ' + command.identifier;
                 ws.send( JSON.stringify(command) );
             }
-        } ).catch( function( error ) {
+        }).catch( ( error )=>{
             command.status = 'ERROR';
             command.error = error;
             ws.send( JSON.stringify(command) );
-        } );
+        });
     });
 }
 

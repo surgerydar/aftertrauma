@@ -1,9 +1,11 @@
+/* eslint-env node, mongodb, es6 */
+/* eslint-disable no-console */
 //
 // 
 //
 var _db;
-var _live = [];
-var access = require('./access');
+let _live = [];
+const access = require('./access');
 /*
     chat {
         _id: ObjectId(),
@@ -127,14 +129,14 @@ GroupChat.prototype.groupgetuserchats = function( wss, ws, command ) {
     //
     // add chat to db
     //
-    process.nextTick(function(){   
+    process.nextTick(()=>{   
         if ( access.verifyCommand( ws, command ) ) {
             // get all group chats user is a member of
-            _db.find('groupchats',{$or:[{members: command.id},{owner: command.id},{public:true}]},{},{date:-1}).then(function( response ) {
+            _db.find('groupchats',{$or:[{members: command.id},{owner: command.id},{public:true}]},{},{date:-1}).then( ( response )=>{
                 command.status = 'OK';
                 command.response = response;
                 ws.send(JSON.stringify(command));
-            }).catch( function( error ) {
+            }).catch( ( error )=>{
                 command.status = 'ERROR';
                 command.error = error;
                 ws.send(JSON.stringify(command));
@@ -148,14 +150,14 @@ GroupChat.prototype.groupcreatechat = function( wss, ws, command ) {
     //
     // add chat to db
     //
-    process.nextTick(function(){   
+    process.nextTick( ()=>{   
         if ( access.verifyCommand( ws, command ) ) {
             var chat = command.chat;
             chat.date = Date.now();
             chat.invited = [];
             chat.active = [];
             inviteMembers( chat );
-            _db.insert('groupchats', chat ).then(function( response ) {
+            _db.insert('groupchats', chat ).then( ( response )=>{
                 //
                 //
                 //
@@ -179,7 +181,7 @@ GroupChat.prototype.groupcreatechat = function( wss, ws, command ) {
                 //
                 //
                 
-            }).catch( function( error ) {
+            }).catch( ( error )=>{
                 command.status = 'ERROR';
                 command.error = error;
                 ws.send(JSON.stringify(command));
@@ -193,11 +195,11 @@ GroupChat.prototype.groupupdatechat = function( wss, ws, command ) {
     //
     // add chat to db
     //
-    process.nextTick(function(){   
+    process.nextTick( ()=>{   
         if ( access.verifyCommand( ws, command ) ) {
             var chat = command.chat;
             chat.date = Date.now();
-            _db.updateOne( 'groupchats', { id: chat.id }, { $set: chat } ).then(function( response ) {
+            _db.updateOne( 'groupchats', { id: chat.id }, { $set: chat } ).then( ( response )=>{
                 //
                 //
                 //
@@ -212,7 +214,7 @@ GroupChat.prototype.groupupdatechat = function( wss, ws, command ) {
                     command.response = response;
                     ws.send(JSON.stringify(command));
                 }
-            }).catch( function( error ) {
+            }).catch( ( error )=>{
                 command.status = 'ERROR';
                 command.error = error;
                 ws.send(JSON.stringify(command));
@@ -226,9 +228,9 @@ GroupChat.prototype.groupacceptinvite = function( wss, ws, command ) {
     //
     // update chat status
     //
-    process.nextTick(function(){   
+    process.nextTick( ()=>{   
         if ( access.verifyCommand( ws, command ) ) {
-            _db.findOne('groupchats', { id: command.chatid }, {}).then(function( chat ) {
+            _db.findOne('groupchats', { id: command.chatid }, {}).then( ( chat )=>{
                 var invitedIndex = chat.invited.indexOf( command.userid );
                 if ( invitedIndex >= 0 ) {
                     //
@@ -247,7 +249,7 @@ GroupChat.prototype.groupacceptinvite = function( wss, ws, command ) {
                     // update timestamp
                     //
                     chat.date = Date.now();
-                    _db.updateOne( 'groupchats', { id: command.chatid }, { $set: chat } ).then( function( response ) {
+                    _db.updateOne( 'groupchats', { id: command.chatid }, { $set: chat } ).then( ( response )=>{
                         //
                         // respond to caller
                         //
@@ -261,7 +263,7 @@ GroupChat.prototype.groupacceptinvite = function( wss, ws, command ) {
                             status: 'OK',
                             chat: chat
                         });
-                    }).catch( function( error) {
+                    }).catch( ( error )=>{
                         command.status = 'ERROR';
                         command.error = error;
                         ws.send(JSON.stringify(command));
@@ -271,7 +273,7 @@ GroupChat.prototype.groupacceptinvite = function( wss, ws, command ) {
                     command.error = 'invalid invite';
                     ws.send(JSON.stringify(command));
                 }
-            }).catch( function( error ) {
+            }).catch( ( error )=>{
                 command.status = 'ERROR';
                 command.error = error;
                 ws.send(JSON.stringify(command));
@@ -285,9 +287,9 @@ GroupChat.prototype.groupdeclineinvite = function( wss, ws, command ) {
     //
     // update chat status
     //
-    process.nextTick(function(){   
+    process.nextTick( ()=>{   
         if ( access.verifyCommand( ws, command ) ) {
-            _db.findOne('groupchats', { id: command.chatid }, {}).then(function( chat ) {
+            _db.findOne('groupchats', { id: command.chatid }, {}).then( ( chat )=>{
                 let updated = false;
                 let index = chat.members.indexOf( command.userid );
                 if ( index >= 0 ) {
@@ -304,7 +306,7 @@ GroupChat.prototype.groupdeclineinvite = function( wss, ws, command ) {
                     // update timestamp
                     //
                     chat.date = Date.now();
-                    _db.updateOne( 'groupchats', { id: command.chatid }, { $set: chat } ).then( function( response ) {
+                    _db.updateOne( 'groupchats', { id: command.chatid }, { $set: chat } ).then( ( response )=>{
                         //
                         // respond to caller
                         //
@@ -328,7 +330,7 @@ GroupChat.prototype.groupdeclineinvite = function( wss, ws, command ) {
                     command.error = 'user is not a member of this chat';
                     ws.send(JSON.stringify(command));                    
                 }
-            }).catch( function( error ) {
+            }).catch( ( error )=>{
                 command.status = 'ERROR';
                 command.error = error;
                 ws.send(JSON.stringify(command));
@@ -342,9 +344,9 @@ GroupChat.prototype.groupjoinchat = function( wss, ws, command ) {
     //
     // join chat
     //
-    process.nextTick(function(){   
+    process.nextTick( ()=>{   
         if ( access.verifyCommand( ws, command ) ) {
-            _db.findOne('groupchats', { id: command.chatid, public: true }).then(function( chat ) {
+            _db.findOne('groupchats', { id: command.chatid, public: true }).then( ( chat )=>{
                 //
                 // check user is not already a member
                 //
@@ -355,7 +357,7 @@ GroupChat.prototype.groupjoinchat = function( wss, ws, command ) {
                     chat.members.push( command.userid );
                     chat.active.push( command.userid );
                     chat.date = Date.now();
-                    _db.updateOne( 'groupchats', { id: command.chatid }, { $set: chat } ).then( function( response ) {
+                    _db.updateOne( 'groupchats', { id: command.chatid }, { $set: chat } ).then( ( response )=>{
                         //
                         // respond to caller
                         //
@@ -370,7 +372,7 @@ GroupChat.prototype.groupjoinchat = function( wss, ws, command ) {
                             status: 'OK',
                             chat: chat
                         });
-                    }).catch( function( error) {
+                    }).catch( ( error )=>{
                         command.status = 'ERROR';
                         command.error = error;
                         ws.send(JSON.stringify(command));
@@ -380,7 +382,7 @@ GroupChat.prototype.groupjoinchat = function( wss, ws, command ) {
                     command.error = 'already a member';
                     ws.send(JSON.stringify(command));
                 }
-            }).catch( function( error ) {
+            }).catch( ( error )=>{
                 command.status = 'ERROR';
                 command.error = error;
                 ws.send(JSON.stringify(command));
@@ -394,9 +396,9 @@ GroupChat.prototype.groupleavechat = function( wss, ws, command ) {
     //
     // leave chat
     //
-    process.nextTick(function(){   
+    process.nextTick( ()=>{   
         if ( access.verifyCommand( ws, command ) ) {
-            _db.findOne('groupchats', { id: command.chatid }).then(function( chat ) {
+            _db.findOne('groupchats', { id: command.chatid }).then( ( chat )=>{
                 //
                 // remove user from lists
                 //
@@ -416,7 +418,7 @@ GroupChat.prototype.groupleavechat = function( wss, ws, command ) {
                 // update
                 //
                 chat.date = Date.now();
-                _db.updateOne( 'groupchats', { id: command.chatid }, { $set: chat } ).then( function( response ) {
+                _db.updateOne( 'groupchats', { id: command.chatid }, { $set: chat } ).then( ( response )=>{
                     //
                     // respond to caller
                     //
@@ -431,12 +433,12 @@ GroupChat.prototype.groupleavechat = function( wss, ws, command ) {
                         status: 'OK',
                         chat: chat
                     } );
-                }).catch( function( error) {
+                }).catch( ( error )=>{
                     command.status = 'ERROR';
                     command.error = error;
                     ws.send(JSON.stringify(command));
                 });
-            }).catch( function( error ) {
+            }).catch( ( error )=>{
                 command.status = 'ERROR';
                 command.error = error;
                 ws.send(JSON.stringify(command));
@@ -450,12 +452,12 @@ GroupChat.prototype.groupremovechat = function( wss, ws, command ) {
     //
     // remove chat
     //
-    process.nextTick(function(){   
+    process.nextTick( ()=>{   
         if ( access.verifyCommand( ws, command ) ) {
             //
             // only allow remove from the owner
             //
-            _db.findOne('groupchats', { id: command.chatid }).then(function( chat ) {
+            _db.findOne('groupchats', { id: command.chatid }).then( ( chat )=>{
                 _db.remove('groupchats', { id: command.chatid, owner: command.userid }).then(function( response ) {
                     command.status = 'OK';
                     if ( chat.members ) {
@@ -464,12 +466,12 @@ GroupChat.prototype.groupremovechat = function( wss, ws, command ) {
                         command.response = response;
                         ws.send(JSON.stringify(command));
                     }
-                }).catch( function( error ) {
+                }).catch( ( error )=>{
                     command.status = 'ERROR';
                     command.error = error;
                     ws.send(JSON.stringify(command));
                 });
-            }).catch(function(error) {
+            }).catch( (error)=>{
                 command.status = 'ERROR';
                 command.error = error;
                 ws.send(JSON.stringify(command));
@@ -484,9 +486,9 @@ GroupChat.prototype.groupsendmessage = function( wss, ws, command ) {
     // { id: guid, from: userid, message: text }
     //
     console.log( 'GroupChat.groupsendmessage : ' + JSON.stringify( command ) );
-    process.nextTick(function(){   
+    process.nextTick( ()=>{   
         if ( access.verifyCommand( ws, command ) ) {
-            _db.findOne('groupchats', { $and: [ { id: command.chatid }, { $or: [ { owner: command.userid }, { members: command.userid }, { public: true }]}]},{}).then(function( chat ) {
+            _db.findOne('groupchats', { $and: [ { id: command.chatid }, { $or: [ { owner: command.userid }, { members: command.userid }, { public: true }]}]},{}).then( ( chat )=>{
                 //
                 // add message
                 //
@@ -499,7 +501,7 @@ GroupChat.prototype.groupsendmessage = function( wss, ws, command ) {
                 // update
                 // TODO: look at pushing message using mongo
                 //
-                _db.updateOne('groupchats', { id: command.chatid }, {$set: chat }).then(function( response ) {
+                _db.updateOne('groupchats', { id: command.chatid }, {$set: chat }).then( ( response )=>{
                     //
                     // respond to caller
                     //
@@ -510,12 +512,12 @@ GroupChat.prototype.groupsendmessage = function( wss, ws, command ) {
                     // forward to active members
                     //
                     sendToActiveMembers( chat, command );
-                }).catch( function( error ) {
+                }).catch( ( error )=>{
                     command.status = 'ERROR';
                     command.error = error;
                     ws.send(JSON.stringify(command));
                 });
-            }).catch( function( error ) {
+            }).catch( ( error )=>{
                 console.log('GroupChat.groupsendmessage : unable to find chat : ' + command.chatid + ' : error : ' + JSON.stringify( error ) );
                 command.status = 'ERROR';
                 command.error = error;
@@ -534,9 +536,9 @@ GroupChat.prototype.groupremovemessage = function( wss, ws, command ) {
     //
     // update chat status
     //
-    process.nextTick(function(){   
+    process.nextTick( ()=>{   
         if ( access.verifyCommand( ws, command ) ) {
-            _db.findOne('groupchats', { $and: [ { id: command.chatid }, { $or: [ { owner: command.userid }, { members: command.userid } ]}]},{}).then(function( chat ) {
+            _db.findOne('groupchats', { $and: [ { id: command.chatid }, { $or: [ { owner: command.userid }, { members: command.userid } ]}]},{}).then( ( chat )=>{
                 //
                 // remove message
                 //
@@ -552,7 +554,7 @@ GroupChat.prototype.groupremovemessage = function( wss, ws, command ) {
                 //
                 // update
                 //
-                _db.updateOne('groupchats', { id: command.chatid }, { $set: chat }).then(function( response ) {
+                _db.updateOne('groupchats', { id: command.chatid }, { $set: chat }).then( ( response )=>{
                     //
                     // respond to caller
                     //
@@ -563,12 +565,12 @@ GroupChat.prototype.groupremovemessage = function( wss, ws, command ) {
                     // forward to active members
                     //
                     sendToActiveMembers( chat, command );
-                }).catch( function( error ) {
+                }).catch( ( error )=>{
                     command.status = 'ERROR';
                     command.error = error;
                     ws.send(JSON.stringify(command));
                 });
-            }).catch( function( error ) {
+            }).catch( ( error )=>{
                 command.status = 'ERROR';
                 command.error = error;
                 ws.send(JSON.stringify(command));
@@ -584,12 +586,12 @@ GroupChat.prototype.groupgolive = function( wss, ws, command ) {
     //
     //
     
-    process.nextTick(function(){
+    process.nextTick( ()=>{
         //
         // check if user is blocked
         //
         try {
-            _db.findOne('users', { id: command.id } ).then( function( user ) {
+            _db.findOne('users', { id: command.id } ).then( ( user )=>{
                 if ( user.blocked ) {
                     command.status = 'ERROR';
                     command.error = 'blocked';
@@ -599,7 +601,7 @@ GroupChat.prototype.groupgolive = function( wss, ws, command ) {
                     command.status = 'OK';
                     ws.send(JSON.stringify(command));
                 }
-            }).catch( function( error ) {
+            }).catch( ( error )=>{
                 command.status = 'ERROR';
                 command.error = error;
                 ws.send(JSON.stringify(command));
@@ -617,13 +619,13 @@ GroupChat.prototype.groupfilterchats = function( wss, ws, command ) {
     //
     // update user
     //
-    process.nextTick(function() {  
+    process.nextTick( ()=>{  
         try {
-            _db.find('groupchats', command.filter, {}, command.order || {}, command.limit || 0).then(function( response ) {
+            _db.find('groupchats', command.filter, {}, command.order || {}, command.limit || 0).then( ( response )=>{
                 command.status = 'OK';
                 command.response = response;
                 ws.send(JSON.stringify(command));
-            }).catch( function( error ) {
+            }).catch( ( error )=>{
                 command.status = 'ERROR';
                 command.error = error;
                 ws.send(JSON.stringify(command));

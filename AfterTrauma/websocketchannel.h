@@ -15,7 +15,7 @@ class WebSocketChannel : public QObject
     Q_PROPERTY(bool autoreconnect MEMBER m_autoreconnect )
     */
 public:
-    explicit WebSocketChannel(QObject *parent = 0);
+    explicit WebSocketChannel(QObject *parent = nullptr);
     //
     //
     //
@@ -24,8 +24,8 @@ public:
     bool autoreconnect() const { return m_autoreconnect; }
     void setAutoreconnect( const bool autoreconnect ) { m_autoreconnect = autoreconnect; }
 signals:
-    void received(const QString &message);
-    void error(const QString &error);
+    void received(const QString& message);
+    void error(const QString& error);
     void opened();
     void closed();
 

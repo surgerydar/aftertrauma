@@ -1,7 +1,9 @@
+/* eslint-env node, mongodb, es6 */
+/* eslint-disable no-console */
 var env = process.env;
-var config = require('./config');
-var fs = require('fs');
-var sharp = require('sharp');
+const config = require('./config');
+//var fs = require('fs');
+const sharp = require('sharp');
 //
 // connect to database
 //
@@ -12,16 +14,16 @@ db.connect(
 	env.APP_NAME,
     env.MONGODB_DB_USERNAME,
 	env.MONGODB_DB_PASSWORD
-).then( function( db_connection ) {
+).then( () => {
     try {
         //
         // configure express
         //
         console.log('initialising express');
-        let express = require('express');
-        let bodyParser = require('body-parser');
-        let jsonParser = bodyParser.json();
-        let mailer = require('./mailer.js');
+        const express = require('express');
+        const bodyParser = require('body-parser');
+        //const jsonParser = bodyParser.json();
+        //const mailer = require('./mailer.js');
         //
         //
         //		
@@ -47,11 +49,11 @@ db.connect(
         //
         // user
         //
-        app.get('/avatar/:id', function (req, res) {
+        app.get('/avatar/:id', (req, res)=>{
             // update user
             db.findOne( 'users', { id: req.params.id }, { avatar: 1 } ).then( function( response ) {
                 if ( req.query.width && req.query.height ) {
-                    var buffer = new Buffer(response.avatar.split(',')[1], 'base64');
+                    let buffer = new Buffer(response.avatar.split(',')[1], 'base64');
                     let width = parseInt(req.query.width);
                     let height = parseInt(req.query.height);
                     let transform = sharp(buffer).resize(width, height).max();
@@ -63,14 +65,14 @@ db.connect(
                     //
                     //
                     //
-                    var img = new Buffer(response.avatar.split(',')[1], 'base64');
+                    let img = new Buffer(response.avatar.split(',')[1], 'base64');
                     res.writeHead(200, {
                         'Content-Type': 'image/png',
                         'Content-Length': img.length
                     });
                     res.end( img );
                 }
-            } ).catch( function( error ) {
+            } ).catch( ( error )=>{
                 res.json( {status: 'ERROR', message: JSON.stringify( error ) } );
             });
         });
@@ -130,36 +132,52 @@ db.connect(
         //
         // connect groupchat
         //
-        try { // TODO: roll out exception handling for all modules
+        try { 
             console.log('groupchat');
             let groupchat = require('./groupchat');
             groupchat.setup(wsr,db);
         } catch( error ) {
-            console.error('unable to install croup chat : ' + error );
+            console.error('unable to install group chat : ' + error );
         }
         //
         // connect day
         //
-        console.log('day');
-        let day = require('./day');
-        day.setup(wsr,db);
+        try { 
+            console.log('day');
+            let day = require('./day');
+            day.setup(wsr,db);
+        } catch( error ) {
+            console.error('unable to install day : ' + error );
+        }
         //
         // connect sync
         //
-        console.log('sync');
-        let sync = require('./sync');
-        sync.setup(wsr,db);
+        try {
+            console.log('sync');
+            let sync = require('./sync');
+            sync.setup(wsr,db);
+        } catch( error ) {
+            console.error('unable to install sync : ' + error );
+        }
         //
         // connect fileuploader
         //
-        let fileuploader = require('./fileuploader');
-        fileuploader.setup(wsr);
+        try {
+            let fileuploader = require('./fileuploader');
+            fileuploader.setup(wsr);
+        } catch( error ) {
+            console.error('unable to install fileuploader : ' + error );
+        }
         //
         // connect usage
         //
-        console.log('usage');
-        let usage = require('./usage');
-        usage.setup(wsr,db);
+        try {
+            console.log('usage');
+            let usage = require('./usage');
+            usage.setup(wsr,db);
+        } catch( error ) {
+            console.error('unable to install fileuploader : ' + error );
+        }
         //
         // create server
         //
@@ -170,10 +188,15 @@ db.connect(
         // start listening
         //
         console.log('starting server');
-        server.listen(env.NODE_PORT || 3000, env.NODE_IP || 'localhost', () => console.log('Server started'));
-    } catch( error ) {
+        server.listen(env.NODE_PORT || 3000, env.NODE_IP || 'localhost', () => {
+            console.log('Server started')
+        });
+        //
+        //
+        //
+    } ( error ) => {
         console.log( 'unable to start server : ' + error );
     }
-}).catch( function( err ) {
-	console.log( 'unable to connect to database : ' + err );
+}).catch( ( error ) => {
+	console.log( 'unable to connect to database : ' + error );
 });

@@ -1,15 +1,16 @@
-'use strict';
-let net     = require('net');
-let http    = require('http');
-let https   = require('https');
-let ws      = require('ws');
+/* eslint-env node, mongodb, es6 */
+/* eslint-disable no-console */
+const net     = require('net');
+const http    = require('http');
+const https   = require('https');
+const ws      = require('ws');
 
-exports.createServer = (opts, routers) => {
+exports.createServer = (opts, routers)=>{
     //
     // create socket server
     //
-    let server = net.createServer(socket => {
-        socket.once('data', buffer => {
+    let server = net.createServer( (socket)=>{
+        socket.once('data', (buffer)=>{
             // Pause the socket
             socket.pause();
 
@@ -46,11 +47,11 @@ exports.createServer = (opts, routers) => {
     //
     if ( routers.ws ) {
         server.ws = new ws.Server({server:server.http});
-        server.ws.on('connection', function connection(ws) {
+        server.ws.on('connection', (ws)=>{
             routers.ws.connection( server.ws, ws )
         });
         server.wss = new ws.Server({server:server.https});
-        server.wss.on('connection', function connection(ws) {
+        server.wss.on('connection', (ws)=>{
             routers.ws.connection( server.wss, ws )
         });
     }

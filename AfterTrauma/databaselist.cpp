@@ -519,6 +519,7 @@ void DatabaseList::_update( QVariantMap& object, QVariantMap& update ) {
     for ( QVariantMap::iterator it = update.begin(); it != update.end(); ++it ) {
         //
         // TODO: handle nested array / document updates
+        // $set, $push
         //
         object[ it.key() ] = it.value();
     }

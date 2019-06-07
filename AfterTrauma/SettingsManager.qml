@@ -45,10 +45,72 @@ AfterTrauma.Page {
                     //
                     //
                     Rectangle {
+                        id: textSizeBlock
+                        width: settingsContainer.width
+                        height: childrenRect.height + 16
+                        color: Colours.almostWhite
+                        Label {
+                            id: textSizePreview
+                            height: 48
+                            anchors.top: parent.top
+                            anchors.left: parent.left
+                            anchors.margins: 8
+                            //
+                            //
+                            //
+                            font.weight: Font.Light
+                            font.family: fonts.light
+                            font.pointSize: textSize.sizes[ textSize.value ].pointSize
+                            //
+                            //
+                            //
+                            text: "Text Size"
+                        }
+                        AfterTrauma.SpinBox {
+                            id: textSize
+                            anchors.top: textSizePreview.bottom
+                            anchors.right: parent.right
+                            anchors.margins: 8
+                            from: 0
+                            to: 3
+                            value: valueFromPointSize(profile.textSize)
+                            //
+                            //
+                            //
+                            textFromValue: function( value, locale ) {
+                                return sizes[ Math.max(0,Math.min(sizes.length-1,value)) ].name;
+                            }
+                            onValueChanged: {
+                                if ( sizes[ Math.max(0,Math.min(sizes.length-1,value)) ].pointSize !== profile.textSize ) {
+                                    profile.textSize = sizes[ Math.max(0,Math.min(sizes.length-1,value)) ].pointSize;
+                                    dirty = true;
+                                    textSizePreview.font.pointSize = profile.textSize;
+                                }
+                            }
+                            function valueFromPointSize( pointSize ) {
+                                if ( pointSize ) {
+                                    for ( var i = 0; i < sizes.length; i++ ) {
+                                        if ( sizes[ i ].pointSize === pointSize ) {
+                                            return i;
+                                        }
+                                    }
+                                }
+                                return 1;
+                            }
+                            property var sizes: [
+                                { name: "Small", pointSize: 12 },
+                                { name: "Normal", pointSize: 18 },
+                                { name: "Medium", pointSize: 24 },
+                                { name: "Large", pointSize: 32 }
+                            ]
+                        }
+                    }
+                    Rectangle {
                         id: stayLoggedInBlock
                         width: settingsContainer.width
                         height: childrenRect.height + 16
                         color: Colours.almostWhite
+                        enabled: userProfile ? true : false
                         AfterTrauma.CheckBox {
                             id: stayLoggedIn
                             anchors.top: parent.top
@@ -68,6 +130,7 @@ AfterTrauma.Page {
                         width: settingsContainer.width
                         height: childrenRect.height + 16
                         color: Colours.almostWhite
+                        enabled: userProfile ? true : false
                         AfterTrauma.TextField {
                             id: currentPassword
                             anchors.top: parent.top
@@ -88,7 +151,7 @@ AfterTrauma.Page {
                         }
                         AfterTrauma.Button {
                             anchors.top: newPassword.bottom
-                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.right: parent.right
                             anchors.margins: 8
                             backgroundColour: Colours.slate
                             textColour: Colours.almostWhite
@@ -165,7 +228,7 @@ AfterTrauma.Page {
                         AfterTrauma.Button {
                             id: updateButton
                             anchors.top: parent.top
-                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.right: parent.right
                             anchors.margins: 8
                             backgroundColour: Colours.slate
                             textColour: Colours.almostWhite
@@ -183,7 +246,7 @@ AfterTrauma.Page {
                         AfterTrauma.Button {
                             id: termsButton
                             anchors.top: parent.top
-                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.right: parent.right
                             anchors.margins: 8
                             backgroundColour: Colours.slate
                             textColour: Colours.almostWhite

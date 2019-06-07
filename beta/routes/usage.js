@@ -1,12 +1,14 @@
-var express = require('express')
-var router  = express.Router()
+/* eslint-env node, mongodb, es6 */
+/* eslint-disable no-console */
+const express = require('express')
+const router  = express.Router()
 
 module.exports = function( authentication, db ) {
     //
     //
     //
     function generateCSV( usage ) {
-        function sanitiseString( string ) {
+        let sanitiseString = ( string )=>{
             return string.replace(/"/g, '""') ;  
         };
         let csv = [];
@@ -25,29 +27,40 @@ module.exports = function( authentication, db ) {
             // row
             //
             let row = [];
-            for ( key in data ) {
+            for ( var key in data ) {
                 var column;
                 if ( key === 'date' ) {
                     column = new Date( data[key] ).toISOString();   
                 } else if ( key === 'extra' && typeof data[key] !== 'string' ) {
                     let extra = []; 
-                    for ( extrakey in data[key] ) {
+                    for ( var extrakey in data[key] ) {
                         let extravalue = '';
                         if ( extrakey === 'date' ) {
-                            extravalue = new Date( data[key][extrakey] ).toISOString();     
+                            extravalue = new Date( data[key][extrakey] ).toISOString();   
+                        } else if ( typeof data[key][extrakey] !== 'string' ) {
+                            extravalue += '[';
+                            if ( Array.isArray( data[key][extrakey] ) ) {
+                                for ( var i = 0; i < data[key][extrakey].length; i++ ) {
+                                    extravalue += data[key][extrakey][ i ];
+                                    if ( i < data[key][extrakey].length - 1 ) {
+                                        extravalue += ','
+                                    }
+                                }
+                            } else {
+                                for ( var extraValueKey in data[key][extrakey] ) {
+                                    extravalue += extraValueKey + '=' + data[key][extrakey][extraValueKey];
+                                }
+                            }
+                            extravalue += ']';
+                        /* JONS : this is now generalised above
                         } else if ( extrakey === 'challenge' ) {
-                            let challenge = {
-                                name:       data[key][extrakey]['name'],
-                                activity:   data[key][extrakey]['activity'],
-                                frequency:  data[key][extrakey]['frequency'],
-                                repeats:    data[key][extrakey]['repeats']
-                            };
                             extravalue += '[';
                             extravalue += 'name=' + data[key][extrakey]['name'];
                             extravalue += ',activity=' + data[key][extrakey]['activity'];
                             extravalue += ',frequency=' + data[key][extrakey]['frequency'];
                             extravalue += ',repeats=' + data[key][extrakey]['repeats'];
                             extravalue += ']';
+                        */
                         } else {
                             extravalue = data[key][extrakey];
                         }
@@ -57,7 +70,7 @@ module.exports = function( authentication, db ) {
                 } else {
                     column = data[key].toString();
                 }
-                row.push('"'+column+'"');
+                row.push('"'+sanitiseString(column)+'"');
             }
             csv.push(row.join(','));
            
@@ -75,7 +88,7 @@ module.exports = function( authentication, db ) {
         let startDate = parseInt(req.query.startdate);
         let endDate = parseInt(req.query.enddate);
         let format = req.query.format;
-        db.find('usage', { $and: [ { date: { $gte: startDate } }, { date: { $lte: endDate } } ] } ).then( function( usage ) {
+        db.find('usage', { $and: [ { date: { $gte: startDate } }, { date: { $lte: endDate } } ] } ).then( ( usage )=>{
             if ( format === 'json' ) {
                 res.json({ status: 'OK', response: usage});
             } else if( format === 'csv' ) {
@@ -91,7 +104,7 @@ module.exports = function( authentication, db ) {
             } else {
                 res.render( 'usage', { usage: usage } );
             }
-        }).catch( function( error ) {
+        }).catch( ( error )=>{
             console.log( 'usage/report : error : ' + error );
             res.render( 'usage', { error: error.toString() } );
         });

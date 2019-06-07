@@ -114,7 +114,7 @@ AfterTrauma.Page {
                             anchors.right: parent.right
                             anchors.margins: 8
                             color: Colours.veryDarkSlate
-                            fontSizeMode: Label.Fit
+                            wrapMode: Label.WordWrap
                             font.family: fonts.light
                             font.pointSize: 24
                             text: "Who is the person filling in this profile?"
@@ -253,9 +253,23 @@ AfterTrauma.Page {
                         //
                         //
                         //
+                        Label {
+                            id: avatarHeader
+                            anchors.top: parent.top
+                            anchors.left: parent.left
+                            anchors.margins: 8
+                            color: Colours.veryDarkSlate
+                            wrapMode: Label.WordWrap
+                            font.family: fonts.light
+                            font.pointSize: 24
+                            text: "Profile image"
+                        }
+                        //
+                        //
+                        //
                         Image {
                             id: avatar
-                            anchors.top: parent.top
+                            anchors.top: avatarHeader.bottom
                             anchors.left: parent.left
                             anchors.bottom: galleryButton.top
                             anchors.right: parent.right
@@ -298,9 +312,23 @@ AfterTrauma.Page {
                     }
                     Rectangle {
                         id: profileTextBlock
-                        height: profileText.height + 16
+                        height: childrenRect.height + 16
                         width: profileContainer.width
                         color: Colours.almostWhite
+                        //
+                        //
+                        //
+                        Label {
+                            id: profileTextHeader
+                            anchors.top: parent.top
+                            anchors.left: parent.left
+                            anchors.margins: 8
+                            color: Colours.veryDarkSlate
+                            wrapMode: Label.WordWrap
+                            font.family: fonts.light
+                            font.pointSize: 24
+                            text: "Profile"
+                        }
                         //
                         //
                         //
@@ -308,11 +336,48 @@ AfterTrauma.Page {
                             id: profileText
                             height: Math.max(contentHeight,128)
                             anchors.left: parent.left
-                            anchors.bottom: parent.bottom
+                            anchors.top: profileTextHeader.bottom
                             anchors.right: parent.right
                             anchors.margins: 8
                             placeholderText: "Tell us a little about you and your trauma experience"
                             text: profile && profile.profile ? profile.profile : ""
+                            onTextChanged: {
+                                dirty = true;
+                            }
+                        }
+                    }
+                    Rectangle {
+                        id: hospitalTextBlock
+                        height: childrenRect.height + 16
+                        width: profileContainer.width
+                        color: Colours.almostWhite
+                        //
+                        //
+                        //
+                        Label {
+                            id: hospitalTextHeader
+                            anchors.top: parent.top
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                            anchors.margins: 8
+                            color: Colours.veryDarkSlate
+                            wrapMode: Label.WordWrap
+                            font.family: fonts.light
+                            font.pointSize: 24
+                            text: "Which hospital first treated you for your injuries?"
+                        }
+                        //
+                        //
+                        //
+                        AfterTrauma.ScrollableTextArea {
+                            id: hospitalText
+                            height: Math.max(contentHeight,64)
+                            anchors.left: parent.left
+                            anchors.top: hospitalTextHeader.bottom
+                            anchors.right: parent.right
+                            anchors.margins: 8
+                            placeholderText: "Hospital name"
+                            text: profile && profile.hospital ? profile.hospital : ""
                             onTextChanged: {
                                 dirty = true;
                             }
@@ -601,6 +666,7 @@ AfterTrauma.Page {
         profile.gender = getGender();
         profile.age = getAge();
         profile.profile = profileText.text;
+        profile.hospital = hospitalText.text;
         if ( profile.tags ) {
             console.log( 'profile tags: ' + JSON.stringify(profile.tags));
         }
@@ -620,7 +686,8 @@ AfterTrauma.Page {
                            gender: getGender(),
                            age: getAge(),
                            tags: profile.tags || [],
-                           injuries: profile.injuries || {}
+                           injuries: profile.injuries || {},
+                           hospital: profile.hospital
                        });
 
     }

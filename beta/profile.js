@@ -1,10 +1,12 @@
+/* eslint-env node, mongodb, es6 */
+/* eslint-disable no-console */
 //
 // 
 //
-var _db;
-var _wsr;
-var mailer = require('./mailer.js');
-var access = require('./access');
+let _db;
+let _wsr;
+const mailer = require('./mailer.js');
+const access = require('./access');
 
 function Profile() {
     
@@ -26,13 +28,13 @@ Profile.prototype.updateprofile = function( wss, ws, command ) {
     //
     // update user
     //
-    process.nextTick(function(){   
+    process.nextTick( ()=>{   
         //console.log('updating user : ' + JSON.stringify(command.profile));
-        _db.updateUser(command.profile.id,command.profile).then(function( response ) {
+        _db.updateUser(command.profile.id,command.profile).then( ( response )=>{
             command.status = 'OK';
             command.response = response;
             ws.send(JSON.stringify(command));
-        }).catch( function( error ) {
+        }).catch( ( error )=>{
             command.status = 'ERROR';
             command.error = error;
             ws.send(JSON.stringify(command));
@@ -45,16 +47,16 @@ Profile.prototype.getpublicprofiles = function( wss, ws, command ) {
     //
     // get list of public profiles
     //
-    process.nextTick(function() {  
+    process.nextTick( ()=>{  
         let query = {};
         if ( command.exclude ) {
             query = {id:{$not:{$eq:command.exclude}}};
         }
-        _db.findUsers(query,{password: 0, email: 0},{}).then(function( response ) {
+        _db.findUsers(query,{password: 0, email: 0},{}).then( ( response )=>{
             command.status = 'OK';
             command.response = response;
             ws.send(JSON.stringify(command));
-        }).catch( function( error ) {
+        }).catch( ( error )=>{
             command.status = 'ERROR';
             command.error = error;
             ws.send(JSON.stringify(command));
@@ -67,16 +69,16 @@ Profile.prototype.findpublicprofiles = function( wss, ws, command ) {
     //
     // update user
     //
-    process.nextTick(function() {  
+    process.nextTick( ()=>{  
         let query = {};
         if ( command.exclude ) {
             query = {$and:[{id:{$not:{$eq:command.exclude}}},{username: { $regex: '^' + command.search, $options:'i'} }]};
         }
-        _db.findUsers(query,{password: 0, email: 0},{}).then(function( response ) {
+        _db.findUsers(query,{password: 0, email: 0},{}).then( ( response )=>{
             command.status = 'OK';
             command.response = response;
             ws.send(JSON.stringify(command));
-        }).catch( function( error ) {
+        }).catch( ( error )=>{
             command.status = 'ERROR';
             command.error = error;
             ws.send(JSON.stringify(command));
@@ -89,14 +91,14 @@ Profile.prototype.filterpublicprofiles = function( wss, ws, command ) {
     //
     // update user
     //
-    process.nextTick(function() {  
+    process.nextTick( ()=>{  
         try {
             //_db.find('users', command.filter, {password: 0, email: 0}, command.order, command.limit).then(function( response ) {
-            _db.findUsers(command.filter,{password: 0, email: 0},{}).then(function( response ) {
+            _db.findUsers(command.filter,{password: 0, email: 0},{}).then( ( response )=>{
                 command.status = 'OK';
                 command.response = response;
                 ws.send(JSON.stringify(command));
-            }).catch( function( error ) {
+            }).catch( ( error )=>{
                 command.status = 'ERROR';
                 command.error = error;
                 ws.send(JSON.stringify(command));
@@ -112,16 +114,16 @@ Profile.prototype.blockprofile = function( wss, ws, command ) {
     //
     // block user
     //
-    process.nextTick(function(){   
+    process.nextTick( ()=>{   
         if ( access.verifyCommand( ws, command ) ) {
-            _db.updateUser(command.id, { blocked: true }).then(function( response ) {
+            _db.updateUser(command.id, { blocked: true }).then( ( response )=>{
                 //
                 // flag all user messages
                 //
-                _db.find('groupchats',{$or:[{members: command.id},{owner: command.id}]},{},{date:-1}).then(function( response ) {
-                    response.forEach( function( chat ) {
+                _db.find('groupchats',{$or:[{members: command.id},{owner: command.id}]},{},{date:-1}).then( ( response )=>{
+                    response.forEach( ( chat )=>{
                         //console.log( 'Profile.blockprofile : blocking chat : ' + JSON.stringify(chat) );
-                        chat.messages.forEach( function( message ) {
+                        chat.messages.forEach( ( message )=>{
                             if ( message.from === command.id ) {
                                 message.blocked = true;
                             }    
@@ -136,7 +138,7 @@ Profile.prototype.blockprofile = function( wss, ws, command ) {
                         };
                         _wsr.message( wss, ws, JSON.stringify( updateCommand ) );
                     });
-                }).catch( function( error ) {
+                }).catch( ( error )=>{
                     console.log( 'Profile.blockprofile : unable to find user chats : ' + error );
                 });
                 //
@@ -150,7 +152,7 @@ Profile.prototype.blockprofile = function( wss, ws, command ) {
                 command.status = 'OK';
                 command.response = response;
                 ws.send(JSON.stringify(command));
-            }).catch( function( error ) {
+            }).catch( ( error )=>{
                 command.status = 'ERROR';
                 command.error = error;
                 ws.send(JSON.stringify(command));
@@ -164,15 +166,15 @@ Profile.prototype.unblockprofile = function( wss, ws, command ) {
     //
     // update user
     //
-    process.nextTick(function(){   
+    process.nextTick( ()=>{   
         if ( access.verifyCommand( ws, command ) ) {
-            _db.updateUser(command.id, { blocked: false }).then(function( response ) {
+            _db.updateUser(command.id, { blocked: false }).then( ( response )=>{
                 //
                 // unflag all user messages
                 //
-                _db.find('groupchats',{$or:[{members: command.id},{owner: command.id}]},{},{date:-1}).then(function( response ) {
-                    response.forEach( function( chat ) {
-                        chat.messages.forEach( function( message ) {
+                _db.find('groupchats',{$or:[{members: command.id},{owner: command.id}]},{},{date:-1}).then( ( response )=>{
+                    response.forEach( ( chat )=>{
+                        chat.messages.forEach( ( message )=>{
                             if ( message.from === command.id ) {
                                 message.blocked = false;
                             }    
@@ -187,7 +189,7 @@ Profile.prototype.unblockprofile = function( wss, ws, command ) {
                         };
                         _wsr.message( wss, ws, JSON.stringify( updateCommand ) );
                     });
-                }).catch( function( error ) {
+                }).catch( ( error )=>{
                     console.log( 'Profile.unblockprofile : unable to find user chats : ' + error );
                 });
                 //
@@ -201,7 +203,7 @@ Profile.prototype.unblockprofile = function( wss, ws, command ) {
                 command.status = 'OK';
                 command.response = response;
                 ws.send(JSON.stringify(command));
-            }).catch( function( error ) {
+            }).catch( ( error )=>{
                 command.status = 'ERROR';
                 command.error = error;
                 ws.send(JSON.stringify(command));

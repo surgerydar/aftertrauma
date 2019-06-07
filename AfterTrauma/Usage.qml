@@ -91,7 +91,7 @@ Item {
 
       */
     function add( section, action, item, extra ) {
-        console.log( 'Usage : adding : ' + section + ' : ' + action + ' : ' + item + ' : ' + JSON.stringify(extra) );
+        //console.log( 'Usage : adding : ' + section + ' : ' + action + ' : ' + item + ' : ' + JSON.stringify(extra) );
 
         model.add({
                       date    : Date.now(),

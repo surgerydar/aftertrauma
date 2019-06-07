@@ -104,16 +104,40 @@ AfterTrauma.Page {
     //
     //
     //
-    Component.onCompleted: {
+    property bool onStack: false
+    StackView.onActivating: {
         pages.model.clear();
         var filter = {section: 'about'};
         console.log( 'Help : filtering by : ' + JSON.stringify( filter ) );
         documentModel.setFilter(filter);
         var count = documentModel.count;
-        console.log( 'Help : appending : ' + count + ' documents' );
+        //console.log( 'Help : appending : ' + count + ' documents' );
         for ( var i = 0; i < count; i++ ) {
             var document = documentModel.get(i);
-            console.log( 'Help : appending document : ' + JSON.stringify(document));
+            //console.log( 'Help : appending document : ' + JSON.stringify(document));
+            pages.model.append(document);
+        }
+        if ( !onStack ) {
+            usageModel.add('about', 'open' );
+        }
+    }
+    StackView.onRemoved: {
+        onStack = false;
+        usageModel.add('about', 'close' );
+    }
+    //
+    //
+    //
+    Component.onCompleted: {
+        pages.model.clear();
+        var filter = {section: 'about'};
+        //console.log( 'Help : filtering by : ' + JSON.stringify( filter ) );
+        documentModel.setFilter(filter);
+        var count = documentModel.count;
+        //console.log( 'Help : appending : ' + count + ' documents' );
+        for ( var i = 0; i < count; i++ ) {
+            var document = documentModel.get(i);
+            //console.log( 'Help : appending document : ' + JSON.stringify(document));
             pages.model.append(document);
         }
     }

@@ -97,12 +97,18 @@ Item {
         //
         //
         //
+        onError: {
+            console.log( 'ChatChannel : error : ' + error );
+        }
+        //
+        //
+        //
         onReceived: {
             //response.text = message;
+            //console.log( 'ChatChannel : received : ' + message );
             try {
                 var command = JSON.parse(message);
 
-                //console.log( 'ChatChannel : received : ' + message );
                 if ( command.command === 'welcome' ) {
                     refresh();
                 } else if ( command.command === 'groupgolive') {
@@ -230,10 +236,10 @@ Item {
                             //
                             // check for duplicate
                             //
-                            var message = command.message;
+                            var incommingMessage = command.message;
                             var duplicate = false;
                             for ( var i = 0; i < chat.messages.length; i++ ) {
-                                if ( chat.messages[ i ].id === message.id ) {
+                                if ( chat.messages[ i ].id === incommingMessage.id ) {
                                     duplicate = true;
                                     break;
                                 }
@@ -244,18 +250,18 @@ Item {
                                 //
                                 var messageModel = chatModel.getMessageModel(command.chatid);
                                 if ( messageModel ) {
-                                    messageModel.add( message );
+                                    messageModel.add( incommingMessage );
                                 }
                                 //
                                 // update database
                                 //
-                                chat.messages.push( message );
-                                chatModel.update({id: command.chatid},{ messages: chat.messages, date: message.date || Date.now() });
+                                chat.messages.push( incommingMessage );
+                                chatModel.update({id: command.chatid},{ messages: chat.messages, date: incommingMessage.date || Date.now() });
                                 chatModel.save();
                                 //
                                 //
                                 //
-                                if ( message.from !== userProfile.id ) {
+                                if ( incommingMessage.from !== userProfile.id ) {
                                     unreadChatsModel.addMessage(command.chatid);
                                     // Notify user
                                     // TODO: need to store usernames in chat so we can add from???
