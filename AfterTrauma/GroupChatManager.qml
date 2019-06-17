@@ -32,7 +32,7 @@ AfterTrauma.Page {
         //
         //
         //
-        emptyPrompt: "No active chat's<br/>Add a chat to start a new conversation<br/>or<br/>find a group chat"
+        emptyPrompt: "No active chats<br/>Add a chat to start a new conversation<br/>or<br/>find a group chat"
         //
         //
         //

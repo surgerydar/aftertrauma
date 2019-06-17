@@ -342,7 +342,9 @@ Rectangle {
         MouseArea {
             anchors.fill: parent
             onClicked: {
+                console.log( 'global dates : [' + globalMinimumDate + ',' + globalMaximumDate + ']');
                 dateRangePicker.show( function( from, to ) {
+                    console.log( 'NewLineChart : datePicker : range [' + from + ',' + to + ']')
                     startDate = from;
                     endDate = to;
                     canvas.requestPaint();
@@ -371,7 +373,9 @@ Rectangle {
         MouseArea {
             anchors.fill: parent
             onClicked: {
+                console.log( 'global dates : [' + globalMinimumDate + ',' + globalMaximumDate + ']');
                 dateRangePicker.show( function( from, to ) {
+                    console.log( 'NewLineChart : datePicker : range [' + from + ',' + to + ']')
                     startDate = from;
                     endDate = to;
                     canvas.requestPaint();
@@ -383,11 +387,13 @@ Rectangle {
     //
     //
     onStartDateChanged: {
-        var index = dailyModel.indexOfFirstDayBefore(startDate);
+        console.log( 'NewLineChart : onStartDateChanged : ' + startDate );
+        //var index = dailyModel.indexOfFirstDayBefore(startDate);
         fromDate.text = '< ' + startDate.toDateString();
     }
     onEndDateChanged: {
-        var index = dailyModel.indexOfFirstDayAfter(endDate);
+        console.log( 'NewLineChart : onEndDateChanged : ' + endDate );
+        //var index = dailyModel.indexOfFirstDayAfter(endDate);
         toDate.text = endDate.toDateString() + ' >';
     }
     /*

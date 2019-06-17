@@ -1,5 +1,5 @@
 import QtQuick 2.7
-import QtQuick.Controls 2.1
+import QtQuick.Controls 2.5
 
 import SodaControls 1.0
 
@@ -47,6 +47,7 @@ Item {
             //
             //
             onCurrentIndexChanged: {
+                console.log( 'DatePicker.day.onCurrentIndexChanged : ' + currentIndex );
                 if ( currentIndex > -1 ) {
                     updateDate();
                 }
@@ -92,6 +93,7 @@ Item {
             //
             //
             onCurrentIndexChanged: {
+                console.log( 'DatePicker.month.onCurrentIndexChanged : ' + currentIndex );
                 if ( currentIndex > -1 ) {
                     updateDate();
                 }
@@ -143,6 +145,7 @@ Item {
             //
             //
             onCurrentIndexChanged: {
+                console.log( 'DatePicker.year.onCurrentIndexChanged : ' + currentIndex );
                 if ( currentIndex > -1 ) {
                     updateDate();
                 }
@@ -194,8 +197,8 @@ Item {
     function updateDate() {
         if ( !blockUpdate ) {
             var maxDays = daysInMonth(year.currentValue(),month.currentValue());
-            //console.log( 'updateDate() : maxDays=' + maxDays + ' day.model=' + day.model );
-            if ( maxDays != day.model ) {
+            console.log( 'updateDate() : maxDays=' + maxDays + ' day.model=' + day.model );
+            if ( maxDays !== day.model ) {
                 var dayIndex        = Math.min(day.currentValue(),maxDays-1);
                 day.model           = maxDays;
                 day.currentIndex    = dayIndex;
@@ -219,11 +222,14 @@ Item {
         currentDate.setHours(0,0,0,0); // standardise time
         year.model          = 30000;
         //year.currentIndex   = currentDate.getFullYear() - year.model.min;
-        year.currentIndex   = currentDate.getFullYear();
+        //year.currentIndex   = currentDate.getFullYear();
+        year.positionViewAtIndex(currentDate.getFullYear(), Tumbler.Center );
         month.model         = 12;
-        month.currentIndex  = currentDate.getMonth();
+        //month.currentIndex  = currentDate.getMonth();
+        month.positionViewAtIndex(currentDate.getMonth(),Tumbler.Center);
         day.model           = daysInMonth(currentDate.getFullYear(),currentDate.getMonth());
-        day.currentIndex    = currentDate.getDate() - 1;
+        //day.currentIndex    = currentDate.getDate() - 1;
+        day.positionViewAtIndex( currentDate.getDate() - 1, Tumbler.Center);
         //
         //
         //

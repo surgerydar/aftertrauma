@@ -58,6 +58,7 @@ Popup {
             anchors.horizontalCenter: parent.horizontalCenter
             minimumDate: container.minimumDate
             maximumDate: to.currentDate
+            textMonth: true
         }
         //
         //
@@ -81,6 +82,7 @@ Popup {
             anchors.horizontalCenter: parent.horizontalCenter
             minimumDate: from.currentDate
             maximumDate: container.maximumDate
+            textMonth: true
         }
         //
         //
@@ -124,16 +126,13 @@ Popup {
     //
     function show( callback, title, fromDate, toDate ) {
         blockUpdates = true;
-
         container.callback = callback;
         titleText.text = title;
-
         if ( fromDate ) {
             from.currentDate = fromDate;
         } else {
             from.currentDate = new Date();
         }
-
         if ( toDate ) {
             to.currentDate = toDate;
         } else {
