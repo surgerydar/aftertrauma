@@ -10,6 +10,7 @@ DatabaseList {
     //
     //
     Component.onCompleted: {
+
     }
 
     function getDateRange() {
@@ -63,29 +64,19 @@ DatabaseList {
 
         var day = findOne(query);
         if ( !day && create ) {
-            day = createDate(date);
             //
             // interpolate values
             //
-            var before = dayBefore(date.getTime());
-            var after = dayAfter(date.getTime());
-            if ( before || after ) {
-                var values = day.values;
-                if ( before && after ) {
-                    //console.log( 'Daily.getDay : interpolating between : ' + JSON.stringify(before) + ' and ' + JSON.stringify(after) );
-                    for ( var i = 0; i < values.length; i++ ) {
-                        values[ i ].value = ( before.values[ i ].value + after.values[ i ].value ) / 2.;
-                    }
-                } else if ( before ) {
-                    //console.log( 'Daily.getDay : setting values to previous : ' + JSON.stringify(before) );
-                    values = before.values;
-                } else if ( after ) {
-                    //console.log( 'Daily.getDay : setting values to next : ' + JSON.stringify(after) );
-                    values = after.values;
-                }
-                update({date: day.date},{values: values});
-                save();
+            var values = valuesForDate(date.getTime());
+            //
+            // create day
+            //
+            day = createDate(date);
+            for ( var i = 0; i < day.values.length; i++ ) {
+                day.values[ i ].value = values[ i ];
             }
+            update({date: day.date},{values: day.values});
+            save();
         }
 
         return day;
@@ -128,42 +119,52 @@ DatabaseList {
     }
     function indexOfFirstDayBefore( d ) {
         var date = d.getTime();
-        for ( var i = 0; i < count; i++ ) {
-            var day = get(i);
-            if ( day.date < date ) {
-                return Math.min( i, count - 1);
-            }
-        }
-        return count - 1;
-    }
-    function indexOfFirstDayAfter( d ) {
-        var date = d.getTime();
+        var previous = 0;
         for ( var i = count - 1; i >= 0; i-- ) {
             var day = get(i);
             if ( day.date > date ) {
-                return Math.max( i, 0);
+                return previous;
             }
+            previous = i;
         }
-        return 0;
+        return previous;
+    }
+    function indexOfFirstDayAfter( d ) {
+        var date = d.getTime();
+        var previous = count - 1;
+        for ( var i = 0; i < count; i++ ) {
+            var day = get(i);
+            if ( day.date < date ) {
+                return previous;
+            }
+            previous = i;
+        }
+        return previous;
     }
     //
     //
     //
     function dayBefore( date ) {
-        for ( var i = 0; i < count; i++ ) {
-            var day = get(i);
-            //if ( day.date <= date ) return day;
-            if ( day.date < date ) return day;
-        }
-        return undefined;
-    }
-    function dayAfter( date ) {
+        var previous = get(0);
         for ( var i = count - 1; i >= 0; i-- ) {
             var day = get(i);
-            if ( day.date >= date ) return day;
-            //if ( day.date > date ) return day;
+            if ( day.date > date ) {
+                return previous || day;
+            }
+            previous = day;
         }
-        return undefined;
+        return previous;
+    }
+    function dayAfter( date ) {
+        var previous = get(count-1);
+        for ( var i = 0; i < count; i++ ) {
+            var day = get(i);
+            if ( day.date < date ) {
+                return previous || day;
+            }
+            previous = day;
+        }
+        return previous;
     }
     function valuesForDate( date ) {
         var before = dayBefore( date );
@@ -171,39 +172,36 @@ DatabaseList {
         var values = [];
         var i;
         if ( before && after ) {
-            if ( before.date === date ) {
-                for ( i = 0; i < 5; i++ ) {
+            var range = after.date - before.date;
+            if ( range === 0 || before.date === date ) {
+                for ( i = 0; i < before.values.length; i++ ) {
                     values.push(before.values[ i ].value);
                 }
             } else if ( after.date === date ) {
-                for ( i = 0; i < 5; i++ ) {
+                for ( i = 0; i < after.values.length; i++ ) {
                     values.push(after.values[ i ].value);
                 }
             } else {
-                var range = after.date - before.date;
                 var position = date - before.date;
                 var interpolation = position / range;
-                for ( i = 0; i < 5; i++ ) {
+                for ( i = 0; i < before.values.length; i++ ) {
                     var value = before.values[ i ].value + ( ( after.values[ i ].value - before.values[ i ].value ) * interpolation );
                     values.push(value);
                 }
             }
-            return values;
         } else if ( before ) {
-            for ( i = 0; i < 5; i++ ) {
+            for ( i = 0; i < before.values.length; i++ ) {
                 values.push(before.values[ i ].value);
             }
-            return values;
         } else if ( after ) {
-            for ( i = 0; i < 5; i++ ) {
+            for ( i = 0; i < after.values.length; i++ ) {
                 values.push(after.values[ i ].value);
             }
-            return values;
         } else {
-            //console.log( 'Daily.valuesForDate(' + date + ') not found')
+            values = [ 0., 0., 0., 0., 0. ];
         }
-
-        return [ 0., 0., 0., 0., 0.]
+        //console.log( 'date=' + new Date( date ).toDateString() + ' before=' + ( before ? new Date( before.date ).toDateString() : undefined ) + ' after=' + ( after ? new Date( after.date ).toDateString() : undefined ) + ' values=' + JSON.stringify(values) );
+        return values;
     }
     function startValues() {
         var first = get(0);
@@ -212,7 +210,6 @@ DatabaseList {
         //console.log( 'l : ' + last.date );
     }
     function dateRange() {
-
         return count > 0 ? { min: get(count-1).date, max: get(0).date } : { min: Date.now(), max: Date.now() };
     }
     function blocksForDate( date ) {

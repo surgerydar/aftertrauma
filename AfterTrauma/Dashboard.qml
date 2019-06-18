@@ -38,7 +38,7 @@ AfterTrauma.Page {
             anchors.leftMargin: 32
             anchors.rightMargin: 32
             visible: !flowerChartAnimator.running
-            showSlider: Utils.daysBetweenDates( globalMinimumDate, globalMaximumDate ) > 1
+            showSlider: Utils.daysBetweenDates( globalMinimumDate, globalMaximumDate ) >= 1
             onDateChanged: {
                 setGlobalDate(currentDate);
             }

@@ -142,13 +142,6 @@ Rectangle {
             //
             numDays = Utils.daysBetweenDates(chart.startDate,chart.endDate);
 
-            if (chart.gridSize == 0)
-                chart.gridSize = Math.max(1,numDays);
-
-            var startIndex = dailyModel.indexOfFirstDayBefore( chart.startDate );
-            var endIndex = dailyModel.indexOfFirstDayAfter( chart.endDate );
-            //console.log( 'start: ' + startIndex + ' end: ' + endIndex + ' numDays: ' + numDays );
-
             var ctx = canvas.getContext("2d");
             ctx.globalCompositeOperation = "source-over";
             ctx.lineWidth = 1;
@@ -167,6 +160,14 @@ Rectangle {
             var dIndex = 1;// TODO: skip
             var day, point, value;
             var relativeValue = 0.0;
+
+            if (chart.gridSize == 0)
+                chart.gridSize = Math.max(1,numDays);
+
+            var startIndex = dailyModel.indexOfFirstDayBefore( chart.startDate );
+            var endIndex = dailyModel.indexOfFirstDayAfter( chart.endDate );
+            console.log( 'start: ' + startIndex + ' end: ' + endIndex + ' numDays: ' + numDays );
+
             if ( startIndex === endIndex ) {
                 day = dailyModel.get(startIndex);
                 for ( var j = 0; j < day.values.length; j++ ) {
@@ -196,7 +197,7 @@ Rectangle {
                     // increment x by diference between samples
                     //
                     x = Utils.daysBetweenMs(chart.startDate.getTime(),day.date) * xGridStep;
-                    if ( x == 0 || Math.abs( x - previousX ) >= 1 ) {
+                    if ( x === 0 || Math.abs( x - previousX ) >= 1 ) {
                         previousX = x;
                         //
                         // calculate points for each value

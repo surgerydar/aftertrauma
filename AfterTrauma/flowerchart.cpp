@@ -59,6 +59,7 @@ FlowerChart::FlowerChart( QQuickItem* parent ) : QQuickPaintedItem( parent ), m_
     //
     //
     setAcceptedMouseButtons(Qt::AllButtons);
+    setRenderTarget(QQuickPaintedItem::FramebufferObject);
 }
 //
 //
