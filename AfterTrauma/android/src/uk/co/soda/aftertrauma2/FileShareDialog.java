@@ -1,4 +1,4 @@
-package uk.co.soda.aftertrauma;
+package uk.co.soda.aftertrauma2;
 
 // Qt
 import org.qtproject.qt5.android.QtNative;
@@ -16,7 +16,7 @@ import java.io.File;
 
 public class FileShareDialog {
 
-    static final String AUTHORITY = "uk.co.soda.aftertrauma.fileprovider";
+    static final String AUTHORITY = "uk.co.soda.aftertrauma2.fileprovider";
 
     public static void share(String path, String mime) {
         System.out.println("share");

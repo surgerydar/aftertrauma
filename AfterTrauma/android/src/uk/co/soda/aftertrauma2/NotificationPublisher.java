@@ -1,4 +1,4 @@
-package uk.co.soda.aftertrauma;
+package uk.co.soda.aftertrauma2;
 
 // Qt
 import org.qtproject.qt5.android.QtNative;

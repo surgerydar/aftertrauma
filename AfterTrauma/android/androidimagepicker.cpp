@@ -48,7 +48,7 @@ public:
     }
 
     void showGallery() {
-        QAndroidJniObject intent = QAndroidJniObject::callStaticObjectMethod("uk/co/soda/aftertrauma/ImagePicker",
+        QAndroidJniObject intent = QAndroidJniObject::callStaticObjectMethod("uk/co/soda/aftertrauma2/ImagePicker",
                                                   "openGallery",
                                                   "()Landroid/content/Intent;");
         if ( intent.isValid() ) {
@@ -59,12 +59,12 @@ public:
 
     void showCamera() {
         qDebug() << "AndroidImagePicker::showCamera : creating intent";
-        QAndroidJniObject intent = QAndroidJniObject::callStaticObjectMethod("uk/co/soda/aftertrauma/ImagePicker",
+        QAndroidJniObject intent = QAndroidJniObject::callStaticObjectMethod("uk/co/soda/aftertrauma2/ImagePicker",
                                                   "openCamera",
                                                   "()Landroid/content/Intent;");
         if ( intent.isValid() ) {
             qDebug() << "AndroidImagePicker::showCamera : starting intent";
-            QAndroidJniObject imageUri = QAndroidJniObject::getStaticObjectField( "uk/co/soda/aftertrauma/ImagePicker", "mCurrentPhotoPath", "Ljava/lang/String;" );
+            QAndroidJniObject imageUri = QAndroidJniObject::getStaticObjectField( "uk/co/soda/aftertrauma2/ImagePicker", "mCurrentPhotoPath", "Ljava/lang/String;" );
             cameraPath = imageUri.toString();
             qDebug() << "AndroidImagePicker::showCamera : Capturing image to : " << cameraPath;
             QtAndroid::startActivity(intent, SOURCE_CAMERA, this);

@@ -1,4 +1,4 @@
-package uk.co.soda.aftertrauma;
+package uk.co.soda.aftertrauma2;
 
 // Qt
 import org.qtproject.qt5.android.bindings.QtApplication;
@@ -30,7 +30,7 @@ import java.util.List;
 
 public class ImagePicker {
 
-    static final String AUTHORITY = "uk.co.soda.aftertrauma.fileprovider";
+    static final String AUTHORITY = "uk.co.soda.aftertrauma2.fileprovider";
 
     public String getRealPathFromURI(Context context, Uri contentUri)
     {

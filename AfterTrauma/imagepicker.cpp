@@ -17,7 +17,7 @@ ImagePicker::ImagePicker(QObject *parent) : QObject(parent) {
     //
     //
     if ( QtAndroid::androidSdkVersion() >= 23 ) {
-        QAndroidJniObject::callStaticMethod<void>("uk/co/soda/aftertrauma/Permissions",
+        QAndroidJniObject::callStaticMethod<void>("uk/co/soda/aftertrauma2/Permissions",
                                                   "request",
                                                   "()V");
     }

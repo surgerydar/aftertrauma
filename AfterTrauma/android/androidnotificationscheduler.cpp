@@ -11,7 +11,7 @@ void _scheduleNotification( int id, QString message, unsigned int delay, unsigne
     qDebug() << "scheduling notification : " << message;
     QAndroidJniObject jni_message = QAndroidJniObject::fromString(message);
 
-    QAndroidJniObject::callStaticMethod<void>("uk/co/soda/aftertrauma/NotificationScheduler",
+    QAndroidJniObject::callStaticMethod<void>("uk/co/soda/aftertrauma2/NotificationScheduler",
                                               "show",
                                               "(ILjava/lang/String;II)V",
                                               (jint) id,
@@ -25,7 +25,7 @@ void _scheduleNotificationByPattern( int id, QString message, int pattern ) {
     qDebug() << "scheduling notification : " << message;
     QAndroidJniObject jni_message = QAndroidJniObject::fromString(message);
 
-    QAndroidJniObject::callStaticMethod<void>("uk/co/soda/aftertrauma/NotificationScheduler",
+    QAndroidJniObject::callStaticMethod<void>("uk/co/soda/aftertrauma2/NotificationScheduler",
                                               "show",
                                               "(ILjava/lang/String;I)V",
                                               (jint) id,
@@ -38,7 +38,7 @@ void _scheduleNotificationByDate( int id, QString message, int weekday, int hour
     qDebug() << "scheduling notification : " << message;
     QAndroidJniObject jni_message = QAndroidJniObject::fromString(message);
 
-    QAndroidJniObject::callStaticMethod<void>("uk/co/soda/aftertrauma/NotificationScheduler",
+    QAndroidJniObject::callStaticMethod<void>("uk/co/soda/aftertrauma2/NotificationScheduler",
                                               "showByDate",
                                               "(ILjava/lang/String;II)V",
                                               (jint) id,
@@ -48,20 +48,20 @@ void _scheduleNotificationByDate( int id, QString message, int weekday, int hour
 }
 
 void _cancelNotification( int id ) {
-    QAndroidJniObject::callStaticMethod<void>("uk/co/soda/aftertrauma/NotificationScheduler",
+    QAndroidJniObject::callStaticMethod<void>("uk/co/soda/aftertrauma2/NotificationScheduler",
                                               "hide",
                                               "(I)V",
                                               (jint) id);
 }
 
 void _cancelAllNotifications() {
-    QAndroidJniObject::callStaticMethod<void>("uk/co/soda/aftertrauma/NotificationScheduler",
+    QAndroidJniObject::callStaticMethod<void>("uk/co/soda/aftertrauma2/NotificationScheduler",
                                               "hideAll",
                                               "()V");
 }
 
 extern int _getActivationNotificationId() {
-    return QAndroidJniObject::callStaticMethod<jint>("uk/co/soda/aftertrauma/NotificationHandler",
+    return QAndroidJniObject::callStaticMethod<jint>("uk/co/soda/aftertrauma2/NotificationHandler",
                                                          "getNotificationId",
                                                          "()I");
 

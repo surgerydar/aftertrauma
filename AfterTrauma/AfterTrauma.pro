@@ -108,16 +108,18 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
-    android/src/uk/co/soda/NotificationScheduler.java \
-    android/src/uk/co/soda/NotificationPublisher.java \
-    android/src/uk/co/soda/ImagePicker.java \
-    android/src/uk/co/soda/NotificationHandler.java \
-    android/src/uk/co/soda/aftertrauma/FileShareDialog.java \
-    android/src/uk/co/soda/aftertrauma/ImagePicker.java \
-    android/src/uk/co/soda/aftertrauma/NotificationHandler.java \
-    android/src/uk/co/soda/aftertrauma/NotificationPublisher.java \
-    android/src/uk/co/soda/aftertrauma/NotificationScheduler.java \
-    android/src/uk/co/soda/aftertrauma/Permissions.java
+    android/src/uk/co/soda/aftertrauma2/FileShareDialog.java \
+    android/src/uk/co/soda/aftertrauma2/FileShareDialog.java \
+    android/src/uk/co/soda/aftertrauma2/ImagePicker.java \
+    android/src/uk/co/soda/aftertrauma2/ImagePicker.java \
+    android/src/uk/co/soda/aftertrauma2/NotificationHandler.java \
+    android/src/uk/co/soda/aftertrauma2/NotificationHandler.java \
+    android/src/uk/co/soda/aftertrauma2/NotificationPublisher.java \
+    android/src/uk/co/soda/aftertrauma2/NotificationPublisher.java \
+    android/src/uk/co/soda/aftertrauma2/NotificationScheduler.java \
+    android/src/uk/co/soda/aftertrauma2/NotificationScheduler.java \
+    android/src/uk/co/soda/aftertrauma2/Permissions.java \
+    android/src/uk/co/soda/aftertrauma2/Permissions.java
 
 ios {
     OBJECTIVE_SOURCES += ios/ImagePicker.mm
@@ -171,9 +173,8 @@ android {
     SOURCES += ./android/androidsharedialog.cpp
     SOURCES += ./android/androidnotificationscheduler.cpp
 
-    ANDROID_EXTRA_LIBS += /Users/jonathanjones-morris/Documents/Developer/OpenSSL-for-Android-Prebuilt-master/openssl-1.0.2/armeabi-v7a/lib/libcrypto.so
-    ANDROID_EXTRA_LIBS += /Users/jonathanjones-morris/Documents/Developer/OpenSSL-for-Android-Prebuilt-master/openssl-1.0.2/armeabi-v7a/lib/libssl.so
     ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
+
 
     # factsheet.files = ./factsheets
     # factsheet.path = /assets
@@ -184,5 +185,14 @@ android {
     # INSTALLS += factsheetmedia
 
     OTHER_FILES += ./android/AndroidManifest.xml
+}
+
+contains(ANDROID_TARGET_ARCH,armeabi-v7a) {
+    ANDROID_EXTRA_LIBS += /Users/jonathanjones-morris/Documents/Developer/OpenSSL/1.0.2j/arch-armeabi-v7a/lib/libcrypto.so
+    ANDROID_EXTRA_LIBS += /Users/jonathanjones-morris/Documents/Developer/OpenSSL/1.0.2j/arch-armeabi-v7a/lib/libssl.so
+}
+contains(ANDROID_TARGET_ARCH,arm64-v8a) {
+    ANDROID_EXTRA_LIBS += /Users/jonathanjones-morris/Documents/Developer/OpenSSL-for-Android-Prebuilt-master/openssl-1.1.1/arm64-v8a/lib/libcrypto.so
+    ANDROID_EXTRA_LIBS += /Users/jonathanjones-morris/Documents/Developer/OpenSSL-for-Android-Prebuilt-master/openssl-1.1.1/arm64-v8a/lib/libssl.so
 }
 

@@ -17,10 +17,10 @@ WebSocketValidator* WebSocketValidator::shared() {
 //
 // QValidator implimentation
 //
-void WebSocketValidator::fixup(QString &input) const {
+void WebSocketValidator::fixup(QString& /*input*/) const {
 
 }
-QValidator::State WebSocketValidator::validate(QString &input, int &pos) const {
+QValidator::State WebSocketValidator::validate(QString& /*input*/, int& /*pos*/) const {
     //m_pending = input;
 
     return QValidator::Acceptable;
@@ -33,6 +33,6 @@ void WebSocketValidator::onDisconnected() {
 
 }
 
-void WebSocketValidator::onTextMessageReceived(QString message) {
+void WebSocketValidator::onTextMessageReceived(QString /*message*/) {
 
 }
